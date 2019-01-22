@@ -14,7 +14,7 @@ spl_autoload_register(function ($class) {
     }
 });
 
-
+lfrjolrjglrg
 // Create and configure Slim app
 $configuration = [
     'settings' => [
