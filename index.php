@@ -21,13 +21,14 @@ $app = new \Slim\App($c);
 
 /*******************************End Of LOADING & INITIALIZING BASE APPLICATION ****************************************/
 
-// loading routes
+// loading routes automatically
 
-require_once("App/routes/index.php");
-require_once("App/routes/user_admin.php");
-// foreach(array_diff(scandir(__DIR__."/App/routes"), array('.', '..')) as $route){
-//     require_once(__DIR__."/App/routes/".$route);
-// }
+// require_once("App/routes/index.php");
+// require_once("App/routes/user_admin.php");
+// require_once("App/routes/user_admin.php");
+foreach(array_diff(scandir(__DIR__."/App/routes"), array('.', '..')) as $route){
+    require_once(__DIR__."/App/routes/".$route);
+}
 
 
 //running project

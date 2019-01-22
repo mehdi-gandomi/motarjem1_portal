@@ -1,237 +1,20 @@
 <?php
 namespace App\Controllers;
-
 use App\Config;
 use App\Controller;
-use App\Models\Translator;
 use App\Models\User;
 use Gregwar\Captcha\CaptchaBuilder;
 use Slim\Http\UploadedFile;
 
-class AuthController extends Controller
+class UserController extends Controller
 {
 
+    
     //////////////////////////////////////////////
-    // START Translator Functions
-    //////////////////////////////////////////////
-
-    public function translator_get_login($req, $res, $args)
-    {
-
-        $data = $this->get_csrf_token($req);
-        if (isset($_SESSION['oldLoginFields'])) {
-            $data = array_merge($data, $_SESSION['oldLoginFields']);
-            $data['page_title'] = "خطا در ورود";
-            unset($_SESSION['oldLoginFields']);
-        }
-        $data['page_title'] = "ورود به پنل";
-        $this->view->render($res, "website/login.twig", $data);
-    }
-    public function translator_post_login($req, $res, $args)
-    {
-        $postFields = $req->getParsedBody();
-        $username = $postFields['username'];
-        $password = $postFields['password'];
-
-        $result = Translator::login($username, $password);
-
-        if ($result['hasError']) {
-            $this->flash->addMessage('loginError', $result['error']);
-            $_SESSION['oldLoginFields'] = array(
-                'username' => $username,
-                'password' => $password,
-            );
-            return $res->withRedirect('/login');
-        } else {
-            $this->go_to_fucking_ugly_page($result['level'], $result['u_name']);
-        }
-
-    }
-    protected function go_to_fucking_ugly_page($level, $u_name)
-    {
-        print
-            ('
-            <html>
-            <head>
-            <meta http-equiv="content-type"
-            content="text/html; charset=utf-8"/>
-            <meta charset=utf-8"/>
-            <title>Welcome</title>
-            <style>
-            body {
-                text-align: center;
-                font-family: cursive;
-                background: #F3F3F3;
-                padding: 10%;
-            }
-            h1 {
-                position: relative;
-                background: #EDFBFF;
-                border: 25px solid #203559;
-                border-radius: 50px 2px;
-                box-shadow: 0 1px 10px #3D3131;
-                width: 68%;
-                padding: 40px;
-                margin: 0 auto 30px;
-                font-family: cursive;
-            }
-            input[type="text"] {
-                padding: 5px;
-                width: 90px;
-                border: 1px solid #DDD;
-                background: #FDFDFD;
-                outline: none;
-            }
-            input[type="text"]:focus {
-                border: 1px solid #71B3D8;
-                box-shadow: 0 0 3px #9E9E9E;
-            }
-            input[type="submit"] {
-                font-family: cursive;
-                background: #08A9DB;
-                color: #FFF;
-                padding: 4px 10px;
-                border: 1px solid #0A85D8;
-                box-shadow: 0 0 3px #6B6A6A;
-                cursor: pointer;
-            }
-            table
-            {
-                text-align: center;
-                width: 95%;
-            }
-            </style>
-            </head>
-            <body>
-        ');
-
-        if ($level == "admin") {
-            print('
-            <h1>Welcome <span style="color:#abc789">' . $u_name . '</span> To Your Panel</h1><br /><br />Click on the below link :<br /><br />');
-            print('<a href="admin/index.php?sqw1=&action=home">Go to User Page</a>');
-        } else {
-            print('
-            <h1>Welcome <span style="color:#abc789">' . $u_name . '</span> To Your Panel</h1><br /><br />Click on the below link :<br /><br />');
-            print('<a href="user/index.php?sqw1=&action=home">Go to User Page</a>');
-        }
-
-    }
-
-    public function translator_get_signup($req, $res, $args)
-    {
-        $tokenArray = $this->get_csrf_token($req);
-        $data = $tokenArray;
-        $builder = new CaptchaBuilder;
-        $builder->build();
-        $captcha = $builder->inline();
-        $_SESSION['captcha'] = $builder->getPhrase();
-        $data['captcha'] = $captcha;
-        if (isset($_SESSION['oldPostFields'])) {
-            $data = \array_merge($data, $_SESSION['oldPostFields']);
-            $data['page_title'] = "خطا در ثبت نام";
-            unset($_SESSION['oldPostFields']);
-        } else {
-            $data['page_title'] = "استخدام مترجم";
-        }
-        return $this->view->render($res, "website/employment.twig", $data);
-    }
-
-    public function translator_post_signup($req, $res, $args)
-    {
-        $errors = [];
-        $postFields = $req->getParsedBody();
-        $hasError = $this->validate_employment($postFields);
-
-        if ($hasError) {
-            unset($postFields['csrf_name']);
-            unset($postFields['csrf_value']);
-            $_SESSION['oldPostFields'] = $postFields;
-            return $res->withRedirect('/employment');
-        }
-        $userInfo = Translator::new ($postFields);
-        if ($userInfo) {
-            $this->send_user_info_to_email($userInfo, $postFields['fname'], $postFields['email']);
-            $this->view->render($res, "website/successful-employment.twig", ['email' => $postFields['email'], "page_title" => "ثبت نام موفق"]);
-        }
-
-    }
-
-    public function upload_employee_photo($req, $res, $rgs)
-    {
-        $uploadedFiles = $req->getUploadedFiles();
-        $uploadedFile = $uploadedFiles['user_photo_file'];
-        $directory = dirname(dirname(__DIR__)) . '/up_user_photo';
-        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
-            $filename = $this->moveUploadedFile($directory, $uploadedFile);
-            return $res->write($filename);
-        }
-    }
-    public function upload_employee_melicard($req, $res, $rgs)
-    {
-        $uploadedFiles = $req->getUploadedFiles();
-        $uploadedFile = $uploadedFiles['meli_card_photo_file'];
-        $directory = dirname(dirname(__DIR__)) . '/up_nation_cart_photo';
-        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
-            $filename = $this->moveUploadedFile($directory, $uploadedFile);
-            return $res->write($filename);
-        }
-    }
-
-    protected function validate_employment($postFields)
-    {
-        $hasError = false;
-        if (!filter_var($postFields['email'], FILTER_VALIDATE_EMAIL)) {
-            $this->flash->addMessage('error', "آدرس ایمیل وارد شده نامعتبر می باشد!");
-            $hasError = true;
-        }
-        if ($postFields['lname'] == "" || $postFields['fname'] == "") {
-            $this->flash->addMessage('error', "فیلد نام یا نام خانوادگی نباید خالی باشد !");
-            $hasError = true;
-        }
-        if (!isset($postFields['en_to_fa']) && !isset($postFields['fa_to_en'])) {
-            $this->flash->addMessage('error', "باید حداقل یکی از زبان ها انتخاب شود !");
-            $hasError = true;
-        }
-        if ($postFields['mobile'] == "") {
-            $this->flash->addMessage('error', "فیلد تلفن همراه نباید خالی باشد !");
-            $hasError = true;
-        }
-        if ($postFields['user_photo'] == "") {
-            $this->flash->addMessage('error', "باید یک عکس پرسنلی آپلود کنید !");
-            $hasError = true;
-        }
-        if ($postFields['meli_card'] == "") {
-            $this->flash->addMessage('error', "باید تصویر کارت ملی خودرا آپلود کنید !");
-            $hasError = true;
-        }
-        if ($postFields['education'] == "") {
-            $this->flash->addMessage('error', "فیلد تحصیلات نباید خالی باشد !");
-            $hasError = true;
-        }
-        if ($postFields['melli_code'] == "") {
-            $this->flash->addMessage('error', "فیلد کدملی نباید خالی باشد !");
-            $hasError = true;
-        }
-        if ($_SESSION['captcha'] != \strtolower($postFields['captcha_input'])) {
-            $this->flash->addMessage('error', "کد امنیتی وارد شده اشتباه می باشد !");
-            $hasError = true;
-        }
-        if (Translator::check_existance_by_email($postFields['email'])) {
-            $this->flash->addMessage('error', "با این ایمیل قبلا ثبت نام شده است !");
-            $hasError = true;
-        }
-
-        return $hasError;
-    }
-    //////////////////////////////////////////////
-    // END Translator Functions
+    // START Customer(User) Auth Functions
     //////////////////////////////////////////////
 
-    //////////////////////////////////////////////
-    // START Customer(User) Functions
-    //////////////////////////////////////////////
-
-    public function customer_get_auth($req, $res, $args)
+    public function get_auth($req, $res, $args)
     {
         $data = $this->get_csrf_token($req);
         if (isset($_SESSION['login_username'])) {
@@ -245,7 +28,7 @@ class AuthController extends Controller
         $this->view->render($res, "website/login_signup.twig", $data);
     }
     //login process of user (customer) if user is not active, an activation link will be sent to user's email
-    public function customer_post_login($req, $res, $args)
+    public function post_login($req, $res, $args)
     {
         $postFields = $req->getParsedBody();
         $userData = User::by_username($postFields['username'], "*");
@@ -255,12 +38,12 @@ class AuthController extends Controller
                     $_SESSION['is_user_logged_in'] = true;
                     $_SESSION['fname'] = $userData['fname'];
                     $_SESSION['lname'] = $userData['lname'];
-                    $_SESSION['avatar'] = "/public/images/avatars/" . $userData['avatar'];
+                    $_SESSION['avatar'] =$userData['avatar'];
                     $_SESSION['user_id'] = $userData['username'];
                     //user level that logged in valid values are : user,admin,translator
                     $_SESSION['user_type'] = "user";
                     \setcookie(\session_name(), \session_id(), time() + (86400 * 7));
-                    return $res->withRedirect('/');
+                    return $res->withRedirect('/user');
                 } else {
                     $this->flash->addMessage('userActivationError', "حساب کاربری شما غیرفعال می باشد ! لطفا از طریق <strong><a  onclick='sendVerificationCode(\"$postFields[username]\")'>این لینک</a></strong> آن را فعال کنید.");
                     $_SESSION['login_username'] = $postFields['username'];
@@ -279,7 +62,7 @@ class AuthController extends Controller
 
     }
     // signup process for users (customer)
-    public function customer_post_signup($req, $res, $args)
+    public function post_signup($req, $res, $args)
     {
         $postFields = $req->getParsedBody();
         $hasError = $this->valiate_user_signup($postFields);
@@ -327,7 +110,7 @@ class AuthController extends Controller
 
     }
     //process and activate a user by link that sent to email
-    public function customer_verify_email($req, $res, $args)
+    public function verify_email($req, $res, $args)
     {
         $username = \trim(\urldecode($req->getQueryParams()["user"]));
         $userData = User::by_username($username);
@@ -352,7 +135,7 @@ class AuthController extends Controller
     }
 
     //create and send a verification link to user to activate the account
-    public function customer_send_verification_email($req, $res, $args)
+    public function send_verification_email($req, $res, $args)
     {
         $hash = md5(md5(Config::VERIFY_EMAIL_KEY));
         $username = $args['username'];
@@ -430,7 +213,7 @@ class AuthController extends Controller
         return $hasError;
     }
     //////////////////////////////////////////////
-    // END Customer(User) Functions
+    // END Customer(User) Auth Functions
     //////////////////////////////////////////////
 
     protected function moveUploadedFile($directory, UploadedFile $uploadedFile)

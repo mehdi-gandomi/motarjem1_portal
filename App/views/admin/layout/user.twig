@@ -20,13 +20,25 @@
             gtag('config', 'UA-118965717-3');
             // Bootstrap ID
             gtag('config', 'UA-118965717-5');
-        </script>
+        </script>           
     </head>
     <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
 
         {{include("admin/includes/navbar.twig")}}
         <div class="app-body">
             <div class="sidebar">
+                <div class="profile-avatar">
+                    <div class="profile-avatar__avatar">
+                    
+                    
+                        
+                        <img src="{{'/public/uploads/avatars/user/' ~ user.avatar}}" alt="{{user.fullname}}">
+                    </div>
+                    <div class="profile-avatar__text">
+                        <h5>خوش آمدید</h5>
+                        <p>{{user.fullname}}</p>
+                    </div>
+                </div>
                 <nav class="sidebar-nav">
                     {{include('admin/includes/user_sidebar.twig') }}
                 </nav>

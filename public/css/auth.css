@@ -4870,16 +4870,38 @@ main {
 }
 
 main.login-wrap {
+  background-image: url("/public/images/tranlator_login.jpg");
+  background-size: cover;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
   height: 100%;
+  width: 100%;
+  z-index: 0;
+  position: relative;
+}
+
+main.login-wrap:before {
+  content: "";
+  display: block;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0.9;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
 }
 
 main.employment-wrap {
   padding-bottom: 4rem;
   padding-top: 4rem;
   height: unset !important;
+}
+
+.auth {
+  z-index: 3;
 }
 
 .auth.center {
