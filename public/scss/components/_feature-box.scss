@@ -3,9 +3,18 @@
   padding-bottom: 4rem;
   
   // @include angeled-edge;
-  
+  .col-sm-6:last-child{
+    .feature__overlay__action {
+      &:before{
+        left: 60%;        
+      }
+    }
+  }
 }
 .feature-box {
+
+
+
   background: $feature-card-bg;
   box-shadow: $feature-boxshadow;
   display: flex;
@@ -64,7 +73,6 @@
     height: 8px;
     top: -100%;
     left: 50%;
-    
     border-style: solid;
     border-color: rgb(55, 160, 0);
     border-width: 1px 1px 0 0;

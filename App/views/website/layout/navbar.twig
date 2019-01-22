@@ -1,90 +1,98 @@
- <header>
-      <nav class="top-nav">
-        
-          {% if user.is_logged_in %}
-            <div class="user-greeting">
-              {{user.fullname}} عزیز خوش آمدید 
-              {% if user.user_type=="user" %}
-                <a href="/user/logout">خروج</a>
-              {% endif %}
-              
-            </div>
-          {% else %}
-          <div class="user-auth">
-            <a href="/translator/login" class="sign-in primary--color">
-              <i class="icon-login"></i> <span>ورود مترجم</span>
-            </a>
-            <a href="/employment" class="sign-up success--color">
-              <i class="icon-user-add"></i> <span>عضویت مترجم</span>
-            </a>
-            <a href="/user/auth" class="sign-up primary--color">
-              <i class="icon-user"></i> <span>ورود / ثبت نام کاربر</span>
-            </a>
-          </div>
-          {% endif %}
-        
-        <div class="social-media">
-          <ul>
-            <li>
-              <a
-                href="https://telegram.me/joinchat/AAAAAENnLiWdB6XvCvuB5w"
-                target="_blank"
-                class="icon-telegram"
-              >
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://www.linkedin.com/in/motarjem-one"
-                class="icon-linkedin-squared"
-              >
-              </a>
-            </li>
-            <li>
-              <a href="https://twitter.com/MOTARJEM11" class="icon-twitter">
-              </a>
-            </li>
+<header>
+    <nav class="top-nav">
 
-            <li>
-              <a
-                href="https://instagram.com/motarjemone"
-                target="_blank"
-                class="icon-instagram"
-              >
-              </a>
-            </li>
-          </ul>
+        {% if user.is_logged_in %}
+            <div class="user-greeting">
+                {{user.fullname}}
+                عزیز خوش آمدید
+                <a href="/{{user.user_type}}">ورود به پنل کاربری</a>
+                <a href="/{{user.user_type}}/logout">خروج</a>
+
+            </div>
+        {% else %}
+            <div class="user-auth">
+                <a href="/translator/login" class="sign-in primary--color">
+                    <i class="icon-login"></i>
+                    <span>ورود مترجم</span>
+                </a>
+                <a href="/employment" class="sign-up success--color">
+                    <i class="icon-user-add"></i>
+                    <span>عضویت مترجم</span>
+                </a>
+                <a href="/user/auth" class="sign-up primary--color">
+                    <i class="icon-user"></i>
+                    <span>ورود / ثبت نام کاربر</span>
+                </a>
+            </div>
+        {% endif %}
+
+        <div class="social-media">
+            <ul>
+                <li>
+                    <a href="https://telegram.me/joinchat/AAAAAENnLiWdB6XvCvuB5w" target="_blank" class="icon-telegram"></a>
+                </li>
+                <li>
+                    <a href="https://www.linkedin.com/in/motarjem-one" class="icon-linkedin-squared"></a>
+                </li>
+                <li>
+                    <a href="https://twitter.com/MOTARJEM11" class="icon-twitter"></a>
+                </li>
+
+                <li>
+                    <a href="https://instagram.com/motarjemone" target="_blank" class="icon-instagram"></a>
+                </li>
+            </ul>
         </div>
-      </nav>
-      <nav class="main-navbar ">
-        <div class="nav-toggle"><i></i><i></i><i></i></div>
+    </nav>
+    <nav class="main-navbar ">
+        <div class="nav-toggle">
+            <i></i>
+            <i></i>
+            <i></i>
+        </div>
         <a href="" class="nav-brand">
-          <img src="public/images/logo.png" alt="brand" />
-          <div class="nav-brand__text">
-            <h4 class="nav-brand__text__title">مترجم 1</h4>
-            <p class="nav-brand__text__description">
-              جامع ترین وب سایت خدمات ترجمه تخصصی
-            </p>
-          </div>
+            <img src="public/images/logo.png" alt="brand"/>
+            <div class="nav-brand__text">
+                <h4 class="nav-brand__text__title">مترجم 1</h4>
+                <p class="nav-brand__text__description">
+                    جامع ترین وب سایت خدمات ترجمه تخصصی
+                </p>
+            </div>
         </a>
         <ul class="nav-menu nav">
-          <li><a href="/">صفحه اصلی</a></li>
-          <li><a href="/blog">وبلاگ</a></li>
-          <li><a href="/expense-calculator">محاسبه هزینه</a></li>
-          <li><a href="/contact-us">تماس با ما</a></li>
-          <li><a href="/about-us">درباره ما </a></li>
-          <li><a href="/employment">استخدام مترجم </a></li>
-          <li><a href="/dore-zaban">دوره های آموزشی</a></li>
-          
+            <li>
+                <a href="/">صفحه اصلی</a>
+            </li>
+            <li>
+                <a href="/blog">وبلاگ</a>
+            </li>
+            <li>
+                <a href="/expense-calculator">محاسبه هزینه</a>
+            </li>
+            <li>
+                <a href="/contact-us">تماس با ما</a>
+            </li>
+            <li>
+                <a href="/about-us">درباره ما
+                </a>
+            </li>
+            <li>
+                <a href="/employment">استخدام مترجم
+                </a>
+            </li>
+            <li>
+                <a href="/dore-zaban">دوره های آموزشی</a>
+            </li>
+
         </ul>
         <div class="nav-options">
-          <ul class="nav">
-            <li>
-              <a class="button is--success is--outline " href="/order">
-                <i class="icon-cart-plus"></i> سفارش</a
-              >
-            </li>
-          </ul>
+            <ul class="nav">
+                <li>
+                    <a class="button is--success is--outline " href="/order">
+                        <i class="icon-cart-plus"></i>
+                        سفارش</a >
+                </li>
+            </ul>
         </div>
-      </nav>
-    </header>
+    </nav>
+</header>

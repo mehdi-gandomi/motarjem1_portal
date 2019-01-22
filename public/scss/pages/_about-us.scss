@@ -74,16 +74,25 @@ margin-top: 3rem;
         }
         &__title{
             color: #106197;
+            h4{
+                font-size: 1.2rem !important;
+            }
         }
         &__content{
             text-align: center;
             color: #0025a0;
+            p{
+                font-size: 0.9rem;
+            }
         }
 
     }
     &__rules{
         .rules{
             margin-top: 2rem;
+            li{
+                font-size: 0.9rem;
+            }
         }
     }
 
@@ -91,7 +100,7 @@ margin-top: 3rem;
 .section-title{
     color: #0025a0;
     padding: 1rem;
-    font-size: 2.1rem;
+    font-size: 1.6rem;
 }
 .bg-white{
     background: #fff !important;

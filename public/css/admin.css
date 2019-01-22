@@ -21617,4 +21617,55 @@ body {
 .sidebar-minimized .profile-avatar__text {
   display: none;
 }
+
+.info-cards {
+  margin-top: 3rem;
+}
+
+.info-card {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  background: #fff;
+  width: 100%;
+}
+
+.info-card__icon {
+  -ms-flex-preferred-size: 30%;
+      flex-basis: 30%;
+  width: 30%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.info-card__icon img {
+  width: 50px;
+  height: 50px;
+}
+
+.info-card__content {
+  padding: 1rem;
+  width: 70%;
+  -ms-flex-preferred-size: 70%;
+      flex-basis: 70%;
+}
+
+.info-card__content__title {
+  font-size: 1rem;
+  color: #afa4a4;
+}
+
+.info-card__content__value {
+  font-weight: bold;
+  font-size: 1.3rem;
+}
 /*# sourceMappingURL=admin.css.map */

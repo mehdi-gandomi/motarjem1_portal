@@ -8567,6 +8567,10 @@ h2 {
   padding-bottom: 4rem;
 }
 
+.feature-section .col-sm-6:last-child .feature__overlay__action:before {
+  left: 60%;
+}
+
 .feature-box {
   background: #fff;
   -webkit-box-shadow: 0 0px 7px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);
@@ -9985,19 +9989,31 @@ h2 {
   color: #106197;
 }
 
+.about-us__service__title h4 {
+  font-size: 1.2rem !important;
+}
+
 .about-us__service__content {
   text-align: center;
   color: #0025a0;
+}
+
+.about-us__service__content p {
+  font-size: 0.9rem;
 }
 
 .about-us__rules .rules {
   margin-top: 2rem;
 }
 
+.about-us__rules .rules li {
+  font-size: 0.9rem;
+}
+
 .section-title {
   color: #0025a0;
   padding: 1rem;
-  font-size: 2.1rem;
+  font-size: 1.6rem;
 }
 
 .bg-white {
