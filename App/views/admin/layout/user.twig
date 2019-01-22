@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
         <title>{{title}}</title>
         <!-- Main styles for this application-->
-        <link href="public/css/admin.min.css" rel="stylesheet">
+        <link href="/public/css/admin.min.css" rel="stylesheet">
         {% block style_below %}{% endblock %}
         <script>
             window.dataLayer = window.dataLayer || [];
@@ -26,27 +26,12 @@
 
         {{include("admin/includes/navbar.twig")}}
         <div class="app-body">
-            {% set menu_items = {
-                "item":{"icon":"icon-speedometer","title":"داشبورد","link":"/"},
-                    "order-dropdown":{
-                        "parent":{"icon":"icon-bag","title":"سفارشات","link":"/orders"},
-                        "items":[
-                            {"title":"مشاهده سفارشات","link":"orders/show"},
-                            {"title":"سفارش جدید","link":"orders/new"}
-                        ]
-                    },
-                    "message-dropdown":{
-                        "parent":{"icon":"icon-envelope","title":"مرکز پیام","link":"/messages"},
-                        "items":[
-                            {"title":"مشاهده پیام ها","link":"messages/show"},
-                            {"title":"ارسال پیام جدید","link":"messages/new"},
-                        ]
-                    }
-                    
-                }
-            
-             %}
-            {{include("admin/includes/sidebar.twig",menu_items)}}
+            <div class="sidebar">
+                <nav class="sidebar-nav">
+                    {{include('admin/includes/user_sidebar.twig') }}
+                </nav>
+                <button class="sidebar-minimizer brand-minimizer" type="button"></button>
+            </div>
             {% block content %}
                 {# main content goes here #}
             {% endblock %}
@@ -64,12 +49,12 @@
         </footer>
         {% block script_top %}{% endblock %}
         <!-- CoreUI and necessary plugins-->
-        <script src="public/js/jquery.min.js"></script>
-        <script src="public/js/popper.min.js"></script>
-        <script src="public/js/bootstrap.min.js"></script>
-        <script src="public/js/pace.min.js"></script>
-        <script src="public/js/perfect-scrollbar.min.js"></script>
-        <script src="public/js/coreui.min.js"></script>
+        <script src="/public/js/panel/jquery.min.js"></script>
+        <script src="/public/js/panel/popper.min.js"></script>
+        <script src="/public/js/panel/bootstrap.min.js"></script>
+        <script src="/public/js/panel/pace.min.js"></script>
+        <script src="/public/js/panel/perfect-scrollbar.min.js"></script>
+        <script src="/public/js/panel/coreui.min.js"></script>
 
         {% block script_below %}{% endblock %}
 
