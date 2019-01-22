@@ -1,0 +1,39 @@
+<div class="sidebar">
+    <nav class="sidebar-nav">
+        <ul class="nav">
+            
+            {% for key, item in menu_items %}
+                
+                {% if key == "item" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{item.link}}">
+                            <i class="nav-icon {{item.icon}}"></i>
+                            {{item.title}}
+                        </a>
+                    </li>
+
+                {% else %}
+                    <li class="nav-item nav-dropdown">
+                        <a class="nav-link nav-dropdown-toggle" href="{{item.parent.link}}">
+                            <i class="nav-icon {{item.parent.icon}}"></i>
+                            {{item.parent.title}}</a>
+                        <ul class="nav-dropdown-items">
+
+                            {% for subitem in item.items %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{subitem.link}}">
+                                        {# <i class="nav-icon icon-puzzle"></i> #}
+                                        {{subitem.title}}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </ul>
+    </nav>
+    <button class="sidebar-minimizer brand-minimizer" type="button"></button>
+</div>

@@ -1,0 +1,30 @@
+body,
+html {
+  overflow-x: hidden;
+  text-align: right;
+  height: 100%;
+}
+body {
+  display: flex;
+  flex-direction: column;
+}
+main {
+  flex: 1 0 auto;
+  
+}
+.footer {
+  flex-shrink: 0;
+}
+
+
+p,a{
+  direction: rtl;
+}
+
+.rtl{
+  direction: rtl;
+}
+.ltr{
+  direction: ltr !important;
+}
+

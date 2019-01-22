@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+        <title>ورود / ثبت نام در سایت مترجم وان</title>
+        <link rel="stylesheet" href="/public/css/login_signup.min.css"/>
+    </head>
+    <body>
+        <section class="user">
+            <div class="user_options-container">
+                <div class="user_options-text">
+                    <div class="user_options-unregistered">
+                        <h2 class="user_unregistered-title">اکانت نداری ؟</h2>
+                        <p class="user_unregistered-text">
+                            خوب میتونی به راحتی برای خودت اکانت بسازی تا از امکانات پنل استفاده کنی
+                        </p>
+                        <button class="user_unregistered-signup" onclick="window.history.back();">
+                            بازگشت
+                        </button>
+                        <button class="user_unregistered-signup" id="signup-button">
+                            ثبت نام
+                        </button>
+                    </div>
+
+                    <div class="user_options-registered">
+                        <h2 class="user_registered-title">اکانت داری ؟</h2>
+                        <p class="user_registered-text">
+                            خوب به راحتی می تونی وارد پنلت بشی و سفارشاتی که تاحالا دادی رو ببینی و از وضعیت اون ها با خبر بشی
+                        </p>
+                        <button class="user_registered-login" id="login-button">
+                            ورود
+                        </button>
+                        <button class="user_unregistered-signup" onclick="window.history.back();">
+                            بازگشت
+                        </button>
+                    </div>
+                </div>
+
+                {% if flash("userSignupErrors")or flash("userSignUpLogs") %}
+                    <div class="user_options-forms signup-click" id="user_options-forms">
+                    {% else %}
+                        <div class="user_options-forms" id="user_options-forms">
+                        {% endif %}
+
+                        <div class="user_forms-login">
+                            <h2 class="forms_title">ورود به پنل</h2>
+                            <form class="forms_form" action="/user/login" method="POST">
+                                <input type="hidden" name="csrf_name" value="{{ csrf_name }}"/>
+                                <input type="hidden" name="csrf_value" value="{{ csrf_value }}"/>
+                                <fieldset class="forms_fieldset">
+                                    <div class="forms_field">
+                                        <input type="text" placeholder="نام کاربری" name="username" class="forms_field-input" required="required" autofocus="autofocus" value="{{login_username}}"/>
+                                    </div>
+                                    <div class="forms_field">
+                                        <input type="password" placeholder="گذرواژه شما" name="password" class="forms_field-input" required="required"/>
+                                    </div>
+                                </fieldset>
+                                <div class="forms_buttons">
+                                    <input type="submit" value="ورود" class="forms_buttons-action"/>
+                                    <button type="button" class="forms_buttons-forgot">
+                                        پسوردتو فراموش کردی ؟
+                                    </button>
+                                </div>
+                            </form>
+                            <div class="auth-logs">
+
+                                {% for error in flash("userLoginError") %}
+                                    <p class="is--danger">{{ error | raw}}</p>
+                                {% endfor %}
+                                {% for error in flash("userActivationError") %}
+                                    <p class="is--danger">{{ error | raw}}</p>
+                                {% endfor %}
+                                {% if flash("userActivationSuccess") %}
+                                    <p class="is--success">{{ flash("userActivationSuccess")[0] |raw }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="user_forms-signup">
+                            <h2 class="forms_title">ثبت نام در وبسایت</h2>
+                            <form class="forms_form" action="/user/signup" method="POST">
+                                <input type="hidden" name="csrf_name" value="{{ csrf_name }}"/>
+                                <input type="hidden" name="csrf_value" value="{{ csrf_value }}"/>
+                                <fieldset class="forms_fieldset">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="forms_field">
+                                                <input type="text" name="fname" placeholder="نام شما" class="forms_field-input" required="required" value="{{fname}}"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="forms_field">
+                                                <input type="text" name="lname" placeholder="نام خانوادگی شما" class="forms_field-input" required="required" value="{{lname}}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="forms_field">
+                                        <input type="text" name="username" placeholder="نام کاربری" class="forms_field-input" required="required" value="{{username}}"/>
+                                    </div>
+                                    <div class="forms_field">
+                                        <input type="email" name="email" placeholder="ایمیل شما" class="forms_field-input" required="required" value="{{email}}"/>
+                                    </div>
+
+                                    <div class="forms_field">
+                                        <input type="text" name="phone" placeholder="تلفن همراه شما" class="forms_field-input" value="{{phone}}"/>
+                                    </div>
+
+                                    <div class="forms_field">
+                                        <input type="password" name="password" placeholder="پسورد شما" class="forms_field-input" required="required"/>
+                                    </div>
+                                    <div class="forms_field">
+                                        <input type="password" name="confirm_password" placeholder="تکرار پسورد" class="forms_field-input" required="required"/>
+                                    </div>
+                                </fieldset>
+                                <div class="forms_buttons">
+                                    <input type="submit" value="ثبت نام" class="forms_buttons-action"/>
+                                </div>
+                            </form>
+                            <div class="auth-logs">
+
+                                {% for error in flash("userSignupErrors") %}
+                                    <p class="is--danger">{{ error | raw }}</p>
+                                {% endfor %}
+
+                                {% for log in flash("userSignUpLogs") %}
+                                    <p class="is--success">{{ log | raw }}</p>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <script src="/public/js/axios.min.js"></script>
+            <script src="/public/js/login_signup.js"></script>
+        </body>
+    </html>

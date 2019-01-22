@@ -1,0 +1,98 @@
+.banner{
+   &.about-us{
+    background-image: url(../images/about-banner.png);
+   }
+   &.contact-us{
+       background-image: url(../images/contact-us.jpg);
+       height: 400px !important;
+   }
+    width: 100%;
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    color: #fff;
+
+}
+.has--overlay{
+    &:before{
+        position:absolute;
+        content:"";
+        background:rgba(0,0, 0,0.4);
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        display: block;
+        z-index:0;
+    }
+    .inner{
+        position:relative;
+        width:100%;
+        height:100%;
+        top:0px;
+        left:0px;
+        color:white;
+        z-index:5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+}
+
+.about-us{
+    padding: 2rem;
+    &__title{
+        color: #5679d4;
+        h3{
+            font-size: 2.3rem;
+        }
+    }
+    &__subtitle{
+        margin-top: 2rem;
+    }
+    &__services{
+margin-top: 3rem;
+    }
+    &__service{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+
+        &__icon{
+            width: 100px;
+            height: 100px;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            img{
+                max-width: 100%;
+                max-height: 100%;
+            }
+        }
+        &__title{
+            color: #106197;
+        }
+        &__content{
+            text-align: center;
+            color: #0025a0;
+        }
+
+    }
+    &__rules{
+        .rules{
+            margin-top: 2rem;
+        }
+    }
+
+}
+.section-title{
+    color: #0025a0;
+    padding: 1rem;
+    font-size: 2.1rem;
+}
+.bg-white{
+    background: #fff !important;
+}

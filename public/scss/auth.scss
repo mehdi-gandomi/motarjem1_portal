@@ -1,0 +1,233 @@
+@import "bootstrap/functions";
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
+@import "bootstrap/reboot";
+@import "bootstrap/forms";
+@import "bootstrap/buttons";
+@import "bootstrap/grid";
+@import "bootstrap/bootstrap-grid.scss";
+@import "components/fontiran";
+
+body,html{
+    background: rgb(234, 231, 231);
+    color: #5b5b5b;
+    width: 100%;
+    height: 100%;
+    font-family: IranSans,sans-serif,Tahoma;
+}
+
+main{
+    direction: rtl;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  &.login-wrap{
+   
+    
+    justify-content: center;
+    
+    height: 100%;
+    
+  }
+    &.employment-wrap{
+        padding-bottom: 4rem;
+        padding-top: 4rem;
+        height: unset !important;
+    }
+}
+
+.auth{
+    &.center{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    &.success{
+        background: #fff;
+        padding: 2rem;
+        h2{
+            color: rgb(46, 170, 46);
+        }
+        p{
+            color: rgb(139, 122, 122);
+            font-size: 1rem;
+        }
+    }
+    &.is--signup{
+        width: 90%;
+        
+    }    
+    &__logo{
+        width:100px;
+        height: 100px;
+        img{
+            max-width: 100%;
+        }
+    }
+    &__form{
+        width: 100%;
+        background: #fff;
+        &__title{
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+        .center{
+            display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        }
+        padding: 2rem;
+        margin-top: 2rem;
+        &__icon{
+            width: 100px;
+            height: 100px;
+            margin: auto;
+            img{
+                max-width: 100%;
+            }
+        }
+    }
+}
+
+.w-100{
+width: 100%;
+}
+.pr-3{
+padding-right: 1.5rem;
+}
+.pt-4{
+padding-top: 2rem;
+}
+.alert{
+    font-weight: 400;
+    padding-bottom: 1rem;
+    &.is--success{
+        color: rgb(255, 36, 36) !important;
+    }
+}
+.text-center{
+    text-align: center !important;
+}
+.ltr{
+    direction: ltr !important;
+}
+.seperator{
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+.credential{
+    padding-top: 2rem;
+}
+
+
+// employment page styles
+
+.no-pad{
+    padding: 0 !important;
+}
+
+.employment{
+    display: flex;
+}
+.hire-form{
+    width: 65%;
+    flex-basis: 65%;
+    padding: 2rem;
+}
+.hire-notes{
+    width: 35%;
+    flex-basis: 35%;
+    position: relative;
+    padding: 1rem;
+    padding-top: 5rem;
+    order: 1;
+    .notes{
+        position:relative;
+        width:100%;
+        height:100%;
+        top:0px;
+        left:0px;
+        color:white;
+        z-index:10;
+    }
+    &.has--background{
+        background: url(../images/Hiring.jpg);
+        background-size:cover;
+        background-position:center;
+    }
+    &:before{
+        position:absolute;
+        content:"";
+        background:rgba(0,0, 0,0.6);
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        display: none;
+        z-index:0;
+    }
+    &.has--overlay:before{
+        display: block !important;
+    }
+}
+
+
+#reload-captcha {
+    img{
+        width: 20px;
+        height: 20px;
+    }
+}
+.alert-list{
+    margin: 2rem auto;
+    padding: 1rem;
+    width: 50%;
+    text-align: center;
+    &.is--error{
+        background: #ff6473;
+        color: #fff;
+    }
+    ul{
+        
+        list-style: none;
+        
+        
+    }
+}
+
+element.style {
+}
+.hire-notes.has--background {
+    background: url(../images/Hiring.jpg);
+    background-size: cover;
+    background-position: center;
+}
+
+//responsiveness
+@media (max-width:768px) {
+    .employment {
+        display: block
+    }
+    .hire-notes {
+        width: 100%;
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%
+    }
+    .hire-form {
+        width: 100%;
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%
+    }
+    .captcha--section {
+        height: 120px
+    }
+    .alert-list {
+        width: 100%
+    }
+}
+

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+           <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>مترجم وان - {{page_title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      media="screen"
+      href="/public/css/main.min.css"
+    />
+        {% endblock %}
+        {% block stylebelow %}{% endblock %}
+    </head>
+    <body>
+     {{ include('website/layout/navbar.twig') }}
+        <main class="rtl">{% block content %}{% endblock %}</main>
+
+      {{ include('website/layout/footer.twig') }}
+      {% block scriptabove %}{% endblock %}
+        <script src="/public/js/bootstrap-native-v4.min.js"></script>
+        <script src="/public/js/functions.js"></script>
+        <script src="/public/js/axios.min.js"></script>
+       
+        <script src="/public/js/main.js"></script>
+      {% block scriptbelow %}{% endblock %}
+    </body>
+</html>

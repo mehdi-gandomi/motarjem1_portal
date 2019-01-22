@@ -1,0 +1,77 @@
+.order-result{
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+    text-align: center;
+    margin-top: 3rem;
+    padding: 1rem;
+    position: relative;
+    
+    &.is--success{
+        background: #80ac7b;
+        color: #fff;
+    }
+    &.is--error{
+        background: #e93b24;
+        color: #fff;
+        margin-bottom: 3rem;
+    }
+    
+    h4{
+        display: inline-block;
+    }
+    .print-invoice{
+        // margin-right: 3rem;
+        display: inline-block;
+        position: absolute;
+        left: 10px;
+    }
+}
+
+.invoice{
+    box-shadow: 0 0px 4px rgba(0,0,0,.19), 0 2px 4px rgba(0,0,0,.23);
+    padding: 0 2rem 2rem 2rem;
+    margin-bottom: 3rem;
+    &__header{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #75cac3;
+        &__brand{
+            display: flex;
+            align-items: center;
+        }
+        .brand_info{
+            margin-right: 2rem;
+            &__contact{
+                p{
+                    display: inline-block;
+                    margin: 0 1rem;
+                }
+            }
+        }
+        
+    }
+    &__details{
+
+    }
+    &__detail{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 1rem;
+        span{
+            margin-top: 1rem;
+        }
+    }
+}
+
+@media print {
+  header{
+      display: none !important;
+  }
+       
+  }

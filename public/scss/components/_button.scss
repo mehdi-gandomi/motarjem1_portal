@@ -1,0 +1,62 @@
+// button styles
+.button {
+  padding: 0.375rem 0.75rem;
+  text-align: center;
+  border-radius: 8px;
+  display: inline-block;
+  vertical-align: middle;
+  border: 0;
+  cursor: pointer;
+  &.has--shadow {
+    box-shadow: 0 0 7px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);
+  }
+  &.has--shadow-light {
+    box-shadow: 0 0 7px rgba(0, 0, 0, 0.19), 0 2px 0px rgba(0, 0, 0, 0.23);
+  }
+  &.has--lighter-shadow{
+    box-shadow: 0 0 1.5px rgba(0,0,0,.19), 0 1.3px 0 rgba(0,0,0,.23);
+  }
+  &:focus,
+  &:active,
+  &:hover {
+    text-decoration: none;
+    outline: none;
+  }
+  i {
+    font-size: 1.3rem;
+  }
+  &.is--outline {
+    transition: all 0.3s ease-out;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  &.is--success {
+    background: #0c907d;
+    &.is--outline {
+      @include invert(#0c907d);
+    }
+  }
+  
+  &.read--more {
+    &.is--outline {
+      @include invert(#4d626e);
+    }
+  }
+}
+.button--calc {
+  &.is--outline {
+    @include invert(#3f72af);
+  }
+}
+
+@media(max-width:768px){
+    .button{
+        padding: .27rem .60rem;
+        margin-left: 0.5rem;
+        font-size: 0.95rem;
+        i {
+            font-size: 0.95rem;
+          }
+    }
+    
+}

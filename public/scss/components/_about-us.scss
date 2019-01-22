@@ -1,0 +1,14 @@
+.about-section{
+    background: #2C8ECB;
+    color: #fff;
+    padding: 2rem;
+    position: relative;
+    &__action{
+        display: flex;
+        justify-content: center;
+    }
+    // .btn--rounded{
+    //     border-radius: 30%;
+    // }
+    @include section-arrow(#2C8ECB);
+}

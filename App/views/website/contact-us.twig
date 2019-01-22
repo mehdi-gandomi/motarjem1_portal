@@ -1,0 +1,115 @@
+{% extends "website/layout/base.twig" %}
+
+{% block content %}
+
+<div class="banner contact-us has--overlay">
+    <div class="inner">
+        <h2 class="text-center bounce-in">ارتباط با ما</h2>
+    </div>
+</div>
+
+
+<div class="contact-us row">
+    <div class="col-lg-7">
+        <div class="contact__header">
+            <h1>راه های ارتباطی ما</h1>
+        </div>
+
+        {# <div class="contact-us__map">
+                <img src="public/images/map.jpg" alt="">
+            </div> #}
+
+        <ul class="contact-ways">
+            <li class="contact-way"><i class="icon-map-pin"></i><span> دفتر مرکزی : تهران - میدان انقلاب ابتدای کارگر
+                    شمالی کوچه رستم پ ۲۱
+                    و ۸ </span></li>
+            <li class="contact-way"><i class="icon-map-pin"></i><span>مازندران بابل بخش مرکزی - شهر بابل-محله عباس
+                    آباد-بلوار شهیدبهشتی-بن بست بسیج 17 </span></li>
+            <li class="contact-way"><i class="icon-phone-squared"></i><span>٠٩٣٠٩٥٨٩١٢٢ - 66496035_021</span></li>
+            <li class="contact-way"><i class="icon-mail"></i><span><a href="mailto: Motarjem1@yahoo.com">
+                        Motarjem1@yahoo.com</a></span></li>
+        </ul>
+
+
+
+    </div>
+    <div class="col-lg-5">
+
+        <section class="contact">
+            <div class="contact__header">
+                <h1>تماس با ما</h1>
+            </div>
+            <form class="contact__form" action="#">
+                <div class="form__group">
+                    <svg class="form__icon" width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
+                    </svg>
+                    <label class="form__label" for="fullname">نام شما</label>
+                    <input class="form__input" id="fullname" name="fullname" type="text">
+                    <span class="form__ripple" aria-hidden="true"></span>
+                </div>
+                <div class="form__group">
+                    <svg class="form__icon" width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z" />
+                    </svg>
+                    <label class="form__label" for="email">ایمیل شما</label>
+                    <input class="form__input" id="email" name="email" type="email">
+                    <span class="form__ripple" aria-hidden="true"></span>
+                </div>
+                <div class="form__group">
+                    <svg class="form__icon" width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4A2,2 0 0,0 20,2M6,9H18V11H6M14,14H6V12H14M18,8H6V6H18" />
+                    </svg>
+                    <label class="form__label" for="message">پیام شما</label>
+                    <textarea class="form__input" id="message" name="message" rows="2"></textarea>
+                    <span class="form__ripple" aria-hidden="true"></span>
+                </div>
+                <button class="form__button" type="button">
+                    {# <svg class="form__button-icon" width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
+                    </svg> #}
+                    فرستادن پیام
+                </button>
+            </form>
+        </section>
+
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scriptbelow %}
+<script>
+    // Contact From.
+    // --------------------
+
+    function formGroup(element) {
+        let input = element.querySelector(`.form__input`);
+        let label = element.querySelector(`.form__label`);
+        let ripple = element.querySelector(`.form__ripple`);
+
+        if (input.value !== '')
+            label.classList.add(`form__label--floating`);
+
+        const toggleActiveState = function (event) {
+            if (event.type === 'focus') {
+                element.classList.add(`form__group--focus`);
+                ripple.classList.add(`form__ripple--active`);
+                if (input.value === '')
+                    label.classList.add(`form__label--floating`);
+            } else if (event.type === 'blur') {
+                element.classList.remove(`form__group--focus`);
+                ripple.classList.remove(`form__ripple--active`);
+                if (input.value === '')
+                    label.classList.remove(`form__label--floating`);
+            }
+        };
+
+        input.addEventListener('focus', toggleActiveState);
+        input.addEventListener('blur', toggleActiveState);
+    }
+
+    document.querySelectorAll(`.form__group`).forEach(formGroup);
+</script>
+{% endblock %}

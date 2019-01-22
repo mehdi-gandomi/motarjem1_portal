@@ -1,0 +1,66 @@
+{% extends "website/layout/base.twig" %}
+
+{% block stylebelow %}
+<link rel="stylesheet" href="public/css/order-result.css">
+{% endblock %}
+
+{% block content %}
+{% if success %}
+<div class="order-result container">
+    <div class="row ">
+
+
+
+
+        <div class="col-12 success-message">
+            <h3 class="title">اطلاعات شما با موفقیت ثبت شد!</h3>
+            <h5 class="subtitle">برای نهایی کردن سفارش خود لطفا از یکی از درگاه های زیر پرداخت خود را انجام دهید</h5>
+        </div>
+        <div class="col-12">
+            <ul class="order-info">
+                <li>نوع ترجمه : {{translation_type}}</li>
+                <li>کیفیت ترجمه : {{translation_quality}}</li>
+                <li>تعداد صفحات : {{page_number}}</li>
+                <li>زمان تحویل : {{duration}} روز</li>
+                <li>هزینه قابل پرداخت : {{final_price}} تومان</li>
+            </ul>
+        </div>
+        <div class="col-12">
+            <div class="payment-gateways">
+                <form action="order-payment/{{order_id}}" method="POST">
+                    <input type="hidden" name="csrf_name" value="{{csrf_name}}">
+                    <input type="hidden" name="csrf_value" value="{{csrf_value}}">
+                    <div class="mellat">
+                        <button type="submit" name="gateway" value="mellat" class="button mellat has--lighter-shadow"
+                            readonly>
+                            <img src="public/images/icon/Behpardakht.png" alt="mellat">
+                            <span>پرداخت توسط درگاه بانک ملت</span>
+                        </button>
+                    </div>
+                    <div class="or">یا</div>
+                    <div class="zarinpal">
+                        <button type="submit" name="gateway" value="zarinpal" class="button zarinpal has--lighter-shadow"
+                            readonly>
+                            <img src="public/images/icon/zarinpal.png" alt="zarinpal">
+                            <span>پرداخت توسط زرین پال</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+{% else %}
+
+<div class="col-12 error-message">
+    <h3 class="title">خطایی در ثبت اطلاعات رخ داد</h3>
+    <h5 class="subtitle">باما <a href="">تماس</a> بگیرید</h5>
+    <a href="/order" class="btn btn-primary mt-3">بازگشت</a>
+</div>
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends "website/layout/base.twig" %}
+
+{% block stylebelow %}
+<link rel="stylesheet" href="public/css/step-form.css">
+<link rel="stylesheet" href="public/css/filepond.min.css">
+{% endblock %}
+
+{% block content %}
+
+
+
+<div class="steps-container">
+    <h3 class="text-center">سیستم ثبت سفارش ترجمه</h3>
+    <div class="wrapper">
+        <ul class="steps">
+            <li class="is-active">گام اول</li>
+            <li>گام دوم</li>
+            <li>گام سوم</li>
+        </ul>
+        <form class="form-wrapper order-form" method="POST" enctype="multipart/form-data" action="order-completed">
+            <input type="hidden" name="files" id="uploaded-files">
+            <input type="hidden" name="csrf_name" value="{{csrf_name}}">
+            <input type="hidden" name="csrf_value" value="{{csrf_value}}">
+            <fieldset class="section is-active">
+                <h3 class="text-center">اطلاعات ترجمه</h3>
+
+                <div class="order-form row">
+                    <div class="form-group col-lg-3 col-md-6">
+                        <label for="type">نوع ترجمه *</label>
+
+                        <select name="type" id="type" class="form-control">
+                            {% for key, value in translate_type %}
+                            {% if key == type %}
+                            <option value="{{ key }}" selected> {{ value }}</option>
+
+                            {% else %}
+                            <option value="{{ key }}"> {{ value }}</option>
+
+                            {% endif %}
+
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% if type=="specialist" %}
+                    <div class="form-group field_of_study col-lg-3 col-md-6 show">
+                        {% else %}
+                        <div class="form-group field_of_study col-lg-3 col-md-6">
+                            {% endif %}
+                            <label for="field_of_study">رشته تحصصی</label>
+                            <select name="field_of_study" id="field_of_study" class="form-control">
+                                    {% for key, value in field_types %}
+                                    {% if key == field_of_study %}
+                                    <option value="{{ key }}" selected> {{ value }}</option>
+    
+                                    {% else %}
+                                    <option value="{{ key }}"> {{ value }}</option>
+                                    {% endif %}
+                                    {% endfor %}                                
+                            </select>
+                        </div>
+                        <div class="form-group col-lg-3 col-md-6">
+                            <label for="words">تعداد کلمات *</label>
+                            <input class="form-control" type="number" name="words" id="words" value="{{words}}"
+                                placeholder="تعداد کلمات">
+                            <span class="hint words--hint">هر صفحه استاندارد، 250 کلمه است</span>
+                        </div>
+                        <div class="form-group col-lg-3 col-md-6">
+                            <label for="language">زبان ترجمه *</label>
+                            <select name="language" id="language" class="form-control">
+                                {% for key, value in lang_type %}
+                                {% if key == language %}
+                                <option value="{{ key }}" selected> {{ value }}</option>
+
+                                {% else %}
+                                <option value="{{ key }}"> {{ value }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-lg-3 form-group col-md-6">
+                            <label for="quality">کیفیت ترجمه</label>
+                            <select name="translation_quality" id="quality" class="form-control">
+                                <option value="silver">نقره ایی</option>
+                                <option value="gold">طلایی</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-lg-3 col-md-6">
+                            <label for="discount">کد تخفیف</label>
+                            <input type="text" name="discount" id="discount" class="form-control" placeholder="کد تخفیف">
+                            <span class="hint">جهت دریافت کد تخفیف <a href="http://www.t.me/motarjem_one">پیام</a> دهید</span>
+                        </div>
+
+                    </div>
+                
+                    <div class="step-actions">
+                        
+                        <div class="btn btn-primary prev-step">مرحله قبلی</div>
+                        <div class="btn btn-success next-step">مرحله بعدی</div>
+                    </div>
+            </fieldset>
+            <fieldset class="section">
+                <h3 class="text-center">زمان تحویل *</h3>
+                <div class="row cf delivery-selection-wrap">
+                    {% for key, value in delivery_types %}
+                    <div class="col-lg-4 col-sm-4 col-xs-4">
+                        {% if key == delivery_type %}
+                        <input type="radio" name="delivery_type" value="{{ key }}" checked id="{{key}}" />
+                        {% else %}
+                        <input type="radio" name="delivery_type" value="{{ key }}" id="{{key}}" />
+                        {% endif %}
+                        <label class="deliver-selection" for="{{key}}">
+                            <img src="public/images/icon/{{value.icon}}" alt="">
+                            <h4>{{value.name}}</h4>
+                        </label>
+                    </div>
+                    {% endfor %}
+
+                </div>
+                <p id="delivery-hint" style="text-align: center;margin-top: 1rem;"></p>
+                <div class="row pt-4">
+                    <div class="col-12 pb-4">
+                        <p>🔰قیمت‌گذاری هزینه ترجمه بر حسب تعداد کلمات هر صفحه لحاظ می‌شود نه صفحه‌ایی یا خطی.</p>
+                        <p>🔰در ترجمه نیمه فوری، 10 تومان به نرخ ترجمه‌ها اضافه می‌شود.
+                            </p>
+                            <p>🔰در ترجمه فوری، نرخ ترجمه‌ها دو برابر حساب می‌شود.</p>
+                    </div>
+                    <div class="col-lg-12">
+                        <h3 class="text-center">آپلود فایل (ها)</h3>
+                    </div>
+                    <div class="col-lg-4 col-sm-12 hints-for-upload">
+                        <h4 class="py-2 text-center">نکات آپلود فایل</h4>
+                        <p class="text-right">
+                            لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک
+                            است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی
+                            تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد.
+                        </p>
+                    </div>
+                    <div class="col-lg-8 col-sm-12 align-self-center">
+                        <input type="file" class="filepond" name="file" multiple id="file" data-max-file-size="3MB"
+                            data-max-files="3" />
+                    </div>
+                </div>
+                <div class="step-actions">
+                    <div class="btn btn-primary prev-step">مرحله قبلی</div>
+                    <div class="btn btn-success next-step">مرحله بعدی</div>
+                </div>
+            </fieldset>
+            <fieldset class="section">
+                <div class="order-form row">
+                    <div class="col-lg-4 col-md-6 form-group">
+                        <label for="fullname">نام و نام خانوادگی</label>
+                        <input class="form-control" type="text" name="fullname" id="fullname">
+                    </div>
+                    <div class="col-lg-4 form-group col-md-6">
+                        <label for="phone_number">شماره همراه</label>
+                        <input class="form-control" type="text" name="phone_number" id="phone_number">
+                        <span class="hint phone--hint"></span>
+                    </div>
+                    <div class="col-lg-4 form-group col-md-6">
+                        <label for="email">ایمیل</label>
+                        <input class="form-control" type="email" name="email" id="email">
+                        <span class="hint email--hint"></span>
+                    </div>
+                    <div class="col-lg-12 form-group">
+                        <label for="description">توضیحات</label>
+                        <textarea class="form-control" name="description" id="description" rows="4"></textarea>
+                    </div>
+                    <div class="col-lg-12 form-group">
+                        <input class="btn btn-primary" type="submit" value="ثبت سفارش">
+                    </div>
+                </div>
+
+                <div class="step-actions">
+                    <div class="btn btn-secondary prev-step">مرحله قبلی</div>
+                </div>
+            </fieldset>
+
+
+        </form>
+
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+{% block scriptbelow %}
+<script src='public/js/filepond-plugin-file-encode.min.js'></script>
+<script src='public/js/filepond-plugin-file-validate-size.min.js'></script>
+<script src='public/js/filepond.min.js'></script>
+<script src="public/js/order.js"></script>
+{% endblock %}

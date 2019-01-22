@@ -1,0 +1,343 @@
+{% extends "website/layout/base.twig" %}
+
+{% block content %}
+<section id="main-slider" class="carousel slide ltr" data-ride="carousel">
+  <ol class="carousel-indicators">
+    <li class="active" data-target="#main-slider" data-slide-to="0"></li>
+    <li data-target="#main-slider" data-slide-to="1"></li>
+    <li data-target="#main-slider" data-slide-to="2"></li>
+  </ol>
+
+  <!-- Wrapper for Slides -->
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <!-- Set the first background image using inline CSS below. -->
+      <div class="fill" style="background-image:url('public/images/translate.png');"></div>
+      <div class="carousel-caption">
+        <h2 class="animated fadeInLeft">ترجمه مقاله</h2>
+        <p class="animated fadeInUp">
+          ترجمه مقالات شما توسط با سابقه ترین مترجمان
+        </p>
+        <p class="animated fadeInUp">
+          <a href="/order" class="btn btn-transparent btn-rounded btn-large">همین الان سفارش
+            دهید !</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="carousel-item">
+      <!-- Set the third background image using inline CSS below. -->
+      <div class="fill" style="background-image:url('public/images/research.jpg');"></div>
+      <div class="carousel-caption">
+        <h2 class="animated fadeInRight">تحقیق</h2>
+        <p class="animated fadeInRight">
+          انجام تحقیقات شما و تایپ آنها در سریع ترین زمان ممکن
+        </p>
+        <p class="animated fadeInRight">
+          <a href="/order" class="btn btn-transparent btn-rounded btn-large">همین الان سفارش
+            دهید !</a>
+        </p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <!-- Set the third background image using inline CSS below. -->
+      <div class="fill" style="background-image:url('public/images/typing.png');"></div>
+      <div class="carousel-caption">
+        <h2 class="animated fadeInRight">تایپ مقالات</h2>
+        <p class="animated fadeInRight">
+          تایپ مقالات و تحقیقات شما در کمترین زمان
+        </p>
+        <p class="animated fadeInRight">
+          <a href="/order" class="btn btn-transparent btn-rounded btn-large">همین الان سفارش
+            دهید !</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</section>
+<section class="price-calculate">
+  <form action="/expense-calculator" method="POST" class="price-form container">
+    <div class="row align-items-center">
+      <h5 class="col-lg-2 col-sm-12">برآورد هزینه</h5>
+      <div class="form-group col-lg-2 col-sm-6">
+        <label for="language">زبان ترجمه</label>
+        <select name="language" id="language" class="form-control">
+          <option value="en_to_fa">انگلیسی - فارسی</option>
+          <option value="fa_to_en">فارسی - انگلیسی</option>
+        </select>
+      </div>
+      <div class="form-group col-lg-2 col-sm-6">
+        <label for="type">نوع ترجمه</label>
+        <select name="type" id="type" class="form-control">
+          <option value="common">عمومی</option>
+          <option value="specialist">تخصصی</option>
+        </select>
+      </div>
+      <div class="form-group col-lg-2 col-sm-6">
+        <label for="delivery_type">زمان تحویل</label>
+        <select name="delivery_type" id="delivery_type" class="form-control">
+          <option value="normal">عادی</option>
+          <option value="half_an_instant">نیمه فوری</option>
+          <option value="instantaneous">فوری</option>
+        </select>
+      </div>
+      <div class="form-group col-lg-2 col-6">
+        <label for="words">تعداد کلمات</label>
+        <input type="number" class="form-control" name="words" id="words" placeholder="تعداد کلمه" />
+      </div>
+      <div class="form-group col-lg-2 col-6">
+        <button type="submit" name="submit" class="button button--calc is--outline has--shadow-light">
+          <i class="icon-calc"></i> محاسبه
+        </button>
+      </div>
+    </div>
+  </form>
+</section>
+<section class="about-section container-fluid">
+  <h3 class="text-center">درباره ما</h3>
+  <p>
+    سایت مترجم وان به عنوان مرکزی فعال خدمات ترجمه متون را به صورت تخصصی ،
+    فوری و با تعرفه های بسیار مناسب دانشجویی ارائه می نماید. کیفیت خدمات ،
+    پشتیبانی شبانه روزی ، قیمت مناسب از سویی پشتیبانی از تمامی رشته های
+    دانشگاهی درکنار تسلط مترجمین بر موضوع و تحویل پروژه های ترجمه فارسی به
+    انگلیسی به صورت تایپ شده ، سبب شده است تا کاربران با رضایت کامل به
+    صورت مداوم از ترجمه انگلیسی به فارسی / فارسی به انگلیسی وب سایت مترجم
+    وان بهره مند گردند.
+  </p>
+  <p>
+    سایت اصلی مترجم وان برا این پایه استوار است که رضایت کارفرما و مترجم
+    در طول انجام یک پروژه ترجمه به طور کامل جلب شود. مترجم ها می توانند با
+    ثبت نام در مترجم وان به جمع مترجم ها پیوسته و به صورت دور کاری در آمد
+    میلیونی داشته باشند
+  </p>
+  <!--
+          <p>
+            سایت مترجم وان نهایت تلاش خود را کرده است که بستری فراهم کند که تمام
+            مترجم ها اعم از مترجم های زبان انگلیسی به فارسی ، مترجم متون تخصصی و
+            فنی ، مترجم فارسی به انگلیسی ، مترجم متون تخصصی کامپیوتر ، پزشکی ،
+            حسابداری ، برق ، مدیریت و .... همین طور سایر مترجمینی که توانایی ترجمه
+            در سایر زبان ها و تخصص ها را دارند بتوانند از این مهارت و تخصص خود کسب
+            در آمد کنند.
+          </p>
+        -->
+  <div class="about-section__action">
+    <a href="/about" class="btn btn-success btn--rounded">اطلاعات بیشتر</a>
+  </div>
+</section>
+<section class="container-fluid feature-section">
+  <h3 class="text-center p-5">خدمات ما</h3>
+  <div class="row">
+    <div class="col-lg-3 col-sm-6">
+      <div class="feature-box">
+        <div class="feature-box__icon">
+          <img src="public/images/icon/tranlating.svg" alt="" />
+        </div>
+        <div class="feature-box__title">ترجمه</div>
+        <div class="feature-box__overlay">
+          <div class="feature__overlay__description">
+            ترجمه کتاب ، مقاله ، پایان نامه و پروژه دانشجویی در زمینه های
+            مختلف
+          </div>
+          <div class="feature__overlay__action">
+            <a href="/order">همین الان سفارش دهید</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+      <div class="feature-box">
+        <div class="feature-box__icon">
+          <img src="public/images/icon/research.svg" alt="" />
+        </div>
+        <div class="feature-box__title">تحقیق</div>
+        <div class="feature-box__overlay">
+          <div class="feature__overlay__description">
+            ترجمه کتاب ، مقاله ، پایان نامه و پروژه دانشجویی در زمینه های
+            مختلف
+          </div>
+          <div class="feature__overlay__action">
+            <a href="/order">همین الان سفارش دهید</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+      <div class="feature-box">
+        <div class="feature-box__icon">
+          <img src="public/images/icon/typewriter.svg" alt="" />
+        </div>
+        <div class="feature-box__title">تایپ</div>
+        <div class="feature-box__overlay">
+          <div class="feature__overlay__description">
+            ترجمه کتاب ، مقاله ، پایان نامه و پروژه دانشجویی در زمینه های
+            مختلف
+          </div>
+          <div class="feature__overlay__action">
+            <a href="/order">همین الان سفارش دهید</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+      <div class="feature-box">
+        <div class="feature-box__icon">
+          <img src="public/images/icon/tranlating.svg" alt="" />
+        </div>
+        <div class="feature-box__title">ترجمه</div>
+        <div class="feature-box__overlay">
+          <div class="feature__overlay__description">
+            ترجمه کتاب ، مقاله ، پایان نامه و پروژه دانشجویی در زمینه های
+            مختلف
+          </div>
+          <div class="feature__overlay__action">
+            <a href="/order">همین الان سفارش دهید</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="telegram-ad rtl">
+  <div class="telegram-ad__image">
+    <img src="public/images/telegram-bot.png" alt="telegram-bot" />
+  </div>
+  <div class="telegram-ad__text">
+    <h3 class="telegram-ad__title">
+      تلگرام داری و میخای سریع و راحت فایل ترجمت رو سفارش بدی؟
+    </h3>
+    <h4 class="telegram-ad__subtitle">
+      در ربات تلگرام ما عضو شو و هزینه ترجمت رو برآورد کن و همونجا سفارش
+      بده
+    </h4>
+    <div class="telegram-ad__content">
+      <p>
+        ☑️ کانال مترجم وان (فوری،تخصصی،ارزان) ارائه کننده خدمات تخصصی ترجمه انگلیسی به فارسی و ترجمه فارسی به انگلیسی،
+        مفتخر است که خدمات خود را با کیفیتی بالا و تعرفه های دانشجویی به شما عرضه می نماید. مهمترین ملاک ترجمه جلب
+        رضایت و بدست آوردن محبوبیت در بین اساتید، دانشجویان و تمامی مخاطبان امر ترجمه است؛ که با قرار دادن قیمت ها در
+        پایین ترین سطح ممکن و ارائه ترجمه ای تخصصی و فوری در تلاش رسیدن به این مهم هستیم .
+      </p>
+    </div>
+    <div class="telegram-ad__action">
+      <a href="http://t.me/motarjemonebot" class="button telegram-ad__action__button is--bot-button has--shadow">
+        <img src="public/images/icon/roboto-logo.svg" alt="telegram bot">
+        <span>ورود به ربات تلگرام</span>
+      </a>
+      <a href="http://t.me/motarjemone" class="button telegram-ad__action__button is--channel-button has--shadow">
+        <img src="public/images/icon/telegram.svg" alt="telegram channel">
+        <span>پیوستن به کانال تلگرام</span>
+      </a>
+    </div>
+  </div>
+</section>
+<section class="hire-translator">
+  <h4 class="text-center mt-4">مترجم هستید؟</h4>
+  <div class="animation-wrap">
+    <img class="animation-wrap__main-image" src="public/images/translator.png" alt="hire-translator" />
+    <div class="animation-wrap__item top--right ">
+      <div class="animation-wrap__item__icon">
+        <img src="public/images/icon/register.svg" alt="sign up" />
+      </div>
+      <h4 class="animation-wrap__item__title">ثبت نام کنید</h4>
+      <p class="animation-wrap__item__subtitle">
+        ابتدا ثبت نام کنید و بعد از شرکت در آزمونهای ورودی به عنوان مترجم
+        استخدام سایت ترجمه تخصصی ترنسیس شوید
+      </p>
+    </div>
+    <div class="animation-wrap__item top--left ">
+      <div class="animation-wrap__item__icon">
+        <img src="public/images/icon/project.svg" alt="project" />
+      </div>
+      <h4 class="animation-wrap__item__title">
+        در پروژه های ترجمه شرکت کنید
+      </h4>
+      <p class="animation-wrap__item__subtitle">
+        پروژه های ترجمه مرتبط با تخصص شما معرفی میشوند، آنها را مشاهده و
+        پیشنهادتان را برای ترجمه تخصصی آن متون اعلام کنید
+      </p>
+    </div>
+    <div class="animation-wrap__item bottom--right ">
+      <div class="animation-wrap__item__icon">
+        <img src="public/images/icon/conversation.svg" alt="chat" />
+      </div>
+      <h4 class="animation-wrap__item__title">
+        با کارفرما در ارتباط باشید
+      </h4>
+      <p class="animation-wrap__item__subtitle">
+        هر زمان که خواستید می توانید با کارفرمایان پروژه ترجمه خود آنلاین
+        در ارتباط باشید
+      </p>
+    </div>
+    <div class="animation-wrap__item bottom--left ">
+      <div class="animation-wrap__item__icon">
+        <img src="public/images/icon/get-money.svg" alt="chat" />
+      </div>
+      <h4 class="animation-wrap__item__title">کسب درآمد کنید</h4>
+      <p class="animation-wrap__item__subtitle">
+        پس از انجام پروژه ترجمه فایل ترجمه شده را به کارفرما تحویل دهید و
+        پس از کسب رضایت وی حق الزحمه خود را دریافت کنید
+      </p>
+    </div>
+  </div>
+</section>
+<section class="hire">
+  <div class="text-center">
+    <h5>
+      در سایت مترجم وان ثبت نام کنید و استخدام شوید و
+      <strong>در آمد</strong> کسب کنید
+    </h5>
+    <a href="/employment" class="btn btn-primary">ثبت نام مترجم</a>
+  </div>
+</section>
+{{ include('website/includes/testimonials.twig') }}
+<section class="recent-posts-wrap rtl">
+  <div class="container">
+    <h4 class="text-center mt-4 mb-4">آخرین مطالب وبلاگ</h4>
+    <div class="row" id="posts-wrap">
+
+      {% for post in latestPosts %}
+      <div class="col-lg-4">
+        <div class="post">
+          <img src="{{post.thumbnail}}" alt="" class="post__thumbnail">
+          <div class="post__body">
+            <h5 class="post__title">{{post.title}}</h5>
+            <ul class="post__categories">
+              {% for category in post.categories %}
+              <li class='post__category'>
+                <a href="{{category.link}}">#{{category.name}}</a>
+              </li>
+              {% endfor %}
+            </ul>
+            <p class="post__content">{{post.previewText}}</p>
+            <div class="post__footer">
+              <a href="{{post.link}}" class="button read--more is--outline">ادامه خواندن</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {% endfor %}
+    </div>
+
+  </div>
+  <div class="visit-blog">
+    <a href="http://www.motarjem1.com/blog" class="btn btn-primary">مطالب بیشتر</a>
+  </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scriptbelow %}
+
+<script src="public/js/home.js"></script>
+{% endblock %}

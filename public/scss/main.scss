@@ -1,0 +1,27 @@
+@import "variables";
+@import "mixins";
+@import "components/fontiran";
+@import "bootstrap/bootstrap.scss";
+@import "global";
+@import "components/button";
+@import "components/fontastic";
+@import "components/navbar";
+@import "components/carousel";
+@import "components/calculate-form";
+@import "components/about-us";
+@import "components/feature-box";
+@import "components/telegram-ad";
+@import "components/hiring";
+@import "components/testimonial";
+@import "components/post";
+
+
+
+@import "pages/404.scss";
+@import "pages/calculate-expense.scss";
+@import "pages/order-resullt";
+@import "pages/about-us";
+@import "pages/contact-us";
+@import "components/footer";
+
+

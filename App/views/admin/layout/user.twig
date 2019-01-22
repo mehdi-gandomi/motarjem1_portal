@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {# <base href="public/"> #}
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+        <title>{{title}}</title>
+        <!-- Main styles for this application-->
+        <link href="public/css/admin.min.css" rel="stylesheet">
+        {% block style_below %}{% endblock %}
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            // Shared ID
+            gtag('config', 'UA-118965717-3');
+            // Bootstrap ID
+            gtag('config', 'UA-118965717-5');
+        </script>
+    </head>
+    <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+
+        {{include("admin/includes/navbar.twig")}}
+        <div class="app-body">
+            {% set menu_items = {
+                "item":{"icon":"icon-speedometer","title":"داشبورد","link":"/"},
+                    "order-dropdown":{
+                        "parent":{"icon":"icon-bag","title":"سفارشات","link":"/orders"},
+                        "items":[
+                            {"title":"مشاهده سفارشات","link":"orders/show"},
+                            {"title":"سفارش جدید","link":"orders/new"}
+                        ]
+                    },
+                    "message-dropdown":{
+                        "parent":{"icon":"icon-envelope","title":"مرکز پیام","link":"/messages"},
+                        "items":[
+                            {"title":"مشاهده پیام ها","link":"messages/show"},
+                            {"title":"ارسال پیام جدید","link":"messages/new"},
+                        ]
+                    }
+                    
+                }
+            
+             %}
+            {{include("admin/includes/sidebar.twig",menu_items)}}
+            {% block content %}
+                {# main content goes here #}
+            {% endblock %}
+
+        </div>
+        <footer class="app-footer">
+            <div>
+                <a href="https://coreui.io">CoreUI</a>
+                <span>&copy; 2018 creativeLabs.</span>
+            </div>
+            <div class="ml-auto">
+                <span>Powered by</span>
+                <a href="https://coreui.io">CoreUI</a>
+            </div>
+        </footer>
+        {% block script_top %}{% endblock %}
+        <!-- CoreUI and necessary plugins-->
+        <script src="public/js/jquery.min.js"></script>
+        <script src="public/js/popper.min.js"></script>
+        <script src="public/js/bootstrap.min.js"></script>
+        <script src="public/js/pace.min.js"></script>
+        <script src="public/js/perfect-scrollbar.min.js"></script>
+        <script src="public/js/coreui.min.js"></script>
+
+        {% block script_below %}{% endblock %}
+
+    </body>
+</html>

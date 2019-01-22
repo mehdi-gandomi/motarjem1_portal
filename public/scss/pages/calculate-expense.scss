@@ -1,0 +1,98 @@
+.calculate-expense{
+    padding: 3rem;
+
+    &__description{
+        padding: 2rem 0;
+        &__title{
+            font-size:1.4rem;
+            color: #1d6c75;
+        }
+        &__text{
+            padding: 1rem;
+            font-size: 1rem;
+            color: #70756d;
+        }
+    }
+
+    &__form{
+        box-shadow: 0 0px 4px rgba(0,0,0,.19), 0 2px 4px rgba(0,0,0,.23);
+        &__title{
+            background: #48466d;
+            color: #fff;
+            text-align: center;
+            padding: 0.7rem;
+            width: 100%;
+        }
+        &__content{
+            padding: 2rem;
+        }
+        .hint{
+            color: #8D8F8E;
+            font-size: 0.75rem;
+            text-align: center;
+            display: block;
+            margin-top: 0.5rem;
+        }
+        #calc{
+            margin-top: 1.2rem;
+        }
+        #order{
+            margin-top: 1.2rem;
+    margin-right: 0.5rem;
+        }
+    }
+    
+    .field_of_study{
+        display: none;
+        &.show{
+            display: block !important;
+        }
+    }
+}
+.calculate-result{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1rem;
+    opacity: 0;
+    visibility: hidden;
+    font-size: 0.93rem;
+    &.show{
+        animation: fade-in 0.5s ease-out forwards;
+    }
+    &__icon{
+        width: 32px;
+        height: 32px;
+        img{
+            max-width: 100%;
+        }
+        display: inline-block;
+    }
+    &__title{
+        display: inline-block;
+        font-size: 0.9rem;
+        margin: 0 0.5rem;
+    }
+    
+        
+        svg {
+            width: 32px;
+        }
+    
+}
+
+.input-error{
+    border:2px solid #ff7070;
+    
+}
+
+@keyframes fade-in{
+    0%{
+        opacity: 0;
+        visibility: hidden;       
+    }
+    100%{
+        opacity: 1;
+    visibility: visible;
+    }
+}

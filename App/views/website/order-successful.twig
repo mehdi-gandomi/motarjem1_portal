@@ -1,0 +1,173 @@
+{% extends "website/layout/base.twig" %}
+
+{% block stylebelow %}
+<style media="print">
+    header{
+        display: none;
+    }
+    footer{
+        display: none;
+    }
+    body{
+        direction: rtl;
+    }
+    .order-result {
+      display: none;      
+      }
+      @page {
+        size: A5;
+        margin: 0;
+        /*-webkit-transform: rotate(-90deg); 
+        -moz-transform:rotate(-90deg);
+        filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+        transform: rotate(-90deg);*/
+      }
+      .invoice {
+        box-shadow: 0 0px 4px rgba(0, 0, 0, 0.19), 0 2px 4px rgba(0, 0, 0, 0.23);
+        padding: 0 2rem 2rem 2rem;
+        margin-bottom: 3rem;
+      }
+      .invoice__header {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #75cac3;
+      }
+      .invoice__header__brand {
+        display: flex;
+        align-items: center;
+      }
+      .invoice__header .brand_info {
+        margin-right: 2rem;
+      }
+      .invoice__header .brand_info__contact p {
+        display: inline-block;
+        margin: 0 0.5rem;
+      }
+      .invoice__details{
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .invoice__detail {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: calc(33.333% - 1rem);
+        margin: 1rem 0.5rem;
+      }
+      .invoice__detail span {
+        margin-top: 1rem;
+      }
+      .invoice__detail:last-child{
+        width: calc(100% - 1rem);
+      }
+
+      
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    {% if success %}
+    <div class="order-result is--success">
+            <h4>تراکنش با موفقیت انجام شد !</h4>
+            <button class="btn btn-primary print-invoice">چاپ فاکتور</button>
+    </div>
+        <div class="invoice print-area">
+            <div class="invoice__header">
+                <div class="invoice__header__brand">
+                    <div class="brand_logo">
+                        <img src="/public/images/logo.png" alt="">
+                    </div>
+                    <div class="brand_info">
+                        <h4>
+                            مرکز حرفه ای خدمات ترجمه و ویرایش محتوای <strong>مترجم وان</strong>
+                        </h4>
+                        <div class="brand_info__contact">
+                            <p>شماره تماس {{contact_phone}}</p>
+                            <p>ایمیل {{contact_email}}</p>
+                        </div>
+                    </div>
+                </div>
+    
+    
+            </div>
+            <div class="invoice__details row">
+                <div class="col-lg-4 invoice__detail">
+                    <strong class="invoice__details__title">شماره سفارش </strong>
+                    <span>{{order_id}}</span>
+                </div>
+                <div class="col-lg-4 invoice__detail">
+                    <strong class="invoice__details__title">شماره پیگیری تراکنش </strong>
+                    <span>{{ref_id}}</span>
+                </div>
+                <div class="col-lg-4 invoice__detail">
+                    <strong class="invoice__details__title">تعداد کلمات </strong>
+                    <span>{{words}}</span>
+                </div>
+                <div class="col-lg-4 invoice__detail">
+                    <strong class="invoice__details__title">تعداد صفحات </strong>
+                    <span>{{page_number}}</span>
+                </div>
+                <div class="col-lg-4 invoice__detail">
+                    <strong class="invoice__details__title">زبان ترجمه </strong>
+                    <span>{{translation_language}}</span>
+                </div>
+                <div class="col-lg-4 invoice__detail">
+                    <strong class="invoice__details__title">کیفیت ترجمه </strong>
+                    <span>{{translation_quality}}</span>
+                </div>
+                <div class="col-lg-4 invoice__detail">
+                    <strong class="invoice__details__title">هزینه کل ترجمه </strong>
+                    <span>{{order_price}} تومان</span>
+                </div>
+                <div class="col-lg-4 invoice__detail">
+                    <strong class="invoice__details__title">پرداخت کننده </strong>
+                    <span>{{customer_name}}</span>
+                </div>
+                <div class="col-lg-4 invoice__detail">
+                    <strong class="invoice__details__title"> ایمیل </strong>
+                    <span>{{email}}</span>
+                </div>
+                
+                {% if description %}
+                    <div class="col-12 invoice__detail">
+                        <strong class="invoice__details__title"> توضیحات </strong>
+                        <p>{{description}}</p>
+                    </div>
+                {% endif %}
+            </div>
+            <!-- <div class="invoice__footer">
+                <img src="public/images/logo.png" alt="">
+                <h4>
+                    مرکز حرفه ای خدمات ترجمه و ویرایش محتوای <strong>مترجم وان</strong>
+                </h4>
+            </div> -->
+        </div>
+
+    {% else %}
+        <div class="order-result is--error">
+                <h4>خطایی در هنگام پرداخت رخ داد</h4>
+                <p class="mt-3">کد پیگیری : {{red_id}}</p>
+        </div>
+    {% endif %}
+    
+</div>
+
+{% endblock %}
+
+{% block scriptbelow %}
+
+<script type="text/javascript">
+    addListener(".print-invoice", "click", function (e) {
+        print();
+    });
+
+</script>
+
+{% endblock %}

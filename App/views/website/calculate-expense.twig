@@ -1,0 +1,173 @@
+{% extends "website/layout/base.twig" %}
+
+{% block content %}
+
+<div class="calculate-expense rtl">
+
+  <div class="row">
+    <div class="col-lg-4 calculate-expense__description">
+      <h4 class="calculate-expense__description__title">تفاوت ترجمه نقره ای و طلایی درچیست؟</h4>
+      <p class="calculate-expense__description__text">
+        💎 ترجمه نقره‌ای/خوب: ترجمه توسط مترجم دارای حداقل پنج سال سابقه ترجمه متن‌های مختلف و مسلط به یک حوزه تخصصی، قیمت منصفانه، کیفیت خوب.
+      </p>
+      <div class="calculate-expense__description__text">
+        🌟ترجمه طلایی/عالی: ترجمه توسط مترجم تحصیل کرده در رشته مرتبط با موضوع مقاله و دارای حداقل پنج سال سابقه ترجمه، قیمت منصفانه، کیفیت عالی.
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <form method="GET" action="/order" class="calculate-expense__form">
+        <div class="calculate-expense__form__title">
+          <h4>محاسبه هزینه ترجمه</h4>
+        </div>
+        <div class="calculate-expense__form__content row">
+          <div class="form-group col-lg-4">
+            <label for="type">نوع ترجمه</label>
+          
+            <select name="type" id="type" class="form-control">
+              {% for key, value in translate_type %}
+                {% if key == type %}
+                  <option value="{{ key }}" selected> {{ value }}</option>
+
+                {% else %}
+                  <option value="{{ key }}"> {{ value }}</option>
+
+                {% endif %}
+
+              {% endfor %}
+            </select>
+          </div>
+          {% if type=="specialist" %}
+            <div class="form-group field_of_study col-lg-4 show">
+          {% else %}
+            <div class="form-group field_of_study col-lg-4">
+          {% endif %}
+            <label for="field_of_study">رشته تخصصی</label>
+            <select name="field_of_study" id="field_of_study" class="form-control">
+              <option value="90">ادبیات و زبان شناسی</option>
+              <option value="89">اسناد تجاری</option>
+              <option value="88">اقتصاد</option>
+              <option value="86">برق و الکترونیک</option>
+              <option value="91">تاریخ</option>
+              <option value="41">ترجمه کاتالوگ</option>
+              <option value="76">جغرافیا</option>
+              <option value="75">حسابداری</option>
+              <option value="74">حقوق</option>
+              <option value="70">روان شناسی</option>
+              <option value="71">ریاضی</option>
+              <option value="72">زمین شناسی و معدن</option>
+              <option value="43">زیرنویس فیلم</option>
+              <option value="73">زیست شناسی</option>
+              <option value="67">شیمی</option>
+              <option value="68">صنایع</option>
+              <option value="69">صنایع غذایی</option>
+              <option value="62">علوم اجتماعی</option>
+              <option value="63">علوم سیاسی</option>
+              <option value="64">عمران</option>
+              <option value="61">عمومی</option>
+              <option value="44">فایل صوتی تصویری</option>
+              <option value="57">فقه و علوم اسلامی</option>
+              <option value="58">فلسفه</option>
+              <option value="59">فناوری اطلاعات</option>
+              <option value="60">فیزیک</option>
+              <option value="50">متالورژی و مواد</option>
+              <option value="51">محیط زیست</option>
+              <option value="49">مدیریت</option>
+              <option value="54">منابع طبیعی و شیلات</option>
+              <option value="53">مکانیک</option>
+              <option value="47">نفت،گاز و پتروشیمی</option>
+              <option value="92">هنر و معماری</option>
+              <option value="46">ورزش و تربیت بدنی</option>
+              <option value="85">پزشکی</option>
+              <option value="93">ژنتیک و میکروبیولوژی</option>
+              <option value="55">کامپیوتر</option>
+              <option value="56">کشاورزی</option>
+            </select>
+          </div>
+          <div class="form-group col-lg-4">
+            <label for="words">تعداد کلمات</label>
+            <input class="form-control" type="number" name="words" id="words" value="{{words}}" placeholder="تعداد کلمات">
+            <span class="hint words--hint">هر صفحه استاندارد، 250 کلمه است</span>
+          </div>
+          <div class="form-group col-lg-4">
+            <label for="language">زبان ترجمه</label>
+            <select name="language" id="language" class="form-control">
+              {% for key, value in lang_type %}
+                {% if key == language %}
+                  <option value="{{ key }}" selected> {{ value }}</option>
+
+                {% else %}
+                  <option value="{{ key }}"> {{ value }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group col-lg-4">
+            <label for="delivery_type">زمان تحویل</label>
+            <select name="delivery_type" id="delivery_type" class="form-control">
+              {% for key, value in delivery_types %}
+              {% if key == delivery_type %}
+                <option value="{{ key }}" selected> {{ value }}</option>
+
+              {% else %}
+                <option value="{{ key }}"> {{ value }}</option>
+              {% endif %}
+            {% endfor %}
+            </select>
+          </div>
+          <div class="form-group-col-lg-4">
+            <label for="discount">کد تخفیف</label>
+            <input type="text" name="discount" id="discount" class="form-control" placeholder="کد تخفیف">
+            <span class="hint">جهت دریافت کد تخفیف <a href="http://www.t.me/motarjem_one">پیام</a> دهید</span>
+          </div>
+          <div class="form-group col-lg-4 d-flex align-items-center">
+            <button name="calc" id="calc" class="btn btn-primary">
+              محاسبه هزینه
+            </button>
+            {% if show_result %}
+              <button name="order" type="submit" name="submit" id="order" class="btn btn-success">
+            {% else %}
+              <button name="order" type="submit" name="submit" id="order" class="btn btn-success d-none">
+            {% endif %}
+              سفارش بده
+            </button>
+          </div>
+
+        </div>
+          {% if show_result %}
+            <div class="calculate-result show">
+          {% else %}
+            <div class="calculate-result">
+          {% endif %}
+          <div class="calculate-result__info">
+            {{pageNumber}}
+          </div>
+          <div class="calculate-result__silver">
+            <div class="calculate-result__icon">
+              <img src="public/images/icon/silver.svg" alt="" class="">
+            </div>
+            <span class="calculate-result__title">ترجمه نقره ای</span>
+            <span class="result">
+              {{goldPrice}}
+            </span>
+          </div>
+          <div class="calculate-result__gold">
+            <div class="calculate-result__icon">
+              <img src="public/images/icon/gold.svg" alt="" class="">
+            </div>
+            <span class="calculate-result__title">ترجمه طلایی</span>
+            <span class="result">
+              {{silverPrice}}
+            </span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block scriptbelow %}
+<script src="public/js/expense-calculation.js"></script>
+{% endblock %}
