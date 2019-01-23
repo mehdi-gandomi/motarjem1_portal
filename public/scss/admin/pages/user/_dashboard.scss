@@ -1,0 +1,275 @@
+// dashboard page styles
+//start card styles
+.info-cards {
+    margin-top: 3rem;
+}
+
+.info-card {
+    display: flex;
+    flex-wrap: wrap;
+    background: #fff;
+    width: 100%; // padding: 1rem;
+    // text-decoration: none;
+    &:hover{
+        text-decoration: none;
+    }
+    &__icon {
+        flex-basis: 30%;
+        width: 30%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img {
+            width: 50px;
+            height: 50px;
+        }
+    }
+    &__content {
+        // display: flex;
+        // justify-content: space-between;
+        // align-items: center;
+        // padding-bottom: 1rem;
+        padding: 1rem;
+        width: 70%;
+        flex-basis: 70%;
+        &__title {
+            font-size: 1rem;
+            color: #afa4a4;
+        }
+        &__value {
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+    }
+}
+
+//end card styles
+//profile info card
+.profile-info {
+    &-header {
+        font-size: 1rem;
+    }
+    &__avatar {
+        width: 64px;
+        height: 64px;
+        margin: 1rem auto;
+        img {
+            max-width: 100%;
+            max-width: 100%;
+        }
+    } // &__info{
+    //     &__item{
+    //         text-align: right;
+    //     }
+    // }
+}
+
+.profile-edit-btn {
+    i {
+        font-size: 1rem;
+        margin-left: 0.5rem;
+    }
+}
+
+// end profile info card
+//ticket card styles
+.card-header {
+    >i {
+        margin-left: 0.5rem;
+    }
+}
+
+.ticket-card {
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+    }
+    .card-body {
+        padding: 0 !important;
+    }
+}
+
+//ticket list styles
+.ticket-item {
+    padding-bottom: 0 !important;
+    &:hover {
+        background: #f3f1f1;
+    }
+    &__details {
+        padding-bottom: 0.4rem;
+        position: relative;
+    }
+    &__status {
+        color: #fff;
+        padding: 0.3rem;
+        font-size: 0.55rem;
+        border-radius: 3px;
+        &.answered {
+            background: #757882;
+        }
+        &.not-answered {
+            background: #ff6473;
+        }
+    }
+}
+
+//ticket send btn styles
+.new-ticket-btn {
+    background: #41aaa8;
+    color: #fff;
+    transition: all 0.5s ease-out;
+    display: inline-flex;
+    align-items: center;
+    display: flex;
+    font-size: 0.8rem;
+    padding: .200rem .75rem;
+    &:hover {
+        background: darken(#41aaa8, 20);
+        color: #fff;
+    }
+    i {
+        margin-left: 0.3rem;
+        font-size: 0.85rem;
+    }
+}
+
+//contact info card styles
+.contact-info {
+    padding: 0;
+    list-style: none;
+    &__item {
+        padding-bottom: 1rem; // margin-bottom: 1rem;
+        i {
+            font-size: 0.85rem;
+            background: #20a8d8;
+            border-radius: 50%;
+            padding: 0.4rem;
+            color: #fff;
+        }
+    } //social media icons styles
+    &__social-media {
+        display: flex;
+        justify-content: center;
+        a {
+            margin-right: 0.45rem;
+            font-size: 1.2rem;
+            background: #eee;
+            color: #222;
+            border-radius: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            text-decoration: none;
+            position: relative;
+            width: 35px;
+            height: 35px;
+            margin: 0 4px;
+            -webkit-transition: all 0.5s;
+            -moz-transition: all 0.5s;
+            transition: all 0.5s;
+            &.icon-social-twitter {
+                color: #19b5fe;
+                &:hover {
+                    background-color: #19b5fe;
+                    color: #fff;
+                }
+            } // &.icon-social-twitter span {
+            //     color: #19b5fe;
+            // }
+            &.icon-social-instagram {
+                color: #ff5716;
+                &:hover {
+                    background-color: #ff5716;
+                    color: #fff;
+                }
+            } // &.icon-social-instagram span {
+            //     color: #ff5716;
+            // }
+            &.icon-paper-plane {
+                color: #3b6eff;
+                &:hover {
+                    background-color: #3b6eff;
+                    color: #fff;
+                }
+            } // &.icon-paper-plane span {
+            //     color: #3b6eff;
+            // }
+            &.icon-social-linkedin {
+                color: #2b33ff;
+                &:hover {
+                    background-color: #2b33ff;
+                    color: #fff;
+                }
+            } // &.icon-social-linkedin span {
+            //     color: #2b33ff;
+            // }
+        } // a span {
+        //     background: #fff;
+        //     color: #222;
+        //     font-size: 14px;
+        //     font-weight: bold;
+        //     position: absolute;
+        //     bottom: 0;
+        //     left: -25px;
+        //     right: -25px;
+        //     padding: 5px 7px;
+        //     visibility: hidden;
+        //     opacity: 0;
+        //     -webkit-transition: all 0.4s;
+        //     transition: all 0.4s;
+        // }
+        // a span:before {
+        //     content: "";
+        //     width: 0;
+        //     height: 0;
+        //     border-left: 5px solid transparent;
+        //     border-right: 5px solid transparent;
+        //     border-top: 5px solid #fff;
+        //     position: absolute;
+        //     bottom: -5px;
+        //     left: 40px;
+        // }
+        // a:hover span {
+        //     bottom: 50px;
+        //     visibility: visible;
+        //     opacity: 1;
+        // }
+    }
+}
+
+//end contact info styles
+//order table styles
+.order-table-header{
+display: flex;
+justify-content: space-between;
+}
+.compact-btn {
+    &.teal {
+        background: #41aaa8;
+        color: #fff;
+        font-size: 0.8rem;
+        padding: .200rem .75rem;
+        &:hover {
+            background: darken(#41aaa8, 20);
+            color: #fff;
+        }
+    }
+    &.primary{
+        background: #0ea5c6;
+        color: #fff;
+        font-size: 0.8rem;
+        padding: .200rem .75rem;
+        &:hover {
+            background: darken(#0ea5c6, 20);
+            color: #fff;
+        }
+    }
+    transition: all 0.5s ease-out; // display: inline-flex;
+    i {
+        margin-left: 0.3rem;
+        font-size: 0.85rem;
+    }
+}
+
+//end order table styles

@@ -58,7 +58,7 @@ $wpPostsMV=function($request, $response, $next)
 // i added this route group to execute the wpPosts middleware only on this group!
 $app->group('/', function ($app) use ($container) {
     $app->get('', function (Request $request, Response $response, array $args) {
-
+        
         $this->view->render($response, "website/home.twig", ["page_title" => "صفحه اصلی", "latestPosts" => $_SESSION["latestPosts"]]);
     });
     $app->get('about-us', function (Request $request, Response $response, array $args) {

@@ -1,0 +1,54 @@
+
+// dashboard page styles
+
+//start card styles
+
+.info-cards{
+    margin-top: 3rem;
+
+}
+.info-card{
+    display: flex;
+    flex-wrap: wrap;
+    background: #fff;
+    width: 100%;
+    // padding: 1rem;
+    &__icon{
+        flex-basis: 30%;
+        width: 30%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img{
+            width: 50px;
+            height: 50px;
+        }
+    }
+    &__content{
+        // display: flex;
+        // justify-content: space-between;
+        // align-items: center;
+        // padding-bottom: 1rem;
+        padding:1rem;
+        width: 70%;
+        flex-basis: 70%;
+        &__title{
+            font-size: 1rem;
+            color: #afa4a4;
+        }
+        &__value{
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+    }
+    
+    
+}
+
+//end card styles
+
+//profile info card styles
+
+
+
+//end profile info styles

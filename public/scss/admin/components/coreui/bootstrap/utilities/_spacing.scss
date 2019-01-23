@@ -23,7 +23,7 @@
         }
         .#{$abbrev}l#{$infix}-#{$size},
         .#{$abbrev}x#{$infix}-#{$size} {
-          #{$prop}-left: $length !important;
+          #{$prop}-right: $length !important;
         }
       }
     }

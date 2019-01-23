@@ -11,41 +11,239 @@
     <!-- <li class="breadcrumb-menu d-md-down-none"> <div class="btn-group" role="group" aria-label="Button group"> <a class="btn" href="#"> <i class="icon-speech"></i> </a> <a class="btn" href="//public/"> <i class="icon-graph"></i> Dashboard</a> <a class="btn" href="#"> <i class="icon-settings"></i> Settings</a> </div> </li> -->
   </ol>
   #}
-  <div class="info-cards container">
-    <div class="row">
-      <div class="col-md-4">
-        <div class="info-card">
-          <div class="info-card__icon bg-primary">
-            <img src="/public/images/icon/writing.svg" alt="" />
-          </div>
+  <div class="container">
+    <div class="info-cards ">
+      <div class="row">
+        <div class="col-md-4">
+          <a href="/user/orders" class="info-card">
+            <div class="info-card__icon bg-primary">
+              <img src="/public/images/icon/writing.svg" alt="" />
+            </div>
 
-          <div class="info-card__content">
-            <div class="info-card__content__title">ترجمه های درحال انجام</div>
-            <div class="info-card__content__value">3</div>
+            <div class="info-card__content">
+              <div class="info-card__content__title">ترجمه های درحال انجام</div>
+              <div class="info-card__content__value">3</div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-4">
+          <a href="/user/orders" class="info-card">
+            <div class="info-card__icon bg-success">
+              <img src="/public/images/icon/delivery-complete.svg" alt="" />
+            </div>
+
+            <div class="info-card__content">
+              <div class="info-card__content__title">ترجمه های انجام شده</div>
+              <div class="info-card__content__value">10</div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-4">
+          <a href="/user/messages" class="info-card">
+            <div class="info-card__icon bg-danger">
+              <img src="/public/images/icon/message.svg" alt="" />
+            </div>
+
+            <div class="info-card__content">
+              <div class="info-card__content__title">پیام های خوانده نشده</div>
+              <div class="info-card__content__value">10</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col-md-4">
+        <div class=" card">
+          <div class="card-header f-1rem">
+            <i class="icon-user"></i> مشخصات شما
+          </div>
+          <div class="card-body profile-info">
+            {#
+            <div class="profile-info__avatar">
+              <img
+                src="{{'/public/uploads/avatars/' ~ user.user_type ~ '/' ~ user.avatar}}"
+                alt="{{user.fname ~ ' ' ~ user.lname}}"
+              />
+            </div>
+            #}
+
+            <div class="item">
+              <span>نام شما : </span> <strong>{{ user.fname }}</strong>
+            </div>
+            <div class="item">
+              <span>نام خانوادگی شما : </span> <strong>{{ user.lname }}</strong>
+            </div>
+            <div class="item">
+              <span>ایمیل شما : </span> <strong>{{ user.email }}</strong>
+            </div>
+            <div class="item">
+              <span>شماره همراه شما : </span> <strong>{{ user.phone }}</strong>
+            </div>
+          </div>
+          <div class="card-footer">
+            <a
+              href="/user/profile"
+              class="btn btn-success btn-block profile-edit-btn"
+            >
+              <i class="icon-note"></i> بروزرسانی
+            </a>
           </div>
         </div>
       </div>
       <div class="col-md-4">
-        <div class="info-card">
-          <div class="info-card__icon bg-success">
-            <img src="/public/images/icon/delivery-complete.svg" alt="" />
+        <div class="card ticket-card">
+          <div class="card-header f-1rem ">
+            <div class="card-header__title">
+              <i class="icon-earphones-alt"></i> <span>تیکت های اخیر</span>
+            </div>
+            <a href="/messages/send" class="btn new-ticket-btn">
+              <i class="icon-plus"></i> ارسال تیکت
+            </a>
           </div>
-
-          <div class="info-card__content">
-            <div class="info-card__content__title">ترجمه های انجام شده</div>
-            <div class="info-card__content__value">10</div>
+          <div class="card-body">
+            <div class="list-group ticket-list">
+              <a href="/message/view/12" class="list-group-item ticket-item">
+                <div class="ticket-item__details">
+                  <span class="ticket-item__code">#12535</span> -
+                  <span class="ticket-item__title">پرداخت نشدن هزینه</span>
+                  <span class="ticket-item__status answered"
+                    >پاسخ داده شده</span
+                  >
+                </div>
+                <p>آخرین بروزرسانی : 1397/10/05 (13:07)</p>
+              </a>
+              <a href="/message/view/12" class="list-group-item ticket-item">
+                <div class="ticket-item__details">
+                  <span class="ticket-item__code">#12535</span> -
+                  <span class="ticket-item__title">پرداخت نشدن هزینه</span>
+                  <span class="ticket-item__status answered"
+                    >پاسخ داده شده</span
+                  >
+                </div>
+                <p>آخرین بروزرسانی : 1397/10/05 (13:07)</p>
+              </a>
+              <a href="/message/view/12" class="list-group-item ticket-item">
+                <div class="ticket-item__details">
+                  <span class="ticket-item__code">#12535</span> -
+                  <span class="ticket-item__title">پرداخت نشدن هزینه</span>
+                  <span class="ticket-item__status not-answered"
+                    >پاسخ داده نشده</span
+                  >
+                </div>
+                <p>آخرین بروزرسانی : 1397/10/05 (13:07)</p>
+              </a>
+            </div>
           </div>
         </div>
       </div>
       <div class="col-md-4">
-        <div class="info-card">
-          <div class="info-card__icon bg-danger">
-            <img src="/public/images/icon/message.svg" alt="" />
+        <div class="card">
+          <div class="card-header"><i class="icon-phone"></i> تماس با ما</div>
+          <div class="card-body">
+            <ul class="contact-info">
+              <li class="contact-info__item">
+                <i class="icon-location-pin"></i> میدان انقلاب ابتدای کارگر
+                شمالی کوچه رستم پ ۲۱ و ۸
+              </li>
+              <li class="contact-info__item">
+                <i class="icon-phone"></i> ٠٩٣٠٩٥٨٩١٢٢ - 66496035_021
+              </li>
+              <li class="contact-info__item">
+                <a href="mailto: Motarjem1@yahoo.com"> Motarjem1@yahoo.com</a>
+                <i class="icon-envelope"></i>
+              </li>
+            </ul>
+            <h6 class="text-center">مارا در شبکه های اجتماعی دنبال کنید</h6>
+            <div class="contact-info__social-media">
+              <a href="" class="icon-social-instagram"> </a>
+              <a href="" class="icon-social-linkedin"> </a>
+              <a href="" class="icon-social-twitter"> </a>
+              <a href="" class="icon-paper-plane"> </a>
+            </div>
           </div>
-
-          <div class="info-card__content">
-            <div class="info-card__content__title">پیام های خوانده نشده</div>
-            <div class="info-card__content__value">10</div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header order-table-header">
+             <div class="card-header__title">
+            <i class="icon-basket-loaded"></i> سفارشات اخیر
+            </div>
+            
+            <div class="card-header__action">
+              <a href="user/order/new" class="btn compact-btn teal">
+              <i class="icon-plus"></i> ثبت سفارش جدید
+            </a>
+            <a href="user/orders" class="btn compact-btn primary">
+              <i class="icon-basket"></i> صفحه سفارشات
+            </a>
+            </div>
+            
+            
+          </div>
+          <div class="card-body">
+            <table class="table">
+              <thead>
+                <th>
+                  شماره سفارش
+                </th>
+                <th>
+                  تعداد صفحات
+                </th>
+                <th>
+                  زبان ترجمه
+                </th>
+                <th>
+                  کیفیت ترجمه
+                </th>
+                <th>
+                  زمان تحویل
+                </th>
+                <th>
+                  هزینه ترجمه
+                </th>
+                <th>
+                  مترجم
+                </th>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>12</td>
+                  <td>5</td>
+                  <td>انگلیسی به فارسی</td>
+                  <td>نقره ای</td>
+                  <td>فوری</td>
+                  <td>25000 تومان</td>
+                  <td>مسعود مغربی</td>
+                </tr>
+                <tr>
+                  <td>12</td>
+                  <td>5</td>
+                  <td>انگلیسی به فارسی</td>
+                  <td>نقره ای</td>
+                  <td>فوری</td>
+                  <td>25000 تومان</td>
+                  <td>مسعود مغربی</td>
+                </tr>
+                
+                <tr>
+                  <td>12</td>
+                  <td>5</td>
+                  <td>انگلیسی به فارسی</td>
+                  <td>نقره ای</td>
+                  <td>فوری</td>
+                  <td>25000 تومان</td>
+                  <td>مسعود مغربی</td>
+                </tr>
+                
+                
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

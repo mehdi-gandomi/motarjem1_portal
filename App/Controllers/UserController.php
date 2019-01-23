@@ -1,15 +1,14 @@
 <?php
 namespace App\Controllers;
+
 use App\Config;
 use App\Controller;
 use App\Models\User;
-use Gregwar\Captcha\CaptchaBuilder;
 use Slim\Http\UploadedFile;
 
 class UserController extends Controller
 {
 
-    
     //////////////////////////////////////////////
     // START Customer(User) Auth Functions
     //////////////////////////////////////////////
@@ -38,10 +37,13 @@ class UserController extends Controller
                     $_SESSION['is_user_logged_in'] = true;
                     $_SESSION['fname'] = $userData['fname'];
                     $_SESSION['lname'] = $userData['lname'];
-                    $_SESSION['avatar'] =$userData['avatar'];
+                    $_SESSION['avatar'] = $userData['avatar'];
                     $_SESSION['user_id'] = $userData['username'];
+                    $_SESSION['phone'] = $userData['phone'];
+                    $_SESSION['email'] = $userData['email'];
                     //user level that logged in valid values are : user,admin,translator
                     $_SESSION['user_type'] = "user";
+
                     \setcookie(\session_name(), \session_id(), time() + (86400 * 7));
                     return $res->withRedirect('/user');
                 } else {
@@ -89,23 +91,16 @@ class UserController extends Controller
     //logout process for user , admin and translator
     public function logout($req, $res, $args)
     {
-
-        if (isset($_SESSION['is_user_logged_in'])) {
-            unset($_SESSION['user_id']);
-            unset($_SESSION['is_user_logged_in']);
-        } else if (isset($_SESSION['is_translator_logged_in'])) {
-            unset($_SESSION['translator_id']);
-            unset($_SESSION['is_translator_logged_in']);
-        } else {
-            unset($_SESSION['admin_id']);
-            unset($_SESSION['is_admin_logged_in']);
-        }
+        unset($_SESSION['user_id']);
+        unset($_SESSION['is_user_logged_in']);
         unset($_SESSION['fname']);
         unset($_SESSION['avatar']);
         unset($_SESSION['lname']);
         unset($_SESSION['user_type']);
+        unset($_SESSION['phone']);
+        unset($_SESSION['email']);
         unset($_COOKIE[\session_name()]);
-        \setcookie(\session_name(), \session_id(), -1);
+        \setcookie(\session_name(), "", \time() - 3600);
         return $res->withRedirect('/');
 
     }

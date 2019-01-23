@@ -1,5 +1,6 @@
 <?php
 
+
 spl_autoload_register(function ($class) {
     // if(substr($class, -10) === "Controller"){
     //     $file=__DIR__.'\\App\\Controllers\\'.$class.".php";
@@ -35,10 +36,12 @@ $configuration = [
         ));
         $view->getEnvironment()->addGlobal("user", array(
             'is_logged_in' => isset($_SESSION['is_user_logged_in']) || isset($_SESSION['is_translator_logged_in']) || isset($_SESSION['is_admin_logged_in']),
-            'fullname' => isset($_SESSION['fname']) && isset($_SESSION['lname']) ? $_SESSION['fname']." ".$_SESSION['lname'] : false,
+            'fname' => isset($_SESSION['fname']) ? $_SESSION['fname'] : false,
+            'lname'=>isset($_SESSION['lname']) ? $_SESSION['lname']:false,
             'user_type' => isset($_SESSION['user_type']) ? $_SESSION['user_type'] : false,
             'avatar'=>isset($_SESSION["avatar"]) ? $_SESSION["avatar"]:false,
-            
+            'email'=>isset($_SESSION["email"]) ? $_SESSION["email"]:false,
+            'phone'=>isset($_SESSION["phone"]) ? $_SESSION["phone"]:false,
         ));
         return $view;
     },

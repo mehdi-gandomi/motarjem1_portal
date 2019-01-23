@@ -2,7 +2,10 @@
 /******************************* LOADING & INITIALIZING BASE APPLICATION ****************************************/
 // Configuration for error reporting, useful to show every little problem during development
 
-session_start();
+//starting the session and set cookie lifetime to 2 days
+session_start([
+    'cookie_lifetime' => 172800,
+]);
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 date_default_timezone_set('Asia/Tehran');

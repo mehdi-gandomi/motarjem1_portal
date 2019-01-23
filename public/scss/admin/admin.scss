@@ -1,8 +1,11 @@
 @import "components/fontiran";
 @import "components/icons/coreui-icons";
-@import "components/icons/flag-icon";
-@import "components/icons/font-awesome";
 @import "components/icons/simple-line-icons";
 @import "components/coreui/coreui.scss";
 @import "components/pace";
 @import "components/custom";
+
+//pages
+//user admin panel pages
+@import "pages/user/dashboard";
+//end user admin panel pages

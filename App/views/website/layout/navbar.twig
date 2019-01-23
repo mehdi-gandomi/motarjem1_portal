@@ -3,7 +3,7 @@
 
         {% if user.is_logged_in %}
             <div class="user-greeting">
-                {{user.fullname}}
+                {{user.fname}}
                 عزیز خوش آمدید
                 <a href="/{{user.user_type}}">ورود به پنل کاربری</a>
                 <a href="/{{user.user_type}}/logout">خروج</a>
