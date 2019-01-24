@@ -1,8 +1,8 @@
 <?php
 namespace App\Controllers;
 
-use App\Config;
-use App\Controller;
+use Core\Config;
+use Core\Controller;
 use App\Dependencies\Pay\Payment;
 use App\Models\Order;
 use Slim\Http\UploadedFile;

@@ -1,5 +1,5 @@
 <?php
-namespace App;
+namespace Core;
 use Psr\Container\ContainerInterface;
 abstract class Controller{
     public function __construct(ContainerInterface $container) {

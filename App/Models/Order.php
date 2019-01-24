@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-use App\Model;
+use Core\Model;
 
 class Order extends Model
 {

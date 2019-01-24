@@ -236,7 +236,7 @@
                                             <td>{{order.order_price}}
                                                 تومان</td>
                                             <td>{{order.accepted == '0' ?  'تایید نشده' : 'تایید شده' }}</td>
-                                            <td>{{ order.translator_fname ~ " " ~ order.translator_lname }}</td>
+                                            <td><a onclick="showTranslatorInfo('{{order.translator_id}}')">{{ order.translator_fname ~ " " ~ order.translator_lname }}</a></td>
                                         </tr>
                                     {% endfor %}
 

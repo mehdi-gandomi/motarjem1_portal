@@ -1,6 +1,6 @@
 <?php
 namespace App\Controllers;
-use App\Controller;
+use Core\Controller;
 
 class ExpenseController extends Controller{
   private $combos=array(

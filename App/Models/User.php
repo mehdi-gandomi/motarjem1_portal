@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-use App\Model;
+use Core\Model;
 use \PDO;
 
 class User extends Model
@@ -68,9 +68,9 @@ class User extends Model
         try {
             $db = static::getDB();
             if ($limit) {
-                $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_type,orders.translation_quality,orders.delivery_type,orders.accepted,orders.order_price,translators.fname AS translator_fname,translators.lname AS translator_lname FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id WHERE orders.orderer_id='$userId' ORDER BY order_date DESC LIMIT $limit";
+                $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_type,orders.translation_quality,orders.delivery_type,orders.accepted,orders.order_price,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id WHERE orders.orderer_id='$userId' ORDER BY order_date DESC LIMIT $limit";
             } else {
-                $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_typeوorders.translation_quality,orders.delivery_type,orders.accepted,orders.order_price,translators.fname AS translator_fname,translators.lname AS translator_lname FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id WHERE orders.orderer_id='$userId' ORDER BY order_date DESC";
+                $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_typeوorders.translation_quality,orders.delivery_type,orders.accepted,orders.order_price,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id WHERE orders.orderer_id='$userId' ORDER BY order_date DESC";
             }
             $result = $db->query($sql);
             return $result ? $result->fetchAll(PDO::FETCH_ASSOC) : false;

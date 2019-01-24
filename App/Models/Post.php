@@ -1,6 +1,6 @@
 <?php
 namespace App\Models;
-use App\Model;
+use Core\Model;
 class Post extends Model{
 
     public static function get_all_posts(){

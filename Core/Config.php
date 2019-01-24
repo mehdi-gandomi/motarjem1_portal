@@ -1,10 +1,5 @@
 <?php
-namespace App;
-/**
- * Application configuration
- *
- * PHP version 7.0
- */
+namespace Core;
 class Config
 {
     /**

@@ -1,6 +1,6 @@
 <?php
 namespace App\Models;
-use App\Model;
+use Core\Model;
 class Translator extends Model{
     public static function by_username($username,$fields="*")
     {

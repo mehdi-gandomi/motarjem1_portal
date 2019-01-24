@@ -25,7 +25,7 @@ $configuration = [
         return new \Slim\Csrf\Guard;
     },
     'view' => function ($c) {
-        $view = new \Slim\Views\Twig('App/views');
+        $view = new \Slim\Views\Twig('resource/views');
 
         // Instantiate and add Slim specific extension
         $router = $c->get('router');

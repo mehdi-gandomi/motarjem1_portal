@@ -1,7 +1,7 @@
 <?php
 namespace App\Controllers;
-use App\Config;
-use App\Controller;
+use Core\Config;
+use Core\Controller;
 use App\Models\Translator;
 use Gregwar\Captcha\CaptchaBuilder;
 use Slim\Http\UploadedFile;
