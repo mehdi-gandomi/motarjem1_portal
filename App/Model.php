@@ -53,11 +53,14 @@ abstract class Model
             }
         }
         $sql.=$whereString;
+        
         $stmt=$db->prepare($sql);
         foreach($where as $key=>$value){
             if(is_array($value)){
+                
                 $stmt->bindParam(":$key", $value[1]);
             }else{
+                
                 $stmt->bindParam(":$key", $value);
             }
         }

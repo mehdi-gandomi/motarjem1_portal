@@ -38,7 +38,8 @@ class UserController extends Controller
                     $_SESSION['fname'] = $userData['fname'];
                     $_SESSION['lname'] = $userData['lname'];
                     $_SESSION['avatar'] = $userData['avatar'];
-                    $_SESSION['user_id'] = $userData['username'];
+                    $_SESSION['user_id'] = $userData['user_id'];
+                    // $_SESSION['username'] = $userData['user_id'];
                     $_SESSION['phone'] = $userData['phone'];
                     $_SESSION['email'] = $userData['email'];
                     //user level that logged in valid values are : user,admin,translator
@@ -84,7 +85,7 @@ class UserController extends Controller
                 return $res->withRedirect("/user/auth");
             }
             User::create($postFields);
-            $this->flash->addMessage("userSignUpLogs", "ثبت نام شما با موفقت انجام شد ! لینک فعال سازی به ایمیل شما ارسال شد.");
+            $this->flash->addMessage("userSignUpLogs", "ثبت نام شما با موفقت انجام شد ! لینک فعال سازی به ایمیل شما ارسال شد.<a style='cursor:pointer;color:#5842d4' onclick='sendVerificationCode(\"coderguy\",\".signupLogs\")'>ارسال مجدد</a>");
             return $res->withRedirect("/user/auth");
         }
     }
@@ -209,6 +210,27 @@ class UserController extends Controller
     }
     //////////////////////////////////////////////
     // END Customer(User) Auth Functions
+    //////////////////////////////////////////////
+
+    
+
+    //////////////////////////////////////////////
+    // START Customer(User) ADMIN Functions
+    //////////////////////////////////////////////
+
+    public function get_dashboard($req,$res,$args)
+    {
+        $userOrders=User::get_orders_by_user_id($_SESSION['user_id'],3);
+        $workingOrdersCount=User::get_orders_count_by_user_id($_SESSION['user_id'],true);
+        $completedOrdersCount=User::get_orders_count_by_user_id($_SESSION['user_id']);
+        $unreadMessagesCount=User::get_unread_messages_count_by_user_id($_SESSION['user_id']);
+        $lastThreeMessages=User::get_messages_by_user_id($_SESSION['user_id'],3);
+        
+        $this->view->render($res, "admin/user/dashboard.twig",['orders'=>$userOrders,'completedOrdersCount'=>$completedOrdersCount,'workingOrdersCount'=>$workingOrdersCount,'unreadMessagesCount'=>$unreadMessagesCount,'lastMessages'=>$lastThreeMessages]);    
+    }
+
+    //////////////////////////////////////////////
+    // END Customer(User) ADMIN Functions
     //////////////////////////////////////////////
 
     protected function moveUploadedFile($directory, UploadedFile $uploadedFile)

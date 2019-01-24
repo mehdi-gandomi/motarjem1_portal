@@ -26,9 +26,7 @@ $app->get('/user/confirm', "App\Controllers\UserController:verify_email");
 
 //user admin routes
 $app->group('/user', function ($app) use ($container) {
-    $app->get('', function ($request, $response, $args) {
-        $this->view->render($response, "admin/user/dashboard.twig");
-    });
+    $app->get('', "App\Controllers\UserController:get_dashboard");
 
 })->add($authMV);
 
