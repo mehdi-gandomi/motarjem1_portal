@@ -1,9 +1,9 @@
 <?php
 namespace App\Controllers;
 
+use App\Models\User;
 use Core\Config;
 use Core\Controller;
-use App\Models\User;
 use Slim\Http\UploadedFile;
 
 class UserController extends Controller
@@ -212,23 +212,69 @@ class UserController extends Controller
     // END Customer(User) Auth Functions
     //////////////////////////////////////////////
 
-    
-
     //////////////////////////////////////////////
     // START Customer(User) ADMIN Functions
     //////////////////////////////////////////////
 
-    public function get_dashboard($req,$res,$args)
+    public function get_dashboard($req, $res, $args)
     {
-        $userOrders=User::get_orders_by_user_id($_SESSION['user_id'],3);
-        $workingOrdersCount=User::get_orders_count_by_user_id($_SESSION['user_id'],true);
-        $completedOrdersCount=User::get_orders_count_by_user_id($_SESSION['user_id']);
-        $unreadMessagesCount=User::get_unread_messages_count_by_user_id($_SESSION['user_id']);
-        $lastThreeMessages=User::get_messages_by_user_id($_SESSION['user_id'],3);
-        
-        $this->view->render($res, "admin/user/dashboard.twig",['orders'=>$userOrders,'completedOrdersCount'=>$completedOrdersCount,'workingOrdersCount'=>$workingOrdersCount,'unreadMessagesCount'=>$unreadMessagesCount,'lastMessages'=>$lastThreeMessages]);    
-    }
+        $userOrders = User::get_orders_by_user_id($_SESSION['user_id'], 1, 3);
+        $workingOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], ['is_done'=>0]);
+        $completedOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'],['is_done'=>1]);
+        $unreadMessagesCount = User::get_unread_messages_count_by_user_id($_SESSION['user_id']);
+        $lastThreeMessages = User::get_messages_by_user_id($_SESSION['user_id'], 3);
 
+        $this->view->render($res, "admin/user/dashboard.twig", ['orders' => $userOrders, 'completedOrdersCount' => $completedOrdersCount, 'workingOrdersCount' => $workingOrdersCount, 'unreadMessagesCount' => $unreadMessagesCount, 'lastMessages' => $lastThreeMessages]);
+    }
+    //get translator info and send that as json
+    public function get_translator_info($req, $res, $args)
+    {
+        $translatorId = $args['id'];
+        $translatorData = \App\Models\Translator::get_translator_data_by_id($translatorId, "fname,lname,cell_phone,email,avatar");
+        return $res->withJson($translatorData);
+
+    }
+    public function get_user_orders($req, $res, $args)
+    {
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page"):1;
+        $pendingOrders = $req->getQueryParam("pending");
+        $completedOrders = $req->getQueryParam("completed");
+        $filtering_options=[];
+        if($pendingOrders && !$completedOrders){
+            $filtering_options['is_done']=0;
+            $pending=true;
+            $completed=false;
+        }else if ($completedOrders && !$pendingOrders){
+            $filtering_options['is_done']=1;
+            $pending=false;
+            $completed=true;
+        }else{
+            $pending=true;
+            $completed=true;
+        }
+        $userOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'],$filtering_options);
+        $userOrders = User::get_orders_by_user_id($_SESSION['user_id'], $page, 10, $filtering_options);
+        return $this->view->render($res, "admin/user/orders.twig", ['orders' => $userOrders, 'current_page' => $page, 'orders_count' => 120,'completed'=>$completed,'pending'=>$pending]);
+    }
+    public function get_user_orders_json($req, $res, $args)
+    {
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page"):1;
+        $pendingOrders = $req->getQueryParam("pending");
+        $completedOrders = $req->getQueryParam("completed");
+        $filtering_options=[];
+        if($pendingOrders && !$completedOrders){
+            $filtering_options['is_done']=0;
+        }else if ($completedOrders && !$pendingOrders){
+            $filtering_options['is_done']=1;
+        }
+        $userOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'],$filtering_options);
+        $userOrders = User::get_orders_by_user_id($_SESSION['user_id'], $page, 10, $filtering_options);
+        return $res->withJson(array(
+            'orders'=>$userOrders,
+            'orders_count'=>120,
+            'current_page'=>$page
+        ));
+    }
     //////////////////////////////////////////////
     // END Customer(User) ADMIN Functions
     //////////////////////////////////////////////

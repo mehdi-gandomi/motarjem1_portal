@@ -16559,4 +16559,139 @@ body {
   margin-left: 0.3rem;
   font-size: 0.85rem;
 }
+
+#translatorInfo .modal-header .close {
+  margin-left: unset !important;
+}
+
+.translator-info__avatar {
+  width: 30%;
+  margin: auto;
+  margin-bottom: 2rem;
+  border: 1px solid #222;
+  padding: 0.3rem;
+  border-radius: 50%;
+}
+
+.translator-info__avatar img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 50%;
+}
+
+.translator-info__info {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.label-cbx {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+.label-cbx input:checked + .checkbox {
+  border-color: #20C2E0;
+}
+
+.label-cbx input:checked + .checkbox svg path {
+  fill: #20C2E0;
+}
+
+.label-cbx input:checked + .checkbox svg polyline {
+  stroke-dashoffset: 0;
+}
+
+.label-cbx:hover .checkbox svg path {
+  stroke-dashoffset: 0;
+}
+
+.label-cbx .checkbox {
+  position: relative;
+  top: 2px;
+  float: right;
+  margin-left: 8px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #C8CCD4;
+  border-radius: 3px;
+}
+
+.label-cbx .checkbox svg {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+}
+
+.label-cbx .checkbox svg path {
+  fill: none;
+  stroke: #20C2E0;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 71px;
+  stroke-dashoffset: 71px;
+  -webkit-transition: all 0.6s ease;
+  transition: all 0.6s ease;
+}
+
+.label-cbx .checkbox svg polyline {
+  fill: none;
+  stroke: #FFF;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 18px;
+  stroke-dashoffset: 18px;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.label-cbx > span {
+  pointer-events: none;
+  vertical-align: middle;
+}
+
+.cntr {
+  position: absolute;
+  top: 45%;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.invisible {
+  position: absolute;
+  z-index: -1;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+.table-filter {
+  margin-top: 2rem;
+}
+
+.table-filter label {
+  margin: 0 0.5rem;
+}
+
+#orders-table {
+  margin-top: 2rem;
+}
+
+.page-navigation {
+  margin: 3rem -35px 0 0;
+}
 /*# sourceMappingURL=admin.css.map */

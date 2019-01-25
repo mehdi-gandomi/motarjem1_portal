@@ -63,35 +63,58 @@ class User extends Model
 
     }
     //this function is for getting orders by user id . you can limit the result by passing the second argument to your number of choice
-    public static function get_orders_by_user_id($userId, $limit = null)
+    public static function get_orders_by_user_id($userId, $page, $amount,$filtering_Options=null)
     {
         try {
             $db = static::getDB();
-            if ($limit) {
-                $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_type,orders.translation_quality,orders.delivery_type,orders.accepted,orders.order_price,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id WHERE orders.orderer_id='$userId' ORDER BY order_date DESC LIMIT $limit";
-            } else {
-                $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_typeوorders.translation_quality,orders.delivery_type,orders.accepted,orders.order_price,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id WHERE orders.orderer_id='$userId' ORDER BY order_date DESC";
+            $result=false;
+            $page_limit = ($page - 1) * $amount;
+            $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_type,orders.translation_quality,orders.delivery_type,orders.accepted,orders.order_price,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id WHERE orders.orderer_id= :orderer_id ";
+            
+            if(is_array($filtering_Options) && count($filtering_Options)>0){
+                
+                if(isset($filtering_Options['is_done'])){
+                    $sql.=" AND `is_done` = :is_done";
+                }
+                $filtering_Options['orderer_id']=$userId;
+                $sql.=" ORDER BY order_date DESC LIMIT $page_limit,$amount";
+                $stmt = $db->prepare($sql);
+                $result=$stmt->execute($filtering_Options);
+            }else{
+                
+                $sql.=" ORDER BY order_date DESC LIMIT $page_limit,$amount";
+                $stmt = $db->prepare($sql);
+                $result=$stmt->execute(['orderer_id'=>$userId]);
             }
-            $result = $db->query($sql);
-            return $result ? $result->fetchAll(PDO::FETCH_ASSOC) : false;
+            return $result ? $stmt->fetchAll(PDO::FETCH_ASSOC) : false;
         } catch (\Exception $e) {
             return false;
         }
     }
+
     //this function is for getting orders count!,you can set second argument to get working orders
-    public static function get_orders_count_by_user_id($userId, $workingOrders = false)
+    public static function get_orders_count_by_user_id($userId, $filtering_Options=null)
     {
         try {
             $db = static::getDB();
-            if ($workingOrders) {
-                $sql = "SELECT COUNT(*) AS orders_count FROM `orders` WHERE `orderer_id`= '$userId' AND `is_done`= '0'";
-                $result = $db->query($sql);
-                return $result ? $result->fetch(PDO::FETCH_ASSOC)['orders_count'] : false;
-            } else {
-                $sql = "SELECT COUNT(*) AS orders_count FROM `orders` WHERE `orderer_id`= '$userId' AND `is_done`= '1'";
-                $result = $db->query($sql);
-                return $result ? $result->fetch(PDO::FETCH_ASSOC)['orders_count'] : false;
+            $result=false;
+            $sql="SELECT COUNT(*) AS orders_count FROM `orders` WHERE `orderer_id`= :orderer_id";
+
+            if(is_array($filtering_Options) && count($filtering_Options)>0){
+                
+                if(isset($filtering_Options['is_done'])){
+                    $sql.=" AND `is_done` = :is_done";
+                }
+                $filtering_Options['orderer_id']=$userId;
+                $stmt = $db->prepare($sql);
+                $result=$stmt->execute($filtering_Options);
+            }else{
+                
+                $stmt = $db->prepare($sql);
+                $result=$stmt->execute(['orderer_id'=>$userId]);
             }
+            
+            return $result ? $stmt->fetch(PDO::FETCH_ASSOC)['orders_count'] : false;
         } catch (\Exception $e) {
             return false;
         }

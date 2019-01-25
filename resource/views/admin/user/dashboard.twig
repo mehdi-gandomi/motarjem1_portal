@@ -212,15 +212,15 @@
                                 <tbody>
                                     {% for order in orders %}
                                         {% set page_number = order.word_numbers / 250 %}
-                                        {% if user.delivery_type == '1' %}
+                                        {% if order.delivery_type == '1' %}
                                             {% set delivery_type = "معمولی" %}
                                         {% endif %}
 
-                                        {% if user.delivery_type == '2' %}
+                                        {% if order.delivery_type == '2' %}
                                             {% set delivery_type = "نیمه فوری" %}
                                         {% endif %}
 
-                                        {% if user.delivery_type == '3' %}
+                                        {% if order.delivery_type == '3' %}
                                             {% set delivery_type = "فوری" %}
                                         {% endif %}
                                         <tr>
@@ -236,7 +236,9 @@
                                             <td>{{order.order_price}}
                                                 تومان</td>
                                             <td>{{order.accepted == '0' ?  'تایید نشده' : 'تایید شده' }}</td>
-                                            <td><a onclick="showTranslatorInfo('{{order.translator_id}}')">{{ order.translator_fname ~ " " ~ order.translator_lname }}</a></td>
+                                            <td>
+                                                <a style="cursor:pointer;color:#20a8d8" onclick="showTranslatorInfo('{{order.translator_id}}')">{{ order.translator_fname ~ " " ~ order.translator_lname }}</a>
+                                            </td>
                                         </tr>
                                     {% endfor %}
 
@@ -247,11 +249,66 @@
                 </div>
             </div>
         </div>
+
+        {# translator info modal #}
+        <!-- Modal -->
+        <div class="modal fade" id="translatorInfo" tabindex="-1" role="dialog" aria-labelledby="translatorInfoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="translatorInfoLabel">اطلاعات مترجم</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="translator-info">
+                        
+                            <div class="translator-info__avatar">
+                                <img src="" alt="" id="translator-avatar">
+                            </div>
+                            <div class="translator-info__info">
+                                <div class="translator-info__info__item">
+                                    <label for="">نام مترجم :‌ </label>
+                                    <strong id="translator-name"></strong>
+                                </div>
+                                
+                                
+                                <div class="translator-info__info__item">
+                                    <label for="">ایمیل : </label>
+                                    <strong id="translator-email"></strong>
+                                </div>
+                                <div class="translator-info__info__item">
+                                    <label for="">شماره موبایل</label>
+                                    <strong id="translator-phone"></strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {# <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div> #}
+                </div>
+            </div>
+        </div>
     </main>
 
 {% endblock %}
 {% block script_below %}
-    <script src="/public/js/panel/Chart.min.js"></script>
-    <script src="/public/js/panel/custom-tooltips.min.js"></script>
-    <script src="/public/js/panel/admin.js"></script>
+    
+    <script>
+        function showTranslatorInfo(translatorId){
+            console.log(translatorId);
+            $("#translatorInfo").modal("show");
+            $.get("/user/translator/getinfo/"+translatorId,function(res){
+               
+               $("#translator-avatar").attr("src","/public/uploads/avatars/user/"+res.avatar);
+               $("#translator-name").text(res.fname+" "+res.lname);
+               $("#translator-email").text(res.email);
+               $("#translator-phone").text(res.cell_phone);
+               
+            });
+        }
+    </script>
 {% endblock %}

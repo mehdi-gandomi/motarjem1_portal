@@ -132,4 +132,12 @@ class Translator extends Model{
         }
 
     }
+    public static function get_translator_data_by_id($id,$fields="*")
+    {
+        try{
+            return static::select("translators",$fields,['translator_id'=>$id],true);
+        }catch(\Exception $e){
+            return false;
+        }
+    }
 }

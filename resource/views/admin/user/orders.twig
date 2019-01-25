@@ -1,0 +1,168 @@
+{% extends 'admin/layout/user.twig' %}
+{% block content %}
+    <main class="main">
+        <div class="container-fluid mt-4">
+            <div class="card card-default">
+                <div class="card-body">
+                    <h3>سفارشات شما</h3>
+                    <div class="table-filter">
+                        <label for="pending-orders" class="label-cbx">
+                            <input id="pending-orders" type="checkbox" class="invisible" {{pending ? "checked":""}}/>
+                            <div class="checkbox">
+                                <svg width="20px" height="20px" viewbox="0 0 20 20">
+                                    <path d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z"></path>
+                                    <polyline points="4 11 8 15 16 6"></polyline>
+                                </svg>
+                            </div>
+                            <span>سفارشات در حال انجام</span>
+                        </label>
+                        <label for="completed-orders" class="label-cbx">
+                            <input id="completed-orders" type="checkbox" class="invisible" {{completed ? "checked":""}}/>
+                            <div class="checkbox">
+                                <svg width="20px" height="20px" viewbox="0 0 20 20">
+                                    <path d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z"></path>
+                                    <polyline points="4 11 8 15 16 6"></polyline>
+                                </svg>
+                            </div>
+                            <span>سفارشات انجام شده</span>
+                        </label>
+                        {#
+          <label for="failed-orders" class="label-cbx">
+            <input id="failed-orders" type="checkbox" class="invisible" />
+            <div class="checkbox">
+              <svg width="20px" height="20px" viewBox="0 0 20 20">
+                <path
+                  d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z"
+                ></path>
+                <polyline points="4 11 8 15 16 6"></polyline>
+              </svg>
+            </div>
+            <span>سفارشات ناموفق</span>
+          </label>
+          #}
+                    </div>
+                    <table id="orders-table" class="table">
+                        <thead>
+                            <tr>
+                                <th>شماره سفارش</th>
+                                <th>تعداد صفحات</th>
+                                <th>زبان ترجمه</th>
+                                <th>کیفیت ترجمه</th>
+                                <th>زمان تحویل</th>
+                                <th>هزینه ترجمه</th>
+                                <th>وضعیت تایید</th>
+                                <th>مترجم</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-orders">
+                            {% for order in orders %}
+                                {% set page_number = order.word_numbers / 250 %}
+                                {% if order.delivery_type == '1' %}
+                                    {% set delivery_type = "معمولی" %}
+                                {% endif %}
+                                {% if order.delivery_type == '2' %}
+                                    {% set
+                                    delivery_type = "نیمه فوری" %}
+                                {% endif %}
+                                {% if order.delivery_type == '3' %}
+                                    {% set delivery_type = "فوری" %}
+                                {% endif %}
+                                <tr>
+                                    <td>{{ order.order_id }}</td>
+                                    <td>{{ page_number }}</td>
+                                    <td>
+                                        {{
+                  order.translation_type == "1"
+                    ? "انگلیسی به فارسی"
+                    : "فارسی به انگلیسی"
+                }}
+                                    </td>
+                                    <td>
+                                        {{ order.translation_quality == "5" ? "نقره ای" : "طلایی" }}
+                                    </td>
+                                    <td>{{ delivery_type }}</td>
+                                    <td>{{ order.order_price }}
+                                        تومان</td>
+                                    <td>{{ order.accepted == "0" ? "تایید نشده" : "تایید شده" }}</td>
+                                    <td>
+                                        <a style="cursor:pointer;color:#20a8d8" onclick="showTranslatorInfo('{{ order.translator_id }}')">{{ order.translator_fname ~ " " ~ order.translator_lname }}</a >
+                                    </td>
+                                    <td><a href="/user/order/view/{{order.order_id}}" class="btn btn-primary">مشاهده سفارش</a></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% if orders_count > 10 %}
+                        {% set last_page = orders_count / 10 %}
+                        <nav class="page-navigation" aria-label="Page navigation example">
+                            <ul class="pagination">
+                                {% if current_page != 1 %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="/user/orders" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/user/orders?page={{ current_page - 1 }}" aria-label="Previous">
+                                            قبلی
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% if current_page + 2 > last_page %}
+                                    {% set end_index = last_page %}
+                                    {% set start_index
+            =current_page-(3-(last_page-current_page)) %}
+                                {% else %}
+                                    {% set
+            start_index = current_page - 2 %}
+                                    {% if start_index <= 0 %}
+                                        {% set
+                                        start_index = 1 %}
+                                    {% endif %}
+                                    {% set end_index = current_page + 2
+ %}
+                                {% endif %}
+                                {% for page_number in range(start_index, end_index)
+ %}
+                                    {% if page_number == current_page %}
+                                        {% set pagination_class =
+            "page-item active" %}
+                                    {% else %}
+                                        {% set pagination_class =
+            "page-item" %}
+                                    {% endif %}
+
+                                    <li class="{{ pagination_class }}">
+                                        <a class="page-link" href="/user/orders?page={{ page_number }}">{{
+                page_number
+              }}</a>
+                                    </li>
+                                {% endfor %}
+                                {% if current_page != last_page %}
+
+                                    <li class="page-item">
+                                        <a class="page-link" href="/user/orders?page={{ current_page + 1 }}" aria-label="Previous">
+                                            بعدی
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/user/orders?page={{ last_page }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+{% endblock %}
+{% block script_below %}
+
+    <script src="/public/js/panel/user-orders.js"></script>
+
+{% endblock %}
