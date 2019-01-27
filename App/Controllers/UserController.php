@@ -278,7 +278,9 @@ class UserController extends Controller
 
     public function user_new_order_page($req,$res,$args)
     {
-        return $this->view->render($res,"/admin/user/new-order.twig");
+        $userData=User::by_id($_SESSION['user_id'],"fname,lname,phone,email");
+        
+        return $this->view->render($res,"/admin/user/new-order.twig",$userData);
     }
 
     //////////////////////////////////////////////

@@ -17008,4 +17008,18 @@ body {
   background: #fff;
   height: 35px;
 }
+
+.step-1 {
+  margin-bottom: 2rem;
+}
+
+.step-1 .validation-errors {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+}
+
+.step-2 {
+  margin-bottom: 3rem;
+}
 /*# sourceMappingURL=admin.css.map */

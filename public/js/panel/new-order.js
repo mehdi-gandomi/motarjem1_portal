@@ -2,18 +2,12 @@ let uploadedFiles = [];
 
 //validate inputs
 
-function validationError(condition) {
-  let activeSection = $(".section.is-active");
+function validationError(condition,selector) {
   if (condition == "show") {
-    activeSection
-    element = createEl("div", ["validation-errors"]);
-    element.innerHTML = "لطفا فیلد های مورد نیاز را کامل کنید";
-    activeSection.appendChild(element);
+    $(selector).append("<div class='validation-errors'>لطفا فیلد های مورد نیاز را کامل کنید</div>");
   } else if (condition == "hide") {
-    element = select(".validation-errors");
-    if (element) {
-      activeSection.removeChild(element);
-    }
+    el=document.querySelector(selector);
+    el.removeChild(el.childNodes[el.childNodes.length-1])
   }
 }
 
@@ -36,7 +30,6 @@ function printValidationHint(el, value, className, addClass) {
 
 function validate_words(e) {
   let words = e.target.value;
-  console.log(words);
   let hint = $(".words--hint");
   if (words == "") {
     e.target.classList.add("validation-failed");
@@ -53,53 +46,46 @@ function validate_words(e) {
       "validation-failed-hint"
     );
   } else {
+      console.log("fuck");
     e.target.classList.remove("validation-failed");
+    validationError("hide",".step-1 .row");
     printValidationHint(hint, "", "validation-failed-hint", false);
-    validationError("hide");
+    
   }
 }
-
+$("#words").on("keyup",validate_words);
 function validateEmail(email) {
   var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
 }
 
 function validate_inputs() {
-  switch (activeStep) {
-    case 0:
       let words = $("#words");
-      if (words.value == "") {
+      if (words.val() == "") {
         words.addClass("validation-failed");
-        validationError("show");
-        return false;
-      } else if (words.value < 250) {
+        validationError("show",".step-1 .row");
+      } else if (words.val() < 250) {
         words.addClass("validation-failed");
-        validationError("show");
-        return false;
+        validationError("show",".step-1 .row");
       }
-      return true;
-      break;
-    case 1:
-      if (!$("input[name=delivery_type]:checked")) {
+      
+      if (!$("input[name=delivery_type]:checked") || $("input[name=delivery_type]:checked").length==0) {
+          console.log("fuck");
         printValidationHint(
           "#delivery-hint",
           "این فیلد الزامی می باشد",
           "validation-failed-hint"
         );
-        validationError("show");
-        return false;
+        // validationError("show",".delivery-selection-wrap");
       } else {
-        validationError("hide");
+        // validationError("hide",".delivery-selection-wrap");
         printValidationHint(
           "#delivery-hint",
           "",
           "validation-failed-hint",
           false
         );
-        return true;
       }
-      break;
-  }
 }
 
 function hasEmptyValue(el) {
@@ -109,14 +95,16 @@ function hasEmptyValue(el) {
   return el.val() == "";
 }
 
-$("#words").on("keyup",validate_words);
-$("#words").on("keyup", validate_words);
+
 $(".delivery-selection-wrap")
   .find("input[type=radio]")
-  .on("change", function(e) {
-    validationError("hide");
-    printValidationHint("#delivery-hint", "", "validation-failed-hint", false);
-  });
+  .each(function(index,item){
+      item.addEventListener("change",function(e){
+          validationError("hide",".step-2");
+          printValidationHint("#delivery-hint", "", "validation-failed-hint", false);
+      })
+  })
+  
 $("#phone_number").on("blur", function(e) {
   phone = e.target.value;
   if (isNaN(parseInt(phone))) {
@@ -125,27 +113,43 @@ $("#phone_number").on("blur", function(e) {
       "شماره تلفن باید عدد باشد و 11 رقمی باشد",
       "validation-failed"
     );
+    e.target.classList.add("validation-failed");
   } else if (phone.length < 11 || phone.length > 11) {
     printValidationHint(
       ".phone--hint",
       "شماره تلفن باید 11 رقمی باشد",
       "validation-failed"
     );
+    e.target.classList.add("validation-failed");
   } else {
+    e.target.classList.remove("validation-failed");
     printValidationHint(".phone--hint", "", "validation-failed", false);
   }
+});
+
+$("#fullname").on("blur", function(e) {
+    fullname = e.target.value;
+    if (fullname == "") {
+      e.target.classList.add("validation-failed");
+    } 
+     else {
+      e.target.classList.remove("validation-failed");
+    }
 });
 
 $("#email").on("change", function(e) {
   email = e.target.value;
   if (validateEmail(email)) {
     printValidationHint(".email--hint", "", "validation-failed", false);
+    e.target.classList.remove("validation-failed");
+    validationError("hide",".step-3");
   } else {
     printValidationHint(
       ".email--hint",
       "ایمیل وارد شده معتبر نمی باشد",
       "validation-failed"
     );
+    e.target.classList.add("validation-failed");
   }
 });
 
@@ -160,13 +164,14 @@ $("#type").on("change", function(e) {
 
 $(".new-order-form").on("submit", function(e) {
     e.preventDefault();
+    validate_inputs();
     let validationIsGood = false;
     if (hasEmptyValue("#fullname")) {
       $("#fullname").addClass("validation-failed");
       validationIsGood = false;
     } else {
-      $("#fullname").addClass("validation-failed");
-      validationError("hide");
+      $("#fullname").removeClass("validation-failed");
+      validationError("hide",".step-3");
       validationIsGood = true;
     }
     if (hasEmptyValue("#phone_number")) {
@@ -174,21 +179,21 @@ $(".new-order-form").on("submit", function(e) {
       validationIsGood = false;
     } else {
       $("#phone_number").removeClass("validation-failed");
-      validationError("hide");
+      validationError("hide",".step-3");
       validationIsGood = true;
     }
     if (hasEmptyValue("#email")) {
       $("#email").addClass("validation-failed");
     } else {
       $("#email").removeClass("validation-failed");
-      validationError("hide");
+      validationError("hide",".step-3");
       validationIsGood = true;
     }
   
     if (validationIsGood) {
       e.target.submit();
     } else {
-      validationError("show");
+      validationError("show",".step-3");
     }
 });
 
@@ -209,12 +214,11 @@ We want to preview images, so we need to register the Image Preview plugin
   FilePond.setOptions({
     // instantUpload: false,
     server: {
-      url: "/",
       process: {
-        url: "upload-order-file",
+        url: "/upload-order-file",
         onload: function(response) {
           uploadedFiles.push(response);
-          select("#uploaded-files").value = uploadedFiles.join(",");
+          $("#uploaded-files").val(uploadedFiles.join(","));
           return response.key;
         },
         onerror: function(response) {

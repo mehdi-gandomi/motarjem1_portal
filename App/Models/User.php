@@ -17,6 +17,17 @@ class User extends Model
         }
 
     }
+    public static function by_id($userId, $fields = "*")
+    {
+        try {
+            return static::select("users", $fields, ['user_id' => $userId], true);
+
+        } catch (\Exception $e) {
+            return false;
+
+        }
+
+    }
     public static function activate($username)
     {
         try {
