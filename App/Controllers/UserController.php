@@ -254,7 +254,7 @@ class UserController extends Controller
         }
         $userOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'],$filtering_options);
         $userOrders = User::get_orders_by_user_id($_SESSION['user_id'], $page, 10, $filtering_options);
-        return $this->view->render($res, "admin/user/orders.twig", ['orders' => $userOrders, 'current_page' => $page, 'orders_count' => 120,'completed'=>$completed,'pending'=>$pending]);
+        return $this->view->render($res, "admin/user/orders.twig", ['orders' => $userOrders, 'current_page' => $page, 'orders_count' => $userOrdersCount,'completed'=>$completed,'pending'=>$pending]);
     }
     public function get_user_orders_json($req, $res, $args)
     {
@@ -271,10 +271,16 @@ class UserController extends Controller
         $userOrders = User::get_orders_by_user_id($_SESSION['user_id'], $page, 10, $filtering_options);
         return $res->withJson(array(
             'orders'=>$userOrders,
-            'orders_count'=>120,
+            'orders_count'=>$userOrdersCount,
             'current_page'=>$page
         ));
     }
+
+    public function user_new_order_page($req,$res,$args)
+    {
+        return $this->view->render($res,"/admin/user/new-order.twig");
+    }
+
     //////////////////////////////////////////////
     // END Customer(User) ADMIN Functions
     //////////////////////////////////////////////

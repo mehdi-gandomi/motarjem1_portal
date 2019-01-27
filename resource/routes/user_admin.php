@@ -30,5 +30,6 @@ $app->group('/user', function ($app) use ($container) {
     $app->get('/translator/getinfo/{id}',"App\Controllers\UserController:get_translator_info");
     $app->get('/orders',"App\Controllers\UserController:get_user_orders");
     $app->get("/orders/json","App\Controllers\UserController:get_user_orders_json");
+    $app->get("/order/new","App\Controllers\UserController:user_new_order_page");
 })->add($authMV);
 

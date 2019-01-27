@@ -66,11 +66,7 @@ function showOrders(data) {
   }
   document.getElementById("user-orders").innerHTML = output;
 }
-function showPagination(data, location) {
-  
-  let queryString=location.search;
-  console.log(queryString);
-}
+
 $("#pending-orders").change(function(e) {
 
   let newQs="";
@@ -102,7 +98,7 @@ $("#pending-orders").change(function(e) {
   $.get("/user/orders/json"+newQs, function(res, status) {
     if (status) {
       showOrders(res);
-      showPagination(res, location.origin+location.pathname+newQs);
+      // showPagination(res);
     }
   });
   window.history.pushState(
@@ -146,7 +142,7 @@ $("#completed-orders").change(function(e) {
   $.get("/user/orders/json"+newQs, function(res, status) {
     if (status) {
       showOrders(res);
-      showPagination(res, location.origin+location.pathname+newQs);
+      // showPagination(res);
     }
   });
   window.history.pushState(

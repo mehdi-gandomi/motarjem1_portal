@@ -75,7 +75,11 @@
     opacity: 0;
   }
   
-
+.orders-heading{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
   //table filter section
   .table-filter{
       margin-top: 2rem;

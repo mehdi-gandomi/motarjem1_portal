@@ -1,0 +1,239 @@
+{% extends "admin/layout/user.twig" %}
+
+{% block style_below %}
+    <link rel="stylesheet" href="/public/css/filepond.min.css">
+{% endblock %}
+
+{% block content %}
+
+    <main class="main">
+
+        <div class="card mt-3">
+            <div class="card-body" style="position:relative">
+                <h3>سفارش ترجمه جدید</h3>
+                <form class="form-wrapper mt-5 new-order-form" method="POST" enctype="multipart/form-data" action="order-completed">
+                    <input type="hidden" name="files" id="uploaded-files">
+                    <input type="hidden" name="csrf_name" value="{{csrf_name}}">
+                    <input type="hidden" name="csrf_value" value="{{csrf_value}}">
+
+                    <div class="container-fluid step step-1">
+
+                        {# <h4 class="text-center">اطلاعات ترجمه</h4> #}
+
+                        <div class=" row">
+                            <div class="form-group col-lg-3 col-md-6">
+                                <label for="type">نوع ترجمه *</label>
+                                <select name="type" id="type" class="form-control">
+                                    <option value="common">
+                                        عمومی</option>
+
+                                    <option value="specialist">
+                                        تخصصی</option>
+
+                                </select>
+                            </div>
+
+                            <div class="form-group field_of_study col-lg-3 col-md-6">
+                                <label for="field_of_study">رشته تحصصی</label>
+                                <select name="field_of_study" id="field_of_study" class="form-control">
+                                    <option value="90">
+                                        ادبیات و زبان شناسی</option>
+                                    <option value="89">
+                                        اسناد تجاری</option>
+                                    <option value="88">
+                                        اقتصاد</option>
+                                    <option value="86">
+                                        برق و الکترونیک</option>
+                                    <option value="91">
+                                        تاریخ</option>
+                                    <option value="41">
+                                        ترجمه کاتالوگ</option>
+                                    <option value="76">
+                                        جغرافیا</option>
+                                    <option value="75">
+                                        حسابداری</option>
+                                    <option value="74">
+                                        حقوق</option>
+                                    <option value="70">
+                                        روان شناسی</option>
+                                    <option value="71">
+                                        ریاضی</option>
+                                    <option value="72">
+                                        زمین شناسی و معدن</option>
+                                    <option value="43">
+                                        زیرنویس فیلم</option>
+                                    <option value="73">
+                                        زیست شناسی</option>
+                                    <option value="67">
+                                        شیمی</option>
+                                    <option value="68">
+                                        صنایع</option>
+                                    <option value="69">
+                                        صنایع غذایی</option>
+                                    <option value="62">
+                                        علوم اجتماعی</option>
+                                    <option value="63">
+                                        علوم سیاسی</option>
+                                    <option value="64">
+                                        عمران</option>
+                                    <option value="61">
+                                        عمومی</option>
+                                    <option value="44">
+                                        فایل صوتی تصویری</option>
+                                    <option value="57">
+                                        فقه و علوم اسلامی</option>
+                                    <option value="58">
+                                        فلسفه</option>
+                                    <option value="59">
+                                        فناوری اطلاعات</option>
+                                    <option value="60">
+                                        فیزیک</option>
+                                    <option value="50">
+                                        متالورژی و مواد</option>
+                                    <option value="51">
+                                        محیط زیست</option>
+                                    <option value="49">
+                                        مدیریت</option>
+                                    <option value="54">
+                                        منابع طبیعی و شیلات</option>
+                                    <option value="53">
+                                        مکانیک</option>
+                                    <option value="47">
+                                        نفت،گاز و پتروشیمی</option>
+                                    <option value="92">
+                                        هنر و معماری</option>
+                                    <option value="46">
+                                        ورزش و تربیت بدنی</option>
+                                    <option value="85">
+                                        پزشکی</option>
+                                    <option value="93">
+                                        ژنتیک و میکروبیولوژی</option>
+                                    <option value="55">
+                                        کامپیوتر</option>
+                                    <option value="56">
+                                        کشاورزی</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-lg-3 col-md-6">
+                                <label for="words">تعداد کلمات *</label>
+                                <input class="form-control" type="number" name="words" id="words" value="{{words}}" placeholder="تعداد کلمات">
+                                <span class="hint words--hint">هر صفحه استاندارد، 250 کلمه است</span>
+                            </div>
+                            <div class="form-group col-lg-3 col-md-6">
+                                <label for="language">زبان ترجمه *</label>
+                                <select name="language" id="language" class="form-control">
+                                    <option value="en_to_fa">
+                                        انگلیسی - فارسی</option>
+                                    <option value="fa_to_en">
+                                        فارسی - انگلیسی</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-3 form-group col-md-6">
+                                <label for="quality">کیفیت ترجمه</label>
+                                <select name="translation_quality" id="quality" class="form-control">
+                                    <option value="silver">نقره ایی</option>
+                                    <option value="gold">طلایی</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-lg-3 col-md-6">
+                                <label for="discount">کد تخفیف</label>
+                                <input type="text" name="discount" id="discount" class="form-control" placeholder="کد تخفیف">
+                                <span class="hint">جهت دریافت کد تخفیف
+                                    <a href="http://www.t.me/motarjem_one">پیام</a>
+                                    دهید</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="container-fluid step step-2">
+                        <h5 class="text-center">زمان تحویل *</h5>
+                        <div class="row cf delivery-selection-wrap">
+                            <div class="col-lg-4 col-sm-4 col-xs-4">
+                                <input type="radio" name="delivery_type" value="normal" id="normal">
+                                <label class="deliver-selection" for="normal">
+                                    <img src="/public/images/icon/walker.svg" alt="">
+                                    <h4>عادی</h4>
+                                </label>
+                            </div>
+                            <div class="col-lg-4 col-sm-4 col-xs-4">
+                                <input type="radio" name="delivery_type" value="half_an_instant" id="half_an_instant">
+                                <label class="deliver-selection" for="half_an_instant">
+                                    <img src="/public/images/icon/running-man.svg" alt="">
+                                    <h4>نیمه فوری</h4>
+                                </label>
+                            </div>
+                            <div class="col-lg-4 col-sm-4 col-xs-4">
+                                <input type="radio" name="delivery_type" value="instantaneous" id="instantaneous">
+                                <label class="deliver-selection" for="instantaneous">
+                                    <img src="/public/images/icon/rocket-launch.svg" alt="">
+                                    <h4>فوری</h4>
+                                </label>
+                            </div>
+
+                        </div>
+                        <p id="delivery-hint" style="text-align: center;margin-top: 1rem;"></p>
+                        <div class="row pt-4">
+                            <div class="col-12 pb-4">
+                                <p>🔰قیمت‌گذاری هزینه ترجمه بر حسب تعداد کلمات هر صفحه لحاظ می‌شود نه صفحه‌ایی یا خطی.</p>
+                                <p>🔰در ترجمه نیمه فوری، 10 تومان به نرخ ترجمه‌ها اضافه می‌شود.
+                                </p>
+                                <p>🔰در ترجمه فوری، نرخ ترجمه‌ها دو برابر حساب می‌شود.</p>
+                            </div>
+                            <div class="col-lg-12">
+                                <h3 class="text-center">آپلود فایل (ها)</h3>
+                            </div>
+                            <div class="col-lg-4 col-sm-12 hints-for-upload">
+                                <h4 class="py-2 text-center">نکات آپلود فایل</h4>
+                                <p class="text-right">
+                                    لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد.
+                                </p>
+                            </div>
+                            <div class="col-lg-8 col-sm-12 align-self-center">
+                                <input type="file" class="filepond" name="file" multiple="multiple" id="file" data-max-file-size="3MB" data-max-files="3"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container-fluid step step-3">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6 form-group">
+                                <label for="fullname">نام و نام خانوادگی</label>
+                                <input class="form-control" type="text" name="fullname" id="fullname">
+                            </div>
+                            <div class="col-lg-4 form-group col-md-6">
+                                <label for="phone_number">شماره همراه</label>
+                                <input class="form-control" type="text" name="phone_number" id="phone_number">
+                                <span class="hint phone--hint"></span>
+                            </div>
+                            <div class="col-lg-4 form-group col-md-6">
+                                <label for="email">ایمیل</label>
+                                <input class="form-control" type="email" name="email" id="email">
+                                <span class="hint email--hint"></span>
+                            </div>
+                            <div class="col-lg-12 form-group">
+                                <label for="description">توضیحات</label>
+                                <textarea class="form-control" name="description" id="description" rows="4"></textarea>
+                            </div>
+                            <div class="col-lg-12 form-group">
+                                <input class="btn btn-primary" type="submit" value="ثبت سفارش">
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </main>
+
+{% endblock %}
+
+{% block script_below %}
+    <script src='/public/js/filepond-plugin-file-encode.min.js'></script>
+    <script src='/public/js/filepond-plugin-file-validate-size.min.js'></script>
+    <script src='/public/js/filepond.min.js'></script>
+    <script src="/public/js/panel/new-order.js"></script>
+{% endblock %}
