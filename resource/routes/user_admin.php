@@ -35,5 +35,7 @@ $app->group('/user', function ($app) use ($container) {
     $app->get("/message/view/{msg_id}","App\Controllers\UserController:get_message_details");
     $app->get("/messages","App\Controllers\UserController:get_messages_page");
     $app->get("/messages/json","App\Controllers\UserController:get_messages_json");
+    $app->post("/message/send","App\Controllers\UserController:post_send_message");
+    $app->post("/message/reply","App\Controllers\UserController:post_reply_message");
 })->add($authMV);
 

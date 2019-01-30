@@ -298,7 +298,7 @@
             </div>
         </div>
     </main>
-       <!-- Modal -->
+    <!-- Modal -->
     <div class="modal fade" id="newMessageModal" tabindex="-1" role="dialog" aria-labelledby="newMessageModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -307,27 +307,27 @@
                 </div>
                 <div class="modal-body">
 
-                    <form action="/message/send" method="POST">
+                    <form action="/user/message/send" id="sendMessageForm" method="POST">
                         <input type="hidden" name="msg_id" id="msg_id">
                         <div class="row">
                             <div class="form-group col-md-3">
                                 <label for="">نام شما</label>
-                                <input class="form-control" type="text" name="fullname" value="{{user.fname ~ " " ~ user.lname}}" disabled="disabled"/>
+                                <input class="form-control" type="text" value="{{user.fname ~ " " ~ user.lname}}" disabled="disabled"/>
                             </div>
                             <div class="form-group col-md-5">
                                 <label for="">ایمیل شما</label>
-                                <input class="form-control" type="email" name="email" value="{{user.email}}" disabled="disabled"/>
+                                <input class="form-control" type="email" value="{{user.email}}" disabled="disabled"/>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="">عنوان پیام</label>
-                                <input class="form-control" type="text" name="subject"/>
+                                <input class="form-control" type="text" id="subject" name="subject"/>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="">پیام شما</label>
                             <textarea name="body" id="medium-editor" cols="30" rows="10"></textarea>
                         </div>
-                        <input type="submit" class="btn btn-primary" name="submit" value="ارسال">
+                        <button type="button" class="btn btn-primary" id="send-message-btn">ارسال</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal">انصراف</button>
                     </form>
 
@@ -339,9 +339,10 @@
 {% endblock %}
 {% block script_below %}
     <script src="/public/js/panel/medium-editor.min.js"></script>
+    <script src="/public/js/sweetalert2@8.js"></script>
     <script>
-        let editor = new MediumEditor('#medium-editor',{
-              elementsContainer: document.getElementById('newMessageModal') // use your modal element here
+        let editor = new MediumEditor('#medium-editor', {
+            elementsContainer: document.getElementById('newMessageModal') // use your modal element here
         });
         function showTranslatorInfo(translatorId) {
             console.log(translatorId);
@@ -355,5 +356,33 @@
 
             });
         }
+        //send message with ajax request
+        $("#send-message-btn").click(function (e) {
+            let subject = $("#subject").val();
+            let body = $("#medium-editor").val();
+            if (subject == "") {
+                alert("باید حداقل یک عنوان وارد نمایید!");
+                return;
+            }
+            if (body == "") {
+                alert("باید متن پیام تان را وارد نمایید !");
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: $("#sendMessageForm").attr("action"),
+                data: {
+                    subject: subject,
+                    body: body
+                },
+                success: function (data, status) {
+                    if (status && data.status) {
+                        $("#newMessageModal").modal("hide");
+                        Swal.fire('موفقیت آمیز !', 'پیام شما با موفقیت ارسال شد !', 'success')
+                    }
+                }
+            })
+        })
     </script>
 {% endblock %}

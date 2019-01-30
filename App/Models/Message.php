@@ -3,6 +3,49 @@ namespace App\Models;
 use Core\Model;
 use PDO;
 class Message extends Model{
+    public static function getCurrentDatePersian()
+    {
+        $now = new \DateTime("NOW");
+        $year = $now->format("Y");
+        $month = $now->format("m");
+        $day = $now->format("d");
+        $time = $now->format("H:i");
+        $persianDate = gregorian_to_jalali($year, $month, $day);
+        return  $persianDate[0] . "/" . $persianDate[1] . "/" . $persianDate[2] . " " . $time;
+    }
+    public static function create($userId,$msgData)
+    {
+        try{
+            $persianDate=self::getCurrentDatePersian();
+            $msgData['create_date_persian']=$persianDate;
+            $msgData['update_date_persian']=$persianDate;
+            $msgData['user_type']=1;
+            $msgData['reciever_id']=0;
+            $msgData['sender_id']=$userId;
+            static::insert("messaging",$msgData);
+            return true;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+    public static function create_reply($userId,$msgData)
+    {
+        try{
+            $persianDate=self::getCurrentDatePersian();
+            $msgData['parent_msg_id']=$msgData['msg_id'];
+            unset($msgData['msg_id']);
+            $msgData['create_date_persian']=$persianDate;
+            $msgData['update_date_persian']=$persianDate;
+            $msgData['user_type']=1;
+            $msgData['reciever_id']=0;
+            $msgData['sender_id']=$userId;
+            static::insert("messaging",$msgData);
+            return true;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+    
     public static function get_details_by_id($msgId)
     {
         try{

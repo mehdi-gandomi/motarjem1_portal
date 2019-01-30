@@ -31,7 +31,7 @@
                             <div class="card-body">
                                 <h4 class="msg-title">{{message.subject}}</h4>
                                 <div class="msg-body">
-                                    {{message.body}}
+                                    {{message.body | raw}}
                                 </div>
                                 {% if message.parent_msg_id != "0" %}
                                     <div class="msg-action">
@@ -42,57 +42,90 @@
                             </div>
                         </div>
                     {% endfor %}
-    </main>
+                </main>
 
-    <!-- Modal -->
-    <div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="replyModalLabel">پاسخ به پیام</h5>
-                </div>
-                <div class="modal-body">
+                <!-- Modal -->
+                <div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="replyModalLabel">پاسخ به پیام</h5>
+                            </div>
+                            <div class="modal-body">
 
-                    <form action="/message/reply" method="POST">
-                        <input type="hidden" name="msg_id" id="msg_id">
-                        <div class="row">
-                            <div class="form-group col-md-3">
-                                <label for="">نام شما</label>
-                                <input class="form-control" type="text" name="fullname" value="{{user.fname ~ " " ~ user.lname}}" disabled/>
+                                <form action="/user/message/reply" id="replyMessageForm" method="POST">
+                                    <input type="hidden" name="msg_id" id="msg_id">
+                                    <div class="row">
+                                        <div class="form-group col-md-3">
+                                            <label for="">نام شما</label>
+                                            <input class="form-control" type="text" value="{{user.fname ~ " " ~ user.lname}}" disabled="disabled"/>
+                                        </div>
+                                        <div class="form-group col-md-5">
+                                            <label for="">ایمیل شما</label>
+                                            <input class="form-control" type="email" value="{{user.email}}" disabled="disabled"/>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="">عنوان پیام</label>
+                                            <input class="form-control" type="text" id="subject" name="subject"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="">پیام شما</label>
+                                        <textarea name="body" id="medium-editor" cols="30" rows="10"></textarea>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" id="reply-message-btn">ارسال پاسخ</button>
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">انصراف</button>
+                                </form>
+
                             </div>
-                            <div class="form-group col-md-5">
-                                <label for="">ایمیل شما</label>
-                                <input class="form-control" type="email" name="email" value="{{user.email}}" disabled/>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="">عنوان پیام</label>
-                                <input class="form-control" type="text" name="subject"/>
-                            </div>
+
                         </div>
-                        <div class="form-group">
-                            <label for="">پیام شما</label>
-                            <textarea name="body" id="medium-editor" cols="30" rows="10"></textarea>
-                        </div>
-                        <input type="submit" class="btn btn-primary" name="submit" value="ارسال پاسخ">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">انصراف</button>
-                    </form>
-
+                    </div>
                 </div>
 
-            </div>
-        </div>
-    </div>
+            {% endblock %}
+            {% block script_below %}
+                <script src="/public/js/panel/medium-editor.min.js"></script>
+                <script src="/public/js/sweetalert2@8.js"></script>
+                <script>
+                    let editor = new MediumEditor('#medium-editor', {
+                        elementsContainer: document.getElementById('replyModal') // use your modal element here
+                    });
+                    function showReplyModal(msgId) {
+                        document.getElementById("msg_id").value = msgId;
+                        $("#replyModal").modal("show");
+                    }
 
-{% endblock %}
-{% block script_below %}
-    <script src="/public/js/panel/medium-editor.min.js"></script>
-    <script>
-        let editor = new MediumEditor('#medium-editor',{
-              elementsContainer: document.getElementById('replyModal') // use your modal element here
-        });
-        function showReplyModal(msgId) {
-            document.getElementById("msg_id").value = msgId;
-            $("#replyModal").modal("show");
-        }
-    </script>
-{% endblock %}
+                    //send message with ajax request
+                    $("#reply-message-btn").click(function (e) {
+                        let subject = $("#subject").val();
+                        let body = $("#medium-editor").val();
+                        let msgId=$("#msg_id").val();
+                        if (subject == "") {
+                            alert("باید حداقل یک عنوان وارد نمایید!");
+                            return;
+                        }
+                        if (body == "") {
+                            alert("باید متن پیام تان را وارد نمایید !");
+                            return;
+                        }
+
+                        $.ajax({
+                            type: "POST",
+                            url: $("#replyMessageForm").attr("action"),
+                            data: {
+                                subject: subject,
+                                body: body,
+                                msg_id:msgId
+                            },
+                            success: function (data, status) {
+                                console.log(data);
+                                if (status && data.status) {
+                                    $("#replyModal").modal("hide");
+                                    Swal.fire('موفقیت آمیز !', 'پیام شما با موفقیت ارسال شد !', 'success')
+                                }
+                            }
+                        })
+                    })
+                </script>
+            {% endblock %}

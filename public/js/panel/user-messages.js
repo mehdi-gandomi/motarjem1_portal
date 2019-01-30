@@ -232,3 +232,36 @@ $("#unanswered-messages").change(function(e) {
   applyFilters(queryString);
 });
 //END this functions gets called when a checkbox state changes
+
+//send message with ajax request
+$("#send-message-btn").click(function(e){
+  let subject=$("#subject").val();
+  let body=$("#medium-editor").val();
+  if(subject == ""){
+    alert("باید حداقل یک عنوان وارد نمایید!");
+    return;
+  }
+  if(body == ""){
+    alert("باید متن پیام تان را وارد نمایید !");
+    return;
+  }
+
+  $.ajax({
+    type:"POST",
+    url:$("#sendMessageForm").attr("action"),
+    data:{
+      subject:subject,
+      body:body
+    },
+    success:function(data,status){
+      if(status && data.status){
+        $("#newMessageModal").modal("hide");
+        Swal.fire(
+          'موفقیت آمیز !',
+          'پیام شما با موفقیت ارسال شد !',
+          'success'
+        )
+      }
+    }
+  })
+})

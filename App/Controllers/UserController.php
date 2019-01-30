@@ -332,6 +332,26 @@ class UserController extends Controller
         
         return $res->withJson(['messages'=>$userMessages,'messages_count'=>intval($userMessagesCount),'current_page'=>$page]);
     }
+
+
+    //this function gets message data that user sends and return a json respose if it all goes well
+    public function post_send_message($req,$res,$args)
+    {
+        $result=\App\Models\Message::create($_SESSION['user_id'],$req->getParsedBody());
+        return $res->withJson([
+            'status'=>$result
+        ]);    
+    }
+
+    //this function gets reply message data that user sends and return a json respose if it all goes well
+    public function post_reply_message($req,$res,$args)
+    {
+        
+        $result=\App\Models\Message::create_reply($_SESSION['user_id'],$req->getParsedBody());
+        return $res->withJson([
+            'status'=>$result
+        ]);    
+    }
     //////////////////////////////////////////////
     // END Customer(User) ADMIN Functionsخقیث
     //////////////////////////////////////////////
