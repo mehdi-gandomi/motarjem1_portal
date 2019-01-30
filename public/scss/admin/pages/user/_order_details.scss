@@ -1,0 +1,22 @@
+.order-details{
+    &__detail{
+        border: 1px solid #ffdada;
+        padding:1rem 2rem;
+        &__label{
+            display: block;
+            font-size: 13px;
+            font-size: .929rem;
+            line-height: 1.692;
+            letter-spacing: -.3px;
+            margin-bottom: 0.5rem;
+            color: #a7a2a2;
+        }
+        &__value{
+            font-weight: bold;
+            padding-right: 0.3rem;
+            font-size: 1rem;
+            color: #7b7b7b;
+        }
+    }
+
+}

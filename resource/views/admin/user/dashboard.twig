@@ -1,4 +1,8 @@
 {% extends 'admin/layout/user.twig' %}
+{% block style_below %}
+    <link rel="stylesheet" href="/public/css/medium-editor.min.css"/>
+    <link rel="stylesheet" href="/public/css/medium-theme.min.css"/>
+{% endblock %}
 {% block content %}
 
     <main class="main">
@@ -105,12 +109,12 @@
                         <div class="card-header f-1rem ">
                             <div class="card-header__title">
                                 <i class="icon-earphones-alt"></i>
-                                <span>تیکت های اخیر</span>
+                                <span>پیام های اخیر</span>
                             </div>
-                            <a href="/messages/send" class="btn new-ticket-btn">
+                            <button data-toggle="modal" data-target="#newMessageModal" class="btn new-ticket-btn">
                                 <i class="icon-plus"></i>
-                                ارسال تیکت
-                            </a>
+                                ارسال پیام جدید
+                            </button>
                         </div>
                         <div class="card-body">
                             <div class="list-group ticket-list">
@@ -263,19 +267,20 @@
                     </div>
                     <div class="modal-body">
                         <div class="translator-info">
-                        
+
                             <div class="translator-info__avatar">
                                 <img src="" alt="" id="translator-avatar">
                             </div>
                             <div class="translator-info__info">
                                 <div class="translator-info__info__item">
-                                    <label for="">نام مترجم :‌ </label>
+                                    <label for="">نام مترجم :‌
+                                    </label>
                                     <strong id="translator-name"></strong>
                                 </div>
-                                
-                                
+
                                 <div class="translator-info__info__item">
-                                    <label for="">ایمیل : </label>
+                                    <label for="">ایمیل :
+                                    </label>
                                     <strong id="translator-email"></strong>
                                 </div>
                                 <div class="translator-info__info__item">
@@ -293,21 +298,61 @@
             </div>
         </div>
     </main>
+       <!-- Modal -->
+    <div class="modal fade" id="newMessageModal" tabindex="-1" role="dialog" aria-labelledby="newMessageModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newMessageModalLabel">ارسال پیام</h5>
+                </div>
+                <div class="modal-body">
 
+                    <form action="/message/send" method="POST">
+                        <input type="hidden" name="msg_id" id="msg_id">
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                <label for="">نام شما</label>
+                                <input class="form-control" type="text" name="fullname" value="{{user.fname ~ " " ~ user.lname}}" disabled="disabled"/>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label for="">ایمیل شما</label>
+                                <input class="form-control" type="email" name="email" value="{{user.email}}" disabled="disabled"/>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="">عنوان پیام</label>
+                                <input class="form-control" type="text" name="subject"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="">پیام شما</label>
+                            <textarea name="body" id="medium-editor" cols="30" rows="10"></textarea>
+                        </div>
+                        <input type="submit" class="btn btn-primary" name="submit" value="ارسال">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">انصراف</button>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block script_below %}
-    
+    <script src="/public/js/panel/medium-editor.min.js"></script>
     <script>
-        function showTranslatorInfo(translatorId){
+        let editor = new MediumEditor('#medium-editor',{
+              elementsContainer: document.getElementById('newMessageModal') // use your modal element here
+        });
+        function showTranslatorInfo(translatorId) {
             console.log(translatorId);
             $("#translatorInfo").modal("show");
-            $.get("/user/translator/getinfo/"+translatorId,function(res){
-               
-               $("#translator-avatar").attr("src","/public/uploads/avatars/user/"+res.avatar);
-               $("#translator-name").text(res.fname+" "+res.lname);
-               $("#translator-email").text(res.email);
-               $("#translator-phone").text(res.cell_phone);
-               
+            $.get("/user/translator/getinfo/" + translatorId, function (res) {
+
+                $("#translator-avatar").attr("src", "/public/uploads/avatars/user/" + res.avatar);
+                $("#translator-name").text(res.fname + " " + res.lname);
+                $("#translator-email").text(res.email);
+                $("#translator-phone").text(res.cell_phone);
+
             });
         }
     </script>

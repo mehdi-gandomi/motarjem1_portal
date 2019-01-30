@@ -1,0 +1,143 @@
+{% extends "admin/layout/user.twig" %}
+
+{% block content %}
+    {# START declaring variables based on db info #}
+    {% if delivery_type == '1' %}
+        {% set delivery_type_text = "معمولی" %}
+    {% endif %}
+    {% if delivery_type == '2' %}
+        {% set
+        delivery_type_text = "نیمه فوری" %}
+    {% endif %}
+    {% if delivery_type == '3' %}
+        {% set delivery_type_text = "فوری" %}
+    {% endif %}
+    
+    {# END declaring variables based on db info #}
+
+    <main class="main">
+
+        <div class="card">
+            <div class="card-body">
+                <h3 class="mb-5 mt-3 text-center">جزییات سفارش</h3>
+                <div class="order-details row">
+                    <div class="order-details__detail col-md-2">
+                        <div class="order-details__detail__label">
+                            شماره سفارش
+                        </div>
+                        <div class="order-details__detail__value">
+                            {{order_id}}
+                        </div>
+                    </div>
+                    <div class="order-details__detail col-md-3">
+                        <div class="order-details__detail__label">
+                            شماره تراکنش
+                        </div>
+                        <div class="order-details__detail__value">
+                            {{transaction_code}}
+                        </div>
+                    </div>
+                    <div class="order-details__detail col-md-2">
+                        <div class="order-details__detail__label">
+                            تعداد صفحات
+                        </div>
+                        <div class="order-details__detail__value">
+                            {{word_numbers / 250}}
+                        </div>
+                    </div>
+                    <div class="order-details__detail col-md-3">
+                        <div class="order-details__detail__label">
+                            زبان ترجمه
+                        </div>
+                        <div class="order-details__detail__value">
+                            {{translation_type == "1" ? "انگلیسی به فارسی" : "فارسی به انگلیسی"}}
+                        </div>
+                    </div>
+                    <div class="order-details__detail col-md-2">
+                        <div class="order-details__detail__label">
+                            کیفیت ترجمه
+                        </div>
+                        <div class="order-details__detail__value">
+                            {{ translation_quality == "5" ? "نقره ای" : "طلایی" }}
+                        </div>
+                    </div>
+                    <div class="order-details__detail col-md-3">
+                        <div class="order-details__detail__label">
+                            زمان تحویل
+                        </div>
+                        <div class="order-details__detail__value">
+                        {{delivery_type_text}}
+                        </div>
+                    </div>
+                    <div class="order-details__detail col-md-3">
+                        <div class="order-details__detail__label">
+                            زمان تحویل به روز
+                        </div>
+                        <div class="order-details__detail__value">
+                        {{delivery_days}} روز
+                        </div>
+                    </div>
+                    <div class="order-details__detail col-md-3">
+                        <div class="order-details__detail__label">
+                            تاریخ ثبت سفارش
+                        </div>
+                        <div class="order-details__detail__value">
+                        {{order_date_persian}}
+                        </div>
+                    </div>
+                    <div class="order-details__detail col-md-3">
+                        <div class="order-details__detail__label">
+                            وضعیت تایید
+                        </div>
+                        <div class="order-details__detail__value">
+                        {{ order.accepted == "0" ? "تایید نشده" : "تایید شده" }}
+                        </div>
+                    </div>
+                    <div class="order-details__detail col-md-3">
+                        <div class="order-details__detail__label">
+                            تاریخ تایید سفارش
+                        </div>
+                        <div class="order-details__detail__value">
+                        {{accept_date_persian}}
+                        </div>
+                    </div>
+                    <div class="order-details__detail col-md-3">
+                        <div class="order-details__detail__label">
+                            مترجم
+                        </div>
+                        <div class="order-details__detail__value">
+                        {{translator_fname ~ " " ~ translator_lname}}
+                        </div>
+                    </div>
+                    {# <div class="order-details__detail col-md-4">
+                        <div class="order-details__detail__label">
+                            مرحله سفارش
+                        </div>
+                        <div class="order-details__detail__value">
+                        
+                        </div>
+                    </div> #}
+                    <div class="order-details__detail col-md-3">
+                        <div class="order-details__detail__label">
+                            قیمت کل سفارش
+                        </div>
+                        <div class="order-details__detail__value">
+                        {{order_price}} تومان
+                        </div>
+                    </div>
+                    <div class="order-details__detail col-md-3">
+                        <div class="order-details__detail__label">
+                            وضعیت اتمام
+                        </div>
+                        <div class="order-details__detail__value">
+                        {{is_done == "0" ? "تمام نشده" : "تمام شده"}}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+{% endblock %}

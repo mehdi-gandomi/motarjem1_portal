@@ -16699,12 +16699,34 @@ body {
   margin: 0 0.5rem;
 }
 
-#orders-table {
+#orders-table, #messages-table {
   margin-top: 2rem;
+}
+
+#orders-table tbody tr:hover .order-more-info, #messages-table tbody tr:hover .order-more-info {
+  background: #eadede;
+}
+
+#orders-table tbody td, #messages-table tbody td {
+  vertical-align: middle;
+  text-align: center;
+  height: 100px;
+  border: 1px solid #ebebeb;
+}
+
+.table th.bg-teal-dark {
+  background: #85b3be;
+  color: #fff;
 }
 
 .page-navigation {
   margin: 3rem -35px 0 0;
+}
+
+.order-more-info {
+  cursor: pointer;
+  -webkit-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
 }
 
 .delivery-selection-wrap input[type="radio"] {
@@ -17021,5 +17043,51 @@ body {
 
 .step-2 {
   margin-bottom: 3rem;
+}
+
+.order-details__detail {
+  border: 1px solid #ffdada;
+  padding: 1rem 2rem;
+}
+
+.order-details__detail__label {
+  display: block;
+  font-size: 13px;
+  font-size: .929rem;
+  line-height: 1.692;
+  letter-spacing: -.3px;
+  margin-bottom: 0.5rem;
+  color: #a7a2a2;
+}
+
+.order-details__detail__value {
+  font-weight: bold;
+  padding-right: 0.3rem;
+  font-size: 1rem;
+  color: #7b7b7b;
+}
+
+.view-message .card-header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.view-message .card-header__title {
+  font-size: 1rem;
+}
+
+.view-message .card-header__title p {
+  display: inline-block;
+}
+
+.view-message .msg-action {
+  margin-top: 2rem;
 }
 /*# sourceMappingURL=admin.css.map */

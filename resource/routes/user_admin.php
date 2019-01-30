@@ -31,5 +31,9 @@ $app->group('/user', function ($app) use ($container) {
     $app->get('/orders',"App\Controllers\UserController:get_user_orders");
     $app->get("/orders/json","App\Controllers\UserController:get_user_orders_json");
     $app->get("/order/new","App\Controllers\UserController:user_new_order_page");
+    $app->get("/order/view/{order_id}","App\Controllers\UserController:get_order_details");
+    $app->get("/message/view/{msg_id}","App\Controllers\UserController:get_message_details");
+    $app->get("/messages","App\Controllers\UserController:get_messages_page");
+    $app->get("/messages/json","App\Controllers\UserController:get_messages_json");
 })->add($authMV);
 

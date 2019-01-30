@@ -135,7 +135,7 @@ class User extends Model
     {
         try {
             $db = static::getDB();
-            $sql = "SELECT COUNT(*) AS messages_count FROM `messaging` WHERE `creator_id`= '$userId' AND `is_read`= '0'";
+            $sql = "SELECT COUNT(*) AS messages_count FROM `messaging` WHERE `reciever_id`= '$userId' AND `is_read`= '0'";
             $result = $db->query($sql);
             return $result ? $result->fetch(PDO::FETCH_ASSOC)['messages_count'] : false;
 
@@ -143,19 +143,52 @@ class User extends Model
             return false;
         }
     }
-    //this function gets user latest messages by user_id
-    public static function get_messages_by_user_id($userId, $limit = null)
+
+    //this function gets  user messages by id
+    public static function get_messages_by_id($userId,$page, $amount,$filtering_Options=null)
     {
-        try {
-            $db = static::getDB();
-            if ($limit) {
-                $sql = "SELECT msg_id,subject,update_date_persian,is_answered FROM messaging WHERE creator_id='$userId'  ORDER BY update_date DESC LIMIT $limit";
-            } else {
-                $sql = "SELECT msg_id,subject,update_date_persian,is_answered FROM messaging WHERE creator_id='$userId' ORDER BY update_date DESC";
+        try{
+            $db=static::getDB();
+            $result=false;
+            $page_limit = ($page - 1) * $amount;
+            $sql="SELECT messaging.msg_id,messaging.parent_msg_id,messaging.create_date_persian,messaging.update_date_persian,messaging.subject,messaging.body,messaging.is_answered,messaging.is_read FROM messaging WHERE  messaging.sender_id = :sender_id";
+            if(is_array($filtering_Options) && count($filtering_Options)>0){
+                
+                if(isset($filtering_Options['is_read'])){
+                    $sql.=" AND `is_read` IN (".\implode(",",$filtering_Options['is_read']).")";
+                }
+                if(isset($filtering_Options['is_answered'])){
+                    $sql.=" AND `is_answered` IN (".\implode(",",$filtering_Options['is_answered']).")";
+                }   
             }
-            $result = $db->query($sql);
-            return $result ? $result->fetchAll(PDO::FETCH_ASSOC) : false;
-        } catch (\Exception $e) {
+            $sql.=" ORDER BY update_date DESC LIMIT $page_limit,$amount";
+            $stmt = $db->prepare($sql);
+            // $stmt->bindParam(":reciever_id",$userId);
+            return $stmt->execute(['sender_id'=>$userId]) ? $stmt->fetchAll(PDO::FETCH_ASSOC) : false;
+        }catch(\Exception $e){
+            return false;
+        }
+
+        
+    }
+    //this function gets  user messages count by id
+    public static function get_messages_count_by_id($userId,$filtering_Options)
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT COUNT(*) AS messages_count FROM messaging WHERE  messaging.sender_id = :sender_id";
+            if(is_array($filtering_Options) && count($filtering_Options)>0){
+                
+                if(isset($filtering_Options['is_read'])){
+                    $sql.=" AND `is_read` IN (".\implode(",",$filtering_Options['is_read']).")";
+                }
+                if(isset($filtering_Options['is_answered'])){
+                    $sql.=" AND `is_answered` IN (".\implode(",",$filtering_Options['is_answered']).")";
+                }   
+            }
+            $stmt = $db->prepare($sql);
+            return $stmt->execute(['sender_id'=>$userId]) ? $stmt->fetch(PDO::FETCH_ASSOC)['messages_count'] : false;
+        }catch(\Exception $e){
             return false;
         }
     }

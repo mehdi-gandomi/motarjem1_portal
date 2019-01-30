@@ -1,0 +1,98 @@
+{% extends 'admin/layout/user.twig' %}
+{% block style_below %}
+    <link rel="stylesheet" href="/public/css/medium-editor.min.css"/>
+    <link rel="stylesheet" href="/public/css/medium-theme.min.css"/>
+{% endblock %}
+{% block content %}
+
+    <main class="main  view-message">
+        <div class="container-fluid">
+            {% for message in messages %}
+                {% if message.parent_msg_id == "0" %}
+                    <div class="card card-default is--message">
+                        <div class="card-header">
+                        {% else %}
+                            <div class="card  is--answer mt-4">
+                                <div class="card-header bg-primary">
+                                {% endif %}
+                                <div class="card-header__title">
+                                    <i class="icon-user"></i>
+                                    {% if message.sender_id == "0" %}
+                                        <p>ادمین سایت
+                                        </p>
+                                    {% else %}
+                                        <p>{{user.fname ~ " " ~ user.lname}}
+                                            (کاربر)</p>
+                                    {% endif %}
+
+                                </div>
+                                <div class="card-header__date">{{message.update_date_persian}}</div>
+                            </div>
+                            <div class="card-body">
+                                <h4 class="msg-title">{{message.subject}}</h4>
+                                <div class="msg-body">
+                                    {{message.body}}
+                                </div>
+                                {% if message.parent_msg_id != "0" %}
+                                    <div class="msg-action">
+                                        <button class="btn btn-primary" onclick="showReplyModal('1')">پاسخ به این پیام</button>
+                                    </div>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    {% endfor %}
+    </main>
+
+    <!-- Modal -->
+    <div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="replyModalLabel">پاسخ به پیام</h5>
+                </div>
+                <div class="modal-body">
+
+                    <form action="/message/reply" method="POST">
+                        <input type="hidden" name="msg_id" id="msg_id">
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                <label for="">نام شما</label>
+                                <input class="form-control" type="text" name="fullname" value="{{user.fname ~ " " ~ user.lname}}" disabled/>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label for="">ایمیل شما</label>
+                                <input class="form-control" type="email" name="email" value="{{user.email}}" disabled/>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="">عنوان پیام</label>
+                                <input class="form-control" type="text" name="subject"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="">پیام شما</label>
+                            <textarea name="body" id="medium-editor" cols="30" rows="10"></textarea>
+                        </div>
+                        <input type="submit" class="btn btn-primary" name="submit" value="ارسال پاسخ">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">انصراف</button>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block script_below %}
+    <script src="/public/js/panel/medium-editor.min.js"></script>
+    <script>
+        let editor = new MediumEditor('#medium-editor',{
+              elementsContainer: document.getElementById('replyModal') // use your modal element here
+        });
+        function showReplyModal(msgId) {
+            document.getElementById("msg_id").value = msgId;
+            $("#replyModal").modal("show");
+        }
+    </script>
+{% endblock %}

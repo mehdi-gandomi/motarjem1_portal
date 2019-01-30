@@ -2,7 +2,7 @@
 namespace App\Models;
 
 use Core\Model;
-
+use PDO;
 class Order extends Model
 {
 
@@ -60,15 +60,28 @@ class Order extends Model
             return false;
         }
     }
-    public static function by_id($id)
+    public static function by_id($id,$with_translator_data=false,$with_orderer_data=false)
     {
         try {
-            return static::select("yg_order", "*",['id'=>$id], true);
+            $db=static::getDB();
+            if(!$with_translator_data && !$with_orderer_data){
+                $sql="SELECT * FROM `orders` WHERE order_id = :order_id";
+            }else if($with_translator_data && !$with_orderer_data){
+                $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_type,orders.translation_quality,orders.delivery_type,orders.accepted,orders.order_price,orders.delivery_days,orders.transaction_code,orders.order_date_persian,orders.accept_date_persian,orders.field_of_study,orders.order_step,orders.is_done,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id WHERE orders.order_id= :order_id ";
+            }else if($with_orderer_data && !$with_translator_data){
+                $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_type,orders.translation_quality,orders.delivery_type,orders.accepted,orders.order_price,orders.delivery_days,orders.transaction_code,orders.order_date_persian,orders.accept_date_persian,orders.field_of_study,orders.order_step,orders.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id FROM orders INNER JOIN users ON orders.orderer_id = users.user_id WHERE orders.order_id= :order_id ";
+            }else if($with_translator_data && $with_orderer_data){
+                $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_type,orders.translation_quality,orders.delivery_type,orders.accepted,orders.order_price,orders.delivery_days,orders.transaction_code,orders.order_date_persian,orders.accept_date_persian,orders.field_of_study,orders.order_step,orders.is_done,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id INNER JOIN users ON orders.orderer_id = users.user_id  WHERE orders.order_id= :order_id ";
+            }
+            $stmt=$db->prepare($sql);
+            $stmt->bindParam(":order_id",$id);
+            return $stmt->execute() ? $stmt->fetch(PDO::FETCH_ASSOC) : false;
 
         } catch (\Exeption $e) {
             return false;
         }
     }
+    
 
 
     public static function update_by_id($data,$orderId)

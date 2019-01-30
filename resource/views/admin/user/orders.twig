@@ -48,15 +48,15 @@
                     <table id="orders-table" class="table">
                         <thead>
                             <tr>
-                                <th>شماره سفارش</th>
-                                <th>تعداد صفحات</th>
-                                <th>زبان ترجمه</th>
-                                <th>کیفیت ترجمه</th>
-                                <th>زمان تحویل</th>
-                                <th>هزینه ترجمه</th>
-                                <th>وضعیت تایید</th>
-                                <th>مترجم</th>
-                                <th>عملیات</th>
+                                <th class="bg-teal-dark">شماره سفارش</th>
+                                <th class="bg-teal-dark">تعداد صفحات</th>
+                                <th class="bg-teal-dark">زبان ترجمه</th>
+                                <th class="bg-teal-dark">کیفیت ترجمه</th>
+                                <th class="bg-teal-dark">زمان تحویل</th>
+                                <th class="bg-teal-dark">هزینه ترجمه</th>
+                                <th class="bg-teal-dark">وضعیت تایید</th>
+                                <th class="bg-teal-dark">مترجم</th>
+                                <th class="bg-teal-dark">جزییات</th>
                             </tr>
                         </thead>
                         <tbody id="user-orders">
@@ -92,8 +92,8 @@
                                     <td>
                                         <a style="cursor:pointer;color:#20a8d8" onclick="showTranslatorInfo('{{ order.translator_id }}')">{{ order.translator_fname ~ " " ~ order.translator_lname }}</a >
                                     </td>
-                                    <td>
-                                        <a href="/user/order/view/{{order.order_id}}" class="btn btn-primary">مشاهده سفارش</a>
+                                    <td class="order-more-info">
+                                        <a href="/user/order/view/{{order.order_id}}" ><svg width="13px" height="23px" viewBox="0 0 50 80" xml:space="preserve"><polyline fill="none" stroke="#a9a9a9" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "/></svg></a>
                                     </td>
                                 </tr>
                             {% endfor %}

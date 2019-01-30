@@ -222,8 +222,7 @@ class UserController extends Controller
         $workingOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], ['is_done'=>0]);
         $completedOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'],['is_done'=>1]);
         $unreadMessagesCount = User::get_unread_messages_count_by_user_id($_SESSION['user_id']);
-        $lastThreeMessages = User::get_messages_by_user_id($_SESSION['user_id'], 3);
-
+        $lastThreeMessages = User::get_messages_by_id($_SESSION['user_id'],1,3);
         $this->view->render($res, "admin/user/dashboard.twig", ['orders' => $userOrders, 'completedOrdersCount' => $completedOrdersCount, 'workingOrdersCount' => $workingOrdersCount, 'unreadMessagesCount' => $unreadMessagesCount, 'lastMessages' => $lastThreeMessages]);
     }
     //get translator info and send that as json
@@ -234,6 +233,7 @@ class UserController extends Controller
         return $res->withJson($translatorData);
 
     }
+    //this function gets user orders from db and renders the page
     public function get_user_orders($req, $res, $args)
     {
         $page = $req->getQueryParam("page") ? $req->getQueryParam("page"):1;
@@ -256,6 +256,7 @@ class UserController extends Controller
         $userOrders = User::get_orders_by_user_id($_SESSION['user_id'], $page, 10, $filtering_options);
         return $this->view->render($res, "admin/user/orders.twig", ['orders' => $userOrders, 'current_page' => $page, 'orders_count' => $userOrdersCount,'completed'=>$completed,'pending'=>$pending]);
     }
+    //this function gets user orders from db and returns them as json
     public function get_user_orders_json($req, $res, $args)
     {
         $page = $req->getQueryParam("page") ? $req->getQueryParam("page"):1;
@@ -275,16 +276,64 @@ class UserController extends Controller
             'current_page'=>$page
         ));
     }
-
+    //this function renders new order page for user
     public function user_new_order_page($req,$res,$args)
     {
         $userData=User::by_id($_SESSION['user_id'],"fname,lname,phone,email");
         
-        return $this->view->render($res,"/admin/user/new-order.twig",$userData);
+        return $this->view->render($res,"admin/user/new-order.twig",$userData);
+    }
+    //this function gets order details from db and renders the page
+    public function get_order_details($req,$res,$args)
+    {
+        $orderData=\App\Models\Order::by_id($args['order_id'],true);
+        return $this->view->render($res,"admin/user/order-details.twig",$orderData);
     }
 
+    public function get_message_details($req,$res,$args)
+    {
+        \App\Models\Message::set_message_reply_as_read($args['msg_id']);
+        $messageDetails=\App\Models\Message::get_details_by_id($args['msg_id']);
+        return $this->view->render($res,"admin/user/view-message.twig",['messages'=>$messageDetails]);
+    }
+    public function get_messages_page($req,$res,$args)
+    {
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page"):1;
+        $readQS=$req->getQueryParam("read") === null ? 'unset':\explode(",",$req->getQueryParam("read"));
+        $answeredQS=$req->getQueryParam("answered") === null ? 'unset':\explode(",",$req->getQueryParam("answered"));
+        $filtering_options=[];
+        if($readQS != 'unset'){
+            $filtering_options['is_read']=$readQS;
+        }
+        if($answeredQS != 'unset'){
+            $filtering_options['is_answered']=$answeredQS;
+        }
+        
+        $userMessages=User::get_messages_by_id($_SESSION['user_id'],$page,10,$filtering_options);
+        $userMessagesCount=User::get_messages_count_by_id($_SESSION['user_id'],$filtering_options);
+        
+        return $this->view->render($res,"admin/user/messages.twig",["messages"=>$userMessages,'messages_count'=>$userMessagesCount]);
+    }
+    public function get_messages_json($req,$res,$args)
+    {
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page"):1;
+        $readQS=$req->getQueryParam("read") === null ? 'unset':\explode(",",$req->getQueryParam("read"));
+        $answeredQS=$req->getQueryParam("answered") === null ? 'unset':\explode(",",$req->getQueryParam("answered"));
+        $filtering_options=[];
+        if($readQS != 'unset'){
+            $filtering_options['is_read']=$readQS;
+        }
+        if($answeredQS != 'unset'){
+            $filtering_options['is_answered']=$answeredQS;
+        }
+        
+        $userMessages=User::get_messages_by_id($_SESSION['user_id'],$page,10,$filtering_options);
+        $userMessagesCount=User::get_messages_count_by_id($_SESSION['user_id'],$filtering_options);
+        
+        return $res->withJson(['messages'=>$userMessages,'messages_count'=>intval($userMessagesCount),'current_page'=>$page]);
+    }
     //////////////////////////////////////////////
-    // END Customer(User) ADMIN Functions
+    // END Customer(User) ADMIN Functionsخقیث
     //////////////////////////////////////////////
 
     protected function moveUploadedFile($directory, UploadedFile $uploadedFile)
