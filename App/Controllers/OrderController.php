@@ -88,7 +88,14 @@ class OrderController extends Controller
             $data = array_merge($data, $getParams);
         }
         $data=array_merge($data,array("latestPosts"=>$_SESSION["latestPosts"]));
-        $this->view->render($res, "website/order.twig", $data);
+        if(isset($_SESSION['is_user_logged_in']) || (isset($getParams['signup']) && $getParams['signup']=="false")){
+            return $this->view->render($res, "website/order.twig", $data);
+        }
+        return $res->withRedirect("/order-method");
+    }
+    public function order_method_page($req,$res,$args)
+    {
+        return $this->view->render($res,"website/order-type-choice.twig",['latestPosts'=>$_SESSION['latestPosts']]);
     }
     public function save_order_info($req, $res, $args)
     {

@@ -1,14 +1,24 @@
 {% extends "website/layout/base.twig" %}
 
+
 {% block content %}
 
-<main class="user-choice">
-
-<section class="left">
-
-</section>
-<section class="right"></section>
-
-</main>
+    
+        <h4 class="text-center mt-5 mb-5">لطفا یکی از گزینه های زیر را انتخاب کنید</h4>
+        <div class="choice-wrap">
+        <section class="right choice">
+            <h5 class="choice__title">سفارش با ثبت نام</h5>
+            <img src="/public/images/icon/add-friend.svg" alt="order with signup" class="choice__icon">
+            <p class="choice__description">می تونی به سادگی ثبت نام کنی و تو سفارشات دیگه نیاز نیست دوباره اطلاعاتت رو وارد کنی. همچنین می تونی از امکانات پنل هم استفاده کنی و از وضعیت سفارشاتی که دادی با خبر بشی.</p>
+            <a href="/user/auth" class="choice__button green is--round">ثبت نام</a>
+        </section>
+        <section class="left choice">
+            <h5 class="choice__title">سفارش بدون ثبت نام</h5>
+            <img src="/public/images/icon/remove-friend.svg" alt="order without signup" class="choice__icon">
+            <p class="choice__description">می تونی بدون ثبت نام هم سفارش بدی.ولی اگه اگه ثبت نام کنی تو سفارشای بعدی نیاز نیست دوباره اطلاعاتت رو وارد کنی !</p>
+            <a href="/order?signup=false" class="choice__button blue is--round">سفارش بدون ثبت نام</a>
+        </section>
+        </div>
+    
 
 {% endblock %}

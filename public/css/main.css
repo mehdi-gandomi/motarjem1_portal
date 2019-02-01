@@ -7541,6 +7541,7 @@ main {
   -webkit-box-flex: 1;
       -ms-flex: 1 0 auto;
           flex: 1 0 auto;
+  margin-bottom: 2rem;
 }
 
 .footer {
@@ -10503,6 +10504,104 @@ textarea.form__input {
 .form__button-icon {
   margin-right: 1rem;
   fill: currentColor;
+}
+
+.choice-wrap {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  margin-top: 4rem;
+  margin-bottom: 3rem;
+  background: #fff;
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.19), 0 2px 3px rgba(0, 0, 0, 0.23);
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.19), 0 2px 3px rgba(0, 0, 0, 0.23);
+  padding: 1rem;
+  width: 80%;
+  margin: auto;
+}
+
+.choice-wrap .choice {
+  padding: 2rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 50%;
+  -ms-flex-preferred-size: 50%;
+      flex-basis: 50%;
+}
+
+.choice-wrap .choice.right {
+  border-left: 5px solid #eee;
+}
+
+.choice-wrap .choice__title {
+  text-align: center;
+}
+
+.choice-wrap .choice__icon {
+  width: 100px;
+  height: 100px;
+  display: block;
+  margin: 1rem auto;
+}
+
+.choice-wrap .choice__description {
+  text-align: center;
+  margin: 1rem auto;
+}
+
+.choice-wrap .choice__button {
+  color: #fff;
+  background-color: transparent;
+  outline: 0;
+  -webkit-transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease;
+  padding: 0.5rem 1rem;
+  font-size: 1em;
+}
+
+.choice-wrap .choice__button:hover {
+  text-decoration: none;
+}
+
+.choice-wrap .choice__button.is--round {
+  border: 0;
+  border-radius: 20px;
+}
+
+.choice-wrap .choice__button.blue {
+  background-color: #3498db;
+}
+
+.choice-wrap .choice__button.blue:hover {
+  background-color: #217dbb;
+}
+
+.choice-wrap .choice__button.blue:active {
+  -webkit-box-shadow: inset 0 0 100px #196090;
+  box-shadow: inset 0 0 100px #196090;
+}
+
+.choice-wrap .choice__button.green {
+  background-color: #2ecc71;
+}
+
+.choice-wrap .choice__button.green:hover {
+  background-color: #25a25a;
+}
+
+.choice-wrap .choice__button.green:active {
+  -webkit-box-shadow: inset 0 0 100px #1b7943;
+  box-shadow: inset 0 0 100px #1b7943;
 }
 
 .footer {
