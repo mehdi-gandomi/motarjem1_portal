@@ -62,7 +62,6 @@ $configuration = [
 
 ];
 $c = new \Slim\Container($configuration);
-
 // Register provider
 $c['flash'] = function () {
     return new \Slim\Flash\Messages();

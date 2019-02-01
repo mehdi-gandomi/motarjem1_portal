@@ -110,7 +110,7 @@ class User extends Model
         try {
             $db = static::getDB();
             $result=false;
-            $sql="SELECT COUNT(*) AS orders_count FROM `orders` WHERE `orderer_id`= :orderer_id";
+            $sql="SELECT COUNT(*) AS orders_count FROM `orders` INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE `orderer_id`= :orderer_id ";
 
             if(is_array($filtering_Options) && count($filtering_Options)>0){
                 
@@ -121,7 +121,6 @@ class User extends Model
                 $stmt = $db->prepare($sql);
                 $result=$stmt->execute($filtering_Options);
             }else{
-                
                 $stmt = $db->prepare($sql);
                 $result=$stmt->execute(['orderer_id'=>$userId]);
             }

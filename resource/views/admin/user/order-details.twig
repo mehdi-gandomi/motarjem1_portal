@@ -12,7 +12,7 @@
     {% if delivery_type == '3' %}
         {% set delivery_type_text = "فوری" %}
     {% endif %}
-    
+
     {# END declaring variables based on db info #}
 
     <main class="main">
@@ -66,7 +66,7 @@
                             زمان تحویل
                         </div>
                         <div class="order-details__detail__value">
-                        {{delivery_type_text}}
+                            {{delivery_type_text}}
                         </div>
                     </div>
                     <div class="order-details__detail col-md-3">
@@ -74,7 +74,8 @@
                             زمان تحویل به روز
                         </div>
                         <div class="order-details__detail__value">
-                        {{delivery_days}} روز
+                            {{delivery_days}}
+                            روز
                         </div>
                     </div>
                     <div class="order-details__detail col-md-3">
@@ -82,7 +83,7 @@
                             تاریخ ثبت سفارش
                         </div>
                         <div class="order-details__detail__value">
-                        {{order_date_persian}}
+                            {{order_date_persian}}
                         </div>
                     </div>
                     <div class="order-details__detail col-md-3">
@@ -90,7 +91,7 @@
                             وضعیت تایید
                         </div>
                         <div class="order-details__detail__value">
-                        {{ order.accepted == "0" ? "تایید نشده" : "تایید شده" }}
+                            {{ order.accepted == "0" ? "تایید نشده" : "تایید شده" }}
                         </div>
                     </div>
                     <div class="order-details__detail col-md-3">
@@ -98,7 +99,7 @@
                             تاریخ تایید سفارش
                         </div>
                         <div class="order-details__detail__value">
-                        {{accept_date_persian}}
+                            {{accept_date_persian}}
                         </div>
                     </div>
                     <div class="order-details__detail col-md-3">
@@ -106,7 +107,7 @@
                             مترجم
                         </div>
                         <div class="order-details__detail__value">
-                        {{translator_fname ~ " " ~ translator_lname}}
+                            {{translator_fname ~ " " ~ translator_lname}}
                         </div>
                     </div>
                     {# <div class="order-details__detail col-md-4">
@@ -122,7 +123,8 @@
                             قیمت کل سفارش
                         </div>
                         <div class="order-details__detail__value">
-                        {{order_price}} تومان
+                            {{order_price}}
+                            تومان
                         </div>
                     </div>
                     <div class="order-details__detail col-md-3">
@@ -130,9 +132,20 @@
                             وضعیت اتمام
                         </div>
                         <div class="order-details__detail__value">
-                        {{is_done == "0" ? "تمام نشده" : "تمام شده"}}
+                            {{is_done == "0" ? "تمام نشده" : "تمام شده"}}
                         </div>
                     </div>
+                    {% if description %}
+                        <div class="order-details__detail col-md-12">
+                            <div class="order-details__detail__label">
+                                توضیحات
+                            </div>
+                            <div class="order-details__detail__value">
+                                {{description}}
+                            </div>
+                        </div>
+                    {% endif %}
+
                 </div>
 
             </div>

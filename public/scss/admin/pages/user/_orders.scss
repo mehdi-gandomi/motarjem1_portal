@@ -92,7 +92,8 @@
         margin: 0 0.5rem;
     }
 } //orders table styles
-#orders-table,#messages-table {
+#orders-table,
+#messages-table {
     margin-top: 2rem;
     tbody {
         tr:hover {
@@ -114,7 +115,6 @@
         background: #85b3be;
         color: #fff;
     }
-
 }
 
 //pagination section styles
@@ -124,4 +124,15 @@
 .order-more-info {
     cursor: pointer;
     transition: all 0.3s ease-out;
+    position: relative;
+    a {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 }

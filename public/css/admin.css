@@ -16770,15 +16770,18 @@ body {
   margin: 0 0.5rem;
 }
 
-#orders-table, #messages-table {
+#orders-table,
+#messages-table {
   margin-top: 2rem;
 }
 
-#orders-table tbody tr:hover .order-more-info, #messages-table tbody tr:hover .order-more-info {
+#orders-table tbody tr:hover .order-more-info,
+#messages-table tbody tr:hover .order-more-info {
   background: #eadede;
 }
 
-#orders-table tbody td, #messages-table tbody td {
+#orders-table tbody td,
+#messages-table tbody td {
   vertical-align: middle;
   text-align: center;
   height: 100px;
@@ -16798,6 +16801,24 @@ body {
   cursor: pointer;
   -webkit-transition: all 0.3s ease-out;
   transition: all 0.3s ease-out;
+  position: relative;
+}
+
+.order-more-info a {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  right: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .delivery-selection-wrap input[type="radio"] {
