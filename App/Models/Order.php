@@ -27,32 +27,7 @@ class Order extends Model
             return false;
         }
     }
-    public static function new_buyer($postInfo,$orderId)
-    {
-        try {
-            $buyerInfo = array(
-                'fk_order_id' => $orderId,
-                'u_name' => $postInfo['fullname'],
-                'tell' => $postInfo['phone_number'],
-                'email' => $postInfo['email'],
-                'message' => $postInfo['description'],
-            );
-            static::insert("yg_payer_info", $buyerInfo);
-            return static::get_last_inserted_id();
-        } catch (\Exeption $e) {
-            return false;
-        }
-    }
-    public static function buyer_by_order_id($id)
-    {
-        try {
 
-            return static::select("yg_payer_info", "*",['fk_order_id'=>$id], true);
-
-        } catch (\Exeption $e) {
-            return false;
-        }
-    }
     public static function by_id($id,$with_translator_data=false,$with_orderer_data=false)
     {
         try {
@@ -62,7 +37,7 @@ class Order extends Model
             }else if($with_translator_data && !$with_orderer_data){
                 $sql = "SELECT orders.order_id,orders.word_numbers,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE orders.order_id= :order_id";
             }else if($with_orderer_data && !$with_translator_data){
-                $sql = "SELECT orders.order_id,orders.word_numbers,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id FROM orders INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE orders.order_id= :order_id";
+                $sql = "SELECT orders.order_id,orders.word_numbers,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id,users.email,users.phone FROM orders INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE orders.order_id= :order_id";
             }else if($with_translator_data && $with_orderer_data){
                 $sql = "SELECT orders.order_id,orders.word_numbers,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE orders.order_id= :order_id";
             }
@@ -85,10 +60,10 @@ class Order extends Model
         }
     }
 
-    public static function update_by_id($data,$orderId)
+    public static function update_order_log($data,$orderId)
     {
         try{
-            static::update("yg_order",$data,"id='$orderId'");
+            static::update("order_logs",$data,"order_id='$orderId'");
             return true;
         }catch(\Exception $e){
             return false;

@@ -167,7 +167,7 @@ class OrderController extends Controller
         $payment->set_info(array(
             'order_id' => $orderId,
             'price' => $orderPriceRial,
-            'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['id'],
+            'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['order_id'],
         ));
         $result = $payment->pay();
     }
@@ -177,7 +177,7 @@ class OrderController extends Controller
         $payment = new Payment();
         $payment->set_gateway($gateway);
         $payment->set_info(array(
-            'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['id'],
+            'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['order_id'],
             'price' => $orderData['order_price'],
             'description' => 'خرید از وبسایت مترجم وان',
         ));
@@ -193,37 +193,38 @@ class OrderController extends Controller
             return $this->view->render($res, "website/order-successful.twig", ['status' => false,"page_title"=>"خطا در پرداخت","latestPosts"=>$_SESSION["latestPosts"]]);
         }
         $orderId = $args['order_id'];
-        $orderData = Order::by_id($orderId);
+        $orderData = Order::by_id($orderId,false,true);
         $payment = new Payment();
         $payment->set_info(['price' => $orderData['order_price']]);
         $result = $payment->validate($queryParams['Authority']);
 
         if ($result->Status > 0) {
             $refId = $result->RefID;
-            $updateResult = Order::update_by_id(array(
+            $updateResult = Order::update_order_log(array(
                 'transactionscode' => $refId,
                 'step' => 3,
             ), $orderId);
             // if (!$updateResult) {
             //     return $this->view->render($res, "order-successful.twig", ['status' => false]);
             // }
+            
             $data = array(
                 'contact_phone' => '٠٩٣٠٩٥٨٩١٢٢',
                 'contact_email' => 'Motarjem1@yahoo.com',
                 'order_id' => $orderId,
                 'ref_id' => $refId,
-                'words' => $orderData['word_number'],
-                'page_number' => $orderData['page_number'],
-                'translation_language' => $orderData['translation_lang']=="english_to_farsi" ? "انگلیسی به فارسی":"فارسی به انگلیسی",
-                'translation_quality' => $orderData['translation_kind'] == "silver" ? "نقره ای" : "طلایی",
+                'words' => $orderData['word_numbers'],
+                'page_number' => \ceil($orderData['word_numbers']/250),
+                'translation_language' => $orderData['translation_lang']=="1" ? "انگلیسی به فارسی":"فارسی به انگلیسی",
+                'translation_quality' => $orderData['translation_kind'] == "1" ? "نقره ای" : "طلایی",
                 'order_price' => $orderData['order_price'],
-                'customer_name' => $customerData['u_name'],
-                'email' => $customerData['email'],
-                'description' => $customerData['message'],
+                'customer_name' => $orderData['orderer_fname']." ".$orderData['orderer_lname'],
+                'email' => $orderData['email'],
+                'description' => $orderData['description'],
                 'success'=>true,
                 "page_title"=>"پرداخت موفق"
             );
-            $this->send_invoice_to_email($customerData['email'], $orderData, $refId);
+            $this->send_invoice_to_email($orderData['email'], $orderData, $refId);
             $data=array_merge($data,array("latestPosts"=>$_SESSION["latestPosts"]));
             return $this->view->render($res, "website/order-successful.twig", $data);
             
@@ -236,9 +237,7 @@ class OrderController extends Controller
     {
         $postFields = $req->getParsedBody();
         $orderId = $args['order_id'];
-        $orderData = Order::by_id($orderId);
-        $customerData = Order::buyer_by_order_id($orderId);
-
+        $orderData = Order::by_id($orderId,false,true);
         if ($postFields['ResCode'] == '0') {
             $payment = new Payment("mellat");
             $paymentResult = $payment->validate($postFields);
@@ -247,7 +246,7 @@ class OrderController extends Controller
                 
                 return $this->view->render($res, "website/order-successful.twig", ['status' => false, 'ref_id' => $postFields['SaleOrderId'],"page_title"=>"خطا در پرداخت","latestPosts"=>$_SESSION["latestPosts"]]);
             } else {
-                $updateResult = Order::update_by_id(array(
+                $updateResult = Order::update_order_log(array(
                     'transactionscode' => $postFields['SaleOrderId'],
                     'step' => 3,
                 ), $orderId);
@@ -256,19 +255,18 @@ class OrderController extends Controller
                     'contact_email' => 'Motarjem1@yahoo.com',
                     'order_id' => $orderId,
      -               'ref_id' => $postFields['SaleOrderId'],
-                    'words' => $orderData['word_number'],
-                    'page_number' => $orderData['page_number'],
-                    'translation_language' => $orderData['translation_lang']=="english_to_farsi" ? "انگلیسی به فارسی":"فارسی به انگلیسی",
-                    'translation_quality' => $orderData['translation_kind'] == "silver" ? "نقره ای" : "طلایی",
+                    'words' => $orderData['word_numbers'],
+                    'page_number' => \ceil($orderData['word_numbers']/250),
+                    'translation_language' => $orderData['translation_lang']=="1" ? "انگلیسی به فارسی":"فارسی به انگلیسی",
+                    'translation_quality' => $orderData['translation_kind'] == "1" ? "نقره ای" : "طلایی",
                     'order_price' => $orderData['order_price'],
-                    'customer_name' => $customerData['u_name'],
-                    'email' => $customerData['email'],
-                    'description' => $customerData['message'],
+                    'customer_name' => $orderData['orderer_fname']." ".$orderData['orderer_lname'],
+                    'email' => $orderData['email'],
+                    'description' => $orderData['description'],
                     'success'=>true,
                     "page_title"=>"پرداخت موفق"
                 );
-                $this->send_invoice_to_email("coderguy1999@gmail.com",$orderData,$postFields['SaleOrderId']);
-                // $customerData['email']
+                $this->send_invoice_to_email($orderData['email'],$orderData,$postFields['SaleOrderId']);
                 $data=array_merge($data,array("latestPosts"=>$_SESSION["latestPosts"]));
                 return $this->view->render($res, "website/order-successful.twig", $data);
                 
