@@ -4,6 +4,7 @@
 @import "components/coreui/coreui.scss";
 @import "components/pace";
 @import "components/custom";
+@import "components/avatar";
 
 //pages
 //user admin panel pages
@@ -12,4 +13,5 @@
 @import "pages/user/new-order";
 @import "pages/user/order_details";
 @import "pages/user/view-message";
+@import "pages/user/edit-profile";
 //end user admin panel pages

@@ -8,24 +8,17 @@ class Order extends Model
 
     public static function new ($postInfo) {
         try {
-            $date = jstrftime('%Y/%m/%e ,%A, %r', time() + 60);
-            $publish_date = date("Y-m-d");
-            $priceInfo = self::calculatePrice($postInfo['language'], $postInfo['type'], $postInfo['translation_quality'], $postInfo['delivery_type'], $postInfo['words']);
-            $orderInfo = array(
-                'translation_kind' => $postInfo['translation_quality'],
-                'field_of_study' => $postInfo['field_of_study'],
-                'word_number' => $postInfo['words'],
-                'translation_quality' => $priceInfo['quality'],
-                'translation_lang' => $postInfo['language'],
-                'delivery_type' => $postInfo['delivery_type'],
-                'page_number' => $priceInfo['pageNumber'],
-                'during' => $priceInfo['duration'],
-                'order_price' => $priceInfo['price'],
-                'tarikh' => $date,
-                'publish_date' => $publish_date,
-                'done_file' => $postInfo['files'],
-            );
-            static::insert("yg_order", $orderInfo);
+            unset($postInfo['csrf_value']);
+            unset($postInfo['csrf_name']);
+            unset($postInfo['email']);
+            unset($postInfo['phone_number']);
+            unset($postInfo['fullname']);
+            unset($postInfo['file']);
+            $postInfo['order_date_persian']=static::getCurrentDatePersian();
+            $priceInfo= self::calculatePrice($postInfo['translation_lang'], $postInfo['translation_kind'], $postInfo['translation_quality'], $postInfo['delivery_type'], $postInfo['word_numbers']);
+            $postInfo['order_price']=$priceInfo['price'];
+            $postInfo['delivery_days']=$priceInfo['duration'];
+            static::insert("orders", $postInfo);
             return array(
                 'priceInfo'=>$priceInfo,
                 'orderId'=>static::get_last_inserted_id()
@@ -67,11 +60,11 @@ class Order extends Model
             if(!$with_translator_data && !$with_orderer_data){
                 $sql="SELECT * FROM `orders` WHERE order_id = :order_id";
             }else if($with_translator_data && !$with_orderer_data){
-                $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_type,orders.translation_quality,orders.delivery_type,orders.accepted,orders.order_price,orders.delivery_days,orders.transaction_code,orders.order_date_persian,orders.accept_date_persian,orders.field_of_study,orders.order_step,orders.is_done,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id WHERE orders.order_id= :order_id ";
+                $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_kind,orders.translation_quality,orders.delivery_type,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE orders.order_id= :order_id";
             }else if($with_orderer_data && !$with_translator_data){
-                $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_type,orders.translation_quality,orders.delivery_type,orders.accepted,orders.order_price,orders.delivery_days,orders.transaction_code,orders.order_date_persian,orders.accept_date_persian,orders.field_of_study,orders.order_step,orders.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id FROM orders INNER JOIN users ON orders.orderer_id = users.user_id WHERE orders.order_id= :order_id ";
+                $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_kind,orders.translation_quality,orders.delivery_type,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id FROM orders INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE orders.order_id= :order_id";
             }else if($with_translator_data && $with_orderer_data){
-                $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_type,orders.translation_quality,orders.delivery_type,orders.accepted,orders.order_price,orders.delivery_days,orders.transaction_code,orders.order_date_persian,orders.accept_date_persian,orders.field_of_study,orders.order_step,orders.is_done,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id INNER JOIN users ON orders.orderer_id = users.user_id  WHERE orders.order_id= :order_id ";
+                $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_kind,orders.translation_quality,orders.delivery_type,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE orders.order_id= :order_id";
             }
             $stmt=$db->prepare($sql);
             $stmt->bindParam(":order_id",$id);
@@ -82,7 +75,15 @@ class Order extends Model
         }
     }
     
-
+    public function new_order_log($data)
+    {
+        try{
+            static::insert("order_logs",$data);
+            return true;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
 
     public static function update_by_id($data,$orderId)
     {
@@ -106,42 +107,42 @@ class Order extends Model
             $page_number = 1;
         }
 
-        if ($translate_language == "en_to_fa") {
+        if ($translate_language == "1") {
             switch ($quality) {
-                case "gold":
-                    if ($type == "common") {
+                case "10":
+                    if ($type == "1") {
                         $basePrice = 32;
 
-                    } else if ($type == "specialist") {
+                    } else if ($type == "2") {
                         $basePrice = 44;
                     }
                     break;
-                case "silver":
-                    if ($type == "common") {
+                case "5":
+                    if ($type == "1") {
                         $basePrice = 20;
 
-                    } else if ($type == "specialist") {
+                    } else if ($type == "2") {
                         $basePrice = 40;
                     }
                     break;
             }
 
-        } else if ($translate_language == "fa_to_en") {
+        } else if ($translate_language == "2") {
 
             switch ($quality) {
-                case "gold":
-                    if ($type == "common") {
+                case "10":
+                    if ($type == "1") {
                         $basePrice = 40;
 
-                    } else if ($type == "specialist") {
+                    } else if ($type == "2") {
                         $basePrice = 60;
                     }
                     break;
-                case "silver":
-                    if ($type == "common") {
+                case "5":
+                    if ($type == "1") {
                         $basePrice = 32;
 
-                    } else if ($type == "specialist") {
+                    } else if ($type == "2") {
                         $basePrice = 52;
                     }
                     break;
@@ -150,14 +151,14 @@ class Order extends Model
         }
         $finalPrice = $wordsNumber * $basePrice;
 
-        if ($delivery_type == "normal") {$coefficient = 1;
-            $baseDuration = 5;} else if ($delivery_type == "half_an_instant") {$coefficient = 1.2;
-            $baseDuration = 6;} else if ($delivery_type == "instantaneous") {$coefficient = 1.5;
+        if ($delivery_type == "1") {$coefficient = 1;
+            $baseDuration = 5;} else if ($delivery_type == "2") {$coefficient = 1.2;
+            $baseDuration = 6;} else if ($delivery_type == "3") {$coefficient = 1.5;
             $baseDuration = 8;}
         $finalPrice = $finalPrice * $coefficient;
         $durend = $page_number / $baseDuration;
         $durend = \ceil($durend);
-        if ($quality == "gold") {
+        if ($quality == "10") {
             $translationQuality = 10;
         } else {
             $translationQuality = 0;
@@ -171,5 +172,14 @@ class Order extends Model
         );
 
     }
-
+    protected static function getCurrentDatePersian()
+    {
+        $now = new \DateTime("NOW");
+        $year = $now->format("Y");
+        $month = $now->format("m");
+        $day = $now->format("d");
+        $time = $now->format("H:i");
+        $persianDate = gregorian_to_jalali($year, $month, $day);
+        return  $persianDate[0] . "/" . $persianDate[1] . "/" . $persianDate[2] . " " . $time;
+    }
 }

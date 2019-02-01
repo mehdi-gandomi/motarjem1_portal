@@ -16,6 +16,9 @@ class UserController extends Controller
     public function get_auth($req, $res, $args)
     {
         $data = $this->get_csrf_token($req);
+        if (isset($_SESSION['is_user_logged_in'])) {
+            return $res->withRedirect("/user");
+        }
         if (isset($_SESSION['login_username'])) {
             $data = array_merge($data, ["login_username" => $_SESSION['login_username']]);
             unset($_SESSION['login_username']);
@@ -219,10 +222,10 @@ class UserController extends Controller
     public function get_dashboard($req, $res, $args)
     {
         $userOrders = User::get_orders_by_user_id($_SESSION['user_id'], 1, 3);
-        $workingOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], ['is_done'=>0]);
-        $completedOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'],['is_done'=>1]);
+        $workingOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], ['is_done' => 0]);
+        $completedOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], ['is_done' => 1]);
         $unreadMessagesCount = User::get_unread_messages_count_by_user_id($_SESSION['user_id']);
-        $lastThreeMessages = User::get_messages_by_id($_SESSION['user_id'],1,3);
+        $lastThreeMessages = User::get_messages_by_id($_SESSION['user_id'], 1, 3);
         $this->view->render($res, "admin/user/dashboard.twig", ['orders' => $userOrders, 'completedOrdersCount' => $completedOrdersCount, 'workingOrdersCount' => $workingOrdersCount, 'unreadMessagesCount' => $unreadMessagesCount, 'lastMessages' => $lastThreeMessages]);
     }
     //get translator info and send that as json
@@ -236,121 +239,167 @@ class UserController extends Controller
     //this function gets user orders from db and renders the page
     public function get_user_orders($req, $res, $args)
     {
-        $page = $req->getQueryParam("page") ? $req->getQueryParam("page"):1;
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
         $pendingOrders = $req->getQueryParam("pending");
         $completedOrders = $req->getQueryParam("completed");
-        $filtering_options=[];
-        if($pendingOrders && !$completedOrders){
-            $filtering_options['is_done']=0;
-            $pending=true;
-            $completed=false;
-        }else if ($completedOrders && !$pendingOrders){
-            $filtering_options['is_done']=1;
-            $pending=false;
-            $completed=true;
-        }else{
-            $pending=true;
-            $completed=true;
+        $filtering_options = [];
+        if ($pendingOrders && !$completedOrders) {
+            $filtering_options['is_done'] = 0;
+            $pending = true;
+            $completed = false;
+        } else if ($completedOrders && !$pendingOrders) {
+            $filtering_options['is_done'] = 1;
+            $pending = false;
+            $completed = true;
+        } else {
+            $pending = true;
+            $completed = true;
         }
-        $userOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'],$filtering_options);
+        $userOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], $filtering_options);
         $userOrders = User::get_orders_by_user_id($_SESSION['user_id'], $page, 10, $filtering_options);
-        return $this->view->render($res, "admin/user/orders.twig", ['orders' => $userOrders, 'current_page' => $page, 'orders_count' => $userOrdersCount,'completed'=>$completed,'pending'=>$pending]);
+        return $this->view->render($res, "admin/user/orders.twig", ['orders' => $userOrders, 'current_page' => $page, 'orders_count' => $userOrdersCount, 'completed' => $completed, 'pending' => $pending]);
     }
     //this function gets user orders from db and returns them as json
     public function get_user_orders_json($req, $res, $args)
     {
-        $page = $req->getQueryParam("page") ? $req->getQueryParam("page"):1;
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
         $pendingOrders = $req->getQueryParam("pending");
         $completedOrders = $req->getQueryParam("completed");
-        $filtering_options=[];
-        if($pendingOrders && !$completedOrders){
-            $filtering_options['is_done']=0;
-        }else if ($completedOrders && !$pendingOrders){
-            $filtering_options['is_done']=1;
+        $filtering_options = [];
+        if ($pendingOrders && !$completedOrders) {
+            $filtering_options['is_done'] = 0;
+        } else if ($completedOrders && !$pendingOrders) {
+            $filtering_options['is_done'] = 1;
         }
-        $userOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'],$filtering_options);
+        $userOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], $filtering_options);
         $userOrders = User::get_orders_by_user_id($_SESSION['user_id'], $page, 10, $filtering_options);
         return $res->withJson(array(
-            'orders'=>$userOrders,
-            'orders_count'=>$userOrdersCount,
-            'current_page'=>$page
+            'orders' => $userOrders,
+            'orders_count' => $userOrdersCount,
+            'current_page' => $page,
         ));
     }
     //this function renders new order page for user
-    public function user_new_order_page($req,$res,$args)
+    public function user_new_order_page($req, $res, $args)
     {
-        $userData=User::by_id($_SESSION['user_id'],"fname,lname,phone,email");
-        
-        return $this->view->render($res,"admin/user/new-order.twig",$userData);
+        $userData = User::by_id($_SESSION['user_id'], "fname,lname,phone,email");
+
+        return $this->view->render($res, "admin/user/new-order.twig", $userData);
     }
     //this function gets order details from db and renders the page
-    public function get_order_details($req,$res,$args)
+    public function get_order_details($req, $res, $args)
     {
-        $orderData=\App\Models\Order::by_id($args['order_id'],true);
-        return $this->view->render($res,"admin/user/order-details.twig",$orderData);
+        $orderData = \App\Models\Order::by_id($args['order_id'], true);
+        return $this->view->render($res, "admin/user/order-details.twig", $orderData);
     }
 
-    public function get_message_details($req,$res,$args)
+    public function get_message_details($req, $res, $args)
     {
         \App\Models\Message::set_message_reply_as_read($args['msg_id']);
-        $messageDetails=\App\Models\Message::get_details_by_id($args['msg_id']);
-        return $this->view->render($res,"admin/user/view-message.twig",['messages'=>$messageDetails]);
+        $messageDetails = \App\Models\Message::get_details_by_id($args['msg_id']);
+        return $this->view->render($res, "admin/user/view-message.twig", ['messages' => $messageDetails]);
     }
-    public function get_messages_page($req,$res,$args)
+    public function get_messages_page($req, $res, $args)
     {
-        $page = $req->getQueryParam("page") ? $req->getQueryParam("page"):1;
-        $readQS=$req->getQueryParam("read") === null ? 'unset':\explode(",",$req->getQueryParam("read"));
-        $answeredQS=$req->getQueryParam("answered") === null ? 'unset':\explode(",",$req->getQueryParam("answered"));
-        $filtering_options=[];
-        if($readQS != 'unset'){
-            $filtering_options['is_read']=$readQS;
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
+        $readQS = $req->getQueryParam("read") === null ? 'unset' : \explode(",", $req->getQueryParam("read"));
+        $answeredQS = $req->getQueryParam("answered") === null ? 'unset' : \explode(",", $req->getQueryParam("answered"));
+        $filtering_options = [];
+        if ($readQS != 'unset') {
+            $filtering_options['is_read'] = $readQS;
         }
-        if($answeredQS != 'unset'){
-            $filtering_options['is_answered']=$answeredQS;
+        if ($answeredQS != 'unset') {
+            $filtering_options['is_answered'] = $answeredQS;
         }
-        
-        $userMessages=User::get_messages_by_id($_SESSION['user_id'],$page,10,$filtering_options);
-        $userMessagesCount=User::get_messages_count_by_id($_SESSION['user_id'],$filtering_options);
-        
-        return $this->view->render($res,"admin/user/messages.twig",["messages"=>$userMessages,'messages_count'=>$userMessagesCount]);
-    }
-    public function get_messages_json($req,$res,$args)
-    {
-        $page = $req->getQueryParam("page") ? $req->getQueryParam("page"):1;
-        $readQS=$req->getQueryParam("read") === null ? 'unset':\explode(",",$req->getQueryParam("read"));
-        $answeredQS=$req->getQueryParam("answered") === null ? 'unset':\explode(",",$req->getQueryParam("answered"));
-        $filtering_options=[];
-        if($readQS != 'unset'){
-            $filtering_options['is_read']=$readQS;
-        }
-        if($answeredQS != 'unset'){
-            $filtering_options['is_answered']=$answeredQS;
-        }
-        
-        $userMessages=User::get_messages_by_id($_SESSION['user_id'],$page,10,$filtering_options);
-        $userMessagesCount=User::get_messages_count_by_id($_SESSION['user_id'],$filtering_options);
-        
-        return $res->withJson(['messages'=>$userMessages,'messages_count'=>intval($userMessagesCount),'current_page'=>$page]);
-    }
 
+        $userMessages = User::get_messages_by_id($_SESSION['user_id'], $page, 10, $filtering_options);
+        $userMessagesCount = User::get_messages_count_by_id($_SESSION['user_id'], $filtering_options);
+
+        return $this->view->render($res, "admin/user/messages.twig", ["messages" => $userMessages, 'messages_count' => $userMessagesCount]);
+    }
+    public function get_messages_json($req, $res, $args)
+    {
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
+        $readQS = $req->getQueryParam("read") === null ? 'unset' : \explode(",", $req->getQueryParam("read"));
+        $answeredQS = $req->getQueryParam("answered") === null ? 'unset' : \explode(",", $req->getQueryParam("answered"));
+        $filtering_options = [];
+        if ($readQS != 'unset') {
+            $filtering_options['is_read'] = $readQS;
+        }
+        if ($answeredQS != 'unset') {
+            $filtering_options['is_answered'] = $answeredQS;
+        }
+
+        $userMessages = User::get_messages_by_id($_SESSION['user_id'], $page, 10, $filtering_options);
+        $userMessagesCount = User::get_messages_count_by_id($_SESSION['user_id'], $filtering_options);
+
+        return $res->withJson(['messages' => $userMessages, 'messages_count' => intval($userMessagesCount), 'current_page' => $page]);
+    }
 
     //this function gets message data that user sends and return a json respose if it all goes well
-    public function post_send_message($req,$res,$args)
+    public function post_send_message($req, $res, $args)
     {
-        $result=\App\Models\Message::create($_SESSION['user_id'],$req->getParsedBody());
+        $result = \App\Models\Message::create($_SESSION['user_id'], $req->getParsedBody());
         return $res->withJson([
-            'status'=>$result
-        ]);    
+            'status' => $result,
+        ]);
     }
 
     //this function gets reply message data that user sends and return a json respose if it all goes well
-    public function post_reply_message($req,$res,$args)
+    public function post_reply_message($req, $res, $args)
     {
-        
-        $result=\App\Models\Message::create_reply($_SESSION['user_id'],$req->getParsedBody());
+
+        $result = \App\Models\Message::create_reply($_SESSION['user_id'], $req->getParsedBody());
         return $res->withJson([
-            'status'=>$result
-        ]);    
+            'status' => $result,
+        ]);
+    }
+    public function edit_profile_page($req, $res, $args)
+    {
+        $tokens = $this->get_csrf_token($req);
+        $userData = User::by_id($_SESSION['user_id'], "username,email,phone,fname,lname");
+        $data = ['userData' => $userData];
+        $data = array_merge($data, $tokens);
+        return $this->view->render($res, "admin/user/edit-profile.twig", $data);
+    }
+    public function post_edit_profile($req, $res, $args)
+    {
+        $postFields = $req->getParsedBody();
+        unset($postFields['csrf_name']);
+        unset($postFields['csrf_value']);
+        if (!isset($postFields['new_password']) || $postFields['new_password'] == "") {
+            unset($postFields['new_password']);
+            unset($postFields['old_password']);
+            unset($postFields['new_password_confirm']);
+            $result=User::edit_by_id($_SESSION['user_id'], $postFields);
+            if($result){
+                $this->flash->addMessage('profileEditSuccess', "اطلاعات با موفقیت ویرایش شد");    
+            }else{
+                $this->flash->addMessage('profileEditErrors', "خطایی در ثبت اطلاعات رخ داد !");    
+            }
+        } else {
+            $oldPassword = User::by_id($_SESSION['user_id'], "password")['password'];
+            if ($oldPassword === md5(md5($postFields['old_password']))) {
+                if ($postFields['new_password'] === $postFields['new_password_confirm']) {
+                    $postFields['password']=$postFields['new_password'];
+                    unset($postFields['new_password']);
+                    unset($postFields['old_password']);
+                    unset($postFields['new_password_confirm']);
+                    $result=User::edit_by_id($_SESSION['user_id'], $postFields);
+                    if($result){
+                        $this->flash->addMessage('profileEditSuccess', "اطلاعات با موفقیت ویرایش شد");    
+                    }else{
+                        $this->flash->addMessage('profileEditErrors', "خطایی در ثبت اطلاعات رخ داد !");    
+                    }
+                }else{
+                    $this->flash->addMessage('profileEditErrors', "فیلد پسورد با فیلد تایید پسورد مطابقت ندارد !");    
+                }
+            } else {
+                $this->flash->addMessage('profileEditErrors', "پسورد قبلی اشتباه می باشد !");
+            }
+        }
+        return $res->withRedirect("/user/edit-profile");
+
     }
     //////////////////////////////////////////////
     // END Customer(User) ADMIN Functionsخقیث

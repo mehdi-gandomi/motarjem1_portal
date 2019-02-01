@@ -163,7 +163,7 @@ addListener(".prev-step", "click", function (e) {
 
 addListener("#type", "change", function (e) {
   let kind = e.target.value;
-  if (kind == "specialist") {
+  if (kind == "2") {
     select(".field_of_study").classList.add("show");
   } else {
     select(".field_of_study").classList.remove("show");
@@ -234,6 +234,7 @@ We want to preview images, so we need to register the Image Preview plugin
         url: 'upload-order-file',
         onload: function (response) {
           uploadedFiles.push(response);
+          console.log(response);
           select("#uploaded-files").value = uploadedFiles.join(",");
           return response.key;
         },

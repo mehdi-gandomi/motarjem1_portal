@@ -76,7 +76,7 @@ $app->group('/', function ($app) use ($container) {
     $app->post('order-completed', "App\Controllers\OrderController:save_order_info")->add($container->get('csrf'));
     $app->post('payment-success/{order_id}', "App\Controllers\OrderController:payment_result_mellat");
 
-})->add($wpPostsMV);
+});
 
 //these routes dont get affected by wpPosts middleware
 $app->get('/employment', "App\Controllers\TranslatorController:translator_get_signup")->add($container->get('csrf'));

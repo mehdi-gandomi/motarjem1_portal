@@ -64,7 +64,8 @@ class User extends Model
             $userData['register_date_persian'] = $persianDate[0] . "/" . $persianDate[1] . "/" . $persianDate[2] . " " . $time;
             $userData['password'] = \md5(\md5($userData['password']));
             $userData['is_active'] = 0;
-            return static::insert("users", $userData);
+            static::insert("users", $userData);
+            return static::get_last_inserted_id();
 
         } catch (\Exception $e) {
             var_dump($e);
@@ -80,7 +81,7 @@ class User extends Model
             $db = static::getDB();
             $result=false;
             $page_limit = ($page - 1) * $amount;
-            $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_type,orders.translation_quality,orders.delivery_type,orders.accepted,orders.order_price,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id WHERE orders.orderer_id= :orderer_id ";
+            $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_kind,orders.translation_quality,orders.delivery_type,order_logs.is_accepted,orders.order_price,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE orders.orderer_id=:orderer_id";
             
             if(is_array($filtering_Options) && count($filtering_Options)>0){
                 
@@ -189,6 +190,20 @@ class User extends Model
             $stmt = $db->prepare($sql);
             return $stmt->execute(['sender_id'=>$userId]) ? $stmt->fetch(PDO::FETCH_ASSOC)['messages_count'] : false;
         }catch(\Exception $e){
+            return false;
+        }
+    }
+    //this function lets you update user data by user id
+    public static function edit_by_id($userId,$userData)
+    {
+        try{
+            if(isset($userData['password'])){
+                $userData['password'] = \md5(\md5($userData['password']));                
+            }
+            static::update("users",$userData,"`user_id` = '$userId'");
+            return true;
+        }catch(\Exception $e){
+            
             return false;
         }
     }

@@ -11,23 +11,23 @@ class OrderController extends Controller
 {
     private $combos = array(
         'lang_type' => array(
-            'en_to_fa' => "انگلیسی - فارسی",
-            'fa_to_en' => "فارسی - انگلیسی",
+            '1' => "انگلیسی - فارسی",
+            '2' => "فارسی - انگلیسی",
         ),
         'translate_type' => array(
-            'common' => "عمومی",
-            'specialist' => 'تخصصی',
+            '1' => "عمومی",
+            '2' => 'تخصصی',
         ),
         'delivery_types' => array(
-            'normal' => array(
+            '1' => array(
                 'icon' => 'walker.svg',
                 'name' => 'عادی',
             ),
-            'half_an_instant' => array(
+            '2' => array(
                 'icon' => 'running-man.svg',
                 'name' => 'نیمه فوری',
             ),
-            'instantaneous' => array(
+            '3' => array(
                 'icon' => 'rocket-launch.svg',
                 'name' => 'فوری',
             ),
@@ -93,11 +93,30 @@ class OrderController extends Controller
     public function save_order_info($req, $res, $args)
     {
         $postInfo = $req->getParsedBody();
-        $orderData = Order::new ($postInfo);
+        if(!isset($_SESSION['is_user_logged_in'])){
+            $user_id=\App\Models\User::create([
+                'username'=>$postInfo['email'],
+                'password'=>$postInfo['phone_number'],
+                'fname'=>explode(" ",$postInfo['fullname'])[0],
+                'lname'=>explode(" ",$postInfo['fullname'])[1],
+                'email'=>$postInfo['email'],
+                'phone'=>$postInfo['phone_number']
+            ]);
+            $postInfo['orderer_id']=$user_id;
+        }else{
+            $postInfo['orderer_id']=$_SESSION['user_id'];
+        }
+        //TODO create order logs and insert it to database and of course i have to change user panel as well
+        // creating a new order
+        $orderData = Order::new($postInfo);
         $priceInfo = $orderData['priceInfo'];
         $orderId = $orderData['orderId'];
-        $buy_id = Order::new_buyer($postInfo, $orderId);
-        if ($orderId && $buy_id) {
+        //creating order logs
+        $logResult=Order::new_order_log([
+            'order_id'=>$orderId,
+            'order_step'=>1
+        ]);
+        if ($orderId && $logResult) {
             $tokenArray = $this->get_csrf_token($req);
             $data = array(
                 'success' => true,
@@ -350,10 +369,16 @@ class OrderController extends Controller
     {
         $uploadedFiles = $req->getUploadedFiles();
         $uploadedFile = $uploadedFiles['file'];
-        $directory = dirname(dirname(__DIR__)) . '/up_project_files';
+        $directory = dirname(dirname(__DIR__)) . '/public/uploads/order';
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
-            $filename = $this->moveUploadedFile($directory, $uploadedFile);
-            $res->write($filename);
+            try{
+                $filename = $this->moveUploadedFile($directory, $uploadedFile);
+                $res->write($filename);
+            }catch(\Exception $e){
+                $res->write("error while uploading file "+$e->geetMessage())->withStatus(500);
+            }
+        }else{
+            $res->write($uploadedFile->getError())->withStatus(500);
         }
     }
 
