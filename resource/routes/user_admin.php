@@ -39,5 +39,7 @@ $app->group('/user', function ($app) use ($container) {
     $app->post("/message/reply","App\Controllers\UserController:post_reply_message");
     $app->get("/edit-profile","App\Controllers\UserController:edit_profile_page")->add($container->get('csrf'));
     $app->post("/edit-profile","App\Controllers\UserController:post_edit_profile")->add($container->get('csrf'));
+    $app->post("/edit-profile/upload-avatar","App\Controllers\UserController:upload_avatar");
+    
 })->add($authMV);
 

@@ -5,7 +5,7 @@ use Core\Config;
 use Core\Controller;
 use App\Dependencies\Pay\Payment;
 use App\Models\Order;
-use Slim\Http\UploadedFile;
+
 
 class OrderController extends Controller
 {
@@ -380,20 +380,12 @@ class OrderController extends Controller
                 $filename = $this->moveUploadedFile($directory, $uploadedFile);
                 $res->write($filename);
             }catch(\Exception $e){
-                $res->write("error while uploading file "+$e->geetMessage())->withStatus(500);
+                $res->write("error while uploading file "+$e->gestMessage())->withStatus(500);
             }
         }else{
             $res->write($uploadedFile->getError())->withStatus(500);
         }
     }
 
-    protected function moveUploadedFile($directory, UploadedFile $uploadedFile)
-    {
-        $extension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
-        $basename = bin2hex(random_bytes(8)); // see http://php.net/manual/en/function.random-bytes.php
-        $filename = sprintf('%s.%0.8s', $basename, $extension);
-        $uploadedFile->moveTo($directory . DIRECTORY_SEPARATOR . $filename);
 
-        return $filename;
-    }
 }

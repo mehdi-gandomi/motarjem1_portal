@@ -4,7 +4,6 @@ namespace App\Controllers;
 use App\Models\User;
 use Core\Config;
 use Core\Controller;
-use Slim\Http\UploadedFile;
 
 class UserController extends Controller
 {
@@ -88,6 +87,9 @@ class UserController extends Controller
                 return $res->withRedirect("/user/auth");
             }
             User::create($postFields);
+            $userData = User::by_username($postFields['username']);
+            $verifyLink = $this->createVerifyLink($userData);
+            $this->send_user_info_to_email($postFields,$verifyLink);
             $this->flash->addMessage("userSignUpLogs", "ثبت نام شما با موفقت انجام شد ! لینک فعال سازی به ایمیل شما ارسال شد.<a style='cursor:pointer;color:#5842d4' onclick='sendVerificationCode(\"coderguy\",\".signupLogs\")'>ارسال مجدد</a>");
             return $res->withRedirect("/user/auth");
         }
@@ -142,10 +144,10 @@ class UserController extends Controller
         if ($token === $hash) {
             $userData = User::by_username($username);
             $verifyLink = $this->createVerifyLink($userData);
+            $this->send_user_info_to_email($postFields,$verifyLink);
             return $res->withJson([
                 "status" => true,
-                "message" => "verify email sent to email",
-                "link" => $verifyLink,
+                "message" => "verify email sent to email"
             ]);
         } else {
             return $res->withJson([
@@ -371,28 +373,28 @@ class UserController extends Controller
             unset($postFields['new_password']);
             unset($postFields['old_password']);
             unset($postFields['new_password_confirm']);
-            $result=User::edit_by_id($_SESSION['user_id'], $postFields);
-            if($result){
-                $this->flash->addMessage('profileEditSuccess', "اطلاعات با موفقیت ویرایش شد");    
-            }else{
-                $this->flash->addMessage('profileEditErrors', "خطایی در ثبت اطلاعات رخ داد !");    
+            $result = User::edit_by_id($_SESSION['user_id'], $postFields);
+            if ($result) {
+                $this->flash->addMessage('profileEditSuccess', "اطلاعات با موفقیت ویرایش شد");
+            } else {
+                $this->flash->addMessage('profileEditErrors', "خطایی در ثبت اطلاعات رخ داد !");
             }
         } else {
             $oldPassword = User::by_id($_SESSION['user_id'], "password")['password'];
             if ($oldPassword === md5(md5($postFields['old_password']))) {
                 if ($postFields['new_password'] === $postFields['new_password_confirm']) {
-                    $postFields['password']=$postFields['new_password'];
+                    $postFields['password'] = $postFields['new_password'];
                     unset($postFields['new_password']);
                     unset($postFields['old_password']);
                     unset($postFields['new_password_confirm']);
-                    $result=User::edit_by_id($_SESSION['user_id'], $postFields);
-                    if($result){
-                        $this->flash->addMessage('profileEditSuccess', "اطلاعات با موفقیت ویرایش شد");    
-                    }else{
-                        $this->flash->addMessage('profileEditErrors', "خطایی در ثبت اطلاعات رخ داد !");    
+                    $result = User::edit_by_id($_SESSION['user_id'], $postFields);
+                    if ($result) {
+                        $this->flash->addMessage('profileEditSuccess', "اطلاعات با موفقیت ویرایش شد");
+                    } else {
+                        $this->flash->addMessage('profileEditErrors', "خطایی در ثبت اطلاعات رخ داد !");
                     }
-                }else{
-                    $this->flash->addMessage('profileEditErrors', "فیلد پسورد با فیلد تایید پسورد مطابقت ندارد !");    
+                } else {
+                    $this->flash->addMessage('profileEditErrors', "فیلد پسورد با فیلد تایید پسورد مطابقت ندارد !");
                 }
             } else {
                 $this->flash->addMessage('profileEditErrors', "پسورد قبلی اشتباه می باشد !");
@@ -401,21 +403,29 @@ class UserController extends Controller
         return $res->withRedirect("/user/edit-profile");
 
     }
+
+    public function upload_avatar($req, $res, $args)
+    {
+        $uploadedFiles = $req->getUploadedFiles();
+        $uploadedFile = $uploadedFiles['file'];
+        $directory = dirname(dirname(__DIR__)) . '/public/uploads/avatars/user';
+        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+            try {
+                $filename = $this->moveUploadedFile($directory, $uploadedFile);
+                $_SESSION['avatar'] = $filename;
+                return $res->withJson(['filename' => $filename]);
+            } catch (\Exception $e) {
+                $res->write("error while uploading file "+$e->getMessage())->withStatus(500);
+            }
+        } else {
+            $res->write($uploadedFile->getError())->withStatus(500);
+        }
+    }
+
     //////////////////////////////////////////////
     // END Customer(User) ADMIN Functionsخقیث
     //////////////////////////////////////////////
-
-    protected function moveUploadedFile($directory, UploadedFile $uploadedFile)
-    {
-        $extension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
-        $basename = bin2hex(random_bytes(8)); // see http://php.net/manual/en/function.random-bytes.php
-        $filename = sprintf('%s.%0.8s', $basename, $extension);
-        $uploadedFile->moveTo($directory . DIRECTORY_SEPARATOR . $filename);
-
-        return $filename;
-    }
-
-    protected function send_user_info_to_email($userInfo, $u_name, $email)
+    protected function send_user_info_to_email($userInfo, $verifyLink)
     {
 
         $from = "support@motarjem1.com";
@@ -427,40 +437,93 @@ class UserController extends Controller
             return false;
         }
         $subject = "ثبت نام در مترجم وان";
-        $baseUrl = Config::BASE_URL;
+        $userFname=$postFields['fname'];
         $text = "
-                <html>
-                    <head>
-                        <style>
-                            * {
-                                direction: rtl;
-                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                                text-align: center;
-                            }
+            <body style='margin:0;padding:0;font-family: Vazir, Tahoma, DejaVu Sans, helvetica, arial, freesans, sans-serif;'>
+            <link type='text/css' rel='stylesheet' href='https://cdn.rawgit.com/rastikerdar/vazir-font/v19.1.0/dist/font-face.css'>
+            <div style='width:100%!important;min-width:300px;height:100%;margin:0;padding:0;line-height:1.5;color:#333;background-color:#f2f2f2'>
+            <table style='width:100%;padding:30px 0 0 0'>
+                <tbody>
+                    <tr>
+                        <td align='center'>
+                            <img src='http://motarjem1.com/public/images/logo.png' class='CToWUd' />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table style='padding:5px;width:100%;max-width:620px;margin:0 auto;color:#515151'>
+                <tbody>
+                    <tr>
+                        <td>
+                            <table style='width:100%;margin:0;padding:0 0 20px'>
+                                <tbody>
+                                    <tr style='margin:0;padding:0'>
+                                        <td style='margin:0;padding:0'>
+                                            <table style='width:100%;max-width:620px;padding:30px;margin:20px auto 5px;background-color:#fff;border-radius:4px;text-align:right'>
+                                                <tbody>
+                                                    <tr style='width:100%'>
+                                                        <td style='width:100%'>
+                                                            <h2 style='font-size:25px;line-height:1.3;font-weight:600;color:#757575;width:100%;margin:0 auto 5px;'>
+                                                                $userFname عزیز
+                                                            </h2>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            به وبسایت مترجم وان خوش آمدید ! از ثبت نام شما متشکریم
+                                                            <br />
+                                                            لطفا برای تایید حساب کاربری تان روی لینک زیر کلیک کنید
+                                                            <div style='text-align:center;margin-top:28px;margin-bottom:28px'>
+                                                                <a style='font-size:16px;font-weight:400;display:inline-block;padding:0 16px;border:none;border-radius:2px;text-transform:uppercase;text-decoration:none;text-align:center;vertical-align:baseline;letter-spacing:0;opacity:1;outline:none!important;color:#ffffff;background-color:#03a9f4;line-height:40px;margin:10px 0' href='$verify_link' target='_blank' data-saferedirecturl='$verify_link'>تایید حساب کاربری</a>
+                                                            </div>
+                                                            با تشکر, وبسایت مترجم وان
+                                                        </td>
+                                                    </tr>
+                                                 </tbody>
+                                            </table>
+                                            </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    </td>
+                                </tr>
+                        </tbody>
+                    </table>
+                    <table style='width:100%'>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <table style='width:100%;margin:10px 0;padding:0'>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <p style='text-align:center;color:#666;font-size:12px;font-weight:400;display:block;width:100%;margin:0;padding:0;direction:rtl'>
+                                                طراحی توسط
+                                                <a href='https://coderguy.ir' target='_blank' data-saferedirecturl='https://coderguy.ir'>coderguy</a>
+                                            </p>
 
-                            p.success {
-                                font-weight: bold;
-                                color: #139213;
-                                font-size: 1.2rem;
-                            }
-                        </style>
-                    </head>
+                                            <p style='text-align:center;color:#666;font-size:12px;font-weight:400;display:block;width:100%;margin:0;padding:0'>
+                                                میدان انقلاب ابتدای کارگر شمالی کوچه رستم پ ۲۱ و ۸
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                        </table>
+                            </td>
+                        </tr>
+                        </tbody>
+                </table>
 
-                    <body>
-                        <h3>سلام $u_name عزیز</h3>
-                        <div>
-                            <strong>نام کاربری : </strong>
-                            <span>$userInfo[username]</span>
-                        </div>
-                        <div>
-                            <strong>گذرواژه : </strong>
-                            <span>$userInfo[password]</span>
-                        </div>
-                        <p class='success'>با تشکر از ثبت نام شما . می توانید از <a href='$baseUrl'>این لینک</a> وارد شوید</p>
+                    <img
+                    src='https://ci6.googleusercontent.com/proxy/x1hIVdOPqG1u7nFBLvrvow3A7rXWw6G0YolfgKSfhAJWSkkBNfGon9YTINQ6I2SyfGqYw7up59T-NdDUxBBgz4E14G8p4q4NoP93Weg4bUJvvy66sNJX4EpSMh9hXn7LowGlNVamYUA=s0-d-e1-ft#https://mandrillapp.com/track/open.php?u=30121732&amp;id=ee001c7acb1741cfa420738ecd825d99'
+                    height='1'
+                    width='1'
+                    class='CToWUd'
+                    />
+                </div>
+                </body>
 
-                    </body>
 
-        </html>
         ";
         mail($email, $subject, $text, $headers);
 

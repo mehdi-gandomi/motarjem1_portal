@@ -17159,6 +17159,20 @@ body {
   color: #7b7b7b;
 }
 
+.title-section {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.title-section i {
+  font-size: 1.1rem;
+  margin-left: 0.4rem;
+}
+
 .view-message .card-header {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -17184,6 +17198,21 @@ body {
 }
 
 .edit-profile__info {
-  margin-top: 2.3rem;
+  padding: 1rem;
+  border-top: 2px solid #abdcf7;
+  border-bottom: 2px solid #abdcf7;
+  border-right: 2px solid #abdcf7;
+}
+
+.change-avatar-wrap {
+  background: #5c9ec3;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  color: #fff;
+  padding: 1rem;
+}
+
+.change-password-wrap input {
+  direction: ltr;
 }
 /*# sourceMappingURL=admin.css.map */

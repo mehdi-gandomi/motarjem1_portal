@@ -1,32 +1,50 @@
 {% extends "admin/layout/user.twig" %}
-
+{% block style_below %}
+<style media="print">
+.title-section{
+    display:block;
+}
+.title-section h3{
+    text-align:center;
+}
+.title-section .btn{
+    display:none;
+}
+</style>
+{% endblock %}
 {% block content %}
-    {# START declaring variables based on db info #}
+    {# START declaring
+variables based on db info #}
     {% if delivery_type == '1' %}
-        {% set delivery_type_text = "معمولی" %}
+        {% set
+        delivery_type_text = "معمولی" %}
     {% endif %}
     {% if delivery_type == '2' %}
-        {% set
-        delivery_type_text = "نیمه فوری" %}
+        {% set delivery_type_text = "نیمه فوری" %}
     {% endif %}
     {% if delivery_type == '3' %}
         {% set delivery_type_text = "فوری" %}
     {% endif %}
-
-    {# END declaring variables based on db info #}
+    {# END declaring variables
+based on db info #}
 
     <main class="main">
-
         <div class="card">
             <div class="card-body">
-                <h3 class="mb-5 mt-3 text-center">جزییات سفارش</h3>
+                <div class="title-section mb-5 mt-3 ">
+                    <h3 class="text-center">جزییات سفارش</h3>
+                    <button class="btn btn-success" onclick="window.print()">
+                        <i class="icon-printer"></i>
+                        پرینت
+                    </button>
+                </div>
                 <div class="order-details row">
                     <div class="order-details__detail col-md-2">
                         <div class="order-details__detail__label">
                             شماره سفارش
                         </div>
                         <div class="order-details__detail__value">
-                            {{order_id}}
+                            {{ order_id }}
                         </div>
                     </div>
                     <div class="order-details__detail col-md-3">
@@ -34,7 +52,7 @@
                             شماره تراکنش
                         </div>
                         <div class="order-details__detail__value">
-                            {{transaction_code}}
+                            {{ transaction_code }}
                         </div>
                     </div>
                     <div class="order-details__detail col-md-2">
@@ -42,7 +60,7 @@
                             تعداد صفحات
                         </div>
                         <div class="order-details__detail__value">
-                            {{word_numbers / 250}}
+                            {{ word_numbers / 250 }}
                         </div>
                     </div>
                     <div class="order-details__detail col-md-3">
@@ -50,7 +68,9 @@
                             زبان ترجمه
                         </div>
                         <div class="order-details__detail__value">
-                            {{translation_type == "1" ? "انگلیسی به فارسی" : "فارسی به انگلیسی"}}
+                            {{
+              translation_type == "1" ? "انگلیسی به فارسی" : "فارسی به انگلیسی"
+            }}
                         </div>
                     </div>
                     <div class="order-details__detail col-md-2">
@@ -66,7 +86,7 @@
                             زمان تحویل
                         </div>
                         <div class="order-details__detail__value">
-                            {{delivery_type_text}}
+                            {{ delivery_type_text }}
                         </div>
                     </div>
                     <div class="order-details__detail col-md-3">
@@ -74,7 +94,7 @@
                             زمان تحویل به روز
                         </div>
                         <div class="order-details__detail__value">
-                            {{delivery_days}}
+                            {{ delivery_days }}
                             روز
                         </div>
                     </div>
@@ -83,7 +103,7 @@
                             تاریخ ثبت سفارش
                         </div>
                         <div class="order-details__detail__value">
-                            {{order_date_persian}}
+                            {{ order_date_persian }}
                         </div>
                     </div>
                     <div class="order-details__detail col-md-3">
@@ -99,7 +119,7 @@
                             تاریخ تایید سفارش
                         </div>
                         <div class="order-details__detail__value">
-                            {{accept_date_persian}}
+                            {{ accept_date_persian }}
                         </div>
                     </div>
                     <div class="order-details__detail col-md-3">
@@ -110,20 +130,20 @@
                             {{translator_fname ~ " " ~ translator_lname}}
                         </div>
                     </div>
-                    {# <div class="order-details__detail col-md-4">
-                        <div class="order-details__detail__label">
-                            مرحله سفارش
-                        </div>
-                        <div class="order-details__detail__value">
-                        
-                        </div>
-                    </div> #}
+                    {#
+        <div class="order-details__detail col-md-4">
+          <div class="order-details__detail__label">
+            مرحله سفارش
+          </div>
+          <div class="order-details__detail__value"></div>
+        </div>
+        #}
                     <div class="order-details__detail col-md-3">
                         <div class="order-details__detail__label">
                             قیمت کل سفارش
                         </div>
                         <div class="order-details__detail__value">
-                            {{order_price}}
+                            {{ order_price }}
                             تومان
                         </div>
                     </div>
@@ -132,7 +152,7 @@
                             وضعیت اتمام
                         </div>
                         <div class="order-details__detail__value">
-                            {{is_done == "0" ? "تمام نشده" : "تمام شده"}}
+                            {{ is_done == "0" ? "تمام نشده" : "تمام شده" }}
                         </div>
                     </div>
                     {% if description %}
@@ -141,16 +161,13 @@
                                 توضیحات
                             </div>
                             <div class="order-details__detail__value">
-                                {{description}}
+                                {{ description }}
                             </div>
                         </div>
                     {% endif %}
-
                 </div>
-
             </div>
         </div>
-
     </main>
 
 {% endblock %}

@@ -1,5 +1,22 @@
 .edit-profile{
+
     &__info{
-        margin-top: 2.3rem;
+        padding: 1rem;
+        border-top: 2px solid #abdcf7;
+        border-bottom: 2px solid #abdcf7;
+        border-right: 2px solid #abdcf7;
+    }
+}
+.change-avatar-wrap{
+    background: #5c9ec3;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    color: #fff;
+    padding: 1rem;
+}
+.change-password-wrap{
+ 
+    input{
+        direction: ltr;
     }
 }

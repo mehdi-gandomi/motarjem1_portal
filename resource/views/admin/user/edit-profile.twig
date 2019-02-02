@@ -8,10 +8,11 @@
                 <form class="row" action="/user/edit-profile" method="post">
                     <input type="hidden" name="csrf_name" value="{{ csrf_name }}"/>
                     <input type="hidden" name="csrf_value" value="{{ csrf_value }}"/>
+                    <input type="hidden" name="avatar" id="user-avatar-input" />
                     <div class="col-12">
-                        <h4 class="text-center mt-4">ویرایش اطلاعات پروفابل</h4>
+                        <h4 class="text-center mt-4 mb-4">ویرایش اطلاعات پروفابل</h4>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 change-avatar-wrap">
                         <div class="avatar-upload edit-profile__avatar">
                             <div class="avatar-edit">
                                 <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg"/>
@@ -30,9 +31,10 @@
                             <input type="text" id="lname" name="lname" class="form-control" value="{{userData.lname}}">
                         </div>
                     </div>
-                    <div class="edit-profile__info col-md-9 row">
+                    <div class="edit-profile__info col-md-9 ">
 
-                        <div class="form-group col-md-3">
+                        <div class="row common-info">
+                            <div class="form-group col-md-3">
                             <label for="username">نام کاربری</label>
                             <input type="text" id="username" name="username" class="form-control" value="{{userData.username}}">
                         </div>
@@ -44,7 +46,8 @@
                             <label for="phone">تلفن همراه</label>
                             <input type="text" id="phone" name="phone" class="form-control" value="{{userData.phone}}">
                         </div>
-                        <div class="col-12 mt-4">
+                        </div>
+                        <div class="col-12 mt-4 change-password-wrap">
                             <h6>تغییر پسورد</h6>
                             <hr>
                             <div class="row">
@@ -62,7 +65,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="newPasswordConfirm">پسورد قبلی</label>
+                                        <label for="newPasswordConfirm">تکرار پسورد جدید</label>
                                         <input class="form-control" type="password" name="new_password_confirm" id="newPasswordConfirm">
                                     </div>
                                 </div>
@@ -74,12 +77,12 @@
                         <div class="col-md-5">
                             {% for error in flash("profileEditErrors") %}
                                 <div class="alert alert-danger text-center">
-                                {{error}}
+                                    {{error}}
                                 </div>
                             {% endfor %}
                             {% for success in flash("profileEditSuccess") %}
                                 <div class="alert alert-success text-center">
-                                {{success}}
+                                    {{success}}
                                 </div>
                             {% endfor %}
                         </div>
@@ -93,6 +96,26 @@
 {% endblock %}
 {% block script_below %}
     <script>
+        function sendAjax(file) {
+            let formData = new FormData();
+            formData.append("file", file, file.name);
+            $.ajax({
+                type: "POST",
+                url:"/user/edit-profile/upload-avatar",
+                async: true,
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                timeout: 60000,
+                success:function(data,status){
+                    console.log(data);
+                    if(status){
+                        $("#user-avatar-input").val(data.filename);
+                    }
+                }
+            })
+        }
         function readURL(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
@@ -102,11 +125,12 @@
                     $("#imagePreview").fadeIn(650);
                 };
                 reader.readAsDataURL(input.files[0]);
-                //TODO send file as ajax to server and save it to an input to be sent to server to save in db
+
             }
         }
         $("#imageUpload").change(function () {
             readURL(this);
+            sendAjax(this.files[0]);
         });
     </script>
 {% endblock %}
