@@ -2,7 +2,7 @@
 namespace Core;
 use PDO;
 use Core\Config;
-abstract class Model
+class Model
 {
     private static $db;
     public static function prepare_input($input){

@@ -17,6 +17,17 @@ class User extends Model
         }
 
     }
+    public static function by_email($email, $fields = "*")
+    {
+        try {
+            return static::select("users", $fields, ['email' => $email], true);
+
+        } catch (\Exception $e) {
+            return false;
+
+        }
+
+    }
     public static function by_id($userId, $fields = "*")
     {
         try {
@@ -203,6 +214,18 @@ class User extends Model
             return true;
         }catch(\Exception $e){
             
+            return false;
+        }
+    }
+    //change the password for reset password page
+    public static function change_password($username,$password)
+    {
+        try{
+            static::update("users",[
+                'password'=>\md5(\md5($password))
+            ],"username = '$username'");
+            return true;
+        }catch(\Exception $e){
             return false;
         }
     }
