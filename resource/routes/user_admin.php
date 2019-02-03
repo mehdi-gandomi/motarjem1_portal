@@ -1,5 +1,6 @@
 <?php
-
+use Slim\Http\Request;
+use Slim\Http\Response;
 $container = $app->getContainer();
 
 $authMV = function ($req, $res, $next) use ($container) {
@@ -22,8 +23,10 @@ $app->post('/user/signup', "App\Controllers\UserController:post_signup")->add($c
 $app->get('/user/logout', "App\Controllers\UserController:logout");
 $app->post('/user/verify/{username}', "App\Controllers\UserController:send_verification_email");
 $app->get('/user/confirm', "App\Controllers\UserController:verify_email");
-
-
+$app->get("/user/forgot-password",function (Request $request, Response $response, array $args) {
+    $this->view->render($response, "website/forgot_password.twig");
+});
+$app->post('/user/forget-password', "App\Controllers\UserController:create_forget_password_link");
 //user admin routes
 $app->group('/user', function ($app) use ($container) {
     $app->get('', "App\Controllers\UserController:get_dashboard");
@@ -40,6 +43,5 @@ $app->group('/user', function ($app) use ($container) {
     $app->get("/edit-profile","App\Controllers\UserController:edit_profile_page")->add($container->get('csrf'));
     $app->post("/edit-profile","App\Controllers\UserController:post_edit_profile")->add($container->get('csrf'));
     $app->post("/edit-profile/upload-avatar","App\Controllers\UserController:upload_avatar");
-    
 })->add($authMV);
 
