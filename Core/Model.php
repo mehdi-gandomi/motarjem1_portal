@@ -29,7 +29,6 @@ class Model
         $arrayKeys=array_keys($data);
         $sql="INSERT INTO $tbl_name (";
         $sql.=implode(",",$arrayKeys).")"." VALUES(:".implode(",:",$arrayKeys).")";
-        var_dump($sql);
         $stmt=$db->prepare($sql);
         return $stmt->execute($data);
     }
@@ -52,8 +51,9 @@ class Model
                     $whereString.="`$key`= :$key";
                 }
             }
+            $sql.=$whereString;
         }
-        $sql.=$whereString;
+        
         
         $stmt=$db->prepare($sql);
         foreach($where as $key=>$value){

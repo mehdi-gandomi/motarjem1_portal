@@ -1,0 +1,57 @@
+[04-Feb-2019 11:26:04 UTC] PHP Fatal error:  Uncaught Error: Class 'CurlRequest' not found in /home2/motarje6/public_html/automation/index.php:9
+Stack trace:
+#0 /home2/motarje6/public_html/automation/index.php(51): wpPosts()
+#1 {main}
+  thrown in /home2/motarje6/public_html/automation/index.php on line 9
+[05-Feb-2019 06:40:07 UTC] PHP Fatal error:  Uncaught Error: Class 'CurlRequest' not found in /home2/motarje6/public_html/automation/index.php:10
+Stack trace:
+#0 /home2/motarje6/public_html/automation/index.php(52): wpPosts()
+#1 {main}
+  thrown in /home2/motarje6/public_html/automation/index.php on line 10
+[05-Feb-2019 06:40:36 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function gregorian_to_jalali() in /home2/motarje6/public_html/automation/index.php:22
+Stack trace:
+#0 /home2/motarje6/public_html/automation/index.php(52): wpPosts()
+#1 {main}
+  thrown in /home2/motarje6/public_html/automation/index.php on line 22
+[05-Feb-2019 06:47:39 UTC] PHP Fatal error:  Uncaught Error: Class 'Model' not found in /home2/motarje6/public_html/automation/index.php:56
+Stack trace:
+#0 {main}
+  thrown in /home2/motarje6/public_html/automation/index.php on line 56
+[05-Feb-2019 06:49:09 UTC] PHP Fatal error:  Uncaught Error: Class 'Core\Config' not found in /home2/motarje6/public_html/Core/Model.php:14
+Stack trace:
+#0 /home2/motarje6/public_html/automation/index.php(57): Core\Model::getDB()
+#1 {main}
+  thrown in /home2/motarje6/public_html/Core/Model.php on line 14
+[05-Feb-2019 06:49:47 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'date' in 'field list' in /home2/motarje6/public_html/Core/Model.php:34
+Stack trace:
+#0 /home2/motarje6/public_html/Core/Model.php(34): PDOStatement->execute(Array)
+#1 /home2/motarje6/public_html/automation/index.php(62): Core\Model::insert('posts', Array)
+#2 {main}
+  thrown in /home2/motarje6/public_html/Core/Model.php on line 34
+[05-Feb-2019 06:50:41 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'date' in 'field list' in /home2/motarje6/public_html/Core/Model.php:33
+Stack trace:
+#0 /home2/motarje6/public_html/Core/Model.php(33): PDOStatement->execute(Array)
+#1 /home2/motarje6/public_html/automation/index.php(62): Core\Model::insert('posts', Array)
+#2 {main}
+  thrown in /home2/motarje6/public_html/Core/Model.php on line 33
+[06-Feb-2019 10:10:18 UTC] PHP Parse error:  syntax error, unexpected end of file in /home2/motarje6/public_html/automation/index.php on line 70
+[06-Feb-2019 10:16:33 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '('ترجمه تخصصی مقالات رشته کامپیوتر در مترجم ' at line 1 in /home2/motarje6/public_html/automation/index.php:67
+Stack trace:
+#0 /home2/motarje6/public_html/automation/index.php(67): PDO->query('INSERT INTO pos...')
+#1 {main}
+  thrown in /home2/motarje6/public_html/automation/index.php on line 67
+[06-Feb-2019 10:24:33 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'link";s:76:"http://www.motarjem1.com/blog/category/%d8%a2%d9%85%d9%88%d8%b2%d8%b' at line 1 in /home2/motarje6/public_html/automation/index.php:67
+Stack trace:
+#0 /home2/motarje6/public_html/automation/index.php(67): PDO->query('INSERT INTO pos...')
+#1 {main}
+  thrown in /home2/motarje6/public_html/automation/index.php on line 67
+[06-Feb-2019 10:31:17 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'INSERT INTO posts (title,previewText,link,date,thumbnail,categories) VALUES ("ت' at line 1 in /home2/motarje6/public_html/automation/index.php:67
+Stack trace:
+#0 /home2/motarje6/public_html/automation/index.php(67): PDO->query('INSERT INTO pos...')
+#1 {main}
+  thrown in /home2/motarje6/public_html/automation/index.php on line 67
+[06-Feb-2019 10:33:58 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '('ترجمه تخصصی مقالات رشته کامپیوتر در مترجم ' at line 1 in /home2/motarje6/public_html/automation/index.php:67
+Stack trace:
+#0 /home2/motarje6/public_html/automation/index.php(67): PDO->query('INSERT INTO pos...')
+#1 {main}
+  thrown in /home2/motarje6/public_html/automation/index.php on line 67

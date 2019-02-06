@@ -60,19 +60,18 @@
               <th class="bg-teal-dark">تعداد صفحات</th>
               <th class="bg-teal-dark">زبان ترجمه</th>
               <th class="bg-teal-dark">کیفیت ترجمه</th>
-              <th class="bg-teal-dark">زمان تحویل</th>
+              
               <th class="bg-teal-dark">هزینه ترجمه</th>
+             <th class="bg-teal-dark">وضعیت پرداخت</th> 
               <th class="bg-teal-dark">وضعیت تایید</th>
+              
               <th class="bg-teal-dark">مترجم</th>
               <th class="bg-teal-dark">جزییات</th>
             </tr>
           </thead>
           <tbody id="user-orders">
             {% for order in orders %} {% set page_number = order.word_numbers /
-            250 %} {% if order.delivery_type == '1' %} {% set delivery_type =
-            "معمولی" %} {% endif %} {% if order.delivery_type == '2' %} {% set
-            delivery_type = "نیمه فوری" %} {% endif %} {% if order.delivery_type
-            == '3' %} {% set delivery_type = "فوری" %} {% endif %}
+            250 %} 
             <tr>
               <td>{{ order.order_id }}</td>
               <td>{{ page_number }}</td>
@@ -86,15 +85,27 @@
               <td>
                 {{ order.translation_quality == "5" ? "نقره ای" : "طلایی" }}
               </td>
-              <td>{{ delivery_type }}</td>
+              
               <td>{{ order.order_price }} تومان</td>
-              <td>{{ order.accepted == "0" ? "تایید نشده" : "تایید شده" }}</td>
               <td>
-                <a
-                  style="cursor:pointer;color:#20a8d8"
-                  onclick="showTranslatorInfo('{{ order.translator_id }}')"
-                  >{{ order.translator_fname ~ " " ~ order.translator_lname }}</a
-                >
+                  {% if order.transaction_code=="0" %}
+                    <p>پرداخت نشده</p>
+                  {% else %}
+                    <p>پرداخت شده</p>
+                  {% endif %}
+              </td>
+              <td>{{ order.is_accepted == "0" ? "تایید نشده" : "تایید شده" }}</td>
+              <td>
+                  {% if order.translator_id == "0" %}
+                    <p>مشخص نشده</p>
+                  {% else %}
+                      <a
+                      style="cursor:pointer;color:#20a8d8"
+                      onclick="showTranslatorInfo('{{ order.translator_id }}')"
+                      >مشاهده اطلاعات مترجم</a>
+                  {% endif %}
+                
+                
               </td>
               <td class="order-more-info">
                 <a href="/user/order/view/{{ order.order_id }}"
@@ -180,6 +191,47 @@
   </div>
 </main>
 
+<div class="modal fade" id="translatorInfo" tabindex="-1" role="dialog" aria-labelledby="translatorInfoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="translatorInfoLabel">اطلاعات مترجم</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="translator-info">
+
+                            <div class="translator-info__avatar">
+                                <img src="" alt="" id="translator-avatar">
+                            </div>
+                            <div class="translator-info__info">
+                                <div class="translator-info__info__item">
+                                    <label for="">نام مترجم :‌
+                                    </label>
+                                    <strong id="translator-name"></strong>
+                                </div>
+
+                                <div class="translator-info__info__item">
+                                    <label for="">ایمیل :
+                                    </label>
+                                    <strong id="translator-email"></strong>
+                                </div>
+                                <div class="translator-info__info__item">
+                                    <label for="">شماره موبایل</label>
+                                    <strong id="translator-phone"></strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {# <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div> #}
+                </div>
+            </div>
+        </div>
 {% endblock %} {% block script_below %}
 
 <script src="/public/js/panel/user-orders.js"></script>

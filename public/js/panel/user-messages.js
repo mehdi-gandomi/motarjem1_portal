@@ -41,7 +41,7 @@ function showMessages(data) {
   let output = "";
   if (data.messages.length > 0) {
     data.messages.forEach(function(message) {
-      let isRead=message.is_read == "0" ? "پاسخ داده نشده": "پاسخ داده شده";
+      let isRead=message.is_read == "0" ? "خوانده نشده": "خوانده شده";
       let isAnswered=message.is_answered == "0" ? "پاسخ داده نشده" : "پاسخ داده شده";
       output += "<tr>";
       output += "<td>" + message.msg_id + "</td>";

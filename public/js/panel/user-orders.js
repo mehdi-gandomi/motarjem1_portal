@@ -151,3 +151,17 @@ $("#completed-orders").change(function(e) {
     location.origin+location.pathname+newQs
   );
 });
+
+//show translator info in a modal
+function showTranslatorInfo(translatorId) {
+    console.log(translatorId);
+    $("#translatorInfo").modal("show");
+    $.get("/user/translator/getinfo/" + translatorId, function (res) {
+
+        $("#translator-avatar").attr("src", "/public/uploads/avatars/user/" + res.avatar);
+        $("#translator-name").text(res.fname + " " + res.lname);
+        $("#translator-email").text(res.email);
+        $("#translator-phone").text(res.cell_phone);
+
+    });
+}

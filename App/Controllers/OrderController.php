@@ -113,7 +113,7 @@ class OrderController extends Controller
         }else{
             $postInfo['orderer_id']=$_SESSION['user_id'];
         }
-        //TODO create order logs and insert it to database and of course i have to change user panel as well
+        
         // creating a new order
         $orderData = Order::new($postInfo);
         $priceInfo = $orderData['priceInfo'];
@@ -127,8 +127,8 @@ class OrderController extends Controller
             $tokenArray = $this->get_csrf_token($req);
             $data = array(
                 'success' => true,
-                'translation_type' => $postInfo['type'] == "common" ? "عمومی" : "تخصصی",
-                'translation_quality' => $postInfo['translation_quality'] == "silver" ? "نقره ای" : "طلایی",
+                'translation_type' => $postInfo['type'] == "1" ? "عمومی" : "تخصصی",
+                'translation_quality' => $postInfo['translation_quality'] == "5" ? "نقره ای" : "طلایی",
                 'page_number' => $priceInfo['pageNumber'],
                 'duration' => $priceInfo['duration'],
                 'final_price' => $priceInfo['price'],
@@ -140,7 +140,7 @@ class OrderController extends Controller
             $this->view->render($res, "website/order-result.twig",$data );
         }
     }
-
+    
     public function order_payment($req, $res, $args)
     {
         $orderId = $args['order_id'];
@@ -209,7 +209,7 @@ class OrderController extends Controller
             $refId = $result->RefID;
             $updateResult = Order::update_order_log(array(
                 'transactionscode' => $refId,
-                'step' => 3,
+                'step' => 2,
             ), $orderId);
             // if (!$updateResult) {
             //     return $this->view->render($res, "order-successful.twig", ['status' => false]);
@@ -298,74 +298,171 @@ class OrderController extends Controller
             return false;
         }
         $subject = "مترجم وان / رسید سفارش";
-        $quality=$orderData['translation_kind'];
-        $words=$orderData['word_number'];
-        $language=$orderData['translation_lang']=="english_to_farsi" ? "انگلیسی به فارسی":"فارسی به انگلیسی";
-        $pages=$orderData['page_number'];
+        $quality=$orderData['translation_quality'] == "5" ? "نقره ای":"طلایی";
+        $word_numbers=$orderData['word_numbers'];
+        $language=$orderData['translation_lang']=="1" ? "انگلیسی به فارسی":"فارسی به انگلیسی";
+        $page_number=\ceil($orderData['word_numbers']/250);
         $price=$orderData['order_price'];
-        $date=$orderData['tarikh'];
+        $date=$orderData['order_date_persian'];
         $msg = "
-        <html>
-
-        <head>
-            <style>
-                * {
-                    direction: rtl;
-                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                    text-align: center;
-                }
-
-                table {
-                    border: 1px solid rgba(0, 0, 0, 0.6);
-                    margin: auto;
-                }
-
-                th,
-                td {
-                    border: 1px solid rgb(185, 173, 173);
-                    margin: 0;
-                    padding: 1rem;
-                    font-size: 1rem;
-                }
-
-                p {
-                    font-weight: bold;
-                    color: #139213;
-                    font-size: 1.2rem;
-                }
-            </style>
-        </head>
-
-        <body>
-            <h3>رسید خرید شما</h3>
-
-            <table>
-                <thead>
-                    <th>شماره پیگیری</th>
-                    <th>کیفیت سفارش</th>
-                    <th>تعداد کلمات</th>
-                    <th>زبان ترجمه</th>
-                    <th>تعداد صفحات</th>
-                    <th>مبلغ کل سفارش</th>
-                    <th>تاریخ ثبت سفارش</th>
-                </thead>
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type='text/css'>
+      .order {
+        border: 1px solid #eee;
+        border-collapse: collapse;
+        margin: 1.5rem 0;
+      }
+      .order td,
+      th {
+        border: 2px solid #d8cdcd;
+        border-spacing: 0;
+        margin: 0;
+        padding: 1rem;
+      }
+    </style>
+  </head>
+  <body
+    style='margin:0;padding:0;font-family: Vazir,tahoma, DejaVu Sans, helvetica, arial, freesans, sans-serif;'
+  >
+    <div
+      style='width:100%!important;min-width:300px;height:100%;margin:0;padding:0;line-height:1.5;color:#333;background-color:#f2f2f2'
+    >
+      <table style='width:100%;padding:30px 0 0 0'>
+        <tbody>
+          <tr>
+            <td align='center'>
+              <img
+                src='http://motarjem1.com/public/images/logo.png'
+                class='CToWUd'
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table
+        style='padding:5px;width:100%;max-width:620px;margin:0 auto;color:#515151'
+      >
+        <tbody>
+          <tr>
+            <td>
+              <table style='width:100%;margin:0;padding:0 0 20px'>
                 <tbody>
-                    <tr>
-                        <td>$refId</td>
-                        <td>$quality</td>
-                        <td>$words</td>
-                        <td>$language</td>
-                        <td>$pages</td>
-                        <td>$price تومان</td>
-                        <td>$date</td>
-                    </tr>
+                  <tr style='margin:0;padding:0'>
+                    <td style='margin:0;padding:0'>
+                      <table
+                        style='width:100%;max-width:620px;padding:30px;margin:20px auto 5px;background-color:#fff;border-radius:4px;text-align:right'
+                      >
+                        <tbody>
+                          <tr>
+                            <td style='font-weight:bold;font-size:0.85rem;'>
+                              خانم/آقای $fullname
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style='color:#738598;font-weight:bold'>
+                              سفارش شما با موفقیت ثبت شد و در اسرع وقت به آن
+                              رسیدگی خواهد شد
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <table class='order'>
+                                <thead>
+                                  <tr>
+                                    <th>شماره پیگیری</th>
+                                    <th>کیفیت <span class='il'>سفارش</span></th>
+                                    <th>تعداد کلمات</th>
+                                    <th>زبان ترجمه</th>
+                                    <th>تعداد صفحات</th>
+                                    <th>
+                                      مبلغ کل <span class='il'>سفارش</span>
+                                    </th>
+                                    <th>
+                                      تاریخ ثبت <span class='il'>سفارش</span>
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td>$refId</td>
+                                    <td>$quality</td>
+                                    <td>$word_numbers</td>
+                                    <td>$language</td>
+                                    <td>$page_number</td>
+                                    <td>$price تومان</td>
+                                    <td>
+                                      $date
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </td>
+                          </tr>
+
+                          <tr>
+                            <td
+                              style='font-weight:bold;color:#5dc0a6;font-size:1rem'
+                            >
+                              🙏 با تشکر از خرید شما
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
                 </tbody>
-            </table>
-            <p>ممنون از اینکه مترجم وان را انتخاب کردید !</p>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table style='width:100%'>
+        <tbody>
+          <tr>
+            <td>
+              <table style='width:100%;margin:10px 0;padding:0'>
+                <tbody>
+                  <tr>
+                    <td>
+                      <p
+                        style='text-align:center;color:#666;font-size:12px;font-weight:400;display:block;width:100%;margin:0;padding:0;direction:rtl'
+                      >
+                        طراحی توسط
+                        <a
+                          href='https://coderguy.ir'
+                          target='_blank'
+                          data-saferedirecturl='https://coderguy.ir'
+                          >coderguy</a
+                        >
+                      </p>
 
-        </body>
+                      <p
+                        style='text-align:center;color:#666;font-size:12px;font-weight:400;display:block;width:100%;margin:0;padding:0'
+                      >
+                        میدان انقلاب ابتدای کارگر شمالی کوچه رستم پ ۲۱ و ۸
+                      </p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-        </html>";
+      <img
+        src='https://ci6.googleusercontent.com/proxy/x1hIVdOPqG1u7nFBLvrvow3A7rXWw6G0YolfgKSfhAJWSkkBNfGon9YTINQ6I2SyfGqYw7up59T-NdDUxBBgz4E14G8p4q4NoP93Weg4bUJvvy66sNJX4EpSMh9hXn7LowGlNVamYUA=s0-d-e1-ft#https://mandrillapp.com/track/open.php?u=30121732&amp;id=ee001c7acb1741cfa420738ecd825d99'
+        height='1'
+        width='1'
+        class='CToWUd'
+      />
+    </div>
+  </body>
+</html>
+
+";
 
         \mail($email, $subject, $msg, $headers);
     }

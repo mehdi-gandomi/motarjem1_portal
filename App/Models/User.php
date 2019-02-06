@@ -92,13 +92,13 @@ class User extends Model
             $db = static::getDB();
             $result=false;
             $page_limit = ($page - 1) * $amount;
-            $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_kind,orders.translation_quality,orders.delivery_type,order_logs.is_accepted,orders.order_price,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE orders.orderer_id=:orderer_id";
-            
+            $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_kind,orders.translation_quality,orders.delivery_type,order_logs.is_accepted,orders.order_price,orders.translator_id FROM orders  INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE orders.orderer_id=:orderer_id";
             if(is_array($filtering_Options) && count($filtering_Options)>0){
                 
                 if(isset($filtering_Options['is_done'])){
                     $sql.=" AND `is_done` = :is_done";
                 }
+                
                 $filtering_Options['orderer_id']=$userId;
                 $sql.=" ORDER BY order_date DESC LIMIT $page_limit,$amount";
                 $stmt = $db->prepare($sql);
@@ -127,6 +127,9 @@ class User extends Model
                 
                 if(isset($filtering_Options['is_done'])){
                     $sql.=" AND `is_done` = :is_done";
+                }
+                if(isset($filtering_Options['is_accepted'])){
+                    $sql.=" AND `is_accepted` = :is_accepted";
                 }
                 $filtering_Options['orderer_id']=$userId;
                 $stmt = $db->prepare($sql);

@@ -85,6 +85,7 @@ class UserController extends Controller
             if (User::check_user_existance($postFields)) {
                 $this->flash->addMessage('userSignupErrors', "با این ایمیل یا نام کاربری قبلا ثبت نام شده است !");
                 unset($postFields['csrf_name']);
+                unset($postFields['csrf_value']);
                 $_SESSION['oldSignUpFields'] = $postFields;
                 return $res->withRedirect("/user/auth");
             }
@@ -92,7 +93,7 @@ class UserController extends Controller
             $userData = User::by_username($postFields['username']);
             $verifyLink = $this->createVerifyLink($userData);
             $this->send_user_info_to_email($postFields, $verifyLink);
-            $this->flash->addMessage("userSignUpLogs", "ثبت نام شما با موفقت انجام شد ! لینک فعال سازی به ایمیل شما ارسال شد.<a style='cursor:pointer;color:#5842d4' onclick='sendVerificationCode(\"coderguy\",\".signupLogs\")'>ارسال مجدد</a>");
+            $this->flash->addMessage("userSignUpLogs", "ثبت نام شما با موفقیت انجام شد ! لینک فعال سازی به ایمیل شما ارسال شد.<a style='cursor:pointer;color:#5842d4' onclick='sendVerificationCode(\"$userData[username]\",\".signupLogs\")'>ارسال مجدد</a>");
             return $res->withRedirect("/user/auth");
         }
     }
@@ -146,17 +147,24 @@ class UserController extends Controller
         if ($token === $hash) {
             $userData = User::by_username($username);
             $verifyLink = $this->createVerifyLink($userData);
-            $this->send_user_info_to_email($postFields, $verifyLink);
-            return $res->withJson([
-                "status" => true,
-                "message" => "verify email sent to email",
-            ]);
-        } else {
+            $result=$this->send_user_info_to_email($userData, $verifyLink);
+            if($result){
+                return $res->withJson([
+                    "status" => true,
+                    "message" => "لینک فعال سازی به ایمیل شما ارسال شد !",
+                ]);    
+            }
             return $res->withJson([
                 "status" => false,
-                "message" => "no token or invalid token!",
+                "message" => "خطایی در ارسال لینک به ایمیل رخ داد !",
             ]);
-        }
+            
+        } 
+        return $res->withJson([
+            "status" => false,
+            "message" => "توکن ارسال شده نامعتبر می باشد!",
+        ]);
+        
     }
 
     public function get_forget_password_page($req, $res, $args)
@@ -245,8 +253,8 @@ class UserController extends Controller
     public function get_dashboard($req, $res, $args)
     {
         $userOrders = User::get_orders_by_user_id($_SESSION['user_id'], 1, 3);
-        $workingOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], ['is_done' => 0]);
-        $completedOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], ['is_done' => 1]);
+        $workingOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], ['is_done' => 0,'is_accepted'=>1]);
+        $completedOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], ['is_done' => 1,'is_accepted'=>1]);
         $unreadMessagesCount = User::get_unread_messages_count_by_user_id($_SESSION['user_id']);
         $lastThreeMessages = User::get_messages_by_id($_SESSION['user_id'], 1, 3);
         $this->view->render($res, "admin/user/dashboard.twig", ['orders' => $userOrders, 'completedOrdersCount' => $completedOrdersCount, 'workingOrdersCount' => $workingOrdersCount, 'unreadMessagesCount' => $unreadMessagesCount, 'lastMessages' => $lastThreeMessages]);
@@ -312,7 +320,13 @@ class UserController extends Controller
     //this function gets order details from db and renders the page
     public function get_order_details($req, $res, $args)
     {
-        $orderData = \App\Models\Order::by_id($args['order_id'], true);
+        $orderData = \App\Models\Order::by_id($args['order_id']);
+        if($orderData['translator_id'] != "0"){
+            $translatorData=\App\Models\Translator::by_id($orderData['translator_id'],"fname,lname");
+            $orderData['translator_fname']=$translatorData['fname'];
+            $orderData['translator_lname']=$translatorData['lname'];
+        }
+        
         return $this->view->render($res, "admin/user/order-details.twig", $orderData);
     }
 
@@ -328,17 +342,47 @@ class UserController extends Controller
         $readQS = $req->getQueryParam("read") === null ? 'unset' : \explode(",", $req->getQueryParam("read"));
         $answeredQS = $req->getQueryParam("answered") === null ? 'unset' : \explode(",", $req->getQueryParam("answered"));
         $filtering_options = [];
+        var_dump($readQS);
+        $read=false;
+        $unread=false;
+        $answered=false;
+        $unanswered=false;
+        var_dump($answeredQS);
         if ($readQS != 'unset') {
             $filtering_options['is_read'] = $readQS;
+            if(count($readQS)==2){
+            $read=true;
+            $unread=true;
+        }else{
+            if($readQS[0]=="0"){
+                $unread=true;
+                $read=false;
+            }else{
+                $unread=false;
+                $read=true;
+            }
+        }
         }
         if ($answeredQS != 'unset') {
             $filtering_options['is_answered'] = $answeredQS;
+            if(count($answeredQS)==2){
+            $answered=true;
+            $unanswered=true;
+        }else{
+            if($answeredQS[0]=="0"){
+                $unanswered=true;
+                $answered=false;
+            }else{
+                $unanswered=false;
+                $answered=true;
+            }
         }
-
+        }
+        
         $userMessages = User::get_messages_by_id($_SESSION['user_id'], $page, 10, $filtering_options);
         $userMessagesCount = User::get_messages_count_by_id($_SESSION['user_id'], $filtering_options);
 
-        return $this->view->render($res, "admin/user/messages.twig", ["messages" => $userMessages, 'messages_count' => $userMessagesCount]);
+        return $this->view->render($res, "admin/user/messages.twig", ["messages" => $userMessages, 'messages_count' => $userMessagesCount,'read'=>$read,'unread'=>$unread,'answered'=>$answered,'unanswered'=>$unanswered]);
     }
     public function get_messages_json($req, $res, $args)
     {
@@ -457,14 +501,21 @@ class UserController extends Controller
         $headers .= "Reply-To: noreply@motarjem1.com \r\n";
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($userInfo['email'], FILTER_VALIDATE_EMAIL)) {
             return false;
         }
         $subject = "ثبت نام در مترجم وان";
-        $userFname = $postFields['fname'];
+        $userFname = $userInfo['fname'];
         $text = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style type='text/css'>
+                @import('https://cdn.rawgit.com/rastikerdar/vazir-font/v19.1.0/dist/font-face.css');
+            </style>
+        </head>
             <body style='margin:0;padding:0;font-family: Vazir, Tahoma, DejaVu Sans, helvetica, arial, freesans, sans-serif;'>
-            <link type='text/css' rel='stylesheet' href='https://cdn.rawgit.com/rastikerdar/vazir-font/v19.1.0/dist/font-face.css'>
+            
             <div style='width:100%!important;min-width:300px;height:100%;margin:0;padding:0;line-height:1.5;color:#333;background-color:#f2f2f2'>
             <table style='width:100%;padding:30px 0 0 0'>
                 <tbody>
@@ -498,7 +549,7 @@ class UserController extends Controller
                                                             <br />
                                                             لطفا برای تایید حساب کاربری تان روی لینک زیر کلیک کنید
                                                             <div style='text-align:center;margin-top:28px;margin-bottom:28px'>
-                                                                <a style='font-size:16px;font-weight:400;display:inline-block;padding:0 16px;border:none;border-radius:2px;text-transform:uppercase;text-decoration:none;text-align:center;vertical-align:baseline;letter-spacing:0;opacity:1;outline:none!important;color:#ffffff;background-color:#03a9f4;line-height:40px;margin:10px 0' href='$verify_link' target='_blank' data-saferedirecturl='$verify_link'>تایید حساب کاربری</a>
+                                                                <a style='font-size:16px;font-weight:400;display:inline-block;padding:0 16px;border:none;border-radius:2px;text-transform:uppercase;text-decoration:none;text-align:center;vertical-align:baseline;letter-spacing:0;opacity:1;outline:none!important;color:#ffffff;background-color:#03a9f4;line-height:40px;margin:10px 0' href='$verifyLink' target='_blank' data-saferedirecturl='$verifyLink'>تایید حساب کاربری</a>
                                                             </div>
                                                             با تشکر, وبسایت مترجم وان
                                                         </td>
@@ -546,10 +597,10 @@ class UserController extends Controller
                     />
                 </div>
                 </body>
-
+</html>
 
         ";
-        mail($email, $subject, $text, $headers);
+        return mail($userInfo['email'], $subject, $text, $headers);
 
     }
     //create email verification link to be send to user
@@ -625,8 +676,14 @@ class UserController extends Controller
         $subject = "لینک تغییر پسورد";
         $userFname = User::by_email($email, "fname")['fname'];
         $text = "
-            <body style='margin:0;padding:0;font-family: Vazir, Tahoma, DejaVu Sans, helvetica, arial, freesans, sans-serif;'>
-            <link type='text/css' rel='stylesheet' href='https://cdn.rawgit.com/rastikerdar/vazir-font/v19.1.0/dist/font-face.css'>
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style type='text/css'>
+                @import('https://cdn.rawgit.com/rastikerdar/vazir-font/v19.1.0/dist/font-face.css');
+            </style>
+        </head>
+            <body style='margin:0;padding:0;font-family: Vazir, Tahoma, DejaVu Sans, helvetica, arial, freesans, sans-serif !important;'>
             <div style='width:100%!important;min-width:300px;height:100%;margin:0;padding:0;line-height:1.5;color:#333;background-color:#f2f2f2'>
             <table style='width:100%;padding:30px 0 0 0'>
                 <tbody>
@@ -656,9 +713,9 @@ class UserController extends Controller
                                                     </tr>
                                                     <tr>
                                                         <td>
-                                                            با سلام شما درخواست تغییر رمز عبور خودتان را داده بودید
+                                                            <p>با سلام شما درخواست تغییر رمز عبور خودتان را داده بودید</p>
                                                             <br />
-                                                            لطفا برای تغییر دادن رمز عبور روی لینک زیر کلیک کنید
+                                                            <strong style='margin-top:2rem;'>لطفا برای تغییر دادن رمز عبور روی لینک زیر کلیک کنید</strong>
                                                             <div style='text-align:center;margin-top:28px;margin-bottom:28px'>
                                                                 <a style='font-size:16px;font-weight:400;display:inline-block;padding:0 16px;border:none;border-radius:2px;text-transform:uppercase;text-decoration:none;text-align:center;vertical-align:baseline;letter-spacing:0;opacity:1;outline:none!important;color:#ffffff;background-color:#03a9f4;line-height:40px;margin:10px 0' href='$link' target='_blank' data-saferedirecturl='$link'>تغییر رمز عبور</a>
                                                             </div>
@@ -708,7 +765,7 @@ class UserController extends Controller
                     />
                 </div>
                 </body>
-
+</html>
 
         ";
         mail($email, $subject, $text, $headers);

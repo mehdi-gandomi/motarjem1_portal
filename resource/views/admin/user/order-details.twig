@@ -33,10 +33,19 @@ based on db info #}
             <div class="card-body">
                 <div class="title-section mb-5 mt-3 ">
                     <h3 class="text-center">جزییات سفارش</h3>
-                    <button class="btn btn-success" onclick="window.print()">
+                    <div>
+                        <button class="btn btn-success" onclick="window.print()">
                         <i class="icon-printer"></i>
                         پرینت
                     </button>
+                    {% if transaction_code == "0" %}
+                                  <button class="btn btn-success" onclick="window.print()">
+                        <i class="icon-credit-card"></i>
+                        پرداخت
+                        </button>
+                    {% endif %}
+                    
+                    </div>
                 </div>
                 <div class="order-details row">
                     <div class="order-details__detail col-md-2">
@@ -111,7 +120,7 @@ based on db info #}
                             وضعیت تایید
                         </div>
                         <div class="order-details__detail__value">
-                            {{ order.accepted == "0" ? "تایید نشده" : "تایید شده" }}
+                            {{ is_accepted == "0" ? "تایید نشده" : "تایید شده" }}
                         </div>
                     </div>
                     <div class="order-details__detail col-md-3">
@@ -127,7 +136,11 @@ based on db info #}
                             مترجم
                         </div>
                         <div class="order-details__detail__value">
-                            {{translator_fname ~ " " ~ translator_lname}}
+                            {% if translator_id == 0 %}
+                                <p>مشخص نشده</p>
+                            {% else %}
+                                {{translator_fname ~ " " ~ translator_lname}}
+                            {% endif %}
                         </div>
                     </div>
                     {#

@@ -11,17 +11,17 @@ class Config
      * Database name
      * @var string
      */
-    const DB_NAME = 'motarjem1';
+    const DB_NAME = 'motarje6_db';
     /**
      * Database user
      * @var string
      */
-    const DB_USER = 'coderguy';
+    const DB_USER = 'motarje6_user';
     /**
      * Database password
      * @var string
      */
-    const DB_PASSWORD = 'mgmehdi@159';
+    const DB_PASSWORD = 'XA@8k7D#k@{!';
     /**
      * Show or hide error messages on screen
      * @var boolean
@@ -30,6 +30,6 @@ class Config
 
     const ENCRYPTION_KEY="c8tUbkNbXDQcuKL3";
     const ENCRYPTION_LENGTH=8;
-    const BASE_URL="http://localhost:8080";
+    const BASE_URL="http://motarjem1.com";
     const VERIFY_EMAIL_KEY="c8tUbkNbXDQcuKL3";
 }

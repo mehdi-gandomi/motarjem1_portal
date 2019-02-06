@@ -97,7 +97,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <a href="/user/profile" class="btn btn-success btn-block profile-edit-btn">
+                            <a href="/user/edit-profile" class="btn btn-success btn-block profile-edit-btn">
                                 <i class="icon-note"></i>
                                 بروزرسانی
                             </a>
@@ -241,7 +241,16 @@
                                                 تومان</td>
                                             <td>{{order.accepted == '0' ?  'تایید نشده' : 'تایید شده' }}</td>
                                             <td>
-                                                <a style="cursor:pointer;color:#20a8d8" onclick="showTranslatorInfo('{{order.translator_id}}')">{{ order.translator_fname ~ " " ~ order.translator_lname }}</a>
+                                                {% if order.translator_id == "0" %}
+                    <p>مشخص نشده</p>
+                  {% else %}
+                      <a
+                      style="cursor:pointer;color:#20a8d8"
+                      onclick="showTranslatorInfo('{{ order.translator_id }}')"
+                      >مشاهده اطلاعات مترجم</a>
+                  {% endif %}
+                
+                
                                             </td>
                                         </tr>
                                     {% endfor %}

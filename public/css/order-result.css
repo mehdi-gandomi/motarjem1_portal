@@ -1,0 +1,62 @@
+.order-result{
+    
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    text-align: center;
+    padding-bottom: 3rem;
+    box-shadow: 0 0px 4px rgba(0,0,0,.19), 0 2px 4px rgba(0,0,0,.23);
+}
+.success-message{
+    background: #80ac7b;
+    color: #fff;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+.error-message{
+    background: #f02816;
+    color: #fff;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    margin: 4rem auto;
+    width: 80%;
+    text-align: center;
+}
+.success-message .title,.error-message .title{
+    font-size: 1.5rem;
+}
+.success-message .subtitle,.error-message .subtitle{
+    font-size: .95rem;
+    color: #f5eeee;
+}
+.payment-gateways form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.payment-gateways img{
+    width: 40px;
+    height: 40px;
+
+}
+
+.order-info{
+    list-style: none;
+}
+.order-info li{
+    display: inline-block;
+    margin: 1rem;
+    padding: 1rem;
+}
+.mellat,.zarinpal{
+    margin: 0 1rem;
+    transition:all 0.3s ease-out;
+}
+
+.zarinpal:hover button{
+background: #e0bb20;
+color: #fff;
+}
+.mellat:hover button{
+    background: #ef4f63;
+    color: #fff;
+}

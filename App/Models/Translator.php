@@ -12,6 +12,16 @@ class Translator extends Model{
         }
 
     }
+    public static function by_id($translatorId,$fields="*")
+    {
+        try{
+            return static::select("translators",$fields,['translator_id'=>$translatorId],true);
+
+        }catch(\Exception $e){
+            return false;
+        }
+
+    }
     public static function check_existance_by_email($email)
     {
         try{

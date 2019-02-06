@@ -149,16 +149,16 @@
                 <div class="order-form row">
                     <div class="col-lg-4 col-md-6 form-group">
                         <label for="fullname">نام و نام خانوادگی</label>
-                        <input class="form-control" type="text" name="fullname" id="fullname">
+                        <input class="form-control" type="text" name="fullname" id="fullname" value="{{user.fname ~ " " ~ user.lname }}">
                     </div>
                     <div class="col-lg-4 form-group col-md-6">
                         <label for="phone_number">شماره همراه</label>
-                        <input class="form-control" type="text" name="phone_number" id="phone_number">
+                        <input class="form-control" type="text" name="phone_number" id="phone_number" value="{{user.phone}}">
                         <span class="hint phone--hint"></span>
                     </div>
                     <div class="col-lg-4 form-group col-md-6">
                         <label for="email">ایمیل</label>
-                        <input class="form-control" type="email" name="email" id="email">
+                        <input class="form-control" type="email" name="email" id="email" value="{{user.email}}">
                         <span class="hint email--hint"></span>
                     </div>
                     <div class="col-lg-12 form-group">

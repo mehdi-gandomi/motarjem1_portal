@@ -33,7 +33,7 @@ class Order extends Model
         try {
             $db=static::getDB();
             if(!$with_translator_data && !$with_orderer_data){
-                $sql="SELECT * FROM `orders` WHERE order_id = :order_id";
+                $sql="SELECT * FROM `orders` INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE orders.order_id = :order_id";
             }else if($with_translator_data && !$with_orderer_data){
                 $sql = "SELECT orders.order_id,orders.word_numbers,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE orders.order_id= :order_id";
             }else if($with_orderer_data && !$with_translator_data){
