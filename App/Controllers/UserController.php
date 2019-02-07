@@ -611,7 +611,7 @@ class UserController extends Controller
             'price' => $orderPriceRial,
             'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['order_id'],
         ));
-        $result = $payment->pay();
+        return $payment->pay();
     }
     protected function zarinpal_payment($orderId, $gateway)
     {

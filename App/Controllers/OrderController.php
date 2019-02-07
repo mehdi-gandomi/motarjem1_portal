@@ -243,7 +243,10 @@ class OrderController extends Controller
     public function payment_result_mellat($req, $res, $args)
     {
         $postFields = $req->getParsedBody();
+        
         $orderId = $args['order_id'];
+        $orderData = Order::by_id($orderId,false,true);
+        var_dump($orderData);
         $orderData = Order::by_id($orderId,false,true);
         if ($postFields['ResCode'] == '0') {
             $payment = new Payment("mellat");
@@ -251,21 +254,21 @@ class OrderController extends Controller
 
             if ($paymentResult['hasError']) {
                 
-                return $this->view->render($res, "website/order-successful.twig", ['status' => false, 'ref_id' => $postFields['SaleOrderId'],"page_title"=>"خطا در پرداخت","latestPosts"=>$_SESSION["latestPosts"]]);
+                return $this->view->render($res, "website/order-successful.twig", ['status' => false, 'ref_id' => $postFields['RefId'],"page_title"=>"خطا در پرداخت","latestPosts"=>$_SESSION["latestPosts"]]);
             } else {
                 $updateResult = Order::update_order_log(array(
-                    'transactionscode' => $postFields['SaleOrderId'],
+                    'transactionscode' => $postFields['‫‪RefId'],
                     'step' => 3,
                 ), $orderId);
                 $data = array(
                     'contact_phone' => '٠٩٣٠٩٥٨٩١٢٢',
                     'contact_email' => 'Motarjem1@yahoo.com',
                     'order_id' => $orderId,
-     -               'ref_id' => $postFields['SaleOrderId'],
+     -               'ref_id' => $postFields['‫‪RefId‬‬'],
                     'words' => $orderData['word_numbers'],
                     'page_number' => \ceil($orderData['word_numbers']/250),
-                    'translation_language' => $orderData['translation_lang']=="1" ? "انگلیسی به فارسی":"فارسی به انگلیسی",
-                    'translation_quality' => $orderData['translation_kind'] == "1" ? "نقره ای" : "طلایی",
+                    'translation_language' => $orderData['translation_lang']==1 ? "انگلیسی به فارسی":"فارسی به انگلیسی",
+                    'translation_quality' => $orderData['translation_kind'] == 1 ? "نقره ای" : "طلایی",
                     'order_price' => $orderData['order_price'],
                     'customer_name' => $orderData['orderer_fname']." ".$orderData['orderer_lname'],
                     'email' => $orderData['email'],
@@ -273,13 +276,13 @@ class OrderController extends Controller
                     'success'=>true,
                     "page_title"=>"پرداخت موفق"
                 );
-                $this->send_invoice_to_email($orderData['email'],$orderData,$postFields['SaleOrderId']);
+                $this->send_invoice_to_email($orderData['email'],$orderData,$postFields['‫‪RefId']);
                 $data=array_merge($data,array("latestPosts"=>$_SESSION["latestPosts"]));
                 return $this->view->render($res, "website/order-successful.twig", $data);
                 
             }
         } else {
-            return $this->view->render($res, "website/order-successful.twig", ['status' => false, 'ref_id' => $postFields['ResCode'],"page_title"=>"خطا در پرداخت"]);
+            return $this->view->render($res, "website/order-successful.twig", ['status' => false, 'ref_id' => $postFields['RefId'],"page_title"=>"خطا در پرداخت"]);
         }
 
     }
@@ -298,12 +301,13 @@ class OrderController extends Controller
             return false;
         }
         $subject = "مترجم وان / رسید سفارش";
-        $quality=$orderData['translation_quality'] == "5" ? "نقره ای":"طلایی";
+        $quality=$orderData['translation_quality'] == 5 ? "نقره ای":"طلایی";
         $word_numbers=$orderData['word_numbers'];
-        $language=$orderData['translation_lang']=="1" ? "انگلیسی به فارسی":"فارسی به انگلیسی";
+        $language=$orderData['translation_lang']==1 ? "انگلیسی به فارسی":"فارسی به انگلیسی";
         $page_number=\ceil($orderData['word_numbers']/250);
         $price=$orderData['order_price'];
         $date=$orderData['order_date_persian'];
+        $fullname=$orderData['orderer_fname']." ".$orderData['orderer_lname'];
         $msg = "
 <!DOCTYPE html>
 <html>

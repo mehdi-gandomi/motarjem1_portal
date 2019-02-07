@@ -203,64 +203,61 @@
                         </div>
                         <div class="card-body">
                             {% if orders %}
-                                  <table class="table">
-                                <thead>
-                                    <th>شماره سفارش</th>
-                                    <th>تعداد صفحات</th>
-                                    <th>زبان ترجمه</th>
-                                    <th>کیفیت ترجمه</th>
-                                    <th>زمان تحویل</th>
-                                    <th>هزینه ترجمه</th>
-                                    <th>وضعیت تایید</th>
-                                    <th>مترجم</th>
-                                </thead>
-                                <tbody>
-                                    {% for order in orders %}
-                                        {% set page_number = order.word_numbers / 250 %}
-                                        {% if order.delivery_type == '1' %}
-                                            {% set delivery_type = "معمولی" %}
-                                        {% endif %}
+                                <table class="table">
+                                    <thead>
+                                        <th>شماره سفارش</th>
+                                        <th>تعداد صفحات</th>
+                                        <th>زبان ترجمه</th>
+                                        <th>کیفیت ترجمه</th>
+                                        <th>زمان تحویل</th>
+                                        <th>هزینه ترجمه</th>
+                                        <th>وضعیت تایید</th>
+                                        <th>مترجم</th>
+                                    </thead>
+                                    <tbody>
+                                        {% for order in orders %}
+                                            {% set page_number = order.word_numbers / 250 %}
+                                            {% if order.delivery_type == '1' %}
+                                                {% set delivery_type = "معمولی" %}
+                                            {% endif %}
 
-                                        {% if order.delivery_type == '2' %}
-                                            {% set delivery_type = "نیمه فوری" %}
-                                        {% endif %}
+                                            {% if order.delivery_type == '2' %}
+                                                {% set delivery_type = "نیمه فوری" %}
+                                            {% endif %}
 
-                                        {% if order.delivery_type == '3' %}
-                                            {% set delivery_type = "فوری" %}
-                                        {% endif %}
-                                        <tr>
-                                            <td>{{ order.order_id }}</td>
-                                            <td>{{ page_number }}</td>
-                                            <td>
-                                                {{ order.translation_type == "1" ? "انگلیسی به فارسی" : "فارسی به انگلیسی" }}
-                                            </td>
-                                            <td>
-                                                {{ order.translation_quality == "5" ? "نقره ای" : "طلایی" }}
-                                            </td>
-                                            <td>{{delivery_type}}</td>
-                                            <td>{{order.order_price}}
-                                                تومان</td>
-                                            <td>{{order.accepted == '0' ?  'تایید نشده' : 'تایید شده' }}</td>
-                                            <td>
-                                                {% if order.translator_id == "0" %}
-                                                    <p>مشخص نشده</p>
-                                                {% else %}
-                                                    <a
-                                                    style="cursor:pointer;color:#20a8d8"
-                                                    onclick="showTranslatorInfo('{{ order.translator_id }}')"
-                                                    >مشاهده اطلاعات مترجم</a>
-                                                {% endif %}
-                                                
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
+                                            {% if order.delivery_type == '3' %}
+                                                {% set delivery_type = "فوری" %}
+                                            {% endif %}
+                                            <tr>
+                                                <td>{{ order.order_id }}</td>
+                                                <td>{{ page_number }}</td>
+                                                <td>
+                                                    {{ order.translation_type == "1" ? "انگلیسی به فارسی" : "فارسی به انگلیسی" }}
+                                                </td>
+                                                <td>
+                                                    {{ order.translation_quality == "5" ? "نقره ای" : "طلایی" }}
+                                                </td>
+                                                <td>{{delivery_type}}</td>
+                                                <td>{{order.order_price}}
+                                                    تومان</td>
+                                                <td>{{order.accepted == '0' ?  'تایید نشده' : 'تایید شده' }}</td>
+                                                <td>
+                                                    {% if order.translator_id == "0" %}
+                                                        <p>مشخص نشده</p>
+                                                    {% else %}
+                                                        <a style="cursor:pointer;color:#20a8d8" onclick="showTranslatorInfo('{{ order.translator_id }}')">مشاهده اطلاعات مترجم</a>
+                                                    {% endif %}
 
-                                </tbody>
-                            </table>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+
+                                    </tbody>
+                                </table>
                             {% else %}
                                 <h5 class="text-center">تاکنون سفارشی ثبت نکرده اید !</h5>
                             {% endif %}
-                            
+
                         </div>
                     </div>
                 </div>

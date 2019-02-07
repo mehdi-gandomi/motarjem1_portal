@@ -25,7 +25,11 @@ class Payment{
 
     public function pay()
     {
-        return $this->gateway->pay();
+        try{
+            return $this->gateway->pay();
+        }catch(\Exception $e){
+            var_dump($e);
+        }
     }
     public function validate($authority)
     {
