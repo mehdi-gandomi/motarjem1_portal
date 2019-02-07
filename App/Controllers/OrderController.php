@@ -34,6 +34,7 @@ class OrderController extends Controller
 
         ),
         'field_types' => array(
+            "0"=>"انتخاب کنید",
             "90" => "ادبیات و زبان شناسی",
             "89" => "اسناد تجاری",
             "88" => "اقتصاد",
@@ -77,7 +78,6 @@ class OrderController extends Controller
     private $gateways = ['mellat', 'zarinpal'];
     private $payment;
     private $payment_gateway;
-
     public function get($req, $res, $args)
     {
         $getParams = $req->getQueryParams();

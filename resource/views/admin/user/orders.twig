@@ -70,62 +70,62 @@
             </tr>
           </thead>
           <tbody id="user-orders">
-            {% for order in orders %} {% set page_number = order.word_numbers /
-            250 %} 
-            <tr>
-              <td>{{ order.order_id }}</td>
-              <td>{{ page_number }}</td>
-              <td>
-                {{
-                  order.translation_type == "1"
-                    ? "انگلیسی به فارسی"
-                    : "فارسی به انگلیسی"
-                }}
-              </td>
-              <td>
-                {{ order.translation_quality == "5" ? "نقره ای" : "طلایی" }}
-              </td>
-              
-              <td>{{ order.order_price }} تومان</td>
-              <td>
-                  {% if order.transaction_code=="0" %}
-                    <p>پرداخت نشده</p>
-                  {% else %}
-                    <p>پرداخت شده</p>
-                  {% endif %}
-              </td>
-              <td>{{ order.is_accepted == "0" ? "تایید نشده" : "تایید شده" }}</td>
-              <td>
-                  {% if order.translator_id == "0" %}
-                    <p>مشخص نشده</p>
-                  {% else %}
-                      <a
-                      style="cursor:pointer;color:#20a8d8"
-                      onclick="showTranslatorInfo('{{ order.translator_id }}')"
-                      >مشاهده اطلاعات مترجم</a>
-                  {% endif %}
+            {% for order in orders %} 
+              {% set page_number = order.word_numbers /250 %} 
+              <tr>
+                <td>{{ order.order_id }}</td>
+                <td>{{ page_number }}</td>
+                <td>
+                  {{
+                    order.translation_type == "1"
+                      ? "انگلیسی به فارسی"
+                      : "فارسی به انگلیسی"
+                  }}
+                </td>
+                <td>
+                  {{ order.translation_quality == "5" ? "نقره ای" : "طلایی" }}
+                </td>
                 
-                
-              </td>
-              <td class="order-more-info">
-                <a href="/user/order/view/{{ order.order_id }}"
-                  ><svg
-                    width="13px"
-                    height="23px"
-                    viewBox="0 0 50 80"
-                    xml:space="preserve"
-                  >
-                    <polyline
-                      fill="none"
-                      stroke="#a9a9a9"
-                      stroke-width="10"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      points="45.63,75.8 0.375,38.087 45.63,0.375 "
-                    /></svg
-                ></a>
-              </td>
-            </tr>
+                <td>{{ order.order_price }} تومان</td>
+                <td>
+                    {% if order.transaction_code=='0' %}
+                      <p>پرداخت نشده</p>
+                    {% else %}
+                      <p>پرداخت شده</p>
+                    {% endif %}
+                </td>
+                <td>{{ order.is_accepted == "0" ? "تایید نشده" : "تایید شده" }}</td>
+                <td>
+                    {% if order.translator_id == '0' %}
+                      <p>مشخص نشده</p>
+                    {% else %}
+                        <a
+                        style="cursor:pointer;color:#20a8d8"
+                        onclick="showTranslatorInfo('{{ order.translator_id }}')"
+                        >مشاهده اطلاعات مترجم</a>
+                    {% endif %}
+                  
+                  
+                </td>
+                <td class="order-more-info">
+                  <a href="/user/order/view/{{ order.order_id }}"
+                    ><svg
+                      width="13px"
+                      height="23px"
+                      viewBox="0 0 50 80"
+                      xml:space="preserve"
+                    >
+                      <polyline
+                        fill="none"
+                        stroke="#a9a9a9"
+                        stroke-width="10"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        points="45.63,75.8 0.375,38.087 45.63,0.375 "
+                      /></svg
+                  ></a>
+                </td>
+              </tr>
             {% endfor %}
           </tbody>
         </table>

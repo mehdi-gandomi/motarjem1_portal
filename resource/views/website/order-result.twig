@@ -27,13 +27,13 @@
         </div>
         <div class="col-12">
             <div class="payment-gateways">
-                <form action="order-payment/{{order_id}}" method="POST">
+                <form action="/order-payment/{{order_id}}" method="POST">
                     <input type="hidden" name="csrf_name" value="{{csrf_name}}">
                     <input type="hidden" name="csrf_value" value="{{csrf_value}}">
                     <div class="mellat">
                         <button type="submit" name="gateway" value="mellat" class="button mellat has--lighter-shadow"
                             readonly>
-                            <img src="public/images/icon/Behpardakht.png" alt="mellat">
+                            <img src="/public/images/icon/Behpardakht.png" alt="mellat">
                             <span>پرداخت توسط درگاه بانک ملت</span>
                         </button>
                     </div>
@@ -41,7 +41,7 @@
                     <div class="zarinpal">
                         <button type="submit" name="gateway" value="zarinpal" class="button zarinpal has--lighter-shadow"
                             readonly>
-                            <img src="public/images/icon/zarinpal.png" alt="zarinpal">
+                            <img src="/public/images/icon/zarinpal.png" alt="zarinpal">
                             <span>پرداخت توسط زرین پال</span>
                         </button>
                     </div>

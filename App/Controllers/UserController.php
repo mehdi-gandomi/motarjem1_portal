@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers;
 
+use App\Dependencies\Pay\Payment;
 use App\Models\User;
 use Core\Config;
 use Core\Controller;
@@ -8,6 +9,49 @@ use Core\Controller;
 class UserController extends Controller
 {
 
+    private $gateways = ['mellat', 'zarinpal'];
+    private $payment;
+    private $payment_gateway;
+    private $studyFields=array(
+        "90" => "ادبیات و زبان شناسی",
+        "89" => "اسناد تجاری",
+        "88" => "اقتصاد",
+        "86" => "برق و الکترونیک",
+        "91" => "تاریخ",
+        "41" => "ترجمه کاتالوگ",
+        "76" => "جغرافیا",
+        "75" => "حسابداری",
+        "74" => "حقوق",
+        "70" => "روان شناسی",
+        "71" => "ریاضی",
+        "72" => "زمین شناسی و معدن",
+        "43" => "زیرنویس فیلم",
+        "73" => "زیست شناسی",
+        "67" => "شیمی",
+        "68" => "صنایع",
+        "69" => "صنایع غذایی",
+        "62" => "علوم اجتماعی",
+        "63" => "علوم سیاسی",
+        "64" => "عمران",
+        "61" => "عمومی",
+        "44" => "فایل صوتی تصویری",
+        "57" => "فقه و علوم اسلامی",
+        "58" => "فلسفه",
+        "59" => "فناوری اطلاعات",
+        "60" => "فیزیک",
+        "50" => "متالورژی و مواد",
+        "51" => "محیط زیست",
+        "49" => "مدیریت",
+        "54" => "منابع طبیعی و شیلات",
+        "53" => "مکانیک",
+        "47" => "نفت،گاز و پتروشیمی",
+        "92" => "هنر و معماری",
+        "46" => "ورزش و تربیت بدنی",
+        "85" => "پزشکی",
+        "93" => "ژنتیک و میکروبیولوژی",
+        "55" => "کامپیوتر",
+        "56" => "کشاورزی",
+    );
     #region Auth functions
 
     //////////////////////////////////////////////
@@ -147,24 +191,24 @@ class UserController extends Controller
         if ($token === $hash) {
             $userData = User::by_username($username);
             $verifyLink = $this->createVerifyLink($userData);
-            $result=$this->send_user_info_to_email($userData, $verifyLink);
-            if($result){
+            $result = $this->send_user_info_to_email($userData, $verifyLink);
+            if ($result) {
                 return $res->withJson([
                     "status" => true,
                     "message" => "لینک فعال سازی به ایمیل شما ارسال شد !",
-                ]);    
+                ]);
             }
             return $res->withJson([
                 "status" => false,
                 "message" => "خطایی در ارسال لینک به ایمیل رخ داد !",
             ]);
-            
-        } 
+
+        }
         return $res->withJson([
             "status" => false,
             "message" => "توکن ارسال شده نامعتبر می باشد!",
         ]);
-        
+
     }
 
     public function get_forget_password_page($req, $res, $args)
@@ -219,10 +263,10 @@ class UserController extends Controller
         $validationSuccess = "";
         $tokens = $this->get_csrf_token($req);
         $userData = User::by_username($postFields['username'], "user_id");
-        if ($postFields['password']=="") {
+        if ($postFields['password'] == "") {
             array_push($validationErrors, "فیلد پسورد نباید خالی باشد !");
         }
-        if ($postFields['confirmPassword']=="") {
+        if ($postFields['confirmPassword'] == "") {
             array_push($validationErrors, "فیلد تایید پسورد نباید خالی باشد");
         }
         if ($postFields['password'] != $postFields['confirmPassword']) {
@@ -231,7 +275,7 @@ class UserController extends Controller
             try {
                 User::change_password($postFields['username'], $postFields['password']);
                 \Core\Model::delete("forgot_password", "user_id = '" . $userData['user_id'] . "'");
-                $validationSuccess="پسورد شما با موفقیت تغییر کرد حالا می توانید با استفاده از <a href='/user/auth'>این لینک</a> وارد شود";
+                $validationSuccess = "پسورد شما با موفقیت تغییر کرد حالا می توانید با استفاده از <a href='/user/auth'>این لینک</a> وارد شود";
             } catch (\Exception $e) {
                 array_push($validationErrors, "خطایی در تغییر پسورد رخ داد");
             }
@@ -253,8 +297,8 @@ class UserController extends Controller
     public function get_dashboard($req, $res, $args)
     {
         $userOrders = User::get_orders_by_user_id($_SESSION['user_id'], 1, 3);
-        $workingOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], ['is_done' => 0,'is_accepted'=>1]);
-        $completedOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], ['is_done' => 1,'is_accepted'=>1]);
+        $workingOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], ['is_done' => 0, 'is_accepted' => 1]);
+        $completedOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], ['is_done' => 1, 'is_accepted' => 1]);
         $unreadMessagesCount = User::get_unread_messages_count_by_user_id($_SESSION['user_id']);
         $lastThreeMessages = User::get_messages_by_id($_SESSION['user_id'], 1, 3);
         $this->view->render($res, "admin/user/dashboard.twig", ['orders' => $userOrders, 'completedOrdersCount' => $completedOrdersCount, 'workingOrdersCount' => $workingOrdersCount, 'unreadMessagesCount' => $unreadMessagesCount, 'lastMessages' => $lastThreeMessages]);
@@ -288,6 +332,7 @@ class UserController extends Controller
         }
         $userOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], $filtering_options);
         $userOrders = User::get_orders_by_user_id($_SESSION['user_id'], $page, 10, $filtering_options);
+        
         return $this->view->render($res, "admin/user/orders.twig", ['orders' => $userOrders, 'current_page' => $page, 'orders_count' => $userOrdersCount, 'completed' => $completed, 'pending' => $pending]);
     }
     //this function gets user orders from db and returns them as json
@@ -314,20 +359,31 @@ class UserController extends Controller
     public function user_new_order_page($req, $res, $args)
     {
         $userData = User::by_id($_SESSION['user_id'], "fname,lname,phone,email");
-
+        $tokenArray = $this->get_csrf_token($req);
+        $userData=array_merge($userData,$tokenArray);
         return $this->view->render($res, "admin/user/new-order.twig", $userData);
     }
     //this function gets order details from db and renders the page
     public function get_order_details($req, $res, $args)
     {
-        $orderData = \App\Models\Order::by_id($args['order_id']);
-        if($orderData['translator_id'] != "0"){
-            $translatorData=\App\Models\Translator::by_id($orderData['translator_id'],"fname,lname");
-            $orderData['translator_fname']=$translatorData['fname'];
-            $orderData['translator_lname']=$translatorData['lname'];
+        $orderData = \App\Models\Order::by_id($args['order_id'],false,false,$_SESSION['user_id']);
+        if($orderData){
+            $orderData['found']=true;
+            if ($orderData['translator_id'] != "0") {
+                $translatorData = \App\Models\Translator::by_id($orderData['translator_id'], "fname,lname");
+                $orderData['translator_fname'] = $translatorData['fname'];
+                $orderData['translator_lname'] = $translatorData['lname'];
+            }
+            
+            $orderData['field_of_study']=$orderData['field_of_study'] !='0' ? $this->studyFields[$orderData['field_of_study']] : "عمومی";
+            
+            $tokenArray = $this->get_csrf_token($req);
+            $orderData = array_merge($orderData, $tokenArray);
+            return $this->view->render($res, "admin/user/order-details.twig", $orderData);
+        }else{
+            return $this->view->render($res, "admin/user/order-details.twig", ['found'=>false]);
         }
         
-        return $this->view->render($res, "admin/user/order-details.twig", $orderData);
     }
 
     public function get_message_details($req, $res, $args)
@@ -343,46 +399,46 @@ class UserController extends Controller
         $answeredQS = $req->getQueryParam("answered") === null ? 'unset' : \explode(",", $req->getQueryParam("answered"));
         $filtering_options = [];
         var_dump($readQS);
-        $read=false;
-        $unread=false;
-        $answered=false;
-        $unanswered=false;
+        $read = false;
+        $unread = false;
+        $answered = false;
+        $unanswered = false;
         var_dump($answeredQS);
         if ($readQS != 'unset') {
             $filtering_options['is_read'] = $readQS;
-            if(count($readQS)==2){
-            $read=true;
-            $unread=true;
-        }else{
-            if($readQS[0]=="0"){
-                $unread=true;
-                $read=false;
-            }else{
-                $unread=false;
-                $read=true;
+            if (count($readQS) == 2) {
+                $read = true;
+                $unread = true;
+            } else {
+                if ($readQS[0] == "0") {
+                    $unread = true;
+                    $read = false;
+                } else {
+                    $unread = false;
+                    $read = true;
+                }
             }
-        }
         }
         if ($answeredQS != 'unset') {
             $filtering_options['is_answered'] = $answeredQS;
-            if(count($answeredQS)==2){
-            $answered=true;
-            $unanswered=true;
-        }else{
-            if($answeredQS[0]=="0"){
-                $unanswered=true;
-                $answered=false;
-            }else{
-                $unanswered=false;
-                $answered=true;
+            if (count($answeredQS) == 2) {
+                $answered = true;
+                $unanswered = true;
+            } else {
+                if ($answeredQS[0] == "0") {
+                    $unanswered = true;
+                    $answered = false;
+                } else {
+                    $unanswered = false;
+                    $answered = true;
+                }
             }
         }
-        }
-        
+
         $userMessages = User::get_messages_by_id($_SESSION['user_id'], $page, 10, $filtering_options);
         $userMessagesCount = User::get_messages_count_by_id($_SESSION['user_id'], $filtering_options);
 
-        return $this->view->render($res, "admin/user/messages.twig", ["messages" => $userMessages, 'messages_count' => $userMessagesCount,'read'=>$read,'unread'=>$unread,'answered'=>$answered,'unanswered'=>$unanswered]);
+        return $this->view->render($res, "admin/user/messages.twig", ["messages" => $userMessages, 'messages_count' => $userMessagesCount, 'read' => $read, 'unread' => $unread, 'answered' => $answered, 'unanswered' => $unanswered]);
     }
     public function get_messages_json($req, $res, $args)
     {
@@ -487,11 +543,115 @@ class UserController extends Controller
         }
     }
 
+    //order payment for unpaid orders
+    public function order_payment($req, $res, $args)
+    {
+        $orderId = $args['order_id'];
+        // $_SESSION['pending_order_id']=$orderId;
+        $postFields = $req->getParsedBody();
+        $this->payment_gateway = $postFields['gateway'];
+        if (!in_array($this->payment_gateway, $this->gateways)) {
+            return $res->write("خطایی در پرداخت رخ داد");
+        }
+        switch ($this->payment_gateway) {
+            case "zarinpal":
+                $result = $this->zarinpal_payment($orderId, $this->payment_gateway);
+                if ($result->Status == 100) {
+                    $this->view->render($res, "website/redirect-page.twig", ['redirect_url' => "https://www.zarinpal.com/pg/StartPay/" . $result->Authority, 'message' => "در حال هدایت به درگاه زرین پال", "message_below" => "لطفا صبر کنید ..."]);
+                } else {
+                    echo "خطایی رخ داد";
+                }
+                break;
+            case "mellat":
+                $result = $this->mellat_payment($orderId, $this->payment_gateway);
+                break;
+        }
+    }
+
+    public function save_user_order_info($req, $res, $args)
+    {
+        $postInfo = $req->getParsedBody();
+        $postInfo['orderer_id'] = $_SESSION['user_id'];
+        
+        // creating a new order
+        $orderData = \App\Models\Order::new ($postInfo);
+        $priceInfo = $orderData['priceInfo'];
+        $orderId = $orderData['orderId'];
+        //creating order logs
+        $logResult = \App\Models\Order::new_order_log([
+            'order_id' => $orderId,
+            'order_step' => 1,
+        ]);
+        if ($orderId && $logResult) {
+            $tokenArray = $this->get_csrf_token($req);
+            $data = array(
+                'success' => true,
+                'translation_type' => $postInfo['type'] == "1" ? "عمومی" : "تخصصی",
+                'translation_quality' => $postInfo['translation_quality'] == "5" ? "نقره ای" : "طلایی",
+                'page_number' => $priceInfo['pageNumber'],
+                'duration' => $priceInfo['duration'],
+                'final_price' => $priceInfo['price'],
+                'order_id' => $orderId,
+                'page_title' => "پرداخت سفارش",
+            );
+            $data = \array_merge($data, $tokenArray);
+            $this->view->render($res, "website/order-result.twig", $data);
+        }
+    }
+
+    // START payment functions for unpaid order
+    protected function mellat_payment($orderId, $gateway)
+    {
+        $orderData = \App\Models\Order::by_id($orderId);
+        $payment = new Payment();
+        $payment->set_gateway($gateway);
+        $orderPriceRial = \intval($orderData['order_price']) * 10;
+        $payment->set_info(array(
+            'order_id' => $orderId,
+            'price' => $orderPriceRial,
+            'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['order_id'],
+        ));
+        $result = $payment->pay();
+    }
+    protected function zarinpal_payment($orderId, $gateway)
+    {
+        $orderData = \App\Models\Order::by_id($orderId);
+        $payment = new Payment();
+        $payment->set_gateway($gateway);
+        $payment->set_info(array(
+            'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['order_id'],
+            'price' => $orderData['order_price'],
+            'description' => 'خرید از وبسایت مترجم وان',
+        ));
+        $result = $payment->pay();
+        return $result;
+
+    }
+    // END payment functions for unpaid order
     //////////////////////////////////////////////
     // END Customer(User) ADMIN Functionsخقیث
     //////////////////////////////////////////////
 
     #endregion
+
+    //create email verification link to be send to user
+    protected function createVerifyLink($userData, $onlyKey = false)
+    {
+        $verifyKey = $userData['email'] . "my name is mehdi" . $userData['phone'] . $userData['register_date'];
+        $verifyKey = \sha1(\md5($verifyKey));
+
+        if ($onlyKey) {
+            return $verifyKey;
+        } else {
+            return Config::BASE_URL . "/user/confirm?user=" . \urlencode($userData['username']) . "&verify_token=" . \urlencode($verifyKey);
+        }
+    }
+
+    protected function send_verification_mail_to_customer($userData)
+    {
+        $verifyLink = $this->createVerifyKey($userData);
+
+    }
 
     protected function send_user_info_to_email($userInfo, $verifyLink)
     {
@@ -515,7 +675,7 @@ class UserController extends Controller
             </style>
         </head>
             <body style='margin:0;padding:0;font-family: Vazir, Tahoma, DejaVu Sans, helvetica, arial, freesans, sans-serif;'>
-            
+
             <div style='width:100%!important;min-width:300px;height:100%;margin:0;padding:0;line-height:1.5;color:#333;background-color:#f2f2f2'>
             <table style='width:100%;padding:30px 0 0 0'>
                 <tbody>
@@ -601,24 +761,6 @@ class UserController extends Controller
 
         ";
         return mail($userInfo['email'], $subject, $text, $headers);
-
-    }
-    //create email verification link to be send to user
-    protected function createVerifyLink($userData, $onlyKey = false)
-    {
-        $verifyKey = $userData['email'] . "my name is mehdi" . $userData['phone'] . $userData['register_date'];
-        $verifyKey = \sha1(\md5($verifyKey));
-
-        if ($onlyKey) {
-            return $verifyKey;
-        } else {
-            return Config::BASE_URL . "/user/confirm?user=" . \urlencode($userData['username']) . "&verify_token=" . \urlencode($verifyKey);
-        }
-    }
-
-    protected function send_verification_mail_to_customer($userData)
-    {
-        $verifyLink = $this->createVerifyKey($userData);
 
     }
     protected function create_password_reset_link($email, $saveToDB = false)

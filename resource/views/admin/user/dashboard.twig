@@ -142,7 +142,7 @@
 
                                     {% endfor %}
                                 {% else %}
-                                    <h6 class="text-center p-3">تاکنون تیکتی ارسال نکرده اید !</h6>
+                                    <h6 class="text-center p-3">تاکنون پیامی ارسال نکرده اید !</h6>
                                 {% endif %}
 
                             </div>
@@ -202,7 +202,8 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <table class="table">
+                            {% if orders %}
+                                  <table class="table">
                                 <thead>
                                     <th>شماره سفارش</th>
                                     <th>تعداد صفحات</th>
@@ -242,21 +243,24 @@
                                             <td>{{order.accepted == '0' ?  'تایید نشده' : 'تایید شده' }}</td>
                                             <td>
                                                 {% if order.translator_id == "0" %}
-                    <p>مشخص نشده</p>
-                  {% else %}
-                      <a
-                      style="cursor:pointer;color:#20a8d8"
-                      onclick="showTranslatorInfo('{{ order.translator_id }}')"
-                      >مشاهده اطلاعات مترجم</a>
-                  {% endif %}
-                
-                
+                                                    <p>مشخص نشده</p>
+                                                {% else %}
+                                                    <a
+                                                    style="cursor:pointer;color:#20a8d8"
+                                                    onclick="showTranslatorInfo('{{ order.translator_id }}')"
+                                                    >مشاهده اطلاعات مترجم</a>
+                                                {% endif %}
+                                                
                                             </td>
                                         </tr>
                                     {% endfor %}
 
                                 </tbody>
                             </table>
+                            {% else %}
+                                <h5 class="text-center">تاکنون سفارشی ثبت نکرده اید !</h5>
+                            {% endif %}
+                            
                         </div>
                     </div>
                 </div>

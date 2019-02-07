@@ -46,7 +46,6 @@ $app->group('/', function ($app) use ($container) {
 
 //these routes dont get affected by wpPosts middleware
 $app->get('/employment', "App\Controllers\TranslatorController:translator_get_signup")->add($container->get('csrf'));
-$app->get('/testing', "App\Controllers\OrderController:testing");
 $app->get('/new-captcha', function (Request $request, Response $response, array $args) {
     $builder = new Gregwar\Captcha\CaptchaBuilder;
     $builder->build();
@@ -56,7 +55,6 @@ $app->get('/new-captcha', function (Request $request, Response $response, array 
         'captcha' => $captcha,
     ));
 });
-
 
 $app->post('/employment', "App\Controllers\TranslatorController:post_signup")->add($container->get('csrf'));
 $app->post('/upload-employee-photo', "App\Controllers\TranslatorController:upload_employee_photo");

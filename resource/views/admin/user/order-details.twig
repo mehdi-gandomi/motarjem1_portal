@@ -1,16 +1,37 @@
 {% extends "admin/layout/user.twig" %}
 {% block style_below %}
-<style media="print">
-.title-section{
-    display:block;
-}
-.title-section h3{
-    text-align:center;
-}
-.title-section .btn{
-    display:none;
-}
-</style>
+    <style media="print">
+        .title-section {
+            display: block;
+        }
+        .title-section h3 {
+            text-align: center;
+        }
+        .title-section .btn {
+            display: none;
+        }
+    </style>
+    <style>
+        .button {
+            padding: 0.375rem 0.75rem;
+            text-align: center;
+            border-radius: 8px;
+            display: inline-block;
+            vertical-align: middle;
+            border: 0;
+            cursor: pointer;
+        }
+        .button.has--lighter-shadow {
+            box-shadow: 0 0 1.5px rgba(0,0,0,.19), 0 1.3px 0 rgba(0,0,0,.23);
+        }
+        .button:active,
+        .button:focus,
+        .button:hover {
+            text-decoration: none;
+            outline: none;
+        }
+    </style>
+    <link rel="stylesheet" href="/public/css/order-result.css">
 {% endblock %}
 {% block content %}
     {# START declaring
@@ -31,20 +52,22 @@ based on db info #}
     <main class="main">
         <div class="card">
             <div class="card-body">
-                <div class="title-section mb-5 mt-3 ">
+                {% if found %}
+                
+                    <div class="title-section mb-5 mt-3 ">
                     <h3 class="text-center">جزییات سفارش</h3>
                     <div>
                         <button class="btn btn-success" onclick="window.print()">
-                        <i class="icon-printer"></i>
-                        پرینت
-                    </button>
-                    {% if transaction_code == "0" %}
-                                  <button class="btn btn-success" onclick="window.print()">
-                        <i class="icon-credit-card"></i>
-                        پرداخت
+                            <i class="icon-printer"></i>
+                            پرینت
                         </button>
-                    {% endif %}
-                    
+                        {% if transaction_code == '0' %}
+                            <button class="btn btn-success" data-toggle="modal" data-target="#orderPaymentModal">
+                                <i class="icon-credit-card"></i>
+                                پرداخت
+                            </button>
+                        {% endif %}
+
                     </div>
                 </div>
                 <div class="order-details row">
@@ -56,12 +79,18 @@ based on db info #}
                             {{ order_id }}
                         </div>
                     </div>
-                    <div class="order-details__detail col-md-3">
+                    <div class="order-details__detail col-md-2">
                         <div class="order-details__detail__label">
                             شماره تراکنش
                         </div>
                         <div class="order-details__detail__value">
-                            {{ transaction_code }}
+                            {% if transaction_code == '0' %}
+                            <p style="color:red">پرداخت نشده</p>
+                            {% else %}
+                                {{ transaction_code }}
+
+                            {% endif %}
+                            
                         </div>
                     </div>
                     <div class="order-details__detail col-md-2">
@@ -72,14 +101,12 @@ based on db info #}
                             {{ word_numbers / 250 }}
                         </div>
                     </div>
-                    <div class="order-details__detail col-md-3">
+                    <div class="order-details__detail col-md-2">
                         <div class="order-details__detail__label">
                             زبان ترجمه
                         </div>
                         <div class="order-details__detail__value">
-                            {{
-              translation_type == "1" ? "انگلیسی به فارسی" : "فارسی به انگلیسی"
-            }}
+                            {{translation_type == "1" ? "انگلیسی به فارسی" : "فارسی به انگلیسی"}}
                         </div>
                     </div>
                     <div class="order-details__detail col-md-2">
@@ -90,6 +117,23 @@ based on db info #}
                             {{ translation_quality == "5" ? "نقره ای" : "طلایی" }}
                         </div>
                     </div>
+                    <div class="order-details__detail col-md-2">
+                        <div class="order-details__detail__label">
+                            نوع ترجمه
+                        </div>
+                        <div class="order-details__detail__value">
+                            {{translation_kind == '1' ? "عمومی":"تخصصی"}}
+                        </div>
+                    </div>
+                    <div class="order-details__detail col-md-3">
+                        <div class="order-details__detail__label">
+                            رشته تخصصی
+                        </div>
+                        <div class="order-details__detail__value">
+                            {{ field_of_study }}
+                        </div>
+                    </div>
+                    
                     <div class="order-details__detail col-md-3">
                         <div class="order-details__detail__label">
                             زمان تحویل
@@ -128,7 +172,10 @@ based on db info #}
                             تاریخ تایید سفارش
                         </div>
                         <div class="order-details__detail__value">
-                            {{ accept_date_persian }}
+                            
+                            {{ accept_date_persian ? accept_date_persian:"تایید نشده"}}
+                            
+                            
                         </div>
                     </div>
                     <div class="order-details__detail col-md-3">
@@ -143,14 +190,6 @@ based on db info #}
                             {% endif %}
                         </div>
                     </div>
-                    {#
-        <div class="order-details__detail col-md-4">
-          <div class="order-details__detail__label">
-            مرحله سفارش
-          </div>
-          <div class="order-details__detail__value"></div>
-        </div>
-        #}
                     <div class="order-details__detail col-md-3">
                         <div class="order-details__detail__label">
                             قیمت کل سفارش
@@ -160,7 +199,7 @@ based on db info #}
                             تومان
                         </div>
                     </div>
-                    <div class="order-details__detail col-md-3">
+                    <div class="order-details__detail col-md-2">
                         <div class="order-details__detail__label">
                             وضعیت اتمام
                         </div>
@@ -169,7 +208,7 @@ based on db info #}
                         </div>
                     </div>
                     {% if description %}
-                        <div class="order-details__detail col-md-12">
+                        <div class="order-details__detail col-md-10">
                             <div class="order-details__detail__label">
                                 توضیحات
                             </div>
@@ -179,8 +218,59 @@ based on db info #}
                         </div>
                     {% endif %}
                 </div>
+                {% else %}
+                    <h3 class="text-center p-5">چنین سفارشی یافت نشد !</h3>
+                {% endif %}
+                
             </div>
         </div>
     </main>
+    <!-- Modal -->
+    <div class="modal fade" id="orderPaymentModal" tabindex="-1" role="dialog" aria-labelledby="orderPaymentModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h4 class="modal-title" id="orderPaymentModalLabel">پرداخت سفارش</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <h3 class="text-center">
+                                مبلغ قابل پرداخت
+                                {{order_price}}
+                                تومان
+                            </h3>
+
+                            <p class="text-center" style="font-size: 1rem;color: #7f95ad;">لطفا یکی از درگاه های زیر را برای پرداخت انتخاب کنید</p>
+                        </div>
+                        <div class="col-12">
+                            <div class="payment-gateways">
+                                <form action="/user/order-payment/{{order_id}}" method="POST">
+                                    <input type="hidden" name="csrf_name" value="{{csrf_name}}">
+                                    <input type="hidden" name="csrf_value" value="{{csrf_value}}">
+                                    <div class="mellat">
+                                        <button type="submit" name="gateway" value="mellat" class="button mellat has--lighter-shadow" readonly="readonly">
+                                            <img src="/public/images/icon/Behpardakht.png" alt="mellat">
+                                            <span>پرداخت توسط درگاه بانک ملت</span>
+                                        </button>
+                                    </div>
+                                    <div class="or">یا</div>
+                                    <div class="zarinpal">
+                                        <button type="submit" name="gateway" value="zarinpal" class="button zarinpal has--lighter-shadow" readonly="readonly">
+                                            <img src="/public/images/icon/zarinpal.png" alt="zarinpal">
+                                            <span>پرداخت توسط زرین پال</span>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-start">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">انصراف</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}

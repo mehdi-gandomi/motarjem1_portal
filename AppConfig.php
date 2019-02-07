@@ -49,8 +49,9 @@ $configuration = [
         return function (\Slim\Http\Request $request, \Slim\Http\Response $response) use ($c) {
             $route = $_SERVER['REQUEST_URI'];
             
-            if (strpos($route, "user/") || strpos($route, "translator/") || strpos($route, "admin/")) {
-                var_dump("not found");
+            if (strpos($route, "user/") || strpos($route, "user") || strpos($route, "translator/") || strpos($route, "translator") || strpos($route, "admin/") || strpos($route, "admin")) {
+                $view = $c->get('view');
+                $view->render($response, 'admin/404.twig');
             } else {    
                 $view = $c->get('view');
                 $view->render($response, 'website/404.twig');

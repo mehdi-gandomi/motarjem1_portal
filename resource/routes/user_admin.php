@@ -33,8 +33,9 @@ $app->group('/user', function ($app) use ($container) {
     $app->get('/translator/getinfo/{id}',"App\Controllers\UserController:get_translator_info");
     $app->get('/orders',"App\Controllers\UserController:get_user_orders");
     $app->get("/orders/json","App\Controllers\UserController:get_user_orders_json");
-    $app->get("/order/new","App\Controllers\UserController:user_new_order_page");
-    $app->get("/order/view/{order_id}","App\Controllers\UserController:get_order_details");
+    $app->get("/order/new","App\Controllers\UserController:user_new_order_page")->add($container->get('csrf'));
+    $app->post("/order/save","App\Controllers\UserController:save_user_order_info")->add($container->get('csrf'));
+    $app->get("/order/view/{order_id}","App\Controllers\UserController:get_order_details")->add($container->get('csrf'));
     $app->get("/message/view/{msg_id}","App\Controllers\UserController:get_message_details");
     $app->get("/messages","App\Controllers\UserController:get_messages_page");
     $app->get("/messages/json","App\Controllers\UserController:get_messages_json");
@@ -43,5 +44,5 @@ $app->group('/user', function ($app) use ($container) {
     $app->get("/edit-profile","App\Controllers\UserController:edit_profile_page")->add($container->get('csrf'));
     $app->post("/edit-profile","App\Controllers\UserController:post_edit_profile")->add($container->get('csrf'));
     $app->post("/edit-profile/upload-avatar","App\Controllers\UserController:upload_avatar");
+    $app->post('/order-payment/{order_id}', "App\Controllers\UserController:order_payment")->add($container->get('csrf'));
 })->add($authMV);
-

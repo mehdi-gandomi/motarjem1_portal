@@ -28,7 +28,7 @@ class Order extends Model
         }
     }
 
-    public static function by_id($id,$with_translator_data=false,$with_orderer_data=false)
+    public static function by_id($id,$with_translator_data=false,$with_orderer_data=false,$ordererId=false)
     {
         try {
             $db=static::getDB();
@@ -40,6 +40,9 @@ class Order extends Model
                 $sql = "SELECT orders.order_id,orders.word_numbers,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id,users.email,users.phone FROM orders INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE orders.order_id= :order_id";
             }else if($with_translator_data && $with_orderer_data){
                 $sql = "SELECT orders.order_id,orders.word_numbers,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM orders INNER JOIN translators ON orders.translator_id=translators.translator_id INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE orders.order_id= :order_id";
+            }
+            if($ordererId){
+                $sql.=" AND orders.orderer_id='$ordererId'";
             }
             $stmt=$db->prepare($sql);
             $stmt->bindParam(":order_id",$id);

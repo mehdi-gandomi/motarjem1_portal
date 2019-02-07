@@ -11,8 +11,8 @@
         <div class="card mt-3">
             <div class="card-body" style="position:relative">
                 <h3>سفارش ترجمه جدید</h3>
-                <form class="form-wrapper mt-5 new-order-form" method="POST" enctype="multipart/form-data" action="order-completed">
-                    <input type="hidden" name="files" id="uploaded-files">
+                <form class="form-wrapper mt-5 new-order-form" method="POST" enctype="multipart/form-data" action="/user/order/save">
+                    <input type="hidden" name="order_files" id="uploaded-files">
                     <input type="hidden" name="csrf_name" value="{{csrf_name}}">
                     <input type="hidden" name="csrf_value" value="{{csrf_value}}">
 
@@ -23,11 +23,11 @@
                         <div class=" row">
                             <div class="form-group col-lg-3 col-md-6">
                                 <label for="type">نوع ترجمه *</label>
-                                <select name="type" id="type" class="form-control">
-                                    <option value="common">
+                                <select name="translation_kind" id="type" class="form-control">
+                                    <option value="1">
                                         عمومی</option>
 
-                                    <option value="specialist">
+                                    <option value="1">
                                         تخصصی</option>
 
                                 </select>
@@ -36,6 +36,7 @@
                             <div class="form-group field_of_study col-lg-3 col-md-6">
                                 <label for="field_of_study">رشته تحصصی</label>
                                 <select name="field_of_study" id="field_of_study" class="form-control">
+                                    <option value="0">انتخاب کنید</option>
                                     <option value="90">
                                         ادبیات و زبان شناسی</option>
                                     <option value="89">
@@ -116,28 +117,28 @@
                             </div>
                             <div class="form-group col-lg-3 col-md-6">
                                 <label for="words">تعداد کلمات *</label>
-                                <input class="form-control" type="number" name="words" id="words" value="{{words}}" placeholder="تعداد کلمات">
+                                <input class="form-control" type="number" name="word_numbers" id="words" value="{{words}}" placeholder="تعداد کلمات">
                                 <span class="hint words--hint">هر صفحه استاندارد، 250 کلمه است</span>
                             </div>
                             <div class="form-group col-lg-3 col-md-6">
                                 <label for="language">زبان ترجمه *</label>
-                                <select name="language" id="language" class="form-control">
-                                    <option value="en_to_fa">
+                                <select name="translation_lang" id="language" class="form-control">
+                                    <option value="1">
                                         انگلیسی - فارسی</option>
-                                    <option value="fa_to_en">
+                                    <option value="2">
                                         فارسی - انگلیسی</option>
                                 </select>
                             </div>
                             <div class="col-lg-3 form-group col-md-6">
                                 <label for="quality">کیفیت ترجمه</label>
                                 <select name="translation_quality" id="quality" class="form-control">
-                                    <option value="silver">نقره ایی</option>
-                                    <option value="gold">طلایی</option>
+                                    <option value="5">نقره ایی</option>
+                                    <option value="10">طلایی</option>
                                 </select>
                             </div>
                             <div class="form-group col-lg-3 col-md-6">
                                 <label for="discount">کد تخفیف</label>
-                                <input type="text" name="discount" id="discount" class="form-control" placeholder="کد تخفیف">
+                                <input type="text" name="discount_code" id="discount" class="form-control" placeholder="کد تخفیف">
                                 <span class="hint">جهت دریافت کد تخفیف
                                     <a href="http://www.t.me/motarjem_one">پیام</a>
                                     دهید</span>
@@ -151,21 +152,21 @@
                         <h5 class="text-center">زمان تحویل *</h5>
                         <div class="row cf delivery-selection-wrap">
                             <div class="col-lg-4 col-sm-4 col-xs-4">
-                                <input type="radio" name="delivery_type" value="normal" id="normal">
+                                <input type="radio" name="delivery_type" value="1" id="normal">
                                 <label class="deliver-selection" for="normal">
                                     <img src="/public/images/icon/walker.svg" alt="">
                                     <h4>عادی</h4>
                                 </label>
                             </div>
                             <div class="col-lg-4 col-sm-4 col-xs-4">
-                                <input type="radio" name="delivery_type" value="half_an_instant" id="half_an_instant">
+                                <input type="radio" name="delivery_type" value="2" id="half_an_instant">
                                 <label class="deliver-selection" for="half_an_instant">
                                     <img src="/public/images/icon/running-man.svg" alt="">
                                     <h4>نیمه فوری</h4>
                                 </label>
                             </div>
                             <div class="col-lg-4 col-sm-4 col-xs-4">
-                                <input type="radio" name="delivery_type" value="instantaneous" id="instantaneous">
+                                <input type="radio" name="delivery_type" value="3" id="instantaneous">
                                 <label class="deliver-selection" for="instantaneous">
                                     <img src="/public/images/icon/rocket-launch.svg" alt="">
                                     <h4>فوری</h4>
