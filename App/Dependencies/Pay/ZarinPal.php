@@ -40,7 +40,7 @@ class ZarinPal
             CURLOPT_USERAGENT => 'ZarinPal Rest Api v1',
             CURLOPT_CUSTOMREQUEST => "POST",
         ));
-        $result = $request->execute_and_parse_json();
+        $result = $request->execute_and_parse_json(true);
         return $result;
     }
 

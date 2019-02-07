@@ -1,11 +1,10 @@
 <?php
 namespace App\Controllers;
 
-use Core\Config;
-use Core\Controller;
 use App\Dependencies\Pay\Payment;
 use App\Models\Order;
-
+use Core\Config;
+use Core\Controller;
 
 class OrderController extends Controller
 {
@@ -34,7 +33,7 @@ class OrderController extends Controller
 
         ),
         'field_types' => array(
-            "0"=>"انتخاب کنید",
+            "0" => "انتخاب کنید",
             "90" => "ادبیات و زبان شناسی",
             "89" => "اسناد تجاری",
             "88" => "اقتصاد",
@@ -83,45 +82,45 @@ class OrderController extends Controller
         $getParams = $req->getQueryParams();
         $tokenArray = $this->get_csrf_token($req);
         $data = array_merge($this->combos, $tokenArray);
-        $data['page_title']="سفارش ترجمه";
+        $data['page_title'] = "سفارش ترجمه";
         if (isset($getParams['words'])) {
             $data = array_merge($data, $getParams);
         }
-        $data=array_merge($data,array("latestPosts"=>$_SESSION["latestPosts"]));
-        if(isset($_SESSION['is_user_logged_in']) || (isset($getParams['signup']) && $getParams['signup']=="false")){
+        $data = array_merge($data, array("latestPosts" => $_SESSION["latestPosts"]));
+        if (isset($_SESSION['is_user_logged_in']) || (isset($getParams['signup']) && $getParams['signup'] == "false")) {
             return $this->view->render($res, "website/order.twig", $data);
         }
         return $res->withRedirect("/order-method");
     }
-    public function order_method_page($req,$res,$args)
+    public function order_method_page($req, $res, $args)
     {
-        return $this->view->render($res,"website/order-type-choice.twig",['latestPosts'=>$_SESSION['latestPosts']]);
+        return $this->view->render($res, "website/order-type-choice.twig", ['latestPosts' => $_SESSION['latestPosts']]);
     }
     public function save_order_info($req, $res, $args)
     {
         $postInfo = $req->getParsedBody();
-        if(!isset($_SESSION['is_user_logged_in'])){
-            $user_id=\App\Models\User::create([
-                'username'=>$postInfo['email'],
-                'password'=>$postInfo['phone_number'],
-                'fname'=>explode(" ",$postInfo['fullname'])[0],
-                'lname'=>explode(" ",$postInfo['fullname'])[1],
-                'email'=>$postInfo['email'],
-                'phone'=>$postInfo['phone_number']
+        if (!isset($_SESSION['is_user_logged_in'])) {
+            $user_id = \App\Models\User::create([
+                'username' => $postInfo['email'],
+                'password' => $postInfo['phone_number'],
+                'fname' => explode(" ", $postInfo['fullname'])[0],
+                'lname' => explode(" ", $postInfo['fullname'])[1],
+                'email' => $postInfo['email'],
+                'phone' => $postInfo['phone_number'],
             ]);
-            $postInfo['orderer_id']=$user_id;
-        }else{
-            $postInfo['orderer_id']=$_SESSION['user_id'];
+            $postInfo['orderer_id'] = $user_id;
+        } else {
+            $postInfo['orderer_id'] = $_SESSION['user_id'];
         }
-        
+
         // creating a new order
-        $orderData = Order::new($postInfo);
+        $orderData = Order::new ($postInfo);
         $priceInfo = $orderData['priceInfo'];
         $orderId = $orderData['orderId'];
         //creating order logs
-        $logResult=Order::new_order_log([
-            'order_id'=>$orderId,
-            'order_step'=>1
+        $logResult = Order::new_order_log([
+            'order_id' => $orderId,
+            'order_step' => 1,
         ]);
         if ($orderId && $logResult) {
             $tokenArray = $this->get_csrf_token($req);
@@ -133,14 +132,14 @@ class OrderController extends Controller
                 'duration' => $priceInfo['duration'],
                 'final_price' => $priceInfo['price'],
                 'order_id' => $orderId,
-                'page_title'=>"پرداخت سفارش"
+                'page_title' => "پرداخت سفارش",
             );
-            $data=\array_merge($data, $tokenArray);
-            $data=array_merge($data,array("latestPosts"=>$_SESSION["latestPosts"]));
-            $this->view->render($res, "website/order-result.twig",$data );
+            $data = \array_merge($data, $tokenArray);
+            $data = array_merge($data, array("latestPosts" => $_SESSION["latestPosts"]));
+            $this->view->render($res, "website/order-result.twig", $data);
         }
     }
-    
+
     public function order_payment($req, $res, $args)
     {
         $orderId = $args['order_id'];
@@ -170,7 +169,7 @@ class OrderController extends Controller
         $orderData = Order::by_id($orderId);
         $payment = new Payment();
         $payment->set_gateway($gateway);
-        $orderPriceRial=\intval($orderData['order_price'])*10;
+        $orderPriceRial = \intval($orderData['order_price']) * 10;
         $payment->set_info(array(
             'order_id' => $orderId,
             'price' => $orderPriceRial,
@@ -195,99 +194,87 @@ class OrderController extends Controller
     public function payment_result_zarinpal($req, $res, $args)
     {
         $queryParams = $req->getQueryParams();
-        if($queryParams['Status']=="NOK"){
-            
-            return $this->view->render($res, "website/order-successful.twig", ['status' => false,"page_title"=>"خطا در پرداخت","latestPosts"=>$_SESSION["latestPosts"]]);
+        if ($queryParams['Status'] == "NOK") {
+            return $this->view->render($res, "website/order-successful.twig", ['status' => false,'refId'=>"دریافت نشد!", "page_title" => "خطا در پرداخت",'error'=>"پرداخت انجام نشد", "latestPosts" => $_SESSION["latestPosts"]]);
         }
         $orderId = $args['order_id'];
-        $orderData = Order::by_id($orderId,false,true);
+        $orderData = Order::by_id($orderId, false, true);
         $payment = new Payment();
         $payment->set_info(['price' => $orderData['order_price']]);
         $result = $payment->validate($queryParams['Authority']);
-
         if ($result->Status > 0) {
-            $refId = $result->RefID;
+            $refId = $result['RefID'];
             $updateResult = Order::update_order_log(array(
-                'transactionscode' => $refId,
-                'step' => 2,
+                'transaction_code' => $refId,
+                'order_step' => 2,
             ), $orderId);
             // if (!$updateResult) {
             //     return $this->view->render($res, "order-successful.twig", ['status' => false]);
             // }
-            
+
             $data = array(
                 'contact_phone' => '٠٩٣٠٩٥٨٩١٢٢',
                 'contact_email' => 'Motarjem1@yahoo.com',
                 'order_id' => $orderId,
-                'ref_id' => $refId,
+                'refId' => $refId,
                 'words' => $orderData['word_numbers'],
-                'page_number' => \ceil($orderData['word_numbers']/250),
-                'translation_language' => $orderData['translation_lang']=="1" ? "انگلیسی به فارسی":"فارسی به انگلیسی",
+                'page_number' => \ceil($orderData['word_numbers'] / 250),
+                'translation_language' => $orderData['translation_lang'] == "1" ? "انگلیسی به فارسی" : "فارسی به انگلیسی",
                 'translation_quality' => $orderData['translation_kind'] == "1" ? "نقره ای" : "طلایی",
                 'order_price' => $orderData['order_price'],
-                'customer_name' => $orderData['orderer_fname']." ".$orderData['orderer_lname'],
+                'customer_name' => $orderData['orderer_fname'] . " " . $orderData['orderer_lname'],
                 'email' => $orderData['email'],
                 'description' => $orderData['description'],
-                'success'=>true,
-                "page_title"=>"پرداخت موفق"
+                'success' => true,
+                "page_title" => "پرداخت موفق",
             );
             $this->send_invoice_to_email($orderData['email'], $orderData, $refId);
-            $data=array_merge($data,array("latestPosts"=>$_SESSION["latestPosts"]));
+            $data = array_merge($data, array("latestPosts" => $_SESSION["latestPosts"]));
             return $this->view->render($res, "website/order-successful.twig", $data);
-            
+
         } else {
-            
-            return $this->view->render($res, "website/order-successful.twig", ['status' => false, 'ref_id' => $result->RefID,"page_title"=>"خطا در پرداخت","latestPosts"=>$_SESSION["latestPosts"]]);
+
+            return $this->view->render($res, "website/order-successful.twig", ['status' => false, 'refId' => $result->RefID,'error'=>"خطایی در پرداخت رخ داد", "page_title" => "خطا در پرداخت", "latestPosts" => $_SESSION["latestPosts"]]);
         }
     }
     public function payment_result_mellat($req, $res, $args)
     {
-        $postFields = $req->getParsedBody();
-        
         $orderId = $args['order_id'];
-        $orderData = Order::by_id($orderId,false,true);
-        var_dump($orderData);
-        $orderData = Order::by_id($orderId,false,true);
-        if ($postFields['ResCode'] == '0') {
-            $payment = new Payment("mellat");
-            $paymentResult = $payment->validate($postFields);
+        $orderData = Order::by_id($orderId, false, true);
+        $payment = new Payment("mellat");
+        $paymentResult = $payment->validate($_POST);
 
-            if ($paymentResult['hasError']) {
-                
-                return $this->view->render($res, "website/order-successful.twig", ['status' => false, 'ref_id' => $postFields['RefId'],"page_title"=>"خطا در پرداخت","latestPosts"=>$_SESSION["latestPosts"]]);
-            } else {
-                $updateResult = Order::update_order_log(array(
-                    'transactionscode' => $postFields['‫‪RefId'],
-                    'step' => 3,
-                ), $orderId);
-                $data = array(
-                    'contact_phone' => '٠٩٣٠٩٥٨٩١٢٢',
-                    'contact_email' => 'Motarjem1@yahoo.com',
-                    'order_id' => $orderId,
-     -               'ref_id' => $postFields['‫‪RefId‬‬'],
-                    'words' => $orderData['word_numbers'],
-                    'page_number' => \ceil($orderData['word_numbers']/250),
-                    'translation_language' => $orderData['translation_lang']==1 ? "انگلیسی به فارسی":"فارسی به انگلیسی",
-                    'translation_quality' => $orderData['translation_kind'] == 1 ? "نقره ای" : "طلایی",
-                    'order_price' => $orderData['order_price'],
-                    'customer_name' => $orderData['orderer_fname']." ".$orderData['orderer_lname'],
-                    'email' => $orderData['email'],
-                    'description' => $orderData['description'],
-                    'success'=>true,
-                    "page_title"=>"پرداخت موفق"
-                );
-                $this->send_invoice_to_email($orderData['email'],$orderData,$postFields['‫‪RefId']);
-                $data=array_merge($data,array("latestPosts"=>$_SESSION["latestPosts"]));
-                return $this->view->render($res, "website/order-successful.twig", $data);
-                
-            }
+        if ($paymentResult['hasError']) {
+
+            return $this->view->render($res, "website/order-successful.twig", ['status' => false, 'refId' => $_POST['RefId'], "page_title" => "خطا در پرداخت", "latestPosts" => $_SESSION["latestPosts"], "error" => $paymentResult['error']]);
         } else {
-            return $this->view->render($res, "website/order-successful.twig", ['status' => false, 'ref_id' => $postFields['RefId'],"page_title"=>"خطا در پرداخت"]);
+            $updateResult = Order::update_order_log(array(
+                'transaction_code' => $_POST['‫‪RefId'],
+                'order_step' => 2,
+            ), $orderId);
+            $data = array(
+                'contact_phone' => '٠٩٣٠٩٥٨٩١٢٢',
+                'contact_email' => 'Motarjem1@yahoo.com',
+                'order_id' => $orderId,
+                'refId' => $_POST['‫‪‫‪RefId‬‬'],
+                'words' => $orderData['word_numbers'],
+                'page_number' => \ceil($orderData['word_numbers'] / 250),
+                'translation_language' => $orderData['translation_lang'] == 1 ? "انگلیسی به فارسی" : "فارسی به انگلیسی",
+                'translation_quality' => $orderData['translation_kind'] == 1 ? "نقره ای" : "طلایی",
+                'order_price' => $orderData['order_price'],
+                'customer_name' => $orderData['orderer_fname'] . " " . $orderData['orderer_lname'],
+                'email' => $orderData['email'],
+                'description' => $orderData['description'],
+                'success' => true,
+                "page_title" => "پرداخت موفق",
+            );
+            $this->send_invoice_to_email($orderData['email'], $orderData, $_POST['‫‪RefId']);
+            $data = array_merge($data, array("latestPosts" => $_SESSION["latestPosts"]));
+            return $this->view->render($res, "website/order-successful.twig", $data);
+
         }
 
     }
-
-
 
     protected function send_invoice_to_email($email, $orderData, $refId)
     {
@@ -301,13 +288,13 @@ class OrderController extends Controller
             return false;
         }
         $subject = "مترجم وان / رسید سفارش";
-        $quality=$orderData['translation_quality'] == 5 ? "نقره ای":"طلایی";
-        $word_numbers=$orderData['word_numbers'];
-        $language=$orderData['translation_lang']==1 ? "انگلیسی به فارسی":"فارسی به انگلیسی";
-        $page_number=\ceil($orderData['word_numbers']/250);
-        $price=$orderData['order_price'];
-        $date=$orderData['order_date_persian'];
-        $fullname=$orderData['orderer_fname']." ".$orderData['orderer_lname'];
+        $quality = $orderData['translation_quality'] == 5 ? "نقره ای" : "طلایی";
+        $word_numbers = $orderData['word_numbers'];
+        $language = $orderData['translation_lang'] == 1 ? "انگلیسی به فارسی" : "فارسی به انگلیسی";
+        $page_number = \ceil($orderData['word_numbers'] / 250);
+        $price = $orderData['order_price'];
+        $date = $orderData['order_date_persian'];
+        $fullname = $orderData['orderer_fname'] . " " . $orderData['orderer_lname'];
         $msg = "
 <!DOCTYPE html>
 <html>
@@ -477,16 +464,15 @@ class OrderController extends Controller
         $uploadedFile = $uploadedFiles['file'];
         $directory = dirname(dirname(__DIR__)) . '/public/uploads/order';
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
-            try{
+            try {
                 $filename = $this->moveUploadedFile($directory, $uploadedFile);
                 $res->write($filename);
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 $res->write("error while uploading file "+$e->gestMessage())->withStatus(500);
             }
-        }else{
+        } else {
             $res->write($uploadedFile->getError())->withStatus(500);
         }
     }
-
 
 }

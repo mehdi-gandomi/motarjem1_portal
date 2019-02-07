@@ -1570,7 +1570,7 @@ input::placeholder {
   -webkit-transition: color .2s ease-in-out;
   transition: color .2s ease-in-out;
   text-decoration: none;
-  font-size: 0.8rem;
+  font-size: 0.85srem;
 }
 
 .user_options-forms .forms_buttons-forgot:hover {
