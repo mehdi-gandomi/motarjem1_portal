@@ -94,6 +94,7 @@ class UserController extends Controller
                     $_SESSION['user_type'] = "user";
 
                     \setcookie(\session_name(), \session_id(), time() + (86400 * 7));
+                    var_dump($_SESSION);
                     return $res->withRedirect('/user');
                 } else {
                     $this->flash->addMessage('userActivationError', "حساب کاربری شما غیرفعال می باشد ! لطفا از طریق <strong><a  onclick='sendVerificationCode(\"$postFields[username]\")'>این لینک</a></strong> آن را فعال کنید.");
@@ -494,8 +495,14 @@ class UserController extends Controller
             unset($postFields['new_password']);
             unset($postFields['old_password']);
             unset($postFields['new_password_confirm']);
+            if(!isset($postFields['avatar']) || $postFields['avatar']=="") unset($postFields['avatar']);
             $result = User::edit_by_id($_SESSION['user_id'], $postFields);
             if ($result) {
+                $_SESSION['fname'] = $postFields['fname'];
+                $_SESSION['lname'] = $postFields['lname'];
+                $_SESSION['avatar'] = $postFields['avatar'];
+                $_SESSION['phone'] = $postFields['phone'];
+                $_SESSION['email'] = $postFields['email'];
                 $this->flash->addMessage('profileEditSuccess', "اطلاعات با موفقیت ویرایش شد");
             } else {
                 $this->flash->addMessage('profileEditErrors', "خطایی در ثبت اطلاعات رخ داد !");
@@ -508,6 +515,7 @@ class UserController extends Controller
                     unset($postFields['new_password']);
                     unset($postFields['old_password']);
                     unset($postFields['new_password_confirm']);
+                    if(!isset($postFields['avatar']) || $postFields['avatar']=="") unset($postFields['avatar']);
                     $result = User::edit_by_id($_SESSION['user_id'], $postFields);
                     if ($result) {
                         $this->flash->addMessage('profileEditSuccess', "اطلاعات با موفقیت ویرایش شد");

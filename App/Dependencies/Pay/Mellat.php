@@ -132,20 +132,22 @@ class Mellat{
             }else {
                 $client->call('bpReversalRequest', $this->info, $namespace);
                 $payResult['hasError']=true;
-                try{
+                if(isset($this->error_codes[$result])){
                     $payResult['error']=$this->error_codes[$result];
-                }catch(\Exception $e){
+                }else{
                     $payResult['error']="خطایی در پرداخت هزینه رخ داد!";
                 }
             }
         }else{    
             $client->call('bpReversalRequest', $this->info, $namespace);
             $payResult['hasError']=true;
-            try{
+            if(isset($this->error_codes[$result])){
                 $payResult['error']=$this->error_codes[$result];
-            }catch(\Exception $e){
+            }else{
                 $payResult['error']="خطایی در پرداخت هزینه رخ داد!";
             }
+            
+            
         }
 
         return $payResult;
