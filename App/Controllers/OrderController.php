@@ -467,7 +467,7 @@ class OrderController extends Controller
                 $filename = $this->moveUploadedFile($directory, $uploadedFile);
                 $res->write($filename);
             } catch (\Exception $e) {
-                $res->write("error while uploading file "+$e->gestMessage())->withStatus(500);
+                $res->write("error while uploading file "+$e->getMessage())->withStatus(500);
             }
         } else {
             $res->write($uploadedFile->getError())->withStatus(500);

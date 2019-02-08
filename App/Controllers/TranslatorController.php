@@ -1,8 +1,9 @@
 <?php
 namespace App\Controllers;
+
+use App\Models\Translator;
 use Core\Config;
 use Core\Controller;
-use App\Models\Translator;
 use Gregwar\Captcha\CaptchaBuilder;
 use Slim\Http\UploadedFile;
 
@@ -45,7 +46,7 @@ class TranslatorController extends Controller
 
     }
 
-    public function get_signup($req, $res, $args)
+    public function get_employment($req, $res, $args)
     {
         $tokenArray = $this->get_csrf_token($req);
         $data = $tokenArray;
@@ -64,44 +65,56 @@ class TranslatorController extends Controller
         return $this->view->render($res, "website/employment.twig", $data);
     }
 
-    public function post_signup($req, $res, $args)
+    public function post_employment($req, $res, $args)
     {
-        $errors = [];
         $postFields = $req->getParsedBody();
         $hasError = $this->validate_employment($postFields);
-
+        
         if ($hasError) {
             unset($postFields['csrf_name']);
             unset($postFields['csrf_value']);
             $_SESSION['oldPostFields'] = $postFields;
-            return $res->withRedirect('/employment');
+            return $res->withRedirect('/translator/employment');
         }
         $userInfo = Translator::new ($postFields);
         if ($userInfo) {
+            //TODO create verify link and send it to user
             $this->send_user_info_to_email($userInfo, $postFields['fname'], $postFields['email']);
             $this->view->render($res, "website/successful-employment.twig", ['email' => $postFields['email'], "page_title" => "ثبت نام موفق"]);
         }
 
     }
 
-    public function upload_employee_photo($req, $res, $rgs)
+    public function upload_photo($req, $res, $rgs)
     {
         $uploadedFiles = $req->getUploadedFiles();
         $uploadedFile = $uploadedFiles['user_photo_file'];
-        $directory = dirname(dirname(__DIR__)) . '/up_user_photo';
+        $directory = dirname(dirname(__DIR__)) . '/uploads/avatars/translator';
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
-            $filename = $this->moveUploadedFile($directory, $uploadedFile);
-            return $res->write($filename);
+            try {
+                $filename = $this->moveUploadedFile($directory, $uploadedFile);
+                return $res->write($filename);
+            } catch (\Exception $e) {
+                $res->write("error while uploading file "+$e->getMessage())->withStatus(500);
+            }
+        } else {
+            $res->write($uploadedFile->getError())->withStatus(500);
         }
     }
-    public function upload_employee_melicard($req, $res, $rgs)
+    public function upload_melicard_photo($req, $res, $rgs)
     {
         $uploadedFiles = $req->getUploadedFiles();
         $uploadedFile = $uploadedFiles['meli_card_photo_file'];
-        $directory = dirname(dirname(__DIR__)) . '/up_nation_cart_photo';
+        $directory = dirname(dirname(__DIR__)) . '/uploads/translator/melicard';
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
-            $filename = $this->moveUploadedFile($directory, $uploadedFile);
-            return $res->write($filename);
+            try {
+                $filename = $this->moveUploadedFile($directory, $uploadedFile);
+                return $res->write($filename);
+            } catch (\Exception $e) {
+                $res->write("error while uploading file "+$e->getMessage())->withStatus(500);
+            }
+        } else {
+            $res->write($uploadedFile->getError())->withStatus(500);
         }
     }
 
@@ -112,40 +125,64 @@ class TranslatorController extends Controller
             $this->flash->addMessage('error', "آدرس ایمیل وارد شده نامعتبر می باشد!");
             $hasError = true;
         }
-        if ($postFields['lname'] == "" || $postFields['fname'] == "") {
-            $this->flash->addMessage('error', "فیلد نام یا نام خانوادگی نباید خالی باشد !");
+        if ($postFields['lname'] == "") {
+            $this->flash->addMessage('error', "فیلد نام خانوادگی نباید خالی باشد !");
+            $hasError = true;
+        }
+        if ($postFields['fname'] == "") {
+            $this->flash->addMessage('error', "فیلد نام نباید خالی باشد !");
             $hasError = true;
         }
         if (!isset($postFields['en_to_fa']) && !isset($postFields['fa_to_en'])) {
             $this->flash->addMessage('error', "باید حداقل یکی از زبان ها انتخاب شود !");
             $hasError = true;
         }
-        if ($postFields['mobile'] == "") {
+        if ($postFields['cell_phone'] == "") {
             $this->flash->addMessage('error', "فیلد تلفن همراه نباید خالی باشد !");
             $hasError = true;
-        }
-        if ($postFields['user_photo'] == "") {
-            $this->flash->addMessage('error', "باید یک عکس پرسنلی آپلود کنید !");
+        }else if (strlen($postFields['cell_phone']) != 11) {
+            $this->flash->addMessage('error', "تلفن همراه نامعتبر می باشد !");
             $hasError = true;
         }
-        if ($postFields['meli_card'] == "") {
-            $this->flash->addMessage('error', "باید تصویر کارت ملی خودرا آپلود کنید !");
-            $hasError = true;
-        }
-        if ($postFields['education'] == "") {
+        // if ($postFields['avatar'] == "") {
+        //     $this->flash->addMessage('error', "باید یک عکس پرسنلی آپلود کنید !");
+        //     $hasError = true;
+        // }
+        // if ($postFields['melicard_photo'] == "") {
+        //     $this->flash->addMessage('error', "باید تصویر کارت ملی خودرا آپلود کنید !");
+        //     $hasError = true;
+        // }
+        if ($postFields['degree'] == "") {
             $this->flash->addMessage('error', "فیلد تحصیلات نباید خالی باشد !");
             $hasError = true;
         }
-        if ($postFields['melli_code'] == "") {
+        if ($postFields['meli_code'] == "" ) {
             $this->flash->addMessage('error', "فیلد کدملی نباید خالی باشد !");
+            $hasError = true;
+        }else if (strlen($postFields['meli_code']) !=10) {
+            $this->flash->addMessage('error', "کد ملی نامعتبر می باشد !");
+            $hasError = true;
+        }
+        if ($postFields['password'] == "") {
+            $this->flash->addMessage('error', "فیلد پسورد نباید خالی باشد !");
+            $hasError = true;
+        } else if ($postFields['password'] != $postFields['confirm_pass']) {
+            $this->flash->addMessage('error', "فیلد پسورد با فیلد تایید آن مطابقت ندارد !");
+            $hasError = true;
+        }
+        if ($postFields['username'] == "") {
+            $this->flash->addMessage('error', "فیلد نام کاربری نباید خالی باشد!");
+            $hasError = true;
+        } else if (\strlen($postFields['username']) < 5) {
+            $this->flash->addMessage('error', "فیلد نام کاربری نباید کمتر از 5 کاراکتر باشد!");
             $hasError = true;
         }
         if ($_SESSION['captcha'] != \strtolower($postFields['captcha_input'])) {
             $this->flash->addMessage('error', "کد امنیتی وارد شده اشتباه می باشد !");
             $hasError = true;
         }
-        if (Translator::check_existance_by_email($postFields['email'])) {
-            $this->flash->addMessage('error', "با این ایمیل قبلا ثبت نام شده است !");
+        if (Translator::check_existance($postFields)) {
+            $this->flash->addMessage('error', "با این ایمیل یا نام کاربری قبلا ثبت نام شده است !");
             $hasError = true;
         }
 
@@ -154,9 +191,6 @@ class TranslatorController extends Controller
     //////////////////////////////////////////////
     // END Translator Auth Functions
     //////////////////////////////////////////////
-
-
-
 
     protected function moveUploadedFile($directory, UploadedFile $uploadedFile)
     {
@@ -219,10 +253,3 @@ class TranslatorController extends Controller
 
     }
 }
-
-
-
-
-    
-
- 

@@ -1,162 +1,201 @@
 {% extends "website/layout/auth.twig" %}
 
 {% block stylebelow %}
-<link rel="stylesheet" href="public/css/filepond.min.css">
+    <link rel="stylesheet" href="/public/css/filepond.min.css">
 {% endblock %}
 
 {% block content %}
-<main class="rtl employment-wrap">
-    <section class="auth is--signup center">
-        <a href="/" class="auth__logo">
-            <img src="/public/images/logo.png" alt="">
-        </a>
+    <main class="rtl employment-wrap">
+        <section class="auth is--signup center">
 
-        <form method="POST" action="/employment" class="auth__form employment no-pad">
-            <input type="hidden" name="csrf_name" value="{{csrf_name}}">
-            <input type="hidden" name="csrf_value" value="{{csrf_value}}">
-            <input type="hidden" name="user_photo" id="user_photo_uploaded">
-            <input type="hidden" name="meli_card" id="melicard_photo_uploaded">
-            {# <div class="col-12">
+            <form method="POST" action="/translator/employment" class="auth__form employment no-pad">
+                <input type="hidden" name="csrf_name" value="{{csrf_name}}">
+                <input type="hidden" name="csrf_value" value="{{csrf_value}}">
+                <input type="hidden" name="avatar" id="user_photo_uploaded" value={{avatar}}>
+                <input type="hidden" name="melicard_photo" id="melicard_photo_uploaded" value={{melicard_photo}}>
+                {# <div class="col-12">
                 <div class="auth__form__icon ">
                     <img src="/public/images/icon/profile.svg" alt="">
                 </div>
             </div> #}
-      
-            <div class="hire-notes has--background has--overlay">
-                <div class="notes">
-                    <p>
-                        سایت مترجم وان با توجه به سیاست کاری خود از بین مترجمین کارآزموده دعوت به همکاری می نماید
-                        مترجمین با توجه به داشتن شرایط زیر اقدام به ثبت نام نمایند :
-                    </p>
-                    <h4>شرایط استخدام مترجم</h4>
-                    <ul>
-                        <li>حداقل مدرک تحصیلی كارشناسي</li>
-                        <li>قدرت تایپ و ترجمه حداقل 5 صفحه در روز</li>
-                        <li>دارا بودن سابقه کار در زمینه ترجمه متون (حداقل یک سال)</li>
-                        <li>دارا بودن تخصص ترجمه در یک یا چند زمینه تخصصی علمی</li>
-                        <li>فعال بودن ، پیگیری مداوم و پاسخگویی به ایمیل ها و تماس های گروه ترجمه</li>
-                        <li>مسئولیت پذیری ، صداقت کاری ، متعهد بودن به موسسه و علاقه به کار و فعالیت مستمر</li>
-                        <li>حجم عکس پرسنلی و تصویر کارت ملی نباید بیشتر از 200 کیلو بایت باشند</li>
-                    </ul>
-                </div>
-            </div>
 
-            <div class="hire-form">
-                    <div class="row">
-    
-                        <div class="col-12">
-                            <p class="auth__form__title">ثبت نام مترجم</p>
-                        </div>
-                        {% if flash('error') %}
-                        <div class="col-12">
-                            <div class="alert-list is--error">
-                                <h4>خطاها :</h4>
-                                <ul>
-                                    {% for msg in flash('error') %}
-                                    <li>{{ msg }}</li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-    
-                        </div>
-                        {% endif %}
-                        <div class="form-group col-lg-4">
-                            <label for="fname">نام </label>
-                            <input type="text" name="fname" class="form-control" id="fname" placeholder="نام شما" value="{{fname}}">
-                        </div>
-                        <div class="form-group col-lg-4">
-                            <label for="lname">نام خانوادگی </label>
-                            <input type="text" name="lname" class="form-control" id="lname" placeholder="نام خانوادگی شما" value="{{lname}}">
-                        </div>
-                        <div class="form-group col-lg-4 pt-4">
-                            <label style="margin-left: 1rem">جنسیت</label>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sex" id="male" value="1" checked>
-                                <label class="form-check-label" for="male">مرد</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sex" id="female" value="0" {{sex=="0" ? "checked":""}}>
-                                <label class="form-check-label" for="female">زن</label>
-                            </div>
-                        </div>
-                        <div class="form-group col-lg-5">
-                            <label for="email">ایمیل</label>
-                            <input type="email" name="email" class="form-control ltr" id="email" placeholder="example@example.com" value="{{email}}">
-                        </div>
-                        <div class="form-group col-lg-3">
-                            <label for="mobile">تلفن همراه</label>
-                            <input type="text" name="mobile" class="form-control ltr" id="mobile" maxlength="11"
-                                placeholder="09151111111" value="{{mobile}}">
-                        </div>
-                        <div class="form-group col-lg-4">
-                            <label for="phone">تلفن ثابت</label>
-                            <input type="text" name="phone" class="form-control ltr" id="phone" maxlength="11" placeholder="02111111111" value="{{phone}}">
-                        </div>
-                        <div class="form-group col-lg-4">
-                            <label for="education">تحصیلات</label>
-                            <input id="education" name="education" class="form-control" type="text" placeholder="تحصیلات" value="{{education}}">
-                        </div>
-                        <div class="form-group col-lg-4">
-                            <label for="melli_code">کدملی (بدون خط تیره)</label>
-                            <input id="melli_code" name="melli_code" class="form-control ltr" type="text" placeholder="0640611111" value="{{melli_code}}">
-                        </div>
-                        <div class="form-group col-lg-4">
-                            <label for="experience">میزان سابقه (به سال)</label>
-                            <input id="experience" name="experience" class="form-control ltr" type="number" placeholder="سابقه به سال" value="{{experience}}">
-                        </div>
-                        <div class="form-group col-12">
-                            <label for="address">آدرس دقیق</label>
-                            <textarea class="form-control" name="address" id="address" rows="4">{{address}}</textarea>
-                        </div>
-                        <div class="form-group col-lg-6">
-                            <label style="margin-left: 1rem;display: block">زبان های ترجمه</label>
-                            <div class="form-check form-check-inline">
-                                <input  class="form-check-input" type="checkbox" name="en_to_fa" id="en-to-fa" value="1" {{en_to_fa=="1" ? "checked":""}}>
-                                <label class="form-check-label" for="en-to-fa">انگلیسی به فارسی</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input  class="form-check-input" type="checkbox" name="fa_to_en" id="fa-to-en" value="1" {{fa_to_en=="1" ? "checked":""}}>
-                                <label class="form-check-label" for="fa-to-en">فارسی به انگلیسی</label>
-                            </div>
-                        </div>
-                        <div class="form-group col-lg-6">
-                            <label for="user_photo">تصویر پرسنلی</label>
-                            <input type="file" class="filepond" name="user_photo_file" id="user_photo" data-max-file-size="200KB" />
-                        </div>
-                        <div class="form-group col-lg-6 captcha--section">
-                            <label for="captcha_input">کد امنیتی</label>
-                            <div class="captcha">
-                                <img src="{{captcha}}" alt="" id="captcha">
-                                <button class="btn btn-primary" id="reload-captcha">
-                                    <img src="/public/images/icon/reload.svg" alt="reload" title="تغییر تصویر">
-                                </button>
-                                <input name="captcha_input" class="form-check-input" style="display:block" type="text" id="captcha_input">
-                            </div>
-    
-                        </div>
-                        <div class="form-group col-lg-6">
-                            <label for="meli_card_photo">تصویر کارت ملی</label>
-                            <input type="file" class="filepond" name="meli_card_photo_file" id="meli_card_photo"
-                                data-max-file-size="200KB" />
-                        </div>
-    
-    
-                        <div class="form-group col-12">
-                            <input type="submit" value="ثبت نام" class="btn btn-primary" name="submit">
-                            <span class="pr-3">از قبل ثبت نام کردید؟ <a href="/login">وارد شوید</a></span class="pr-3">
-                        </div>
-    
+                <div class="hire-notes has--background has--overlay">
+
+                    <div class="notes">
+                        <p>
+                            سایت مترجم وان با توجه به سیاست کاری خود از بین مترجمین کارآزموده دعوت به همکاری می نماید مترجمین با توجه به داشتن شرایط زیر اقدام به ثبت نام نمایند :
+                        </p>
+                        <h4>شرایط استخدام مترجم</h4>
+                        <ul>
+                            <li>حداقل مدرک تحصیلی كارشناسي</li>
+                            <li>قدرت تایپ و ترجمه حداقل 5 صفحه در روز</li>
+                            <li>دارا بودن سابقه کار در زمینه ترجمه متون (حداقل یک سال)</li>
+                            <li>دارا بودن تخصص ترجمه در یک یا چند زمینه تخصصی علمی</li>
+                            <li>فعال بودن ، پیگیری مداوم و پاسخگویی به ایمیل ها و تماس های گروه ترجمه</li>
+                            <li>مسئولیت پذیری ، صداقت کاری ، متعهد بودن به موسسه و علاقه به کار و فعالیت مستمر</li>
+                            <li>حجم عکس پرسنلی و تصویر کارت ملی نباید بیشتر از 200 کیلو بایت باشند</li>
+                        </ul>
                     </div>
                 </div>
-    
-        </form>
-    </section>
-</main>
+
+                <div class="hire-form">
+                    <div class="row">
+
+                        <div class="col-12 row">
+
+                            <div class="col-md-3">
+                                <button class="btn btn-primary back-btn" onclick="window.history.back()">
+                                    <img src="/public/images/icon/go-back-arrow.svg">
+                                    بازگشت
+                                </button>
+                            </div>
+                            <div class="col-md-3 offset-md-2">
+                            <p class="auth__form__title">ثبت نام مترجم</p>
+                            </div>
+                        </div>
+                        {% if flash('error') %}
+                            <div class="col-12">
+                                <div class="alert-list is--error">
+                                    <h4>خطاها :</h4>
+                                    <ul>
+                                        {% for msg in flash('error') %}
+                                            <li>{{ msg }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+
+                            </div>
+                        {% endif %}
+                        <div class="row user-info">
+                            <div class="col-12">
+                                <p class="">اطلاعات کاربری</p>
+                                <hr style="border: 1px solid #eee;margin-bottom: 2rem;">
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <label for="fname">نام
+                                </label>
+                                <input type="text" name="fname" class="form-control" id="fname" value="{{fname}}">
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <label for="lname">نام خانوادگی
+                                </label>
+                                <input type="text" name="lname" class="form-control" id="lname" value="{{lname}}">
+                            </div>
+
+                            <div class="form-group col-lg-4">
+                                <label for="email">ایمیل</label>
+                                <input type="email" name="email" class="form-control ltr" id="email" placeholder="example@example.com" value="{{email}}">
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <label for="username">نام کاربری
+                                </label>
+                                <input type="text" name="username" class="form-control ltr" id="username" value="{{username}}">
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <label for="password">پسورد
+                                </label>
+                                <input type="password" name="password" class="form-control ltr" id="password">
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <label for="confirm_pass">تایید پسورد
+                                </label>
+                                <input type="password" name="confirm_pass" class="form-control ltr" id="confirm_pass">
+                            </div>
+                        </div>
+
+                        <div class="row personal-info">
+
+                            <div class="col-12">
+                                <p class="">اطلاعات شخصی</p>
+                                <hr style="border: 1px solid #eee;margin-bottom: 2rem;">
+                            </div>
+
+                            <div class="form-group col-lg-4 pt-4">
+                                <label style="margin-left: 1rem">جنسیت</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="sex" id="male" value="1" checked="checked">
+                                    <label class="form-check-label" for="male">مرد</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="sex" id="female" value="2" {{sex=="0" ? "checked":""}}>
+                                    <label class="form-check-label" for="female">زن</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-lg-4">
+                                <label for="mobile">تلفن همراه</label>
+                                <input type="text" name="cell_phone" class="form-control ltr" id="mobile" maxlength="11" value="{{cell_phone}}">
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <label for="phone">تلفن ثابت</label>
+                                <input type="text" name="phone" class="form-control ltr" id="phone" maxlength="11" placeholder="02111111111" value="{{phone}}">
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <label for="education">تحصیلات</label>
+                                <input id="education" name="degree" class="form-control" type="text" value="{{degree}}">
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <label for="melli_code">کدملی (بدون خط تیره)</label>
+                                <input id="melli_code" name="meli_code" class="form-control ltr" type="text" placeholder="0640611111" value="{{meli_code}}">
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <label for="experience">میزان سابقه (به سال)</label>
+                                <input id="experience" name="exp_years" class="form-control ltr" type="number" value="{{exp_years}}">
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="address">آدرس دقیق</label>
+                                <textarea class="form-control" name="address" id="address" rows="4">{{address}}</textarea>
+                            </div>
+
+                            <div class="form-group col-lg-6">
+                                <label for="user_photo">تصویر پرسنلی</label>
+                                <input type="file" class="filepond" name="user_photo_file" id="user_photo" data-max-file-size="200KB"/>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label for="meli_card_photo">تصویر کارت ملی</label>
+                                <input type="file" class="filepond" name="meli_card_photo_file" id="meli_card_photo" data-max-file-size="200KB"/>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label style="margin-left: 1rem;display: block">زبان های ترجمه</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="en_to_fa" id="en-to-fa" value="1" {{en_to_fa=="1" ? "checked":""}}>
+                                    <label class="form-check-label" for="en-to-fa">انگلیسی به فارسی</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="fa_to_en" id="fa-to-en" value="1" {{fa_to_en=="1" ? "checked":""}}>
+                                    <label class="form-check-label" for="fa-to-en">فارسی به انگلیسی</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-6 captcha--section">
+                                <div class="captcha">
+                                    <img src="{{captcha}}" alt="" id="captcha">
+                                    <button class="btn btn-primary" id="reload-captcha">
+                                        <img src="/public/images/icon/reload.svg" alt="reload" title="تغییر تصویر">
+                                    </button>
+                                    <input name="captcha_input" class="form-check-input ltr" style="display:block" placeholder="کدامنیتی را وارد نمایید..." type="text" id="captcha_input">
+                                </div>
+
+                            </div>
+
+                            <div class="form-group col-12 mt-4">
+                                <input type="submit" value="ثبت نام" class="btn btn-primary" >
+                                <span class="pr-3">از قبل ثبت نام کردید؟
+                                    <a href="/translator/login">وارد شوید</a>
+                                </span class="pr-3">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </section>
+    </main>
 {% endblock %}
 
 {% block scriptbelow %}
-<script src='public/js/filepond-plugin-file-encode.min.js'></script>
-<script src='public/js/filepond-plugin-file-validate-size.min.js'></script>
-<script src='public/js/filepond.min.js'></script>
-<script src="public/js/employment.js"> </script>
+    <script src='/public/js/filepond-plugin-file-encode.min.js'></script>
+    <script src='/public/js/filepond-plugin-file-validate-size.min.js'></script>
+    <script src='/public/js/filepond.min.js'></script>
+    <script src="/public/js/employment.js"></script>
 {% endblock %}

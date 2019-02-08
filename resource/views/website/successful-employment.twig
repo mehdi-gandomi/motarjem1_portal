@@ -5,8 +5,16 @@
     <section class="auth center success">
 
         <h2 >ثبت نام با موفقیت انجام شد !</h2>
-        <p>نام کاربری و گذرواژه به ایمیل {{email}} ارسال شد</p>
+        <p>لینک فعال سازی به {{email}} ارسال شد ! <button style="border: none;background: transparent;color: #1c819e;cursor: pointer;" onclick="sendVerificationCode('{{email}}')">ارسال مجدد</button></p>
     </section>
 
 </main>
+{% endblock %}
+{% block scriptbelow %}
+    <script>
+        function sendVerificationCode(email){
+            console.log(email);
+            //TODO implement sending verify link and show a message to the user
+        }
+    </script>
 {% endblock %}

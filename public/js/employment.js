@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
             }
         }
     });
-
+    console.log(userPhoto);
 
     let meliCard=FilePond.create(
         document.querySelector('#meli_card_photo')

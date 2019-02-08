@@ -47,7 +47,7 @@ main{
   }
     &.employment-wrap{
         padding-bottom: 4rem;
-        padding-top: 4rem;
+        padding-top: 2rem;
         height: unset !important;
     }
 }
@@ -89,7 +89,7 @@ main{
         &__title{
             text-align: center;
             font-weight: bold;
-            font-size: 1.3rem;
+            font-size: 1.5rem;
         }
         .center{
             display: flex;
@@ -110,15 +110,7 @@ main{
     }
 }
 
-.w-100{
-width: 100%;
-}
-.pr-3{
-padding-right: 1.5rem;
-}
-.pt-4{
-padding-top: 2rem;
-}
+
 .alert{
     font-weight: 400;
     padding-bottom: 1rem;
@@ -192,7 +184,19 @@ padding-top: 2rem;
     }
 }
 
+.back-btn{
+    img{
+        width: 16px;
+        height: 16px;
+    }
+}
+.user-info{
+    margin-top: 1.5rem;
+}
+.personal-info{
 
+    margin-top: 3rem;
+}
 #reload-captcha {
     img{
         width: 20px;
@@ -216,12 +220,20 @@ padding-top: 2rem;
     }
 }
 
-element.style {
-}
+
 .hire-notes.has--background {
     background: url(../images/Hiring.jpg);
     background-size: cover;
     background-position: center;
+}
+
+@media(min-width:769px){
+    .captcha--section{
+        margin-top: -10px;
+    }
+    #captcha_input{
+        width: 51%;
+    }
 }
 
 //responsiveness
@@ -247,3 +259,17 @@ element.style {
     }
 }
 
+//utilities
+
+.mt-4{
+    margin-top: 2rem;
+}
+.w-100{
+    width: 100%;
+    }
+    .pr-3{
+    padding-right: 1.5rem;
+    }
+    .pt-4{
+    padding-top: 2rem;
+    }

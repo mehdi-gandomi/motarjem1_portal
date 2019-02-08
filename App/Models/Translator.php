@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 use Core\Model;
+use \PDO;
 class Translator extends Model{
     public static function by_username($username,$fields="*")
     {
@@ -22,13 +23,15 @@ class Translator extends Model{
         }
 
     }
-    public static function check_existance_by_email($email)
+    public static function check_existance($postFields)
     {
-        try{
-            $result=static::select("translators","id",['email'=>$email],true);
-            return isset($result['id']);
-        }catch(\Exception $e){
+        try {
+            $db = static::getDB();
+            $sql = "SELECT user_id FROM translators WHERE username='$postFields[username]' OR email='$postFields[email]'";
+            return $db->query($sql)->fetch(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
             return false;
+
         }
 
     }
@@ -43,38 +46,21 @@ class Translator extends Model{
     public static function new($postFields)
     {
         try{
-            $date=jstrftime('%Y/%m/%e ,%A, %r',time()+60);
-            $u_name = $postFields['fname'].' '.$postFields['lname'];
-            // $ro = rand(9999,9999999);
-            $password = rand(1000000 , 9999999);
-            $username=$postFields['email'];
-            $data=array(
-                'u_name'=>$u_name,
-                'email'=>$postFields['email'],
-                'tell'=>$postFields['mobile'],
-                'home_tell'=>$postFields['phone'],
-                'username'=>md5(md5($username)),
-                'password'=>md5(md5($password)),
-                'level'=>"user",
-                'active'=>0,
-                'cv_year'=>$postFields['experience'],
-                'sex'=>$postFields['sex'],
-                'nation_code'=>$postFields['melli_code'],
-                'address'=>$postFields['address'],
-                'en_to_fa'=>isset($postFields['en_to_fa']) ? 1:0,
-                'fa_to_en'=>isset($postFields['fa_to_en']) ? 1:0,
-                'user_photo'=>$postFields['user_photo'],
-                'nation_cart_photo'=>$postFields['meli_card'],
-                'registration_date'=>$date
-            );
-
-            static::insert("translators",$data);
+            unset($postFields['confirm_pass']);
+            unset($postFields['captcha_input']);
+            unset($postFields['csrf_name']);
+            unset($postFields['csrf_value']);
+            $userData['register_date_persian'] = self::get_current_date_persian();
+            $postFields['password'] = \md5(\md5($postFields['password']));
+            $postFields['is_active'] = 0;
+            static::insert("translators",$postFields);
             return array(
                 'username'=>$username,
                 'password'=>$password
             );
 
         }catch(\Exception $e){
+            var_dump($e);
             return false;
         }
     }
@@ -149,5 +135,14 @@ class Translator extends Model{
         }catch(\Exception $e){
             return false;
         }
+    }
+    protected static function get_current_date_persian(){
+        $now = new \DateTime("NOW");
+        $year = $now->format("Y");
+        $month = $now->format("m");
+        $day = $now->format("d");
+        $time = $now->format("H:i");
+        $persianDate = gregorian_to_jalali($year, $month, $day);
+        return $persianDate[0] . "/" . $persianDate[1] . "/" . $persianDate[2] . " " . $time;
     }
 }

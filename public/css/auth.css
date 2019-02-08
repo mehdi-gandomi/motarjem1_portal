@@ -4896,7 +4896,7 @@ main.login-wrap:before {
 
 main.employment-wrap {
   padding-bottom: 4rem;
-  padding-top: 4rem;
+  padding-top: 2rem;
   height: unset !important;
 }
 
@@ -4957,7 +4957,7 @@ main.employment-wrap {
 .auth__form__title {
   text-align: center;
   font-weight: bold;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
 }
 
 .auth__form .center {
@@ -4984,18 +4984,6 @@ main.employment-wrap {
 
 .auth__form__icon img {
   max-width: 100%;
-}
-
-.w-100 {
-  width: 100%;
-}
-
-.pr-3 {
-  padding-right: 1.5rem;
-}
-
-.pt-4 {
-  padding-top: 2rem;
 }
 
 .alert {
@@ -5085,6 +5073,19 @@ main.employment-wrap {
   display: block !important;
 }
 
+.back-btn img {
+  width: 16px;
+  height: 16px;
+}
+
+.user-info {
+  margin-top: 1.5rem;
+}
+
+.personal-info {
+  margin-top: 3rem;
+}
+
 #reload-captcha img {
   width: 20px;
   height: 20px;
@@ -5112,6 +5113,15 @@ main.employment-wrap {
   background-position: center;
 }
 
+@media (min-width: 769px) {
+  .captcha--section {
+    margin-top: -10px;
+  }
+  #captcha_input {
+    width: 51%;
+  }
+}
+
 @media (max-width: 768px) {
   .employment {
     display: block;
@@ -5132,5 +5142,21 @@ main.employment-wrap {
   .alert-list {
     width: 100%;
   }
+}
+
+.mt-4 {
+  margin-top: 2rem;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.pr-3 {
+  padding-right: 1.5rem;
+}
+
+.pt-4 {
+  padding-top: 2rem;
 }
 /*# sourceMappingURL=auth.css.map */
