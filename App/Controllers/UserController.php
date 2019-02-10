@@ -191,6 +191,12 @@ class UserController extends Controller
         $token = $req->getParsedBody()['token'];
         if ($token === $hash) {
             $userData = User::by_username($username);
+            if(!$userData){
+                return $res->withJson([
+                    "status" => false,
+                    "message" => "ایمیل وارد شده در سیستم موجود نمی باشد!",
+                ]);        
+            }
             $verifyLink = $this->createVerifyLink($userData);
             $result = $this->send_user_info_to_email($userData, $verifyLink);
             if ($result) {

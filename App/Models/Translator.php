@@ -27,10 +27,10 @@ class Translator extends Model{
     {
         try {
             $db = static::getDB();
-            $sql = "SELECT user_id FROM translators WHERE username='$postFields[username]' OR email='$postFields[email]'";
+            $sql = "SELECT username FROM translators WHERE username='".$postFields['username']."' OR email='".$postFields['email']."'";
             return $db->query($sql)->fetch(PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
-            return false;
+            return true;
 
         }
 
@@ -50,17 +50,16 @@ class Translator extends Model{
             unset($postFields['captcha_input']);
             unset($postFields['csrf_name']);
             unset($postFields['csrf_value']);
-            $userData['register_date_persian'] = self::get_current_date_persian();
+            $postFields['register_date_persian'] = self::get_current_date_persian();
             $postFields['password'] = \md5(\md5($postFields['password']));
             $postFields['is_active'] = 0;
             static::insert("translators",$postFields);
             return array(
-                'username'=>$username,
-                'password'=>$password
+                'username'=>$postFields['username'],
+                'password'=>$postFields['password']
             );
 
         }catch(\Exception $e){
-            var_dump($e);
             return false;
         }
     }

@@ -29,4 +29,4 @@ $app->get('/testing', function (Request $request, Response $response, array $arg
 $app->post('/translator/employment', "App\Controllers\TranslatorController:post_employment")->add($container->get('csrf'));
 $app->post('/upload-employee-photo', "App\Controllers\TranslatorController:upload_photo");
 $app->post('/upload-employee-melicard', "App\Controllers\TranslatorController:upload_melicard_photo");
-
+$app->post('/translator/send-verify/{username}', "App\Controllers\TranslatorController:send_verify_link_again");

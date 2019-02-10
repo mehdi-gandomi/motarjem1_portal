@@ -27,7 +27,7 @@ function sendVerificationCode(username,el){
   .then(function (response) {
     
       if(response.data.status){
-        document.querySelector(el).innerHTML="<p class='is--success'>"+"لینک فعال سازی به ایمیل شما ارسال شد. درصورت مشاهده نکردن ایمیل پوشه spam خود را چک کنید. <a style='cursor:pointer;color:#5842d4' onclick='sendVerificationCode(\"coderguy\",\""+el+"\")'>ارسال مجدد</a>"+"</p>";
+        document.querySelector(el).innerHTML="<p class='is--success'>"+"لینک فعال سازی به ایمیل شما ارسال شد. درصورت مشاهده نکردن ایمیل پوشه spam خود را چک کنید. <a style='cursor:pointer;color:#5842d4' onclick='sendVerificationCode(\""+username+"\",\""+el+"\")'>ارسال مجدد</a>"+"</p>";
       }else{
           document.querySelector(el).innerHTML="<p class='is--error'>"+response.data.message+"</p>";
       }

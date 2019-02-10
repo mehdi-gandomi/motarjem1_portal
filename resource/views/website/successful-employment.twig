@@ -1,19 +1,51 @@
 {% extends "website/layout/auth.twig" %}
 
+{% block stylebelow %}
+    <style>
+        .is--danger {
+            padding: 1rem;
+            color: #fb1329;
+        }
+        .is--success {
+            padding: 1rem;
+            color: #449291;
+        }
+    </style>
+{% endblock %}
 {% block content %}
-<main class="rtl login-wrap">
-    <section class="auth center success">
+    <main class="rtl login-wrap">
+        <section class="auth center success">
 
-        <h2 >ثبت نام با موفقیت انجام شد !</h2>
-        <p>لینک فعال سازی به {{email}} ارسال شد ! <button style="border: none;background: transparent;color: #1c819e;cursor: pointer;" onclick="sendVerificationCode('{{email}}')">ارسال مجدد</button></p>
-    </section>
+            <h2 >ثبت نام با موفقیت انجام شد !</h2>
+            <p>لینک فعال سازی به
+                {{email}}
+                ارسال شد !
+                <button style="border: none;background: transparent;color: #1c819e;cursor: pointer;" onclick="sendVerificationCode('{{username}}')">ارسال مجدد</button>
+            </p>
+        </section>
 
-</main>
+    </main>
 {% endblock %}
 {% block scriptbelow %}
+    <script src="/public/js/axios.min.js"></script>
     <script>
-        function sendVerificationCode(email){
-            console.log(email);
+
+        function sendVerificationCode(username) {
+            console.log(username);
+            axios
+                .post('/translator/send-verify/' + username, {token: "bad47df23cb7e6b3b8abf68cbba85d0f"})
+                .then(function (response) {
+
+                    if (response.data.status) {
+                        document.querySelector(".auth").innerHTML = "<p class='is--success'>" + "لینک فعال سازی به ایمیل شما ارسال شد. درصورت مشاهده نکردن ایمیل پوشه spam خود را چک کنید. <a style='cursor:pointer;color:#5842d4' onclick='sendVerificationCode(\"" + username + "\",\"" + el + "\")'>ارسال مجدد</a>" + "</p>";
+                    } else {
+                        document.querySelector(".auth").innerHTML = "<p class='is--error'>" + response.data.message + "</p>";
+                    }
+
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
             //TODO implement sending verify link and show a message to the user
         }
     </script>
