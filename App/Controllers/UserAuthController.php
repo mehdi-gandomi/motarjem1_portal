@@ -176,6 +176,7 @@ class UserAuthController extends Controller
     public function get_forget_password_page($req, $res, $args)
     {
         $tokens = $this->get_csrf_token($req);
+        $tokens['action']="/user/forget-password";
         $this->view->render($res, "website/forgot_password.twig", $tokens);
     }
 

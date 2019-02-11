@@ -32,3 +32,8 @@ $app->post('/translator/employment', "App\Controllers\TranslatorAuthController:p
 $app->post('/upload-employee-photo', "App\Controllers\TranslatorAuthController:upload_photo");
 $app->post('/upload-employee-melicard', "App\Controllers\TranslatorAuthController:upload_melicard_photo");
 $app->post('/translator/send-verify/{username}', "App\Controllers\TranslatorAuthController:send_verify_link_again");
+
+$app->get("/translator/forget-password", "App\Controllers\TranslatorAuthController:get_forget_password_page")->add($container->get('csrf'));
+$app->post('/translator/forget-password', "App\Controllers\TranslatorAuthController:send_password_reset_link")->add($container->get('csrf'));
+$app->get('/translator/reset-password', "App\Controllers\TranslatorAuthController:reset_password_process")->add($container->get('csrf'));
+$app->post('/translator/password-reset', "App\Controllers\TranslatorAuthController:post_change_password")->add($container->get('csrf'));
