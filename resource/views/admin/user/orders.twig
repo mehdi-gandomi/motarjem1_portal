@@ -66,7 +66,7 @@
                         </thead>
                         <tbody id="user-orders">
                             {% for order in orders %}
-                                {% set page_number = order.word_numbers / 250 %}
+                                {% set page_number = order.word_numbers / 250 | round(0,'ceil')  %}
                                 <tr>
                                     <td>{{ order.order_id }}</td>
                                     <td>{{ page_number }}</td>

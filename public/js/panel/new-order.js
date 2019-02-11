@@ -4,10 +4,18 @@ let uploadedFiles = [];
 
 function validationError(condition,selector) {
   if (condition == "show") {
+    let el=document.querySelector(selector);
+    let child=el.querySelector(".validation-errors")
+    if(child){
+      el.removeChild(child);
+    }
     $(selector).append("<div class='validation-errors'>لطفا فیلد های مورد نیاز را کامل کنید</div>");
   } else if (condition == "hide") {
-    el=document.querySelector(selector);
-    el.removeChild(el.childNodes[el.childNodes.length-1])
+    let el=document.querySelector(selector);
+    let child=el.querySelector(".validation-errors")
+    if(child){
+      el.removeChild(child);
+    }
   }
 }
 
@@ -27,32 +35,36 @@ function printValidationHint(el, value, className, addClass) {
     el.removeClass(className);
   }
 }
-
 function validate_words(e) {
   let words = e.target.value;
+  console.log(words);
   let hint = $(".words--hint");
-  if (words == "") {
+  if(words < 0 || words==0){
+    e.target.value="";
+  }
+  if(words==""){
     e.target.classList.add("validation-failed");
     printValidationHint(
       hint,
       "این فیلد نباید خالی بماند",
       "validation-failed-hint"
     );
-  } else if (words < 250) {
+  }
+  else if (words < 250) {
     e.target.classList.add("validation-failed");
     printValidationHint(
       hint,
       "تعداد کلمات نباید کمتر از 250 باشد!",
       "validation-failed-hint"
     );
-  } else {
-      console.log("fuck");
+  }
+  else {
     e.target.classList.remove("validation-failed");
     validationError("hide",".step-1 .row");
     printValidationHint(hint, "", "validation-failed-hint", false);
-    
   }
 }
+
 $("#words").on("keyup",validate_words);
 function validateEmail(email) {
   var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -155,24 +167,50 @@ $("#email").on("change", function(e) {
 
 $("#type").on("change", function(e) {
   let kind = e.target.value;
-  if (kind == "specialist") {
+  if (kind == "2") {
     $(".field_of_study").addClass("show");
   } else {
-    $(".field_of_study").addClass("show");
+    $(".field_of_study").removeClass("show");
   }
 });
 
 $(".new-order-form").on("submit", function(e) {
     e.preventDefault();
-    validate_inputs();
-    let validationIsGood = false;
+    let validationIsGood = true;
+    let words = $("#words");
+    if (words.val() == "") {
+      words.addClass("validation-failed");
+      validationError("show",".step-1 .row");
+      validationIsGood=false;
+    } else if (words.val() < 250) {
+      words.addClass("validation-failed");
+      validationError("show",".step-1 .row");
+      validationIsGood=false;
+    }
+    
+    if (!$("input[name=delivery_type]:checked") || $("input[name=delivery_type]:checked").length==0) {
+        console.log("fuck");
+      printValidationHint(
+        "#delivery-hint",
+        "این فیلد الزامی می باشد",
+        "validation-failed-hint"
+      );
+      validationIsGood=false;
+    } else {
+      // validationError("hide",".delivery-selection-wrap");
+      printValidationHint(
+        "#delivery-hint",
+        "",
+        "validation-failed-hint",
+        false
+      );
+    }
     if (hasEmptyValue("#fullname")) {
       $("#fullname").addClass("validation-failed");
       validationIsGood = false;
     } else {
       $("#fullname").removeClass("validation-failed");
       validationError("hide",".step-3");
-      validationIsGood = true;
     }
     if (hasEmptyValue("#phone_number")) {
       $("#phone_number").addClass("validation-failed");
@@ -180,20 +218,16 @@ $(".new-order-form").on("submit", function(e) {
     } else {
       $("#phone_number").removeClass("validation-failed");
       validationError("hide",".step-3");
-      validationIsGood = true;
     }
     if (hasEmptyValue("#email")) {
       $("#email").addClass("validation-failed");
     } else {
       $("#email").removeClass("validation-failed");
       validationError("hide",".step-3");
-      validationIsGood = true;
     }
   
     if (validationIsGood) {
       e.target.submit();
-    } else {
-      validationError("show",".step-3");
     }
 });
 
