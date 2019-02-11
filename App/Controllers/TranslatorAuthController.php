@@ -105,7 +105,7 @@ class TranslatorAuthController extends Controller
             if (!$translatorData) {
                 return $res->withJson([
                     "status" => false,
-                    "message" => "ایمیل وارد شده در سیستم موجود نمی باشد!",
+                    "message" => "ایمیل وارد شده در سیستم موجود نمی باشد!"
                 ]);
             }
             $verifyLink = $this->createVerifyLink($translatorData);
@@ -114,6 +114,7 @@ class TranslatorAuthController extends Controller
                 return $res->withJson([
                     "status" => true,
                     "message" => "لینک فعال سازی به ایمیل شما ارسال شد !",
+                    "link"=>$verifyLink
                 ]);
             }
             return $res->withJson([

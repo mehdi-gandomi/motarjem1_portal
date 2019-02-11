@@ -8,13 +8,32 @@ var signupButton = document.getElementById('signup-button'),
 signupButton.addEventListener('click', () => {
   userForms.classList.remove('login-click')
   userForms.classList.add('signup-click')
+  document.querySelector(".user_options-text").classList.add("mt-minese40-mobile");
 }, false)
 
 
 // Add event listener to the "Login" button
 loginButton.addEventListener('click', () => {
   userForms.classList.remove('signup-click')
+  document.querySelector(".user_options-text").classList.remove("mt-minese40-mobile");
   userForms.classList.add('login-click')
+
+}, false)
+
+
+document.getElementById("signup-button-mobile").addEventListener('click', () => {
+  userForms.classList.remove('login-click')
+  userForms.classList.add('signup-click')
+  document.querySelector(".user_options-text").classList.add("mt-minese40-mobile");
+}, false)
+
+
+// Add event listener to the "Login" button
+document.getElementById("login-button-mobile").addEventListener('click', () => {
+  userForms.classList.remove('signup-click')
+  document.querySelector(".user_options-text").classList.remove("mt-minese40-mobile");
+  userForms.classList.add('login-click')
+
 }, false)
 
 function sendVerificationCode(username,el){

@@ -206,7 +206,9 @@ input::placeholder {
   color: rgba(34, 34, 34, 0.85);
   background-color: #ccc;
 }
-
+.user_options-text-mobile{
+  display: none;
+}
 /* Login and signup forms */
 .user_options-forms {
   position: absolute;
@@ -427,4 +429,82 @@ input::placeholder {
      cursor: pointer;
    } 
   }
+}
+
+@media (max-width:768px){
+  .user{
+    height: 100% !important;
+  }
+  .user_options-container{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Login and signup forms */
+.user_options-forms {
+  position: static;
+  transform: none !important;
+  width: 80%;
+  margin: auto;
+ margin-top: 2rem; 
+  
+}
+.user_options-forms .user_forms-signup,
+.user_options-forms .user_forms-login {
+  position: static;
+  visibility: visible; 
+  opacity: 1;
+  width: 90%;
+  margin: auto;
+  transform: none !important;
+  -webkit-transition: opacity .4s ease-in-out, visibility .4s ease-in-out, -webkit-transform .5s ease-in-out;
+  transition: opacity .4s ease-in-out, visibility .4s ease-in-out, -webkit-transform .5s ease-in-out;
+  transition: opacity .4s ease-in-out, visibility .4s ease-in-out, transform .5s ease-in-out;
+  transition: opacity .4s ease-in-out, visibility .4s ease-in-out, transform .5s ease-in-out, -webkit-transform .5s ease-in-out;
+}
+.user_forms-signup .col-md-6{
+  width: 100%;
+  flex-basis: 100%;
+}
+.user_options-forms.signup-click .user_forms-signup {
+  opacity: 1;
+  display: block;
+  margin-top: 35rem;
+}
+.user_options-forms.signup-click .user_forms-signup {
+  opacity: 1;
+  display: block;
+  margin-top: 12rem;
+}
+.mt-minese40-mobile{
+  margin-top: -30rem !important;
+}
+
+.user_options-forms.login-click .user_forms-login {
+  display: block;
+}
+.user_options-forms.login-click{
+  animation:none !important;
+}
+.user_options-forms .user_forms-signup{
+  display: none;
+}
+.user_options-text-mobile{
+  display: block;
+  margin: auto;
+  button{
+    margin: 2rem 0.5rem;
+  }
+}
+.user_options-text{
+order: 1;
+margin-top: 4rem;
+.user_options-registered,.user_options-unregistered{
+  display: none;
+}
+}
+
+.forms_buttons-forgot{
+  margin-top: 1rem;
+}
 }

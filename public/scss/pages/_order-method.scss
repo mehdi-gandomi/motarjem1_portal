@@ -84,3 +84,15 @@
         }
     }
 }
+
+@media(max-width:768px){
+    .choice{  
+        width: 100% !important;
+        flex-basis: 100% !important;
+        &.right{
+            border-bottom:5px solid #eee;
+            border-left: 0 !important;
+        }
+
+     }
+}

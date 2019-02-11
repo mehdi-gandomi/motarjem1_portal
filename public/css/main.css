@@ -8131,6 +8131,10 @@ header .brand-description {
         -ms-flex-align: center;
             align-items: center;
     font-size: 1rem !important;
+    margin: 0;
+  }
+  .top-nav .social-media li {
+    margin: 0;
   }
   .nav-brand {
     -webkit-box-flex: 1;
@@ -10606,6 +10610,18 @@ textarea.form__input {
   box-shadow: inset 0 0 100px #1b7943;
 }
 
+@media (max-width: 768px) {
+  .choice {
+    width: 100% !important;
+    -ms-flex-preferred-size: 100% !important;
+        flex-basis: 100% !important;
+  }
+  .choice.right {
+    border-bottom: 5px solid #eee;
+    border-left: 0 !important;
+  }
+}
+
 .footer {
   direction: rtl;
 }
@@ -10802,6 +10818,7 @@ textarea.form__input {
 .footer .social-media-links {
   margin-top: 1rem;
   margin-right: 0.5rem;
+  padding-right: 0;
 }
 
 .footer .social-media-links a {

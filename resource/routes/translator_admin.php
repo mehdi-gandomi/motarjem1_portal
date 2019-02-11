@@ -25,7 +25,7 @@ $app->get('/new-captcha', function (Request $request, Response $response, array 
     ));
 });
 $app->get('/testing', function (Request $request, Response $response, array $args) {
-    $this->view->render($response, "website/successful-employment.twig", ['email' => "coderguy1999@gmail.com", "page_title" => "ثبت نام موفق"]);
+    $this->view->render($response, "website/successful-employment.twig", ['email' => "coderguy1999@gmail.com","username"=>"coderguy", "page_title" => "ثبت نام موفق"]);
 });
 
 $app->post('/translator/employment', "App\Controllers\TranslatorAuthController:post_employment")->add($container->get('csrf'));
