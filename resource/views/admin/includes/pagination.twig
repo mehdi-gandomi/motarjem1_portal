@@ -1,0 +1,53 @@
+{% if count > offset %}
+    {% set last_page = (count / 10) | round(0, 'ceil') %}
+    <nav class="page-navigation" aria-label="Page navigation example">
+        <ul class="pagination">
+            {% if current_page != 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{base_path}}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="{{base_path ~ '?page=' ~ (current_page - 1) }}" aria-label="Previous">
+                        قبلی
+                    </a>
+                </li>
+            {% endif %}
+            {% if current_page + (visible_numbers-1) > last_page %}
+                {% set end_index = last_page %}
+                {% set start_index=current_page-(visible_numbers-(last_page-current_page)) %}
+            {% else %}
+                {% set start_index = current_page - (visible_numbers-1) %}
+                {% set end_index = current_page + (visible_numbers-1) %}
+            {% endif %}
+            {% if start_index < 1 %}
+                {% set start_index = 1 %}
+            {% endif %}
+            {% for page_number in range(start_index, end_index) %}
+                {% if page_number == current_page %}
+                    {% set pagination_class ="page-item active" %}
+                {% else %}
+                    {% set pagination_class ="page-item" %}
+                {% endif %}
+
+                <li class="{{ pagination_class }}">
+                    <a class="page-link" href="{{base_path ~ '?page=' ~ page_number }}">{{ page_number }}</a >
+                </li>
+            {% endfor %}
+            {% if current_page != last_page %}
+
+                <li class="page-item">
+                    <a class="page-link" href="{{base_path ~ '?page=' ~ (current_page + 1) }}" aria-label="Previous">
+                        بعدی
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="{{base_path ~ '?page=' ~ last_page }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}

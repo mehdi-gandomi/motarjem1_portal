@@ -405,19 +405,16 @@ class UserController extends Controller
         $readQS = $req->getQueryParam("read") === null ? 'unset' : \explode(",", $req->getQueryParam("read"));
         $answeredQS = $req->getQueryParam("answered") === null ? 'unset' : \explode(",", $req->getQueryParam("answered"));
         $filtering_options = [];
-        var_dump($readQS);
-        $read = false;
-        $unread = false;
-        $answered = false;
-        $unanswered = false;
-        var_dump($answeredQS);
+        $read = true;
+        $unread = true;
+        $answered = true;
+        $unanswered = true;
         if ($readQS != 'unset') {
             $filtering_options['is_read'] = $readQS;
-            if (count($readQS) == 2) {
-                $read = true;
-                $unread = true;
-            } else {
+            if (count($readQS)<2) {
+                
                 if ($readQS[0] == "0") {
+                    
                     $unread = true;
                     $read = false;
                 } else {
@@ -428,10 +425,7 @@ class UserController extends Controller
         }
         if ($answeredQS != 'unset') {
             $filtering_options['is_answered'] = $answeredQS;
-            if (count($answeredQS) == 2) {
-                $answered = true;
-                $unanswered = true;
-            } else {
+            if (count($answeredQS)< 2) {
                 if ($answeredQS[0] == "0") {
                     $unanswered = true;
                     $answered = false;
@@ -445,7 +439,7 @@ class UserController extends Controller
         $userMessages = User::get_messages_by_id($_SESSION['user_id'], $page, 10, $filtering_options);
         $userMessagesCount = User::get_messages_count_by_id($_SESSION['user_id'], $filtering_options);
 
-        return $this->view->render($res, "admin/user/messages.twig", ["messages" => $userMessages, 'messages_count' => $userMessagesCount, 'read' => $read, 'unread' => $unread, 'answered' => $answered, 'unanswered' => $unanswered]);
+        return $this->view->render($res, "admin/user/messages.twig", ["messages" => $userMessages,'current_page'=>$page, 'messages_count' => $userMessagesCount, 'read' => $read, 'unread' => $unread, 'answered' => $answered, 'unanswered' => $unanswered]);
     }
     public function get_messages_json($req, $res, $args)
     {
