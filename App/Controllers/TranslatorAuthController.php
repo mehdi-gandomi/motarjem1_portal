@@ -5,11 +5,11 @@ use App\Models\Translator;
 use Core\Config;
 use Core\Controller;
 use Gregwar\Captcha\CaptchaBuilder;
-use Slim\Http\UploadedFile;
 
-class TranslatorController extends Controller
+class TranslatorAuthController extends Controller
 {
-    //////////////////////////////////////////////
+
+//////////////////////////////////////////////
     // START Translator Auth Functions
     //////////////////////////////////////////////
 
@@ -69,32 +69,30 @@ class TranslatorController extends Controller
     {
         $postFields = $req->getParsedBody();
         $hasError = $this->validate_employment($postFields);
-        
+
         if ($hasError) {
             unset($postFields['csrf_name']);
             unset($postFields['csrf_value']);
             $_SESSION['oldPostFields'] = $postFields;
             return $res->withRedirect('/translator/employment');
         }
-        if(Translator::check_existance($postFields)){
+        if (Translator::check_existance($postFields)) {
             unset($postFields['csrf_name']);
             unset($postFields['csrf_value']);
             $_SESSION['oldPostFields'] = $postFields;
             $this->flash->addMessage('error', "این نام کاربری یا ایمیل قبلا در سیستم ثبت شده است !");
             return $res->withRedirect('/translator/employment');
-        }else{
+        } else {
             $translatorInfo = Translator::new ($postFields);
             if ($translatorInfo) {
-                $translatorData=Translator::by_username("coderguy","register_date,phone,email,username");
-                $verifyLink=$this->createVerifyLink($translatorData);
-                $this->send_link_to_email($translatorData,$verifyLink);
-                $this->view->render($res, "website/successful-employment.twig", ['email' => $postFields['email'],'username'=>$postFields['username'], "page_title" => "ثبت نام موفق"]);
-            }    
+                $translatorData = Translator::by_username("coderguy", "register_date,phone,email,username");
+                $verifyLink = $this->createVerifyLink($translatorData);
+                $this->send_link_to_email($translatorData, $verifyLink);
+                $this->view->render($res, "website/successful-employment.twig", ['email' => $postFields['email'], 'username' => $postFields['username'], "page_title" => "ثبت نام موفق"]);
+            }
         }
-        
 
     }
-
 
     //create and send a verification link to translator to activate the account
     public function send_verify_link_again($req, $res, $args)
@@ -104,11 +102,11 @@ class TranslatorController extends Controller
         $token = $req->getParsedBody()['token'];
         if ($token === $hash) {
             $translatorData = Translator::by_username($username);
-            if(!$translatorData){
+            if (!$translatorData) {
                 return $res->withJson([
                     "status" => false,
                     "message" => "ایمیل وارد شده در سیستم موجود نمی باشد!",
-                ]);        
+                ]);
             }
             $verifyLink = $this->createVerifyLink($translatorData);
             $result = $this->send_link_to_email($translatorData, $verifyLink);
@@ -186,7 +184,7 @@ class TranslatorController extends Controller
         if ($postFields['cell_phone'] == "") {
             $this->flash->addMessage('error', "فیلد تلفن همراه نباید خالی باشد !");
             $hasError = true;
-        }else if (strlen($postFields['cell_phone']) != 11) {
+        } else if (strlen($postFields['cell_phone']) != 11) {
             $this->flash->addMessage('error', "تلفن همراه نامعتبر می باشد !");
             $hasError = true;
         }
@@ -202,10 +200,10 @@ class TranslatorController extends Controller
             $this->flash->addMessage('error', "فیلد تحصیلات نباید خالی باشد !");
             $hasError = true;
         }
-        if ($postFields['meli_code'] == "" ) {
+        if ($postFields['meli_code'] == "") {
             $this->flash->addMessage('error', "فیلد کدملی نباید خالی باشد !");
             $hasError = true;
-        }else if (strlen($postFields['meli_code']) !=10) {
+        } else if (strlen($postFields['meli_code']) != 10) {
             $this->flash->addMessage('error', "کد ملی نامعتبر می باشد !");
             $hasError = true;
         }
@@ -237,6 +235,11 @@ class TranslatorController extends Controller
     //////////////////////////////////////////////
     // END Translator Auth Functions
     //////////////////////////////////////////////
+
+
+
+    // utitlity methods
+        
     //create email verification link to be sent to translator
     protected function createVerifyLink($translatorData, $onlyKey = false)
     {
@@ -359,4 +362,5 @@ class TranslatorController extends Controller
         return mail($translatorInfo['email'], $subject, $text, $headers);
 
     }
+
 }

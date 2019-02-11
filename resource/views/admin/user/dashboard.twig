@@ -203,16 +203,16 @@
                         </div>
                         <div class="card-body">
                             {% if orders %}
-                                <table class="table">
+                                <table class="table is--responsive">
                                     <thead>
-                                        <th>شماره سفارش</th>
-                                        <th>تعداد صفحات</th>
-                                        <th>زبان ترجمه</th>
-                                        <th>کیفیت ترجمه</th>
-                                        <th>زمان تحویل</th>
-                                        <th>هزینه ترجمه</th>
-                                        <th>وضعیت تایید</th>
-                                        <th>مترجم</th>
+                                        <th scope="col">شماره سفارش</th>
+                                        <th scope="col">تعداد صفحات</th>
+                                        <th scope="col">زبان ترجمه</th>
+                                        <th scope="col">کیفیت ترجمه</th>
+                                        <th scope="col">زمان تحویل</th>
+                                        <th scope="col">هزینه ترجمه</th>
+                                        <th scope="col">وضعیت تایید</th>
+                                        <th scope="col">مترجم</th>
                                     </thead>
                                     <tbody>
                                         {% for order in orders %}
@@ -229,19 +229,19 @@
                                                 {% set delivery_type = "فوری" %}
                                             {% endif %}
                                             <tr>
-                                                <td>{{ order.order_id }}</td>
-                                                <td>{{ page_number }}</td>
-                                                <td>
+                                                <td data-label="شماره سفارش">{{ order.order_id }}</td>
+                                                <td data-label="تعداد صفحات">{{ page_number }}</td>
+                                                <td data-label="زبان ترجمه">
                                                     {{ order.translation_type == "1" ? "انگلیسی به فارسی" : "فارسی به انگلیسی" }}
                                                 </td>
-                                                <td>
+                                                <td data-label="کیفیت ترجمه">
                                                     {{ order.translation_quality == "5" ? "نقره ای" : "طلایی" }}
                                                 </td>
-                                                <td>{{delivery_type}}</td>
-                                                <td>{{order.order_price}}
+                                                <td data-label="زمان تحویل">{{delivery_type}}</td>
+                                                <td data-label="هزینه ترجمه">{{order.order_price}}
                                                     تومان</td>
-                                                <td>{{order.accepted == '0' ?  'تایید نشده' : 'تایید شده' }}</td>
-                                                <td>
+                                                <td data-label="وضعیت تایید">{{order.accepted == '0' ?  'تایید نشده' : 'تایید شده' }}</td>
+                                                <td data-label="مترجم">
                                                     {% if order.translator_id == "0" %}
                                                         <p>مشخص نشده</p>
                                                     {% else %}

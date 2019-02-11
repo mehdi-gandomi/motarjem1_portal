@@ -16278,6 +16278,32 @@ body {
   display: none;
 }
 
+@media screen and (max-width: 768px) {
+  table.is--responsive thead {
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+  table.is--responsive tr {
+    border-bottom: 3px solid #ddd;
+    display: block;
+  }
+  table.is--responsive td {
+    border-bottom: 1px solid #ddd;
+    display: block;
+    text-align: left !important;
+  }
+  table.is--responsive td::before {
+    content: attr(data-label);
+    float: right;
+  }
+}
+
 .f-1rem {
   font-size: 1rem !important;
 }

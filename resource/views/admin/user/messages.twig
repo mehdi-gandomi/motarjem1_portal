@@ -61,36 +61,36 @@
                         </button>
                     </div>
 
-                    <table id="messages-table" class="table">
+                    <table id="messages-table" class="table is--responsive">
                         <thead>
                             <tr>
-                                <th class="bg-teal-dark">#</th>
-                                <th class="bg-teal-dark">عنوان پیام</th>
-                                <th class="bg-teal-dark">وضعیت خوانده شدن</th>
-                                <th class="bg-teal-dark">وضعیت پاسخ داده شدن</th>
-                                <th class="bg-teal-dark">زمان ارسال</th>
-                                <th class="bg-teal-dark">آخرین بروزرسانی</th>
-                                <th class="bg-teal-dark">جزییات</th>
+                                <th scope="col" class="bg-teal-dark">#</th>
+                                <th scope="col" class="bg-teal-dark">عنوان پیام</th>
+                                <th scope="col" class="bg-teal-dark">وضعیت خوانده شدن</th>
+                                <th scope="col" class="bg-teal-dark">وضعیت پاسخ داده شدن</th>
+                                <th scope="col" class="bg-teal-dark">زمان ارسال</th>
+                                <th scope="col" class="bg-teal-dark">آخرین بروزرسانی</th>
+                                <th scope="col" class="bg-teal-dark">جزییات</th>
                             </tr>
                         </thead>
                         <tbody id="user-messages">
                             {% for message in messages %}
                                 <tr>
-                                    <td>{{ message.msg_id }}</td>
-                                    <td>{{ message.subject }}</td>
-                                    <td>
+                                    <td data-label="شماره پیام">{{ message.msg_id }}</td>
+                                    <td data-label="عنوان پیام">{{ message.subject }}</td>
+                                    <td data-label="وضعیت خوانده شدن">
                                         {{ message.is_read == "0" ? "خوانده نشده" : "خوانده شده" }}
                                     </td>
-                                    <td>
+                                    <td data-label="وضعیت پاسخ">
                                         {{
                   message.is_answered == "0"
                     ? "پاسخ داده نشده"
                     : "پاسخ داده شده"
                 }}
                                     </td>
-                                    <td>{{ message.create_date_persian }}</td>
-                                    <td>{{ message.update_date_persian }}</td>
-                                    <td class="order-more-info">
+                                    <td data-label="زمان ارسال">{{ message.create_date_persian }}</td>
+                                    <td data-label="آخرین بروزرسانی">{{ message.update_date_persian }}</td>
+                                    <td data-label="جزییات" class="order-more-info">
                                         <a href="/user/message/view/{{ message.msg_id }}">
                                             <svg width="13px" height="23px" viewbox="0 0 50 80" xml:space="preserve">
                                                 <polyline fill="none" stroke="#a9a9a9" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "/></svg >
