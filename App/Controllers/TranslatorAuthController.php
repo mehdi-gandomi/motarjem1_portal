@@ -215,7 +215,7 @@ class TranslatorAuthController extends Controller
         $validationErrors = [];
         $validationSuccess = "";
         $tokens = $this->get_csrf_token($req);
-        $translatorData = User::by_username($postFields['username'], "user_id");
+        $translatorData = Translator::by_username($postFields['username'], "user_id");
         if ($postFields['password'] == "") {
             array_push($validationErrors, "فیلد پسورد نباید خالی باشد !");
         }
@@ -226,9 +226,9 @@ class TranslatorAuthController extends Controller
             array_push($validationErrors, "فیلد پسورد با تایید پسورد مطابقت ندارد");
         } else {
             try {
-                User::change_password($postFields['username'], $postFields['password']);
-                \Core\Model::delete("forgot_password", "user_id = '" . $translatorData['user_id'] . "'");
-                $validationSuccess = "پسورد شما با موفقیت تغییر کرد حالا می توانید با استفاده از <a href='/user/auth'>این لینک</a> وارد شود";
+                Translator::change_password($postFields['username'], $postFields['password']);
+                \Core\Model::delete("forgot_password", "user_id = '" . $translatorData['user_id'] . "' AND user_type='2'");
+                $validationSuccess = "پسورد شما با موفقیت تغییر کرد حالا می توانید با استفاده از <a href='/translator/login'>این لینک</a> وارد شود";
             } catch (\Exception $e) {
                 array_push($validationErrors, "خطایی در تغییر پسورد رخ داد");
             }

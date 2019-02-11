@@ -237,7 +237,7 @@ class UserAuthController extends Controller
         } else {
             try {
                 User::change_password($postFields['username'], $postFields['password']);
-                \Core\Model::delete("forgot_password", "user_id = '" . $userData['user_id'] . "'");
+                \Core\Model::delete("forgot_password", "user_id = '" . $userData['user_id'] . "' AND user_type='1'");
                 $validationSuccess = "پسورد شما با موفقیت تغییر کرد حالا می توانید با استفاده از <a href='/user/auth'>این لینک</a> وارد شود";
             } catch (\Exception $e) {
                 array_push($validationErrors, "خطایی در تغییر پسورد رخ داد");
