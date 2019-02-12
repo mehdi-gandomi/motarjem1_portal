@@ -47,9 +47,7 @@ class UserAuthController extends Controller
                     $_SESSION['email'] = $userData['email'];
                     //user level that logged in valid values are : user,admin,translator
                     $_SESSION['user_type'] = "user";
-
                     \setcookie(\session_name(), \session_id(), time() + (86400 * 7));
-                    var_dump($_SESSION);
                     return $res->withRedirect('/user');
                 } else {
                     $this->flash->addMessage('userActivationError', "حساب کاربری شما غیرفعال می باشد ! لطفا از طریق <strong><a  onclick='sendVerificationCode(\"$postFields[username]\")'>این لینک</a></strong> آن را فعال کنید.");
@@ -97,7 +95,7 @@ class UserAuthController extends Controller
             return $res->withRedirect("/user/auth");
         }
     }
-    //logout process for user , admin and translator
+    //logout process for user
     public function logout($req, $res, $args)
     {
         unset($_SESSION['user_id']);
@@ -186,9 +184,10 @@ class UserAuthController extends Controller
         $email = $req->getParsedBody()['email'];
         $result = $this->create_password_reset_link($email, true);
         if ($result['status']) {
-            $this->send_password_reset_to_email($email, $result['link']);
-            $this->flash->addMessage('success', "لینک تغییر پسورد به ایمیل شما ارسال شد !");
-            return $res->withRedirect("/user/forget-password");
+            // $this->send_password_reset_to_email($email, $result['link']);
+            // $this->flash->addMessage('success', "لینک تغییر پسورد به ایمیل شما ارسال شد !");
+            // return $res->withRedirect("/user/forget-password");
+            var_dump($result['link']);
         } else {
             $this->flash->addMessage('error', $result['error']);
             return $res->withRedirect("/user/forget-password");
@@ -201,21 +200,35 @@ class UserAuthController extends Controller
         $token = $req->getParam("token");
         $username = $req->getParam("user");
         $forgetPasswordData = \Core\Model::select("forgot_password", "*", ['token' => $token], true);
-        $validationErrors = [];
-        $validationSuccess = "";
+        
+        
         $tokens = $this->get_csrf_token($req);
-        $tokenIsValid = false;
+        $data=array(
+            'validationErrors' => [],
+            'token_is_valid' => false,
+            'csrf_name' => $tokens['csrf_name'],
+            'csrf_value' => $tokens['csrf_value'],
+            'username'=>$username,
+            'action'=>"/user/password-reset"
+        );
         if ($forgetPasswordData) {
-            if (time() < intval($forgetPasswordData['expire_date'])) {
-                $validationSuccess = "توکن معتبر می باشد حالا می توانید پسوردتان را تغییر دهید";
-                $tokenIsValid = true;
-            } else {
-                array_push($validationErrors, "اعتبار توکن به اتمام رسیده است !");
+            $userData=User::by_id($forgetPasswordData['user_id'],"username");
+            if($userData['username']===$username){
+                if (time() < intval($forgetPasswordData['expire_date'])) {
+                    $data['validationSuccess'] = "توکن معتبر می باشد حالا می توانید پسوردتان را تغییر دهید";
+                    $data['token_is_valid'] = true;
+                } else {
+                    array_push($data['validationErrors'], "اعتبار توکن به اتمام رسیده است !");
+                    \Core\Model::delete("forgot_password","token = '".$token."'");
+                }
+            }else{
+                array_push($data['validationErrors'], "اطلاعات لینک نامعتبر می باشد !");
             }
+            
         } else {
-            array_push($validationErrors, "توکن نامعتبر می باشد !");
+            array_push($data['validationErrors'], "توکن نامعتبر می باشد !");
         }
-        return $this->view->render($res, "website/reset-password.twig", ['token_is_valid' => $tokenIsValid, 'validationErrors' => $validationErrors, 'validationSuccess' => $validationSuccess, 'csrf_name' => $tokens['csrf_name'], 'csrf_value' => $tokens['csrf_value'], 'username' => $username]);
+        return $this->view->render($res, "website/reset-password.twig", $data);
     }
 
 //this funtion gets data from change password page and saves it to database
@@ -238,7 +251,7 @@ class UserAuthController extends Controller
             try {
                 User::change_password($postFields['username'], $postFields['password']);
                 \Core\Model::delete("forgot_password", "user_id = '" . $userData['user_id'] . "' AND user_type='1'");
-                $validationSuccess = "پسورد شما با موفقیت تغییر کرد حالا می توانید با استفاده از <a href='/user/auth'>این لینک</a> وارد شود";
+                $validationSuccess = "پسورد شما با موفقیت تغییر کرد حالا می توانید با استفاده از <a href='/user/auth'>این لینک</a> وارد شوید";
             } catch (\Exception $e) {
                 array_push($validationErrors, "خطایی در تغییر پسورد رخ داد");
             }

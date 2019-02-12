@@ -21,31 +21,87 @@ class TranslatorAuthController extends Controller
             $data = array_merge($data, $_SESSION['oldLoginFields']);
             $data['page_title'] = "خطا در ورود";
             unset($_SESSION['oldLoginFields']);
+        } else {
+            $data['page_title'] = "ورود به پنل";
         }
-        $data['page_title'] = "ورود به پنل";
         $this->view->render($res, "website/translator_login.twig", $data);
     }
+
     public function post_login($req, $res, $args)
     {
         $postFields = $req->getParsedBody();
         $username = $postFields['username'];
         $password = $postFields['password'];
 
-        $result = Translator::login($username, $password);
-
-        if ($result['hasError']) {
-            $this->flash->addMessage('loginError', $result['error']);
+        if ($username == "") {
+            $this->flash->addMessage('loginError', "فیلد نام کاربری نباید خالی باشد !");
+            return $res->withRedirect('/translator/login');
+        }
+        if ($password == "") {
+            $this->flash->addMessage('loginError', "فیلد پسورد نباید خالی باشد !");
+            $_SESSION['oldLoginFields'] = array(
+                'username' => $username,
+            );
+            return $res->withRedirect('/translator/login');
+        }
+        $translatorData = Translator::by_username($username, "*");
+        if ($translatorData) {
+            if ($translatorData['password'] == \md5(\md5($password))) {
+                if ($translatorData['is_active'] == "0") {
+                    $this->flash->addMessage('loginError', "<p class='is--danger'>حساب کاربری شما غیرفعال می باشد ! لطفا از طریق <strong><a style='cursor:pointer;color:#1446A0' onclick='sendVerificationCode(\"" . $username . "\")'>این لینک</a></strong> آن را فعال کنید.</p>");
+                    $_SESSION['oldLoginFields'] = array(
+                        'username' => $username,
+                        'password' => $password,
+                    );
+                    return $res->withRedirect('/translator/login');
+                } else {
+                    $_SESSION['is_translator_logged_in'] = true;
+                    $_SESSION['fname'] = $translatorData['fname'];
+                    $_SESSION['lname'] = $translatorData['lname'];
+                    $_SESSION['avatar'] = $translatorData['avatar'];
+                    $_SESSION['user_id'] = $translatorData['translator_id'];
+                    // $_SESSION['username'] = $userData['user_id'];
+                    $_SESSION['phone'] = $translatorData['phone'];
+                    $_SESSION['email'] = $translatorData['email'];
+                    //user level that logged in valid values are : user,admin,translator
+                    $_SESSION['user_type'] = "translator";
+                    \setcookie(\session_name(), \session_id(), time() + (86400 * 7));
+                    return $res->withRedirect('/translator');
+                }
+            } else {
+                $this->flash->addMessage('loginError', "پسورد وارد شده اشتباه می باشد !");
+                $_SESSION['oldLoginFields'] = array(
+                    'username' => $username,
+                    'password' => $password,
+                );
+                return $res->withRedirect('/translator/login');
+            }
+        } else {
+            $this->flash->addMessage('loginError', "کاربری با این مشخصات یافت نشد !");
             $_SESSION['oldLoginFields'] = array(
                 'username' => $username,
                 'password' => $password,
             );
-            return $res->withRedirect('/login');
-        } else {
-            $this->go_to_fucking_ugly_page($result['level'], $result['u_name']);
+            return $res->withRedirect('/translator/login');
         }
 
     }
+    //logout process for translator
+    public function logout($req, $res, $args)
+    {
+        unset($_SESSION['user_id']);
+        unset($_SESSION['is_translator_logged_in']);
+        unset($_SESSION['fname']);
+        unset($_SESSION['avatar']);
+        unset($_SESSION['lname']);
+        unset($_SESSION['user_type']);
+        unset($_SESSION['phone']);
+        unset($_SESSION['email']);
+        unset($_COOKIE[\session_name()]);
+        \setcookie(\session_name(), "", \time() - 3600);
+        return $res->withRedirect('/');
 
+    }
     public function get_employment($req, $res, $args)
     {
         $tokenArray = $this->get_csrf_token($req);
@@ -105,7 +161,7 @@ class TranslatorAuthController extends Controller
             if (!$translatorData) {
                 return $res->withJson([
                     "status" => false,
-                    "message" => "ایمیل وارد شده در سیستم موجود نمی باشد!"
+                    "message" => "ایمیل وارد شده در سیستم موجود نمی باشد!",
                 ]);
             }
             $verifyLink = $this->createVerifyLink($translatorData);
@@ -114,7 +170,6 @@ class TranslatorAuthController extends Controller
                 return $res->withJson([
                     "status" => true,
                     "message" => "لینک فعال سازی به ایمیل شما ارسال شد !",
-                    "link"=>$verifyLink
                 ]);
             }
             return $res->withJson([
@@ -128,6 +183,29 @@ class TranslatorAuthController extends Controller
             "message" => "توکن ارسال شده نامعتبر می باشد!",
         ]);
 
+    }
+
+    public function verify_user_process($req, $res, $args)
+    {
+        $username = trim(urldecode($req->getParam("user")));
+        $verifyToken = trim(urldecode($req->getParam("verify_token")));
+        $translatorData = Translator::by_username($username);
+        //checks if user is activated already , then send a message to the translator that your account is activated
+        if ($translatorData['is_active']) {
+            $this->flash->addMessage('userActivationSuccess', "اکانت شما قبلا غعال بوده است!");
+            return $res->withRedirect('/translator/login');
+        }
+        //this is the token that created based on database info for the user
+        $createdTokenBasedOnUser = $this->createVerifyLink($translatorData, true);
+        \var_dump($verifyToken, $createdTokenBasedOnUser);
+
+        if ($verifyToken === $createdTokenBasedOnUser) {
+            Translator::activate($username);
+            $this->flash->addMessage('userActivationSuccess', "حساب شما با موفقیت فعال شد ! حالا می توانید وارد شوید.");
+        } else {
+            $this->flash->addMessage('userActivationError', "خطا : توکن اشتباه می باشد!");
+        }
+        return $res->withRedirect('/translator/login');
     }
 
     public function upload_photo($req, $res, $rgs)
@@ -166,7 +244,7 @@ class TranslatorAuthController extends Controller
     public function get_forget_password_page($req, $res, $args)
     {
         $tokens = $this->get_csrf_token($req);
-        $tokens['action']="/translator/forget-password";
+        $tokens['action'] = "/translator/forget-password";
         $this->view->render($res, "website/forgot_password.twig", $tokens);
     }
 
@@ -178,10 +256,11 @@ class TranslatorAuthController extends Controller
         if ($result['status']) {
             $this->send_password_reset_to_email($email, $result['link']);
             $this->flash->addMessage('success', "لینک تغییر پسورد به ایمیل شما ارسال شد !");
-            return $res->withRedirect("/user/forget-password");
+            return $res->withRedirect("/translator/forget-password");
+
         } else {
             $this->flash->addMessage('error', $result['error']);
-            return $res->withRedirect("/user/forget-password");
+            return $res->withRedirect("/translator/forget-password");
         }
     }
 
@@ -191,21 +270,35 @@ class TranslatorAuthController extends Controller
         $token = $req->getParam("token");
         $username = $req->getParam("user");
         $forgetPasswordData = \Core\Model::select("forgot_password", "*", ['token' => $token], true);
-        $validationErrors = [];
-        $validationSuccess = "";
+
         $tokens = $this->get_csrf_token($req);
-        $tokenIsValid = false;
+        $data = array(
+            'validationErrors' => [],
+            'token_is_valid' => false,
+            'csrf_name' => $tokens['csrf_name'],
+            'csrf_value' => $tokens['csrf_value'],
+            'username' => $username,
+            'action' => "/translator/password-reset"
+        );
         if ($forgetPasswordData) {
-            if (time() < intval($forgetPasswordData['expire_date'])) {
-                $validationSuccess = "توکن معتبر می باشد حالا می توانید پسوردتان را تغییر دهید";
-                $tokenIsValid = true;
+            $translatorData = Translator::by_id($forgetPasswordData['user_id'], "username");
+            if ($translatorData['username'] === $username) {
+                if (time() < intval($forgetPasswordData['expire_date'])) {
+                    $data['validationSuccess'] = "توکن معتبر می باشد حالا می توانید پسوردتان را تغییر دهید";
+                    $data['token_is_valid'] = true;
+                } else {
+                    array_push($data['validationErrors'], "اعتبار توکن به اتمام رسیده است !");
+                    \Core\Model::delete("forgot_password", "token = '" . $token . "'");
+                }
             } else {
-                array_push($validationErrors, "اعتبار توکن به اتمام رسیده است !");
+                array_push($data['validationErrors'], "اطلاعات لینک نامعتبر می باشد !");
+
             }
+
         } else {
-            array_push($validationErrors, "توکن نامعتبر می باشد !");
+            array_push($data['validationErrors'], "توکن نامعتبر می باشد !");
         }
-        return $this->view->render($res, "website/reset-password.twig", ['token_is_valid' => $tokenIsValid, 'validationErrors' => $validationErrors, 'validationSuccess' => $validationSuccess, 'csrf_name' => $tokens['csrf_name'], 'csrf_value' => $tokens['csrf_value'], 'username' => $username]);
+        return $this->view->render($res, "website/reset-password.twig", $data);
     }
 
 //this funtion gets data from change password page and saves it to database
@@ -221,27 +314,26 @@ class TranslatorAuthController extends Controller
         }
         if ($postFields['confirmPassword'] == "") {
             array_push($validationErrors, "فیلد تایید پسورد نباید خالی باشد");
-        }
-        if ($postFields['password'] != $postFields['confirmPassword']) {
-            array_push($validationErrors, "فیلد پسورد با تایید پسورد مطابقت ندارد");
         } else {
-            try {
-                Translator::change_password($postFields['username'], $postFields['password']);
-                \Core\Model::delete("forgot_password", "user_id = '" . $translatorData['user_id'] . "' AND user_type='2'");
-                $validationSuccess = "پسورد شما با موفقیت تغییر کرد حالا می توانید با استفاده از <a href='/translator/login'>این لینک</a> وارد شود";
-            } catch (\Exception $e) {
-                array_push($validationErrors, "خطایی در تغییر پسورد رخ داد");
+            if ($postFields['password'] != $postFields['confirmPassword']) {
+                array_push($validationErrors, "فیلد پسورد با تایید پسورد مطابقت ندارد");
+            } else {
+                try {
+                    Translator::change_password($postFields['username'], $postFields['password']);
+                    \Core\Model::delete("forgot_password", "user_id = '" . $translatorData['user_id'] . "' AND user_type='2'");
+                    $validationSuccess = "پسورد شما با موفقیت تغییر کرد حالا می توانید با استفاده از <a href='/translator/login'>این لینک</a> وارد شود";
+                } catch (\Exception $e) {
+                    array_push($validationErrors, "خطایی در تغییر پسورد رخ داد");
+                }
             }
         }
+
         return $this->view->render($res, "website/reset-password.twig", ['token_is_valid' => true, 'validationErrors' => $validationErrors, 'validationSuccess' => $validationSuccess, 'csrf_name' => $tokens['csrf_name'], 'csrf_value' => $tokens['csrf_value'], 'username' => $postFields['username']]);
     }
-
 
     //////////////////////////////////////////////
     // END Translator Auth Functions
     //////////////////////////////////////////////
-
-
 
     // utitlity methods
 
@@ -314,7 +406,7 @@ class TranslatorAuthController extends Controller
         }
 
         return $hasError;
-    }        
+    }
     //create email verification link to be sent to translator
     protected function createVerifyLink($translatorData, $onlyKey = false)
     {
@@ -447,20 +539,24 @@ class TranslatorAuthController extends Controller
             $resetLink = Config::BASE_URL . "/translator/reset-password?token=" . $token . "&user=" . $translatorData['username'];
             if ($saveToDB) {
                 try {
-                    $forgetPasswordData = \Core\Model::select("forgot_password", "user_id", ['user_id' => $translatorData['user_id']]);
+                    $forgetPasswordData = \Core\Model::select("forgot_password", "user_id", ['user_id' => $translatorData['translator_id'], "user_type" => 2]);
                     if ($forgetPasswordData) {
                         \Core\Model::update("forgot_password", [
                             'token' => $token,
                             'expire_date' => \time() + 86400,
-                        ], "user_id = '" . $translatorData['user_id'] . "'");
+                        ], "user_id = '" . $translatorData['translator_id'] . "' AND user_type='2'");
                     } else {
                         \Core\Model::insert("forgot_password", [
-                            'user_id' => $translatorData['user_id'],
+                            'user_id' => $translatorData['translator_id'],
                             'user_type' => 2,
                             'token' => $token,
                             'expire_date' => \time() + 86400,
                         ]);
                     }
+                    return [
+                        'status' => true,
+                        'link' => $resetLink,
+                    ];
 
                 } catch (\Exception $e) {
                     return [
@@ -469,10 +565,7 @@ class TranslatorAuthController extends Controller
                     ];
                 }
             }
-            return [
-                'status' => true,
-                'link' => $resetLink,
-            ];
+
         } else {
             return [
                 'status' => false,

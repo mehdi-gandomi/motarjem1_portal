@@ -110,12 +110,17 @@ main{
     }
 }
 
-
+.error-container{
+    margin-bottom: 0.5rem;
+}
 .alert{
     font-weight: 400;
     padding-bottom: 1rem;
-    &.is--success{
+    &.is--danger{
         color: rgb(255, 36, 36) !important;
+    }
+    &.is--success{
+        color: #558927 !important;
     }
 }
 .text-center{

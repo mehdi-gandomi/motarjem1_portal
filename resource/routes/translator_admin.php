@@ -4,12 +4,8 @@ use Slim\Http\Response;
 
 $container = $app->getContainer();
 
-$app->group('/translator', function ($app) use ($container) {
 
-});
-
-
-//auth routes 
+//auth routes
 
 $app->get('/translator/login', "App\Controllers\TranslatorAuthController:get_login")->add($container->get('csrf'));
 $app->post('/translator/login', "App\Controllers\TranslatorAuthController:post_login")->add($container->get('csrf'));
@@ -24,16 +20,29 @@ $app->get('/new-captcha', function (Request $request, Response $response, array 
         'captcha' => $captcha,
     ));
 });
-$app->get('/testing', function (Request $request, Response $response, array $args) {
-    $this->view->render($response, "website/successful-employment.twig", ['email' => "coderguy1999@gmail.com","username"=>"coderguy", "page_title" => "ثبت نام موفق"]);
-});
 
 $app->post('/translator/employment', "App\Controllers\TranslatorAuthController:post_employment")->add($container->get('csrf'));
 $app->post('/upload-employee-photo', "App\Controllers\TranslatorAuthController:upload_photo");
 $app->post('/upload-employee-melicard', "App\Controllers\TranslatorAuthController:upload_melicard_photo");
 $app->post('/translator/send-verify/{username}', "App\Controllers\TranslatorAuthController:send_verify_link_again");
-
+$app->get("/translator/confirm", "App\Controllers\TranslatorAuthController:verify_user_process");
 $app->get("/translator/forget-password", "App\Controllers\TranslatorAuthController:get_forget_password_page")->add($container->get('csrf'));
 $app->post('/translator/forget-password', "App\Controllers\TranslatorAuthController:send_password_reset_link")->add($container->get('csrf'));
 $app->get('/translator/reset-password', "App\Controllers\TranslatorAuthController:reset_password_process")->add($container->get('csrf'));
 $app->post('/translator/password-reset', "App\Controllers\TranslatorAuthController:post_change_password")->add($container->get('csrf'));
+
+
+$app->group('/translator', function ($app) use ($container) {
+
+    $app->get('', "App\Controllers\TranslatorPanelController:get_dashboard");
+
+})->add(function ($req, $res, $next) use ($container) {
+
+    if (isset($_SESSION['is_translator_logged_in'])) {
+        return $next($req, $res);
+    } else {
+
+        return $res->withRedirect("/translator/login");
+
+    }
+});

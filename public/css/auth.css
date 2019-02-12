@@ -4986,13 +4986,21 @@ main.employment-wrap {
   max-width: 100%;
 }
 
+.error-container {
+  margin-bottom: 0.5rem;
+}
+
 .alert {
   font-weight: 400;
   padding-bottom: 1rem;
 }
 
-.alert.is--success {
+.alert.is--danger {
   color: #ff2424 !important;
+}
+
+.alert.is--success {
+  color: #558927 !important;
 }
 
 .text-center {
