@@ -1,0 +1,105 @@
+
+$default-size: 40px;
+$default-expand-width: 90px;
+$medium-size:60px;
+$medium-expand-size:130px;
+$large-size:80px;
+$large-expand-size:180px;
+
+$default-color: #b5bcc2;
+$default-hover-color: #8196ab;
+
+$primary-color:#20a8d8;
+$primary-hover-color:darken(#20a8d8,15);
+
+$success-color:#4dbd74;
+$success-hover-color:darken(#4dbd74,15);
+
+$danger-color:#f86c6b;
+$danger-hover-color:darken(#f86c6b,15);
+.expand-button {
+    height: $default-size;
+    width: $default-size;
+    background: $default-color;
+    margin-right: 15px;
+    border-radius: $default-size;
+    transition: width 0.3s;
+    color: #fff;
+    font-size: 16px;
+    overflow: hidden;
+    border: 0;
+    cursor: pointer;
+    span {
+        display: inline-block;
+        transition: opacity 0.3s ease 0s, transform 0.5s ease 0s;
+        line-height: $default-size*1.2;
+        font-size: 14px;
+        i{
+            font-size: 1.2rem;
+        }
+        width: 100%;
+        &:before {
+            width: 100%;
+            position: absolute;
+            left: 0px;
+            top: 200%;
+            opacity: 0;
+            content: attr(data-hover);
+            transform: translate3d(0, 0, 0);
+        }
+    }
+    &:hover {
+        width: $default-expand-width;
+        background: $default-hover-color;
+        color: #f0f0f0;
+        span {
+            transform: translateY(-200%);
+            line-height: $default-size;
+            &:before {
+                opacity: 1;
+            }
+        }
+    }
+
+    //colors
+    &.is--primary{
+        background: $primary-color !important;
+        &:hover{
+            background: $primary-hover-color !important;
+        }
+    }
+    &.is--success{
+        background: $success-color !important;
+        &:hover{
+            background: $success-hover-color !important;
+        }
+    }
+    &.is--danger{
+        background: $danger-color !important;
+        &:hover{
+            background: $danger-hover-color !important;
+        }
+    }
+
+    //sizes
+    &.is--medium{
+        width: $medium-size !important;
+        // i{
+        //     line-height: $medium-size/4;
+        // font-size: $medium-size /4;
+        // }
+        &:hover{
+            width: $medium-expand-size !important;
+        }
+    }
+    &.is--large{
+        width: $large-size !important;
+        // i{
+        //     line-height: $large-size/4;
+        // font-size: $large-size/4;
+        // }
+        &:hover{
+            width: $large-expand-size !important;
+        }
+    }
+}

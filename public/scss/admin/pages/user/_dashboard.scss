@@ -17,6 +17,7 @@
         flex-basis: 30%;
         width: 30%;
         display: flex;
+        padding: 1rem;
         justify-content: center;
         align-items: center;
         img {
@@ -39,6 +40,17 @@
         &__value {
             font-weight: bold;
             font-size: 1.3rem;
+        }
+        &__link{
+            font-size: 0.8rem;
+            a{
+                color: #4dbd74;
+                &:hover{
+                    text-decoration: none;
+                    color: #337049;
+                    
+                }
+            }
         }
     }
 }

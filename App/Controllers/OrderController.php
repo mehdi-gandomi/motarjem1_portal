@@ -100,14 +100,19 @@ class OrderController extends Controller
     {
         $postInfo = $req->getParsedBody();
         if (!isset($_SESSION['is_user_logged_in'])) {
-            $user_id = \App\Models\User::create([
-                'username' => $postInfo['email'],
-                'password' => $postInfo['phone_number'],
-                'fname' => explode(" ", $postInfo['fullname'])[0],
-                'lname' => explode(" ", $postInfo['fullname'])[1],
-                'email' => $postInfo['email'],
-                'phone' => $postInfo['phone_number'],
-            ]);
+            $exists = User::check_user_existance(['email' => $postInfo['email'], 'username' => $postInfo['email']]);
+            if ($exists) {
+              $user_id=$exists['user_id'];
+            } else {
+                $user_id = \App\Models\User::create([
+                    'username' => $postInfo['email'],
+                    'password' => $postInfo['phone_number'],
+                    'fname' => explode(" ", $postInfo['fullname'])[0],
+                    'lname' => explode(" ", $postInfo['fullname'])[1],
+                    'email' => $postInfo['email'],
+                    'phone' => $postInfo['phone_number'],
+                ]);
+            }
             $postInfo['orderer_id'] = $user_id;
         } else {
             $postInfo['orderer_id'] = $_SESSION['user_id'];
@@ -195,7 +200,7 @@ class OrderController extends Controller
     {
         $queryParams = $req->getQueryParams();
         if ($queryParams['Status'] == "NOK") {
-            return $this->view->render($res, "website/order-successful.twig", ['status' => false,'refId'=>"دریافت نشد!", "page_title" => "خطا در پرداخت",'error'=>"پرداخت انجام نشد", "latestPosts" => $_SESSION["latestPosts"]]);
+            return $this->view->render($res, "website/order-successful.twig", ['status' => false, 'refId' => "دریافت نشد!", "page_title" => "خطا در پرداخت", 'error' => "پرداخت انجام نشد", "latestPosts" => $_SESSION["latestPosts"]]);
         }
         $orderId = $args['order_id'];
         $orderData = Order::by_id($orderId, false, true);
@@ -234,7 +239,7 @@ class OrderController extends Controller
 
         } else {
 
-            return $this->view->render($res, "website/order-successful.twig", ['status' => false, 'refId' => $result['RefID'],'error'=>"خطایی در پرداخت رخ داد", "page_title" => "خطا در پرداخت", "latestPosts" => $_SESSION["latestPosts"]]);
+            return $this->view->render($res, "website/order-successful.twig", ['status' => false, 'refId' => $result['RefID'], 'error' => "خطایی در پرداخت رخ داد", "page_title" => "خطا در پرداخت", "latestPosts" => $_SESSION["latestPosts"]]);
         }
     }
     public function payment_result_mellat($req, $res, $args)
@@ -243,7 +248,7 @@ class OrderController extends Controller
         $orderData = Order::by_id($orderId, false, true);
         $payment = new Payment("mellat");
         $paymentResult = $payment->validate($_POST);
-        $refId=$_POST['RefId'];
+        $refId = $_POST['RefId'];
         if ($paymentResult['hasError']) {
             return $this->view->render($res, "website/order-successful.twig", ['status' => false, 'refId' => $refId, "page_title" => "خطا در پرداخت", "latestPosts" => $_SESSION["latestPosts"], "error" => $paymentResult['error']]);
         } else {

@@ -61,7 +61,7 @@ class TranslatorAuthController extends Controller
                     $_SESSION['avatar'] = $translatorData['avatar'];
                     $_SESSION['user_id'] = $translatorData['translator_id'];
                     // $_SESSION['username'] = $userData['user_id'];
-                    $_SESSION['phone'] = $translatorData['phone'];
+                    $_SESSION['phone'] = $translatorData['cell_phone'];
                     $_SESSION['email'] = $translatorData['email'];
                     //user level that logged in valid values are : user,admin,translator
                     $_SESSION['user_type'] = "translator";

@@ -4,5 +4,312 @@
     <link rel="stylesheet" href="/public/css/medium-theme.min.css"/>
 {% endblock %}
 {% block content %}
+    <main class="main">
+        {% if is_employed %}
+            <div class="container">
+                <div class="info-cards ">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a href="/translator/orders" class="info-card">
+                                <div class="info-card__icon bg-primary">
+                                    <img src="/public/images/icon/project-panel.svg" alt=""/>
+                                </div>
 
+                                <div class="info-card__content">
+                                    <div class="info-card__content__title">
+                                        ترجمه های محول شده به شما
+                                    </div>
+                                    <div class="info-card__content__value">
+                                        {{ translatorProjectsCount ? translatorProjectsCount : 0
+                }}
+                                        <span class="f-1rem ml-2">پروژه</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <div href="/translator/account-report" class="info-card">
+                                <div class="info-card__icon bg-success">
+                                    <img src="/public/images/icon/income.svg" alt=""/>
+                                </div>
+
+                                <div class="info-card__content">
+                                    <div class="info-card__content__title">میزان درآمد</div>
+                                    <div class="info-card__content__value">
+                                        {{ translatorRevenue ? translatorRevenue : 0 }}
+                                        <span class="f-1rem">تومان</span>
+                                    </div>
+                                    <div class="info-card__content__link">
+                                        <a href="/account/checkout">درخواست پرداخت وجه</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="/translator/messages?unread=true" class="info-card">
+                                <div class="info-card__icon bg-danger">
+                                    <img src="/public/images/icon/message.svg" alt=""/>
+                                </div>
+
+                                <div class="info-card__content">
+                                    <div class="info-card__content__title">پیام های خوانده نشده</div>
+                                    <div class="info-card__content__value">
+                                        {{ unreadMessagesCount ? unreadMessagesCount : 0 }}
+                                        <span class="f-1rem ml-1">پیام</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <div class=" card">
+                            <div class="card-header f-1rem">
+                                <i class="icon-user"></i>
+                                مشخصات شما
+                            </div>
+                            <div class="card-body profile-info">
+                                <div class="item">
+                                    <span>نام شما :
+                                    </span>
+                                    <strong>{{ user.fname }}</strong>
+                                </div>
+                                <div class="item">
+                                    <span>نام خانوادگی شما :
+                                    </span>
+                                    <strong>{{ user.lname }}</strong>
+                                </div>
+                                <div class="item">
+                                    <span>ایمیل شما :
+                                    </span>
+                                    <strong>{{ user.email }}</strong>
+                                </div>
+                                <div class="item">
+                                    <span>شماره همراه شما :
+                                    </span>
+                                    <strong>{{ user.phone }}</strong>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="/user/edit-profile" class="btn btn-success btn-block profile-edit-btn">
+                                    <i class="icon-note"></i>
+                                    بروزرسانی
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card ticket-card">
+                            <div class="card-header f-1rem ">
+                                <div class="card-header__title">
+                                    <i class="icon-earphones-alt"></i>
+                                    <span>پیام های اخیر</span>
+                                </div>
+                                <button data-toggle="modal" data-target="#newMessageModal" class="btn new-ticket-btn">
+                                    <i class="icon-plus"></i>
+                                    ارسال پیام جدید
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group ticket-list">
+                                    {% if lastMessages %}
+                                        {% for message in lastMessages %}
+
+                                            <a href="/user/message/view/{{ message.msg_id }}" class="list-group-item ticket-item">
+                                                <div class="ticket-item__details">
+                                                    <span class="ticket-item__code">#{{ message.msg_id }}</span>
+                                                    -
+                                                    <span class="ticket-item__title">{{ message.subject }}</span>
+                                                    {% if message.is_answered %}
+                                                        <span class="ticket-item__status answered">پاسخ داده شده</span >
+                                                    {% else %}
+                                                        <span class="ticket-item__status not-answered">پاسخ داده نشده</span >
+                                                    {% endif %}
+                                                </div>
+                                                <p>
+                                                    آخرین بروزرسانی
+                                                    {{ message.update_date_persian }}
+                                                </p>
+                                            </a>
+
+                                        {% endfor %}
+                                    {% else %}
+                                        <h6 class="text-center p-3">تاکنون پیامی ارسال نکرده اید !</h6>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="icon-phone"></i>
+                                تماس با ما
+                            </div>
+                            <div class="card-body">
+                                <ul class="contact-info">
+                                    <li class="contact-info__item">
+                                        <i class="icon-location-pin"></i>
+                                        میدان انقلاب ابتدای کارگر شمالی کوچه رستم پ ۲۱ و ۸
+                                    </li>
+                                    <li class="contact-info__item">
+                                        <i class="icon-phone"></i>
+                                        ٠٩٣٠٩٥٨٩١٢٢ - 66496035_021
+                                    </li>
+                                    <li class="contact-info__item">
+                                        <a href="mailto: Motarjem1@yahoo.com">
+                                            Motarjem1@yahoo.com</a>
+                                        <i class="icon-envelope"></i>
+                                    </li>
+                                </ul>
+                                <h6 class="text-center">مارا در شبکه های اجتماعی دنبال کنید</h6>
+                                <div class="contact-info__social-media">
+                                    <a href="" class="icon-social-instagram"></a>
+                                    <a href="" class="icon-social-linkedin"></a>
+                                    <a href="" class="icon-social-twitter"></a>
+                                    <a href="" class="icon-paper-plane"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="mt-3 mb-4">پروژه های جدید</h4>
+                                <table class="table is--responsive">
+                                    <thead>
+                                        <th class="text-center" scope="col">شماره سفارش</th>
+                                        <th class="text-center" scope="col">تعداد صفحات</th>
+                                        <th class="text-center" scope="col">زبان ترجمه</th>
+                                        <th class="text-center" scope="col">کیفیت ترجمه</th>
+                                        <th class="text-center" scope="col">زمان تحویل</th>
+                                        <th class="text-center" scope="col">هزینه ترجمه</th>
+                                        <th class="text-center" scope="col">سهم شما</th>
+                                        <th class="text-center" scope="col">عملیات</th>
+                                    </thead>
+                                    <tbody>
+
+                                        <tr>
+                                            <td data-label="شماره سفارش">11</td>
+                                            <td data-label="تعداد صفحات">10</td>
+                                            <td data-label="زبان ترجمه">
+                                                فارسی به انگلیسی
+                                            </td>
+                                            <td data-label="کیفیت ترجمه">
+                                                نقره ای
+                                            </td>
+                                            <td data-label="زمان تحویل">معمولی</td>
+                                            <td data-label="هزینه ترجمه">5000 تومان</td>
+                                            <td data-label="سهم شما">3500 تومان</td>
+                                            <td data-label="عملیات" class="order-actions">
+                                                <button class="expand-button order-action is--primary is--medium">
+                                                    <span data-hover="جزییات سفارش">
+                                                        <i class="icon-info"></i>
+                                                    </span>
+                                                </button>
+                                                <button class="expand-button order-action is--success is--large">
+                                                    <span data-hover="درخواست انجام سفارش">
+                                                        <i class="icon-check"></i>
+                                                    </span>
+                                                </button>
+                                                <button class="expand-button order-action is--danger">
+                                                    <span data-hover="رد سفارش">
+                                                        <i class="icon-close"></i>
+                                                    </span>
+                                                </button>
+
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        {% else %}
+        {% endif %}
+    </main>
+    <!-- Modal -->
+    <div class="modal fade" id="newMessageModal" tabindex="-1" role="dialog" aria-labelledby="newMessageModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newMessageModalLabel">ارسال پیام</h5>
+                </div>
+                <div class="modal-body">
+                    <form action="/user/message/send" id="sendMessageForm" method="POST">
+                        <input type="hidden" name="msg_id" id="msg_id"/>
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                <label for="">نام شما</label>
+                                <input class="form-control" type="text" value="{{user.fname ~ " " ~ user.lname
+              }}" disabled="disabled"/>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label for="">ایمیل شما</label>
+                                <input class="form-control" type="email" value="{{ user.email }}" disabled="disabled"/>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="">عنوان پیام</label>
+                                <input class="form-control" type="text" id="subject" name="subject"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="">پیام شما</label>
+                            <textarea name="body" id="medium-editor" cols="30" rows="10"></textarea>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="send-message-btn">
+                            ارسال
+                        </button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            انصراف
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script_below %}
+    <script src="/public/js/panel/medium-editor.min.js"></script>
+    <script src="/public/js/sweetalert2@8.js"></script>
+    <script>
+        let editor = new MediumEditor("#medium-editor", {
+            elementsContainer: document.getElementById("newMessageModal") // use your modal element here
+        });
+        //send message with ajax request
+        $("#send-message-btn").click(function (e) {
+            let subject = $("#subject").val();
+            let body = $("#medium-editor").val();
+            if (subject == "") {
+                alert("باید حداقل یک عنوان وارد نمایید!");
+                return;
+            }
+            if (body == "") {
+                alert("باید متن پیام تان را وارد نمایید !");
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: $("#sendMessageForm").attr("action"),
+                data: {
+                    subject: subject,
+                    body: body
+                },
+                success: function (data, status) {
+                    if (status && data.status) {
+                        $("#newMessageModal").modal("hide");
+                        Swal.fire("موفقیت آمیز !", "پیام شما با موفقیت ارسال شد !", "success");
+                    }
+                }
+            });
+        });
+    </script>
 {% endblock %}

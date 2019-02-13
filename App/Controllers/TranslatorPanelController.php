@@ -11,6 +11,6 @@ class TranslatorPanelController extends Controller
 {
     public function get_dashboard($req,$res,$args)
     {
-        return $this->view->render($res,"admin/translator/dashboard.twig");
+        return $this->view->render($res,"admin/translator/dashboard.twig",['is_employed'=>true]);
     }
 }

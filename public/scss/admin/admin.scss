@@ -5,7 +5,8 @@
 @import "components/pace";
 @import "components/custom";
 @import "components/avatar";
-
+@import "components/hint";
+@import "components/expand-button";
 //pages
 //user admin panel pages
 @import "pages/user/dashboard";
@@ -15,3 +16,6 @@
 @import "pages/user/view-message";
 @import "pages/user/edit-profile";
 //end user admin panel pages
+
+//translator panel pages
+@import "pages/translator/dashboard";
