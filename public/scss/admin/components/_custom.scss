@@ -40,8 +40,20 @@
 
 }
 
-
-
+//side bar custom styles
+.text-placeholder{
+    width: 80%;
+    height: 9px;
+    background: #5a5a5a;
+    display: inline-block;
+    border-radius: 5px;
+}
+.nav-item.disabled .nav-link{
+    cursor: not-allowed;
+    &:hover{
+        background: rgba(0,0,0,0) !important;
+    }
+}
 //responsive table styles
 @media screen and (max-width: 768px) {
     table.is--responsive thead {
@@ -73,8 +85,10 @@
   }
 
 
+
 //my utitities 
 .f-1rem{
     font-size: 1rem !important;
 }
+
 

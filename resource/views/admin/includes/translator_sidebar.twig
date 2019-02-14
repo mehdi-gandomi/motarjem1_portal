@@ -1,12 +1,13 @@
 <ul class="nav">
 
     <li class="nav-item">
-        <a class="nav-link" href="/user">
+        <a class="nav-link" href="/translator">
             <i class="nav-icon icon-speedometer"></i>
             داشبورد
         </a>
     </li>
 
+{% if is_employed %}
     <li class="nav-item nav-dropdown">
         <a class="nav-link nav-dropdown-toggle" href="#">
             <i class="nav-icon icon-credit-card"></i>
@@ -23,6 +24,16 @@
             </li>
         </ul>
     </li>
+{% else %}
+   <li class="nav-item disabled">
+            <a class="nav-link" href="#">
+                <i class="nav-icon icon-lock"></i>
+                <span class="text-placeholder"></span>            
+            </a>
+        </li> 
+{% endif %}
+
+    {% if is_employed %}
     <li class="nav-item nav-dropdown">
         <a class="nav-link nav-dropdown-toggle" href="#">
             <i class="nav-icon icon-bag"></i>
@@ -43,20 +54,52 @@
             </li>
         </ul>
     </li>
+    {% else %}
+        <li class="nav-item disabled">
+            <a class="nav-link" href="#">
+                <i class="nav-icon icon-lock"></i>
+                <span class="text-placeholder"></span>            
+            </a>
+        </li> 
+    {% endif %}
     
 
+    {% if is_employed %}
+    
     <li class="nav-item">
         <a class="nav-link" href="/user/messages">
             <i class="nav-icon icon-envelope"></i>
             مرکز پیام
         </a>
     </li>
+    {% else %}
+        <li class="nav-item disabled">
+            <a class="nav-link" href="#">
+                <i class="nav-icon icon-lock"></i>
+                <span class="text-placeholder"></span>            
+            </a>
+        </li> 
+    {% endif %}
+        
+
+    {% if is_employed %}
+    
     <li class="nav-item">
         <a class="nav-link" href="/user/messages">
             <i class="nav-icon icon-bell"></i>
             اطلاعیه ها
         </a>
     </li>
+
+{% else %}
+        <li class="nav-item disabled">
+            <a class="nav-link" href="#">
+                <i class="nav-icon icon-lock"></i>
+                <span class="text-placeholder"></span>            
+            </a>
+        </li> 
+    {% endif %}
+    
     <li class="nav-item">
         <a class="nav-link" href="/user/edit-profile">
             <i class="nav-icon icon-pencil"></i>

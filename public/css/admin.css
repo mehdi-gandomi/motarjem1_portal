@@ -16278,6 +16278,22 @@ body {
   display: none;
 }
 
+.text-placeholder {
+  width: 80%;
+  height: 9px;
+  background: #5a5a5a;
+  display: inline-block;
+  border-radius: 5px;
+}
+
+.nav-item.disabled .nav-link {
+  cursor: not-allowed;
+}
+
+.nav-item.disabled .nav-link:hover {
+  background: rgba(0, 0, 0, 0) !important;
+}
+
 @media screen and (max-width: 768px) {
   table.is--responsive thead {
     border: none;
@@ -16562,6 +16578,10 @@ body {
   overflow: hidden;
   border: 0;
   cursor: pointer;
+}
+
+.expand-button:focus, .expand-button:active {
+  outline: none;
 }
 
 .expand-button span {
