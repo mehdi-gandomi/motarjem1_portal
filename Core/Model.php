@@ -54,7 +54,7 @@ class Model
             $sql.=$whereString;
         }
         
-        
+        var_dump($sql);
         $stmt=$db->prepare($sql);
         foreach($where as $key=>$value){
             if(is_array($value)){

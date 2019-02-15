@@ -108,6 +108,32 @@ class Translator extends Model
 
         }
     }
+    public static function get_test_by_filtering($language,$fieldId)
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT tests.study_field_id,tests.text,study_fields.title FROM tests INNER JOIN study_fields ON study_fields.id=tests.study_field_id  WHERE study_field_id = :field_id AND language_id = :language_id";
+            $stmt=$db->prepare($sql);
+            $stmt->execute([
+                ':field_id'=>$fieldId,
+                ':language_id'=>$language
+            ]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+    public static function get_study_fields()
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT * FROM `study_fields` WHERE id NOT IN ('0','41','43','44')";
+            $result=$db->query($sql);
+            return $result ? $result->fetchAll(PDO::FETCH_ASSOC) : false;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
 
     protected static function get_current_date_persian()
     {

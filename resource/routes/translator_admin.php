@@ -35,7 +35,8 @@ $app->post('/translator/password-reset', "App\Controllers\TranslatorAuthControll
 $app->group('/translator', function ($app) use ($container) {
 
     $app->get('', "App\Controllers\TranslatorPanelController:get_dashboard");
-
+    $app->get('/test/filter', "App\Controllers\TranslatorPanelController:get_test_json");
+    
 })->add(function ($req, $res, $next) use ($container) {
 
     if (isset($_SESSION['is_translator_logged_in'])) {

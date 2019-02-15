@@ -17,3 +17,27 @@
     // }
     
 }
+.test-section{
+    &.ltr{
+        .question{
+            text-align: left;
+        }    
+        .answer textarea{
+            text-align: right;
+        direction: rtl;
+        }
+    }
+    .question{
+        
+        line-height: 1.7;
+        border: 2px solid #eaeaea;
+        padding: 1.5rem;
+    }
+    .answer textarea{
+        text-align: left;
+        direction: ltr;
+    }
+}
+.ltr{
+    direction: ltr;
+}

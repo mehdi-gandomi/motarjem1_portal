@@ -17558,4 +17558,28 @@ body {
 .order-action__icon {
   margin-left: 0.5rem;
 }
+
+.test-section.ltr .question {
+  text-align: left;
+}
+
+.test-section.ltr .answer textarea {
+  text-align: right;
+  direction: rtl;
+}
+
+.test-section .question {
+  line-height: 1.7;
+  border: 2px solid #eaeaea;
+  padding: 1.5rem;
+}
+
+.test-section .answer textarea {
+  text-align: left;
+  direction: ltr;
+}
+
+.ltr {
+  direction: ltr;
+}
 /*# sourceMappingURL=admin.css.map */
