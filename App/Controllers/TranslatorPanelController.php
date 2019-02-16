@@ -23,4 +23,19 @@ class TranslatorPanelController extends Controller
         $test['status']=$test ? true:false;
         return $res->withJson($test);
     }
+    public function save_test_data($req,$res,$args)
+    {
+        $body=$req->getParsedBody();
+        $body['translator_id']=$_SESSION['user_id'];
+        $result=Translator::save_test_data($body);
+        if($result){
+            return $res->withJson(array(
+                'status'=>true
+            )); 
+        }
+        return $res->withJson(array(
+            'status'=>false,
+            'error'=>'مشکلی در ذخیره پاسخ شما رخ داد !'
+        )); 
+    }
 }

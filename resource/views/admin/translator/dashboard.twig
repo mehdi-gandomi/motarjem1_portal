@@ -204,7 +204,7 @@
                                             <td data-label="کیفیت ترجمه">
                                                 نقره ای
                                             </td>
-                                            
+
                                             <td data-label="هزینه ترجمه">5000 تومان</td>
                                             <td data-label="سهم شما">3500 تومان</td>
                                             <td data-label="عملیات" class="order-actions">
@@ -236,49 +236,47 @@
             </div>
 
         {% else %}
-            
-            
+
             <div class="card">
                 <div class="card-body">
-                <h4 class="mt-2 mb-4">آزمون ورودی مترجم وان</h4>
+                    <h4 class="mt-2 mb-4">آزمون ورودی مترجم وان</h4>
 
-                <h5 class="mt-5 mb-4">مترجم عزیز به بخش آزمون مترجم وان خوش آمدید . لطفا به نکات زیر توجه فرمایید</h5>
-                <ul class="test-notes">
-                <li>برای اینکه ثبت نام شما کامل شود باید یک متن را انتخاب کرده و آن را ترجمه کنید</li>
-                <li>سعی کنید در زمان تعیین شده کل متن را ترجمه کنید چراکه زمان تغییر نخواهد کرد</li>
-                <li>بعد از ترجمه دکمه ارسال ترجمه را کلیک کنید تا ترجمه به ادمین ارسال شود</li>
-                <li>تا زمانی که ادمین ترجمه شما را تایید نکند شما قادر به استفاده از امکانات کامل پنل نخواهید بود</li>
-                </ul>
-                <p style="color: #ff4646;font-size: 1rem;">موفق باشید !</p>
+                    <h5 class="mt-5 mb-4">مترجم عزیز به بخش آزمون مترجم وان خوش آمدید . لطفا به نکات زیر توجه فرمایید</h5>
+                    <ul class="test-notes">
+                        <li>برای اینکه ثبت نام شما کامل شود باید یک متن را انتخاب کرده و آن را ترجمه کنید</li>
+                        <li>سعی کنید در زمان تعیین شده کل متن را ترجمه کنید چراکه زمان تغییر نخواهد کرد</li>
+                        <li>بعد از ترجمه دکمه ارسال ترجمه را کلیک کنید تا ترجمه به ادمین ارسال شود</li>
+                        <li>تا زمانی که ادمین ترجمه شما را تایید نکند شما قادر به استفاده از امکانات کامل پنل نخواهید بود</li>
+                    </ul>
+                    <p style="color: #ff4646;font-size: 1rem;">موفق باشید !</p>
 
-                <hr style="margin-top: 2rem;margin-bottom: 1rem;border: 1px solid #eee;">
-              
-                <form method="POST" id="testFilterForm" class="form row">
-                    <div class="form-group col-md-3 offset-md-2">
-                        <label for="language">زبان ترجمه</label>
-                        <select id="language" name="language" class="form-control">
-                            <option value="1">انگلیسی به فارسی</option>
-                            <option value="2">فارسی به انگلیسی</option>
-                        </select>
-                    </div> 
-                    <div class="form-group col-md-3">
-                        <label for="study_field">رشته دانشگاهی</label>
-                        <select id="study_field" name="study_field" class="form-control">
-                            {% for study_field in study_fields %}
-                                <option value="{{study_field.id}}">{{study_field.title}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-3 d-flex align-items-center mt-2">
-                        <input type="submit" value="جستجو" class="btn btn-primary"> 
-                    </div>
-                </form>
-                <div class="error-logs mt-4 d-flex justify-content-center"></div>
-                <div class="test-section row" ></div>
+                    <hr style="margin-top: 2rem;margin-bottom: 1rem;border: 1px solid #eee;">
+
+                    <form method="POST" id="testFilterForm" class="form row">
+                        <div class="form-group col-md-3 offset-md-2">
+                            <label for="language">زبان ترجمه</label>
+                            <select id="language" name="language" class="form-control">
+                                <option value="1">انگلیسی به فارسی</option>
+                                <option value="2">فارسی به انگلیسی</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="study_field">رشته دانشگاهی</label>
+                            <select id="study_field" name="study_field" class="form-control">
+                                {% for study_field in study_fields %}
+                                    <option value="{{study_field.id}}">{{study_field.title}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-center mt-2">
+                            <input type="submit" value="جستجو" class="btn btn-primary">
+                        </div>
+                    </form>
+                    <div class="test-logs mt-4 d-flex justify-content-center"></div>
+                    <div class="test-section row"></div>
                 </div>
             </div>
 
-            
         {% endif %}
     </main>
     <!-- Modal -->
@@ -358,25 +356,47 @@
                 }
             });
         });
-        $("#testFilterForm").submit(function(e){
+        $("#testFilterForm").submit(function (e) {
             e.preventDefault();
-            let language=$("#language").val();
-            let fieldOfStudy=$("#study_field").val();
-            $.get("/translator/test/filter",{"language":language,"study_field":fieldOfStudy},function(data,status){
+            let language = $("#language").val();
+            let fieldOfStudy = $("#study_field").val();
+            $.get("/translator/test/filter", {
+                "language": language,
+                "study_field": fieldOfStudy
+            }, function (data, status) {
                 $(".test-section").html("");
-                $(".error-logs").html("");
-                if(data.status){
-                    if(language=='1'){
+                $(".test-logs").html("");
+                if (data.status) {
+                    if (language == '1') {
                         $(".test-section").addClass("ltr");
-                    }else{
+                    } else {
                         $(".test-section").removeClass("ltr");
                     }
-                    let output="<div class='col-12'><h4 class='text-center mt-4 mb-4'>"+data.title+"</h4></div>"+"<div class='col-md-6'>";
-                    output+="<div class='question'>"+data.text+"</div></div>";
-                    output+="<div class='col-md-6 answer'><form method='post' action='/translator/test/send'><div class='form-group'><textarea class='form-control' cols='10' rows='20' name='answer'></textarea></div><div class='form-group'><input type='submit' value='ارسال پاسخ' class='btn btn-success' /></div></form></div>";
+                    let output = "<div class='col-12'><h4 class='text-center mt-4 mb-4'>" + data.title + "</h4></div>" + "<div class='col-md-6'>";
+                    output += "<div class='question'>" + data.text + "</div></div>";
+                    output += "<div class='col-md-6 answer'><form id='testForm' method='post' action='/translator/test/send'><input type='hidden' id='test_id' value='" + data.test_id + "' /><div class='form-group'><textarea class='form-control' cols='10' rows='20' id='answer' name='answer'></textarea></div><div class='form-group'><input type='submit' value='ارسال پاسخ' class='btn btn-success' /></div></form></div>";
                     $(".test-section").html(output);
-                }else{
-                    $(".error-logs").html("<p style='color: #ff3c3c;font-size: 1rem;'>نتیجه ای یافت نشد !</p>");
+                } else {
+                    $(".test-logs").html("<p style='color: #ff3c3c;font-size: 1rem;'>نتیجه ای یافت نشد !</p>");
+                }
+            })
+        })
+        $(document).on("submit", "#testForm", function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: e.target.getAttribute("action"),
+                data: {
+                    translated_text: $("#answer").val(),
+                    test_id: $("#test_id").val()
+                },
+                success: function (data) {
+                    if (data.status) {
+                        $(".test-section").html("");
+                        Swal.fire('موفق !', 'پاسخ شما با موفقیت ارسال شد !', 'success')
+                    } else {
+                        Swal.fire('خطا !', data.error, 'error')
+                    }
                 }
             })
         })

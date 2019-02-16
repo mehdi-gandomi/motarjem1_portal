@@ -112,7 +112,7 @@ class Translator extends Model
     {
         try{
             $db=static::getDB();
-            $sql="SELECT tests.study_field_id,tests.text,study_fields.title FROM tests INNER JOIN study_fields ON study_fields.id=tests.study_field_id  WHERE study_field_id = :field_id AND language_id = :language_id";
+            $sql="SELECT tests.id AS test_id,tests.study_field_id,tests.text,study_fields.title FROM tests INNER JOIN study_fields ON study_fields.id=tests.study_field_id  WHERE study_field_id = :field_id AND language_id = :language_id";
             $stmt=$db->prepare($sql);
             $stmt->execute([
                 ':field_id'=>$fieldId,
@@ -135,6 +135,16 @@ class Translator extends Model
         }
     }
 
+    //save translated text from translator (step before employment)
+    public static function save_test_data($data)
+    {
+        try{
+            static::insert("translator_tests",$data);
+            return true;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
     protected static function get_current_date_persian()
     {
         $now = new \DateTime("NOW");
