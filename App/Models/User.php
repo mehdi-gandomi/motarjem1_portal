@@ -92,7 +92,7 @@ class User extends Model
             $db = static::getDB();
             $result=false;
             $page_limit = ($page - 1) * $amount;
-            $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_kind,orders.translation_quality,orders.delivery_type,order_logs.is_accepted,order_logs.transaction_code,orders.order_price,orders.translator_id FROM orders  INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE orders.orderer_id=:orderer_id";
+            $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_kind,orders.translation_lang,orders.translation_quality,orders.delivery_type,order_logs.is_accepted,order_logs.transaction_code,orders.order_price,orders.translator_id FROM orders  INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE orders.orderer_id=:orderer_id";
             if(is_array($filtering_Options) && count($filtering_Options)>0){
                 
                 if(isset($filtering_Options['is_done'])){
@@ -149,7 +149,7 @@ class User extends Model
     {
         try {
             $db = static::getDB();
-            $sql = "SELECT COUNT(*) AS messages_count FROM `messaging` WHERE `reciever_id`= '$userId' AND `is_read`= '0'";
+            $sql = "SELECT COUNT(*) AS messages_count FROM `messaging` WHERE `reciever_id`= '$userId' AND user_type='1' AND `is_read`= '0'";
             $result = $db->query($sql);
             return $result ? $result->fetch(PDO::FETCH_ASSOC)['messages_count'] : false;
 
@@ -165,7 +165,7 @@ class User extends Model
             $db=static::getDB();
             $result=false;
             $page_limit = ($page - 1) * $amount;
-            $sql="SELECT messaging.msg_id,messaging.parent_msg_id,messaging.create_date_persian,messaging.update_date_persian,messaging.subject,messaging.body,messaging.is_answered,messaging.is_read FROM messaging WHERE  messaging.sender_id = :sender_id";
+            $sql="SELECT messaging.msg_id,messaging.parent_msg_id,messaging.create_date_persian,messaging.update_date_persian,messaging.subject,messaging.body,messaging.is_answered,messaging.is_read FROM messaging WHERE  messaging.sender_id = :sender_id AND user_type='1'";
             if(is_array($filtering_Options) && count($filtering_Options)>0){
                 
                 if(isset($filtering_Options['is_read'])){

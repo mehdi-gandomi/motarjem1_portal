@@ -7,7 +7,7 @@
         </a>
     </li>
 
-{% if is_employed %}
+{% if user.is_employed %}
     <li class="nav-item nav-dropdown">
         <a class="nav-link nav-dropdown-toggle" href="#">
             <i class="nav-icon icon-credit-card"></i>
@@ -33,7 +33,7 @@
         </li> 
 {% endif %}
 
-    {% if is_employed %}
+    {% if user.is_employed %}
     <li class="nav-item nav-dropdown">
         <a class="nav-link nav-dropdown-toggle" href="#">
             <i class="nav-icon icon-bag"></i>
@@ -64,7 +64,7 @@
     {% endif %}
     
 
-    {% if is_employed %}
+    {% if user.is_employed %}
     
     <li class="nav-item">
         <a class="nav-link" href="/user/messages">
@@ -82,7 +82,7 @@
     {% endif %}
         
 
-    {% if is_employed %}
+    {% if user.is_employed %}
     
     <li class="nav-item">
         <a class="nav-link" href="/user/messages">

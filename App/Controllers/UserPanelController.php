@@ -12,46 +12,7 @@ class UserPanelController extends Controller
     private $gateways = ['mellat', 'zarinpal'];
     private $payment;
     private $payment_gateway;
-    private $studyFields=array(
-        "90" => "ادبیات و زبان شناسی",
-        "89" => "اسناد تجاری",
-        "88" => "اقتصاد",
-        "86" => "برق و الکترونیک",
-        "91" => "تاریخ",
-        "41" => "ترجمه کاتالوگ",
-        "76" => "جغرافیا",
-        "75" => "حسابداری",
-        "74" => "حقوق",
-        "70" => "روان شناسی",
-        "71" => "ریاضی",
-        "72" => "زمین شناسی و معدن",
-        "43" => "زیرنویس فیلم",
-        "73" => "زیست شناسی",
-        "67" => "شیمی",
-        "68" => "صنایع",
-        "69" => "صنایع غذایی",
-        "62" => "علوم اجتماعی",
-        "63" => "علوم سیاسی",
-        "64" => "عمران",
-        "61" => "عمومی",
-        "44" => "فایل صوتی تصویری",
-        "57" => "فقه و علوم اسلامی",
-        "58" => "فلسفه",
-        "59" => "فناوری اطلاعات",
-        "60" => "فیزیک",
-        "50" => "متالورژی و مواد",
-        "51" => "محیط زیست",
-        "49" => "مدیریت",
-        "54" => "منابع طبیعی و شیلات",
-        "53" => "مکانیک",
-        "47" => "نفت،گاز و پتروشیمی",
-        "92" => "هنر و معماری",
-        "46" => "ورزش و تربیت بدنی",
-        "85" => "پزشکی",
-        "93" => "ژنتیک و میکروبیولوژی",
-        "55" => "کامپیوتر",
-        "56" => "کشاورزی",
-    );
+
 
     #region Admin functions
     //////////////////////////////////////////////
@@ -138,8 +99,6 @@ class UserPanelController extends Controller
                 $orderData['translator_fname'] = $translatorData['fname'];
                 $orderData['translator_lname'] = $translatorData['lname'];
             }
-            
-            $orderData['field_of_study']=$orderData['field_of_study'] !='0' ? $this->studyFields[$orderData['field_of_study']] : "عمومی";
             
             $tokenArray = $this->get_csrf_token($req);
             $orderData = array_merge($orderData, $tokenArray);

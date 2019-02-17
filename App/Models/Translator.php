@@ -123,17 +123,7 @@ class Translator extends Model
             return false;
         }
     }
-    public static function get_study_fields()
-    {
-        try{
-            $db=static::getDB();
-            $sql="SELECT * FROM `study_fields` WHERE id NOT IN ('0','41','43','44')";
-            $result=$db->query($sql);
-            return $result ? $result->fetchAll(PDO::FETCH_ASSOC) : false;
-        }catch(\Exception $e){
-            return false;
-        }
-    }
+
 
     //save translated text from translator (step before employment)
     public static function save_test_data($data)
@@ -145,6 +135,59 @@ class Translator extends Model
             return false;
         }
     }
+
+    //this function gets  messages that sent by translator
+    public static function get_messages_by_id($userId,$page, $amount,$filtering_Options=null)
+    {
+        try{
+            $db=static::getDB();
+            $result=false;
+            $page_limit = ($page - 1) * $amount;
+            $sql="SELECT messaging.msg_id,messaging.parent_msg_id,messaging.create_date_persian,messaging.update_date_persian,messaging.subject,messaging.body,messaging.is_answered,messaging.is_read FROM messaging WHERE  messaging.sender_id = :sender_id AND user_type='2'";
+            if(is_array($filtering_Options) && count($filtering_Options)>0){
+                
+                if(isset($filtering_Options['is_read'])){
+                    $sql.=" AND `is_read` IN (".\implode(",",$filtering_Options['is_read']).")";
+                }
+                if(isset($filtering_Options['is_answered'])){
+                    $sql.=" AND `is_answered` IN (".\implode(",",$filtering_Options['is_answered']).")";
+                }   
+            }
+            $sql.=" ORDER BY update_date DESC LIMIT $page_limit,$amount";
+            $stmt = $db->prepare($sql);
+            // $stmt->bindParam(":reciever_id",$userId);
+            return $stmt->execute(['sender_id'=>$userId]) ? $stmt->fetchAll(PDO::FETCH_ASSOC) : false;
+        }catch(\Exception $e){
+            return false;
+        }
+
+        
+    }
+    //get unread messages count by user id
+    public static function get_unread_messages_count_by_user_id($userId)
+    {
+        try {
+            $db = static::getDB();
+            $sql = "SELECT COUNT(*) AS messages_count FROM `messaging` WHERE `reciever_id`= '$userId' AND user_type='2' AND `is_read`= '0'";
+            $result = $db->query($sql);
+            return $result ? $result->fetch(PDO::FETCH_ASSOC)['messages_count'] : 0;
+
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+    public static function get_orders_count_by_user_id($userId)
+    {
+        try{
+            $db = static::getDB();
+            $sql = "SELECT COUNT(*) AS orders_count FROM `orders` WHERE orders.translator_id='$userId'";
+            $result = $db->query($sql);
+            return $result ? $result->fetch(PDO::FETCH_ASSOC)['orders_count'] : 0;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+    
     protected static function get_current_date_persian()
     {
         $now = new \DateTime("NOW");

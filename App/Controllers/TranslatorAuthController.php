@@ -63,6 +63,7 @@ class TranslatorAuthController extends Controller
                     // $_SESSION['username'] = $userData['user_id'];
                     $_SESSION['phone'] = $translatorData['cell_phone'];
                     $_SESSION['email'] = $translatorData['email'];
+                    $_SESSION['is_employed']=$translatorData['is_employed'];
                     //user level that logged in valid values are : user,admin,translator
                     $_SESSION['user_type'] = "translator";
                     \setcookie(\session_name(), \session_id(), time() + (86400 * 7));
