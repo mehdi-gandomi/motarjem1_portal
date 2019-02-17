@@ -45,4 +45,39 @@ class TranslatorPanelController extends Controller
             'error'=>'مشکلی در ذخیره پاسخ شما رخ داد !'
         )); 
     }
+    public function get_order_info($req,$res,$args)
+    {
+        $orderId=$args['order_id'];
+        $orderData=Order::by_id($orderId,false,true);
+        return $res->withJson($orderData);
+    }
+    //requesting to do the translation by translator
+    public function request_order($req,$res,$args)
+    {
+        $body=$req->getParsedBody();
+
+        //TODO : implement requesting (needs creating db table and implement the function)
+
+        return $res->withJson(['status'=>true]);
+    }
+
+    //declining the translation by translator
+    public function decline_order($req,$res,$args)
+    {
+        $body=$req->getParsedBody();
+
+        //TODO : implement declining (needs creating db table and implement the function)
+
+        return $res->withJson(['status'=>true]);
+    }
+    //get new unaccepted orders as json
+    public function get_new_orders_json($req,$res,$args)
+    {
+        $orders=Order::new_unaccepted_orders(3);
+        if($orders){
+            
+            return $res->withJson(['orders'=>$orders,'status'=>true]);
+        }
+        return $res->withJson(['status'=>false]);
+    }
 }

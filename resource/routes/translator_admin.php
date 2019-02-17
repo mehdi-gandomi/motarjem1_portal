@@ -37,6 +37,11 @@ $app->group('/translator', function ($app) use ($container) {
     $app->get('', "App\Controllers\TranslatorPanelController:get_dashboard");
     $app->get('/test/filter', "App\Controllers\TranslatorPanelController:get_test_json");
     $app->post("/test/send","App\Controllers\TranslatorPanelController:save_test_data");
+    $app->get('/order/info/{order_id}', "App\Controllers\TranslatorPanelController:get_order_info");
+    $app->post('/order/request', "App\Controllers\TranslatorPanelController:request_order");
+    $app->post('/order/decline', "App\Controllers\TranslatorPanelController:decline_order");
+    $app->get('/dashboard/new-orders/json', "App\Controllers\TranslatorPanelController:get_new_orders_json");
+    
 })->add(function ($req, $res, $next) use ($container) {
 
     if (isset($_SESSION['is_translator_logged_in'])) {

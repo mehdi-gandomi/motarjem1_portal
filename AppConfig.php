@@ -42,7 +42,8 @@ $configuration = [
             'avatar'=>isset($_SESSION["avatar"]) ? $_SESSION["avatar"]:false,
             'email'=>isset($_SESSION["email"]) ? $_SESSION["email"]:false,
             'phone'=>isset($_SESSION["phone"]) ? $_SESSION["phone"]:false,
-            'is_employed'=>isset($_SESSION['is_employed']) ? $_SESSION['is_employed']:0
+            'is_employed'=>isset($_SESSION['is_employed']) ? $_SESSION['is_employed']:0,
+            'user_id'=>isset($_SESSION['user_id']) ? $_SESSION['user_id']:0
         ));
         return $view;
     },
