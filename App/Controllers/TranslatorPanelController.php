@@ -12,11 +12,20 @@ class TranslatorPanelController extends Controller
     {
         $data=[];
         if($_SESSION['is_employed']){
-            $data['new_orders']=Order::new_unaccepted_orders(3);
+            $data['new_orders']=Order::new_unaccepted_orders(1,3);
             $data['lastMessages']= Translator::get_messages_by_id($_SESSION['user_id'], 1, 3);
             $data['unread_messages_count']=Translator::get_unread_messages_count_by_user_id($_SESSION['user_id']);
             $data['translator_orders_count']=Translator::get_orders_count_by_user_id($_SESSION['user_id']);
             $data['translator_revenue']=\Core\Model::select("translators","revenue",[],true)['revenue'];
+            $requestedOrders=Translator::get_requested_orders_by_user_id($_SESSION['user_id'],true);
+            $deniedOrders=Translator::get_denied_orders_by_user_id($_SESSION['user_id'],true);
+            $data['new_orders']=array_filter($data['new_orders'],function($order) use($requestedOrders){ 
+                return !in_array($order['order_id'],$requestedOrders);
+            });
+            $data['new_orders']=array_filter($data['new_orders'],function($order) use($deniedOrders){ 
+                return !in_array($order['order_id'],$deniedOrders);
+            });
+            
         }else{
             $data['study_fields']=Order::get_study_fields();
         }
@@ -55,29 +64,36 @@ class TranslatorPanelController extends Controller
     public function request_order($req,$res,$args)
     {
         $body=$req->getParsedBody();
-
-        //TODO : implement requesting (needs creating db table and implement the function)
-
-        return $res->withJson(['status'=>true]);
+        if(Translator::request_order($body['translator_id'],$body['order_id'])){
+            return $res->withJson(['status'=>true]);
+        }
+        return $res->withJson(['status'=>false]);
     }
 
     //declining the translation by translator
     public function decline_order($req,$res,$args)
     {
         $body=$req->getParsedBody();
-
-        //TODO : implement declining (needs creating db table and implement the function)
-
-        return $res->withJson(['status'=>true]);
+        if(Translator::deny_order($body['translator_id'],$body['order_id'])){
+            return $res->withJson(['status'=>true]);
+        }
+        return $res->withJson(['status'=>false]);
     }
     //get new unaccepted orders as json
     public function get_new_orders_json($req,$res,$args)
     {
-        $orders=Order::new_unaccepted_orders(3);
-        if($orders){
-            
-            return $res->withJson(['orders'=>$orders,'status'=>true]);
-        }
-        return $res->withJson(['status'=>false]);
+        $page=$req->getQueryParam("page");
+        $offset=$req->getQueryParam("offset");
+        $orders=Order::new_unaccepted_orders($page,$offset);
+        $requestedOrders=Translator::get_requested_orders_by_user_id($_SESSION['user_id'],true);
+        $deniedOrders=Translator::get_denied_orders_by_user_id($_SESSION['user_id'],true);
+        $orders=array_filter($orders,function($order) use($requestedOrders){ 
+            return !in_array($order['order_id'],$requestedOrders);
+        });
+        $orders=array_filter($orders,function($order) use($deniedOrders){ 
+            return !in_array($order['order_id'],$deniedOrders);
+        });
+        
+        return $res->withJson(['orders'=>$orders,'status'=>true]);
     }
 }

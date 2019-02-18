@@ -187,7 +187,77 @@ class Translator extends Model
             return false;
         }
     }
-    
+    public static function get_requested_orders_by_user_id($userId,$idsAsArray=false)
+    {
+        try{
+            if($idsAsArray){
+                $db=static::getDB();
+                $sql="SELECT order_id FROM translator_order_request WHERE translator_id = :translator_id AND state='1' ";
+                $stmt=$db->prepare($sql);
+                $result=$stmt->execute(['translator_id'=>$userId]) ? $stmt->fetchAll(PDO::FETCH_ASSOC):[];
+                return array_map(function($data){
+                    return $data['order_id'];
+                },$result);
+            }
+            $db=static::getDB();
+            $sql="SELECT * FROM translator_order_request WHERE translator_id = :translator_id AND state='1' ";
+            $stmt=$db->prepare($sql);
+            return $stmt->execute(['translator_id'=>$userId]) ? $stmt->fetchAll(PDO::FETCH_ASSOC):[];
+            
+
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+    public static function get_denied_orders_by_user_id($userId,$idsAsArray=false)
+    {
+        try{
+            if($idsAsArray){
+                $db=static::getDB();
+                $sql="SELECT order_id FROM translator_order_request WHERE translator_id = :translator_id AND state='0' ";
+                $stmt=$db->prepare($sql);
+                $result=$stmt->execute(['translator_id'=>$userId]) ? $stmt->fetchAll(PDO::FETCH_ASSOC):[];
+                return array_map(function($data){
+                    return $data['order_id'];
+                },$result);
+            }
+            $db=static::getDB();
+            $sql="SELECT * FROM translator_order_request WHERE translator_id = :translator_id AND state='0' ";
+            $stmt=$db->prepare($sql);
+            return $stmt->execute(['translator_id'=>$userId]) ? $stmt->fetchAll(PDO::FETCH_ASSOC):[];
+            
+
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+
+    public static function request_order($translatorId,$orderId)
+    {
+        try{
+            static::insert("translator_order_request",[
+                'translator_id'=>$translatorId,
+                'order_id'=>$orderId,
+                'state'=>1
+            ]);
+            return true;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+    public static function deny_order($translatorId,$orderId)
+    {
+        try{
+            static::insert("translator_order_request",[
+                'translator_id'=>$translatorId,
+                'order_id'=>$orderId,
+                'state'=>0
+            ]);
+            return true;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
     protected static function get_current_date_persian()
     {
         $now = new \DateTime("NOW");

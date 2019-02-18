@@ -53,7 +53,6 @@ class Model
             }
             $sql.=$whereString;
         }
-        
         $stmt=$db->prepare($sql);
         foreach($where as $key=>$value){
             if(is_array($value)){

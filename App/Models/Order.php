@@ -163,15 +163,12 @@ class Order extends Model
     }
 
     
-    public static function new_unaccepted_orders($limit=null)
+    public static function new_unaccepted_orders($page=1,$offset=10)
     {
         try{
             $db=static::getDB();
-            if($limit){
-                $sql="SELECT orders.order_id,orders.word_numbers,orders.translation_lang,study_fields.title AS study_field,orders.translation_quality,orders.order_price FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE order_logs.is_accepted = '0' LIMIT $limit";
-            }else{
-                $sql="SELECT orders.order_id,orders.word_numbers,orders.translation_lang,study_fields.title AS study_field,orders.translation_quality,orders.order_price FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE order_logs.is_accepted = '0'";
-            }
+            $page_limit = ($page - 1) * $offset;
+            $sql="SELECT orders.order_id,orders.word_numbers,orders.translation_lang,study_fields.title AS study_field,orders.translation_quality,orders.order_price FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE order_logs.is_accepted = '0' LIMIT $page_limit,$offset";
             $result=$db->query($sql);
             return $result ? $result->fetchAll(PDO::FETCH_ASSOC) : false;
         }catch(\Exception $e){

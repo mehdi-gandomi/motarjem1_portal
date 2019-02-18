@@ -126,6 +126,7 @@ function showOrderInfo(orderId){
 
 //accept order process
 function acceptOrder(orderId,translatorId){
+    
     Swal.fire({
         title: 'آیا مطمینید ؟',
         text: "می خواهید این ترجمه را انجام بدهید ؟",
@@ -145,15 +146,17 @@ function acceptOrder(orderId,translatorId){
                     translator_id:translatorId
                 },
                 success:function(data,status){
+                    
                     if(data.status){
                         Swal.fire(
                             'موفق !',
                             'درخواست شما با موفقیت ثبت شد !',
                             'success'
                           )
-                          $.get("/translator/dashboard/new-orders/json",function(data,status){
-                              //implement showing data on dom
-                              console.log(data);
+                          $.get("/translator/new-orders/json",{page:1,offset:3},function(data,status){
+                                if(data.status){
+                                    renderOrders(data.orders,translatorId,"#newOrdersWrap");
+                                }
                           })
                     }else{
                         Swal.fire(
@@ -170,6 +173,7 @@ function acceptOrder(orderId,translatorId){
       })
     
 }
+
 function declineOrder(orderId,translatorId){
     Swal.fire({
         title: 'آیا مطمینید ؟',
@@ -191,14 +195,17 @@ function declineOrder(orderId,translatorId){
                 },
                 success:function(data,status){
                     if(data.status){
+                        console.log("success");
                         Swal.fire(
                             'موفق !',
                             'درخواست شما با موفقیت انجام شد !',
                             'success'
                           )
-                          $.get("/translator/dashboard/new-orders/json",function(data,status){
-                              //implement showing data on dom
-                              console.log(data);
+                          $.get("/translator/new-orders/json",{page:1,offset:3},function(data,status){
+                              if(data.status){
+                                renderOrders(data.orders,translatorId,"#newOrdersWrap");
+                              }
+                              
                           })
                     }else{
                         Swal.fire(
@@ -213,5 +220,38 @@ function declineOrder(orderId,translatorId){
 
         }
       })
+    
+}
+
+function renderOrders(orders,translatorId,el){
+    console.log(orders);
+    let output="";
+    $(".newOrderTable thead").css("display","table-header-group");
+    $(".newOrderTable tbody").css("display","table-row-group");
+    for(let index in orders){
+        let translationLang=orders[index].translation_lang == "1"? "انگلیسی به فارسی": "فارسی به انگلیسی";
+        let translationQuality=orders[index].translation_quality == "5" ? "نقره ای" : "طلایی";
+        output+="<tr>";
+            output+="<td data-label='شماره سفارش'>"+orders[index].order_id+"</td>";
+            output+="<td data-label='تعداد صفحات'>"+Math.ceil(orders[index].word_numbers / 250)+"</td>";
+            output+="<td data-label='زبان ترجمه'>"+translationLang+"</td>";
+            output+="<td data-label='رشته'>"+orders[index].study_field+"</td>";
+            output+="<td data-label='کیفیت ترجمه'>"+translationQuality+"</td>";
+            output+="<td data-label='هزینه ترجمه'>"+orders[index].order_price+"</td>";
+            output+="<td data-label='سهم شما'>"+Math.ceil((orders[index].order_price*70)/100)+"</td>";
+            output+="<td data-label='عملیات' class='order-actions'><button onclick='showOrderInfo(\""+orders[index].order_id+"\")' class='expand-button order-action is--primary is--medium'><span data-hover='جزییات سفارش'><i class='icon-info'></i></span></button>";
+            output+="<button onclick='acceptOrder(\""+orders[index].order_id+"\",\""+translatorId+"\")' class='expand-button order-action is--success is--large'><span data-hover='درخواست انجام سفارش'><i class='icon-check'></i></span></button>";
+            output+="<button onclick='declineOrder(\""+orders[index].order_id+"\",\""+translatorId+"\")' class='expand-button order-action is--danger'><span data-hover='رد سفارش'><i class='icon-check'></i></span></button>";
+            output+="</td>";
+        output+="</tr>";
+    }
+
+    if(output){
+        $(el).html(output);
+    }else{
+        $(".newOrderTable thead").css("display","none");
+        $(".newOrderTable tbody").css("display","none");
+        $(".newOrderTable").html("<h5 class='text-center'>پروژه جدیدی یافت نشد !</h5>");
+    }
     
 }
