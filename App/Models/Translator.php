@@ -187,6 +187,21 @@ class Translator extends Model
             return false;
         }
     }
+
+   
+     //get orders that is not accepted and translator did not request it
+     public static function get_orders_without_requested_by_user_id($userId,$page=1,$offset=10)
+     {
+         try{
+            $db=static::getDB();
+            $page_limit = ($page - 1) * $offset;
+            $sql="SELECT orders.order_id,orders.word_numbers,orders.translation_lang,study_fields.title AS study_field,orders.translation_quality,orders.order_price FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE order_logs.is_accepted = '0' AND orders.order_id NOT IN (SELECT order_id FROM translator_order_request WHERE translator_id='$userId') LIMIT $page_limit,$offset";
+            $result=$db->query($sql);
+            return $result ? $result->fetchAll(PDO::FETCH_ASSOC) : false;
+        }catch(\Exception $e){
+            return false;
+        }
+     }
     public static function get_requested_orders_by_user_id($userId,$idsAsArray=false)
     {
         try{

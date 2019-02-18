@@ -40,6 +40,7 @@ $app->group('/translator', function ($app) use ($container) {
     $app->get('/order/info/{order_id}', "App\Controllers\TranslatorPanelController:get_order_info");
     $app->post('/order/request', "App\Controllers\TranslatorPanelController:request_order");
     $app->post('/order/decline', "App\Controllers\TranslatorPanelController:decline_order");
+    $app->get('/new-orders', "App\Controllers\TranslatorPanelController:get_new_orders");
     $app->get('/new-orders/json', "App\Controllers\TranslatorPanelController:get_new_orders_json");
     
 })->add(function ($req, $res, $next) use ($container) {

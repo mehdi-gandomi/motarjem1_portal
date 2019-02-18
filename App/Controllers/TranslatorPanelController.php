@@ -12,20 +12,11 @@ class TranslatorPanelController extends Controller
     {
         $data=[];
         if($_SESSION['is_employed']){
-            $data['new_orders']=Order::new_unaccepted_orders(1,3);
+            $data['new_orders']=Translator::get_orders_without_requested_by_user_id($_SESSION['user_id'],1,3);
             $data['lastMessages']= Translator::get_messages_by_id($_SESSION['user_id'], 1, 3);
             $data['unread_messages_count']=Translator::get_unread_messages_count_by_user_id($_SESSION['user_id']);
             $data['translator_orders_count']=Translator::get_orders_count_by_user_id($_SESSION['user_id']);
             $data['translator_revenue']=\Core\Model::select("translators","revenue",[],true)['revenue'];
-            $requestedOrders=Translator::get_requested_orders_by_user_id($_SESSION['user_id'],true);
-            $deniedOrders=Translator::get_denied_orders_by_user_id($_SESSION['user_id'],true);
-            $data['new_orders']=array_filter($data['new_orders'],function($order) use($requestedOrders){ 
-                return !in_array($order['order_id'],$requestedOrders);
-            });
-            $data['new_orders']=array_filter($data['new_orders'],function($order) use($deniedOrders){ 
-                return !in_array($order['order_id'],$deniedOrders);
-            });
-            
         }else{
             $data['study_fields']=Order::get_study_fields();
         }
@@ -84,16 +75,15 @@ class TranslatorPanelController extends Controller
     {
         $page=$req->getQueryParam("page");
         $offset=$req->getQueryParam("offset");
-        $orders=Order::new_unaccepted_orders($page,$offset);
-        $requestedOrders=Translator::get_requested_orders_by_user_id($_SESSION['user_id'],true);
-        $deniedOrders=Translator::get_denied_orders_by_user_id($_SESSION['user_id'],true);
-        $orders=array_filter($orders,function($order) use($requestedOrders){ 
-            return !in_array($order['order_id'],$requestedOrders);
-        });
-        $orders=array_filter($orders,function($order) use($deniedOrders){ 
-            return !in_array($order['order_id'],$deniedOrders);
-        });
-        
+        $orders=Translator::get_orders_without_requested_by_user_id($_SESSION['user_id'],$page,$offset);
         return $res->withJson(['orders'=>$orders,'status'=>true]);
+    }
+    //get new orders and render the page
+    public function get_new_orders($req,$res,$args)
+    {
+        $page=$req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
+        $offset=$req->getQueryParam("offset") ? $req->getQueryParam("offset") : 10;
+        $data['new_orders']=Translator::get_orders_without_requested_by_user_id($_SESSION['user_id'],$page,$offset);
+        return $this->view->render($res,"admin/translator/new-orders.twig",$data);
     }
 }

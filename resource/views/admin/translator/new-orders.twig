@@ -1,0 +1,82 @@
+{% extends 'admin/layout/translator.twig' %}
+{% block content %}
+    <main class="main">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="mt-3 mb-4 mr-4">سفارشات جدید</h4>
+                <table class="table newOrderTable is--responsive">
+                    {% if new_orders %}
+                        <thead>
+                            <th class="text-center" scope="col">#</th>
+                            <th class="text-center" scope="col">تعداد صفحات</th>
+                            <th class="text-center" scope="col">زبان ترجمه</th>
+                            <th class="text-center" scope="col">رشته</th>
+                            <th class="text-center" scope="col">کیفیت ترجمه</th>
+                            <th class="text-center" scope="col">هزینه ترجمه</th>
+                            <th class="text-center" scope="col">سهم شما</th>
+                            <th class="text-center" scope="col">عملیات</th>
+                        </thead>
+                        <tbody id="newOrdersWrap">
+                            {% for order in new_orders %}
+                                <tr>
+                                    <td data-label="شماره سفارش">{{ order.order_id }}</td>
+                                    <td data-label="تعداد صفحات">
+                                        {{order.word_numbers / 250 | round(0,'ceil') }}
+                                    </td>
+                                    <td data-label="زبان ترجمه">
+                                        {{
+                order.translation_lang == "1"
+                  ? "انگلیسی به فارسی"
+                  : "فارسی به انگلیسی"
+              }}
+                                    </td>
+                                    <td data-label="رشته">
+                                        {{ order.study_field }}
+                                    </td>
+                                    <td data-label="کیفیت ترجمه">
+                                        {{ order.translation_quality == "5" ? "نقره ای" : "طلایی" }}
+                                    </td>
+
+                                    <td data-label="هزینه ترجمه">{{ order.order_price }}
+                                        تومان</td>
+                                    <td data-label="سهم شما">
+                                        {{ (order.order_price*70)/100 | round(0,'ceil') }}
+                                        تومان
+                                    </td>
+                                    <td data-label="عملیات" class="order-actions">
+                                        <button onclick="showOrderInfo('{{ order.order_id }}')" class="expand-button order-action is--primary is--medium">
+                                            <span data-hover="جزییات سفارش">
+                                                <i class="icon-info"></i>
+                                            </span>
+                                        </button>
+                                        <button onclick="acceptOrder('{{ order.order_id }}','{{
+                  user.user_id
+                }}')" class="expand-button order-action is--success is--large">
+                                            <span data-hover="درخواست انجام سفارش">
+                                                <i class="icon-check"></i>
+                                            </span>
+                                        </button>
+                                        <button onclick="declineOrder('{{ order.order_id }}','{{
+                  user.user_id
+                }}')" class="expand-button order-action is--danger">
+                                            <span data-hover="رد سفارش">
+                                                <i class="icon-close"></i>
+                                            </span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    {% else %}
+                        <h5 class="text-center">پروژه جدیدی یافت نشد !</h5>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block script_below %}
+    <script src="/public/js/sweetalert2@8.js"></script>
+{% endblock %}
