@@ -99,25 +99,29 @@
                                         تومان
                                     </td>
                                     <td data-label="عملیات" class="order-actions">
-                                        <button onclick="showOrderInfo('{{ order.order_id }}')" class="expand-button order-action is--primary is--medium">
-                                            <span data-hover="جزییات سفارش">
-                                                <i class="icon-info"></i>
-                                            </span>
-                                        </button>
-                                        <button onclick="acceptOrder('{{ order.order_id }}','{{
-                  user.user_id
-                }}')" class="expand-button order-action is--success is--large">
-                                            <span data-hover="درخواست انجام سفارش">
-                                                <i class="icon-check"></i>
-                                            </span>
-                                        </button>
-                                        <button onclick="declineOrder('{{ order.order_id }}','{{
-                  user.user_id
-                }}')" class="expand-button order-action is--danger">
-                                            <span data-hover="رد سفارش">
-                                                <i class="icon-close"></i>
-                                            </span>
-                                        </button>
+                                        {% if choice == "new" %}
+                                            <button onclick="showOrderInfo('{{ order.order_id }}')" class="expand-button order-action is--primary is--medium">
+                                                <span data-hover="جزییات سفارش">
+                                                    <i class="icon-info"></i>
+                                                </span>
+                                            </button>
+                                            <button onclick="acceptOrder('{{ order.order_id }}','{{user.user_id}}')" class="expand-button order-action is--success is--large">
+                                                <span data-hover="درخواست انجام سفارش">
+                                                    <i class="icon-check"></i>
+                                                </span>
+                                            </button>
+                                        <button onclick="declineOrder('{{ order.order_id }}','{{user.user_id}}')" class="expand-button order-action is--danger">
+                                                <span data-hover="رد سفارش">
+                                                    <i class="icon-close"></i>
+                                                </span>
+                                            </button>
+                                        {% else %}
+                                            <button onclick="showOrderInfo('{{ order.order_id }}')" class="btn btn-primary order-action">
+                                                <i class="icon-info" style="margin-left:0.5rem"></i>
+                                                <span>جزییات سفارش</span>
+                                            </button>
+                                        {% endif %}
+
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -135,21 +139,36 @@
                             <th class="text-center" scope="col">عملیات</th>
                         </thead>
                         <h5 class="text-center mt-4 no-data">اطلاعاتی یافت نشد !</h5>
-                        <tbody id="newOrdersWrap">
-                            
-                        </tbody>
+                        <tbody id="newOrdersWrap"></tbody>
                     {% endif %}
                 </table>
                 {% include 'admin/includes/pagination.twig' with {
                     'count' : new_orders_count,
                     'current_page' : current_page,
-                    'base_path' : '/user/messages',
+                    'base_path' : '/translator/new-orders',
                     'offset' : 10,
                     'visible_numbers' : 3
                 } %}
             </div>
         </div>
     </main>
+    <!-- Modal -->
+    <div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h5 class="modal-title" id="orderDetailsModalLabel">اطلاعات سفارش</h5>
+                    {# <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button> #}
+                </div>
+                <div class="modal-body" id="orderDetailsWrap" style="padding:2rem"></div>
+                <div class="modal-footer justify-content-start">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">بستن</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block script_below %}

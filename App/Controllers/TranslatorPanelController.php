@@ -99,7 +99,7 @@ class TranslatorPanelController extends Controller
         }else{
             $data['new_orders']=Order::get_denied_orders_data_by_user_id($_SESSION['user_id'],$page,$offset);
         }
-        $data['new_orders_count']=$orders_count=Order::new_orders_count($_SESSION['user_id'],$choice);
+        $data['new_orders_count']=Order::new_orders_count($_SESSION['user_id'],$choice);
         $data['current_page']=$page;
         $data['choice']=$choice;
         return $this->view->render($res,"admin/translator/new-orders.twig",$data);

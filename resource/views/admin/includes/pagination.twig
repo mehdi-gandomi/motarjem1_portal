@@ -1,7 +1,8 @@
-{% if count > offset %}
-    {% set last_page = (count / 10) | round(0, 'ceil') %}
-    <nav class="page-navigation" aria-label="Page navigation example">
-        <ul class="pagination">
+<nav class="page-navigation" aria-label="Page navigation example">
+    <ul class="pagination">
+        {% if count > offset %}
+            {% set last_page = (count / 10) | round(0, 'ceil') %}
+
             {% if current_page != 1 %}
                 <li class="page-item">
                     <a class="page-link" href="{{base_path}}" aria-label="Previous">
@@ -14,12 +15,12 @@
                     </a>
                 </li>
             {% endif %}
-            {% if current_page + (visible_numbers-1) > last_page %}
+            {% if current_page + (visible_numbers - 1) > last_page %}
                 {% set end_index = last_page %}
                 {% set start_index=current_page-(visible_numbers-(last_page-current_page)) %}
             {% else %}
                 {% set start_index = current_page - (visible_numbers-1) %}
-                {% set end_index = current_page + (visible_numbers-1) %}
+                {% set end_index = current_page + (visible_numbers - 1) %}
             {% endif %}
             {% if start_index < 1 %}
                 {% set start_index = 1 %}
@@ -48,6 +49,7 @@
                     </a>
                 </li>
             {% endif %}
-        </ul>
-    </nav>
-{% endif %}
+
+        {% endif %}
+    </ul>
+</nav>
