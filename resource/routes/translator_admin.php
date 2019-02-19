@@ -43,6 +43,7 @@ $app->group('/translator', function ($app) use ($container) {
     $app->get('/new-orders', "App\Controllers\TranslatorPanelController:get_new_orders");
     $app->get('/new-orders/json', "App\Controllers\TranslatorPanelController:get_new_orders_json");
     $app->get('/orders', "App\Controllers\TranslatorPanelController:get_translator_orders");
+    $app->get('/orders/json', "App\Controllers\TranslatorPanelController:get_translator_orders_json");
 })->add(function ($req, $res, $next) use ($container) {
 
     if (isset($_SESSION['is_translator_logged_in'])) {

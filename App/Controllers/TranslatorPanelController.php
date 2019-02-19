@@ -108,6 +108,34 @@ class TranslatorPanelController extends Controller
     public function get_translator_orders($req,$res,$args)
     {
         $data=[];
+        $page=$req->getParam("page") ? $req->getParam("page") : 1;
+        $isDone=$req->getParam("done") !=null || strlen($req->getParam("done"))>0 ? \explode(",",$req->getParam("done")) : [1,0];
+        $data['pending']=true;
+        $data['completed']=true;
+        if(\count($isDone) < 2){
+            switch($isDone[0]){
+                case "0":
+                    $data['completed']=false;
+                break;
+                case "1":
+                    $data['pending']=false;
+                break;
+            }
+        }
+        $data['orders']=Translator::get_translator_orders_by_user_id($_SESSION['user_id'],$page,10,['is_done'=>$isDone]);
+        $data['orders_count']=Translator::get_translator_orders_count_by_user_id($_SESSION['user_id'],['is_done'=>$isDone]);
+        $data['current_page']=$page;
         return $this->view->render($res,"admin/translator/translator_orders.twig",$data);
+    }
+    //get orders that translator have to do or did and render the page with that
+    public function get_translator_orders_json($req,$res,$args)
+    {
+        $data=[];
+        $page=$req->getParam("page") ? $req->getParam("page") : 1;
+        $isDone=$req->getParam("done") !=null || strlen($req->getParam("done"))>0 ? \explode(",",$req->getParam("done")) : [1,0];
+        $data['orders']=Translator::get_translator_orders_by_user_id($_SESSION['user_id'],$page,10,['is_done'=>$isDone]);
+        $data['orders_count']=Translator::get_translator_orders_count_by_user_id($_SESSION['user_id'],['is_done'=>$isDone]);
+        $data['current_page']=$page;
+        return $res->withJson($data);
     }
 }
