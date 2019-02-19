@@ -1,9 +1,64 @@
 {% extends 'admin/layout/translator.twig' %}
+{% block style_below %}
+    <style>
+        .table-title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .radio-group {
+            border: solid 3px #675f6b;
+            display: inline-block;
+            margin: 1rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .radio-group input[type=radio] {
+            position: absolute;
+            visibility: hidden;
+            display: none;
+        }
+
+        .radio-group label {
+            color: #9a929e;
+            display: inline-block;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 5px 20px;
+            margin: 0 !important;
+        }
+
+        .radio-group input[type=radio]:checked + label {
+            color: #ccc8ce;
+            background: #675f6b;
+        }
+
+        .radio-group input[type=radio] + label {
+            border-left: solid 3px #675f6b;
+        }
+        .no-border {
+            border: 0 !important;
+        }
+        label.left-negative-margin {
+            margin-right: -4px !important;
+        }
+    </style>
+{% endblock %}
 {% block content %}
     <main class="main">
         <div class="card">
             <div class="card-body">
-                <h4 class="mt-3 mb-4 mr-4">سفارشات جدید</h4>
+                <div class="table-title">
+                    <h4 class="mt-3 mr-4">سفارشات جدید</h4>
+                    <div class="radio-group">
+                        <input type="radio" id="new_orders" name="choice" value="new" {{choice == 'new' ? "checked":"" }}/>
+                        <label for="new_orders">سفارشات جدید</label >
+                        <input type="radio" id="requested_orders" name="choice" value="requested" {{choice == 'requested' ? "checked":"" }}/>
+                        <label class="left-negative-margin" for="requested_orders">سفارشات درخواست شده</label >
+                        <input type="radio" id="denied_orders" name="choice" value="denied" {{choice == 'denied' ? "checked":"" }}/>
+                        <label class="no-border left-negative-margin" for="denied_orders">سفارشات رد شده</label >
+                    </div>
+                </div>
                 <table class="table newOrderTable is--responsive">
                     {% if new_orders %}
                         <thead>
@@ -69,9 +124,29 @@
                         </tbody>
 
                     {% else %}
-                        <h5 class="text-center">پروژه جدیدی یافت نشد !</h5>
+                        <thead style="display:none">
+                            <th class="text-center" scope="col">#</th>
+                            <th class="text-center" scope="col">تعداد صفحات</th>
+                            <th class="text-center" scope="col">زبان ترجمه</th>
+                            <th class="text-center" scope="col">رشته</th>
+                            <th class="text-center" scope="col">کیفیت ترجمه</th>
+                            <th class="text-center" scope="col">هزینه ترجمه</th>
+                            <th class="text-center" scope="col">سهم شما</th>
+                            <th class="text-center" scope="col">عملیات</th>
+                        </thead>
+                        <h5 class="text-center mt-4 no-data">اطلاعاتی یافت نشد !</h5>
+                        <tbody id="newOrdersWrap">
+                            
+                        </tbody>
                     {% endif %}
                 </table>
+                {% include 'admin/includes/pagination.twig' with {
+                    'count' : new_orders_count,
+                    'current_page' : current_page,
+                    'base_path' : '/user/messages',
+                    'offset' : 10,
+                    'visible_numbers' : 3
+                } %}
             </div>
         </div>
     </main>
@@ -79,4 +154,5 @@
 
 {% block script_below %}
     <script src="/public/js/sweetalert2@8.js"></script>
+    <script src="/public/js/panel/translator-new-orders.js"></script>
 {% endblock %}
