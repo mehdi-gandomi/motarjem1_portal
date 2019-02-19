@@ -42,7 +42,7 @@ $app->group('/translator', function ($app) use ($container) {
     $app->post('/order/decline', "App\Controllers\TranslatorPanelController:decline_order");
     $app->get('/new-orders', "App\Controllers\TranslatorPanelController:get_new_orders");
     $app->get('/new-orders/json', "App\Controllers\TranslatorPanelController:get_new_orders_json");
-    
+    $app->get('/orders', "App\Controllers\TranslatorPanelController:get_translator_orders");
 })->add(function ($req, $res, $next) use ($container) {
 
     if (isset($_SESSION['is_translator_logged_in'])) {

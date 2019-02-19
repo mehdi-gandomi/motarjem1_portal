@@ -101,6 +101,17 @@ function showOrderInfo(orderId){
         output+="<div class='order-details__detail col-md-4'><div class='order-details__detail__label'>تاریخ ثبت سفارش</div><div class='order-details__detail__value'>"+data.order_date_persian+"</div></div>";
         output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>قیمت کل سفارش</div><div class='order-details__detail__value'>"+data.order_price+"</div></div>";
         output+="<div class='order-details__detail col-md-5'><div class='order-details__detail__label'>سهم شما از این سفارش</div><div class='order-details__detail__value'>"+Math.ceil((data.order_price*70)/100)+"</div></div>";
+        if(data.description){
+            output+="<div class='order-details__detail col-md-8'><div class='order-details__detail__label'>توضیحات</div><div class='order-details__detail__value'>"+data.description+"</div></div>";
+        }
+        if(data.order_files){
+            let files=data.order_files.split(",");
+            let filesHtml="";
+            files.forEach(function(file){
+                filesHtml+="<a style='display:block' href='/public/uploads/order/"+file+"' download='"+file+"'>"+file+"</a>"
+            })
+            output+="<div class='order-details__detail col-md-4'><div class='order-details__detail__label'>فایل ها</div><div class='order-details__detail__value'>"+filesHtml+"</div></div>";
+        }
         output+="</div>";
         $("#orderDetailsWrap").html(output);
         $("#orderDetailsModal").modal("show");

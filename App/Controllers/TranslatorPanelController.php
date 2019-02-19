@@ -104,4 +104,10 @@ class TranslatorPanelController extends Controller
         $data['choice']=$choice;
         return $this->view->render($res,"admin/translator/new-orders.twig",$data);
     }
+    //get orders that translator have to do or did and render the page with that
+    public function get_translator_orders($req,$res,$args)
+    {
+        $data=[];
+        return $this->view->render($res,"admin/translator/translator_orders.twig",$data);
+    }
 }
