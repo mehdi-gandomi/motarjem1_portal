@@ -1,0 +1,96 @@
+{% extends 'admin/layout/translator.twig' %} {% block style_below %}
+<link rel="stylesheet" href="/public/css/input-mask.css" />
+<style>
+  .validation-error {
+    text-align: center;
+    margin-top: 0.5rem;
+    color: red;
+  }
+</style>
+{% endblock %} {% block content %}
+<main class="main">
+  <div class="card">
+    <div class="card-body" style="height:550px">
+      <h4 class="mt-4 pb-3">ویرایش اطلاعات حساب بانکی</h4>
+      <hr style="border-width:2px" />
+      <form id="editAccountForm" action="/translator/bank-info/edit" class="row pt-4" method="post">
+        <div class="form-group col-md-2">
+          <label for="bank_name">نام بانک *</label>
+          <select
+            aria-required="true"
+            class="form-control"
+            id="bank_name"
+            name="bank_name"
+          >
+            <option selected="" value="0">انتخاب کنید</option>
+            <option value="ملت">ملت</option>
+            <option value="ملی">ملی</option>
+            <option value="صادرات">صادرات</option>
+            <option value="پاسارگاد">پاسارگاد</option>
+            <option value="آینده">آینده</option>
+            <option value="پارسیان">پارسیان</option>
+            <option value="سامان">سامان</option>
+            <option value="مهر اقتصاد">مهر اقتصاد</option>
+            <option value="مهر ایران">مهر ایران</option>
+            <option value="سپه">سپه</option>
+            <option value="کشاورزی">کشاورزی</option>
+            <option value="قوامین">قوامین</option>
+            <option value="انصار">انصار</option>
+            <option value="اقتصاد نوین">اقتصاد نوین</option>
+            <option value="رسالت">رسالت</option>
+            <option value="پست بانک">پست بانک</option>
+            <option value="رفاه کارگران">رفاه کارگران</option>
+            <option value="شهر">شهر</option>
+            <option value="دی">دی</option>
+            <option value="گردشگری">گردشگری</option>
+            <option value="تجارت">تجارت</option>
+            <option value="مسکن">مسکن</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-3">
+          <label for="card_number">شماره کارت *</label>
+          <input
+            class="masked"
+            id="card_number"
+            name="card_number"
+            type="tel"
+            placeholder="XXXX XXXX XXXX XXXX"
+            pattern="\d{4} \d{4} \d{4} \d{4}"
+            title="16-digit number"
+          />
+        </div>
+        <div class="form-group col-md-4">
+          <label for="shaba_number">شماره شبا</label>
+          <input
+            class="masked"
+            id="shaba_number"
+            name="shaba_number"
+            type="text"
+            placeholder="XX XXXX XXXX XXXX XXXX XXXX XX"
+            pattern="\d{2} \d{4} \d{4} \d{4} \d{4} \d{4} \d{2}"
+            title="24-digit number"
+          />
+        </div>
+        <div class="form-group col-md-3">
+          <label for="account_owner">نام دارنده حساب *</label>
+          <input
+            class="form-control"
+            id="account_owner"
+            name="account_owner"
+            type="text"
+          />
+        </div>
+        <div class="form-group col-md-4 mt-4" style="padding-top:1.7rem">
+          <input class="btn btn-success" type="submit" value="ذخیره تغییرات" />
+          <button class="btn btn-danger" onclick="window.history.back()">
+            انصراف
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+{% endblock %} {% block script_below %}
+<script src="/public/js/panel/edit-bank-info.js"></script>
+{% endblock %}

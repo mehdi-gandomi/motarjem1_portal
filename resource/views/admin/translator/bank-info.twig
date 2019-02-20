@@ -1,0 +1,69 @@
+{% extends 'admin/layout/translator.twig' %}
+
+{% block style_below %}
+    <style>
+        .card-body__title{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        hr{
+            border-width: 3px;
+        }
+        .edit-btn{
+            display: inline-flex;
+            align-items: center;
+        }
+        .edit-btn i{
+            margin-left: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .account-infos{
+            list-style: none;
+        }
+        .account-info{
+            margin: 1.5rem 0;
+        }
+        .account-info__title{
+            font-size: 1rem;
+        }
+        .account-info__value{
+            margin-right: 0.5rem;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <main class="main">
+        <div class="card">
+            <div class="card-body" style="height: 550px">
+                <div class="card-body__title">
+                    <h4>اطلاعات حساب بانکی</h4>
+                    <a href="/translator/bank-info/edit" class="btn btn-primary edit-btn">
+                        <i class="icon-pencil"></i>
+                        ویرایش اطلاعات حساب بانکی
+                    </a>
+                </div>
+                <hr>
+                <ul class="account-infos row mt-4">
+                    <li class="account-info col-md-4">
+                        <strong class="account-info__title">نام بانک :</strong>
+                        <span class="account-info__value">{{bank_name ? bank_name : "مشخص نشده"}}</span>
+                    </li>
+                    <li class="account-info col-md-4">
+                        <strong class="account-info__title">نام دارنده حساب : </strong>
+                        <span class="account-info__value">{{account_owner ? account_owner : "مشخص نشده"}}</span>
+                    </li>
+                    <li class="account-info col-md-4">
+                        <strong class="account-info__title">شماره کارت : </strong>
+                        <span class="account-info__value">{{card_number ? card_number : "مشخص نشده"}}</span>
+                    </li>
+                    <li class="account-info col-12">
+                        <strong class="account-info__title">شماره شبا :</strong>
+                        <span class="account-info__value">{{shaba_number ? shaba_number : "مشخص نشده"}}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+{% endblock %}

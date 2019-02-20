@@ -138,4 +138,16 @@ class TranslatorPanelController extends Controller
         $data['current_page']=$page;
         return $res->withJson($data);
     }
+
+    //get bank account info and render the page
+    public function get_account_info_page($req,$res,$args)
+    {
+        return $this->view->render($res,"admin/translator/bank-info.twig");
+    }
+
+    //render back info edit page
+    public function get_bank_info_edit_page($req,$res,$args)
+    {
+        return $this->view->render($res,"admin/translator/edit-bank-info.twig");
+    }
 }

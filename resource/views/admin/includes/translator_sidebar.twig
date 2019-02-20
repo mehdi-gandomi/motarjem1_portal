@@ -1,108 +1,92 @@
 <ul class="nav">
-
     <li class="nav-item">
         <a class="nav-link" href="/translator">
             <i class="nav-icon icon-speedometer"></i>
             داشبورد
         </a>
     </li>
-
-{% if user.is_employed %}
-    <li class="nav-item nav-dropdown">
-        <a class="nav-link nav-dropdown-toggle" href="#">
-            <i class="nav-icon icon-credit-card"></i>
-            مالی</a>
-        <ul class="nav-dropdown-items">
-
-            <li class="nav-item">
-                <a class="nav-link" href="/user/orders">
-                    گزارش حساب شما</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/user/order/new">
-                    اطلاعات حساب بانکی</a>
-            </li>
-        </ul>
-    </li>
-{% else %}
-   <li class="nav-item disabled">
-            <a class="nav-link" href="#">
-                <i class="nav-icon icon-lock"></i>
-                <span class="text-placeholder"></span>            
-            </a>
-        </li> 
-{% endif %}
-
     {% if user.is_employed %}
-    <li class="nav-item nav-dropdown">
-        <a class="nav-link nav-dropdown-toggle" href="#">
-            <i class="nav-icon icon-bag"></i>
-            سفارشات</a>
-        <ul class="nav-dropdown-items">
-
-            <li class="nav-item">
-                <a class="nav-link" href="/translator/new-orders">
-                    سفارشات جدید</a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="/translator/orders">
-                    سفارشات محول شده به شما</a>
-            </li>
-            
-        </ul>
-    </li>
-    {% else %}
+        <li class="nav-item nav-dropdown">
+            <a class="nav-link nav-dropdown-toggle" href="#">
+                <i class="nav-icon icon-credit-card"></i>
+                مالی</a>
+            <ul class="nav-dropdown-items">
+                <li class="nav-item">
+                    <a class="nav-link" href="/translator/bank-info">
+                        اطلاعات حساب بانکی</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/orders">
+                        گزارش حساب شما</a>
+                </li>
+            </ul>
+        </li>
+        {% else %}
         <li class="nav-item disabled">
             <a class="nav-link" href="#">
                 <i class="nav-icon icon-lock"></i>
-                <span class="text-placeholder"></span>            
+                <span class="text-placeholder"></span>
             </a>
-        </li> 
+        </li>
     {% endif %}
-    
-
     {% if user.is_employed %}
-    
-    <li class="nav-item">
-        <a class="nav-link" href="/user/messages">
-            <i class="nav-icon icon-envelope"></i>
-            مرکز پیام
-        </a>
-    </li>
-    {% else %}
+        <li class="nav-item nav-dropdown">
+            <a class="nav-link nav-dropdown-toggle" href="#">
+                <i class="nav-icon icon-bag"></i>
+                سفارشات</a>
+            <ul class="nav-dropdown-items">
+                <li class="nav-item">
+                    <a class="nav-link" href="/translator/new-orders">
+                        سفارشات جدید</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/translator/orders">
+                        سفارشات محول شده به شما</a>
+                </li>
+            </ul>
+        </li>
+        {% else %}
         <li class="nav-item disabled">
             <a class="nav-link" href="#">
                 <i class="nav-icon icon-lock"></i>
-                <span class="text-placeholder"></span>            
+                <span class="text-placeholder"></span>
             </a>
-        </li> 
+        </li>
     {% endif %}
-        
-
     {% if user.is_employed %}
-    
-    <li class="nav-item">
-        <a class="nav-link" href="/user/messages">
-            <i class="nav-icon icon-bell"></i>
-            اطلاعیه ها
-        </a>
-    </li>
-
-{% else %}
+        <li class="nav-item">
+            <a class="nav-link" href="/user/messages">
+                <i class="nav-icon icon-envelope"></i>
+                مرکز پیام
+            </a>
+        </li>
+        {% else %}
         <li class="nav-item disabled">
             <a class="nav-link" href="#">
                 <i class="nav-icon icon-lock"></i>
-                <span class="text-placeholder"></span>            
+                <span class="text-placeholder"></span>
             </a>
-        </li> 
+        </li>
     {% endif %}
-    
+    {% if user.is_employed %}
+        <li class="nav-item">
+            <a class="nav-link" href="/user/messages">
+                <i class="nav-icon icon-bell"></i>
+                اطلاعیه ها
+            </a>
+        </li>
+        {% else %}
+        <li class="nav-item disabled">
+            <a class="nav-link" href="#">
+                <i class="nav-icon icon-lock"></i>
+                <span class="text-placeholder"></span>
+            </a>
+        </li>
+    {% endif %}
     <li class="nav-item">
         <a class="nav-link" href="/user/edit-profile">
             <i class="nav-icon icon-pencil"></i>
             ویرایش پروفایل
         </a>
     </li>
-
 </ul>
