@@ -21,30 +21,17 @@
             class="form-control"
             id="bank_name"
             name="bank_name"
+            autofocus
           >
-            <option selected="" value="0">انتخاب کنید</option>
-            <option value="ملت">ملت</option>
-            <option value="ملی">ملی</option>
-            <option value="صادرات">صادرات</option>
-            <option value="پاسارگاد">پاسارگاد</option>
-            <option value="آینده">آینده</option>
-            <option value="پارسیان">پارسیان</option>
-            <option value="سامان">سامان</option>
-            <option value="مهر اقتصاد">مهر اقتصاد</option>
-            <option value="مهر ایران">مهر ایران</option>
-            <option value="سپه">سپه</option>
-            <option value="کشاورزی">کشاورزی</option>
-            <option value="قوامین">قوامین</option>
-            <option value="انصار">انصار</option>
-            <option value="اقتصاد نوین">اقتصاد نوین</option>
-            <option value="رسالت">رسالت</option>
-            <option value="پست بانک">پست بانک</option>
-            <option value="رفاه کارگران">رفاه کارگران</option>
-            <option value="شهر">شهر</option>
-            <option value="دی">دی</option>
-            <option value="گردشگری">گردشگری</option>
-            <option value="تجارت">تجارت</option>
-            <option value="مسکن">مسکن</option>
+            <option {{bank_name ? "":"selected"}} value="0">انتخاب کنید</option>
+              {% for bank in banks %}
+                {% if bank == bank_name %}
+                  <option  value="{{bank}}" selected>{{bank}}</option>
+                {% else %}
+                  <option  value="{{bank}}">{{bank}}</option>
+                {% endif %}
+                
+              {% endfor %}
           </select>
         </div>
 
@@ -58,6 +45,7 @@
             placeholder="XXXX XXXX XXXX XXXX"
             pattern="\d{4} \d{4} \d{4} \d{4}"
             title="16-digit number"
+            value="{{card_number}}"
           />
         </div>
         <div class="form-group col-md-4">
@@ -70,6 +58,7 @@
             placeholder="XX XXXX XXXX XXXX XXXX XXXX XX"
             pattern="\d{2} \d{4} \d{4} \d{4} \d{4} \d{4} \d{2}"
             title="24-digit number"
+            value="{{shaba_number}}"
           />
         </div>
         <div class="form-group col-md-3">
@@ -79,13 +68,19 @@
             id="account_owner"
             name="account_owner"
             type="text"
+            value="{{account_owner}}"
           />
         </div>
-        <div class="form-group col-md-4 mt-4" style="padding-top:1.7rem">
+        <div class="form-group col-md-3 mt-4" style="padding-top:1.7rem">
           <input class="btn btn-success" type="submit" value="ذخیره تغییرات" />
           <button class="btn btn-danger" onclick="window.history.back()">
             انصراف
           </button>
+        </div>
+        <div class="form-group col-md-3 mt-5">
+          {% for error in flash("bankInfoErrors") %}
+          <div class="alert alert-danger">{{error}}</div>
+          {% endfor %}
         </div>
       </form>
     </div>

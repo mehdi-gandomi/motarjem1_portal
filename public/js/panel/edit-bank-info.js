@@ -7,7 +7,6 @@ var masking = {
     maskedLetter : '_',
   
     init: function () {
-      console.log(masking.maskedInputs);
       masking.setUpMasks(masking.maskedInputs);
       masking.maskedInputs = document.querySelectorAll('.masked'); // Repopulating. Needed b/c static node list was created above.
       masking.activateMasking(masking.maskedInputs);
@@ -32,10 +31,16 @@ var masking = {
   
       text = '<span class="shell">' +
         '<span aria-hidden="true" id="' + input.id + 
-        'Mask"><i></i>' + placeholder + '</span>' + 
-        input.outerHTML +
-        '</span>';
-  
+        'Mask"><i></i>';
+      if(input.value.length ==0){
+        text+= placeholder;
+      }else{
+        input.selectionStart=input.value.length;
+      }
+      text+= '</span>' + 
+      input.outerHTML +
+      '</span>';
+      
       input.outerHTML = text;
     },
   
@@ -184,15 +189,14 @@ var masking = {
       return;  
     }
   })
-  $("#card_number").on("blur",function(e){
-    let bankName=$("#bank_name");
-    if(bankName.val()=="0"){
-      bankName.addClass("has-error");
-      bankName.parent().find(".validation-error").eq(0).remove();
-      bankName.parent().append("<p class='validation-error'>باید حداقل یک بانک را انتخاب کنید !</p>");
-      return;  
+  $("#card_number").on("input",function(e){
+    let trimmedValue=e.target.value.replace(/ /g,'');
+    if(trimmedValue.length == 16 ){
+      $(this).removeClass("has-error");
+      $(this).parent().find(".validation-error").eq(0).remove();
+      return;
     }
-  });
+  })
   $("#card_number").on("blur",function(e){
     let trimmedValue=e.target.value.replace(/ /g,'');
     if(trimmedValue==""){
@@ -232,19 +236,52 @@ var masking = {
     }
     
   })
-
+  $("#account_owner").on("blur",function(e){
+    let value=e.target.value;
+    if(value.trim().length<1){
+      $(this).addClass("has-error");
+      $(this).parent().find(".validation-error").eq(0).remove();
+      $(this).parent().append("<p class='validation-error'>فیلد دارنده حساب نباید خالی باشد !</p>");
+    }else{
+      $(this).removeClass("has-error");
+      $(this).parent().find(".validation-error").eq(0).remove();
+    }
+  });
+  $("#account_owner").on("input",function(e){
+    let value=e.target.value;
+    if(value.trim().length>0){
+      $(this).removeClass("has-error");
+      $(this).parent().find(".validation-error").eq(0).remove();
+    }else{
+      $(this).addClass("has-error");
+      $(this).parent().find(".validation-error").eq(0).remove();
+      $(this).parent().append("<p class='validation-error'>فیلد دارنده حساب نباید خالی باشد !</p>");
+    }
+  })
+  //listen on form submit and validate the inputs , if inputs are okay the submit the form
   $("#editAccountForm").on("submit",function(e){
     e.preventDefault();
-    let cardNumber=$("#card_number").val().replace(/ /g,'');
+    let cardNumber=$("#card_number");
+    let accountOwner=$("#account_owner");
+    let bankName=$("#bank_name");
     let validationIsGood=true;
+
     //validate credit card number
-    if(cardNumber==""){
+    if(bankName.val()=="0"){
+      bankName.addClass("has-error");
+      bankName.parent().find(".validation-error").eq(0).remove();
+      bankName.parent().append("<p class='validation-error'>باید حداقل یک بانک را انتخاب کنید !</p>");
+    }else{
+      bankName.removeClass("has-error");
+      bankName.parent().find(".validation-error").eq(0).remove();
+    }
+    if(cardNumber.val().replace(/ /g,'')==""){
       cardNumber.addClass("has-error");
       cardNumber.parent().find(".validation-error").eq(0).remove();
       cardNumber.parent().append("<p class='validation-error'>فیلد شماره کارت نباید خالی باشد !</p>");
       validationIsGood=false;
     }
-    else if(cardNumber.length < 16 ){
+    else if(cardNumber.val().replace(/ /g,'').length < 16 ){
       cardNumber.addClass("has-error");
       cardNumber.parent().find(".validation-error").eq(0).remove();
       cardNumber.parent().append("<p class='validation-error'>شماره کارت نباید کمتر از 16 رقم باشد !</p>");
@@ -253,6 +290,18 @@ var masking = {
       cardNumber.removeClass("has-error");
       cardNumber.parent().find(".validation-error").eq(0).remove();
     }
+    if($("#account_owner").val().trim()==""){
+      accountOwner.addClass("has-error");
+      accountOwner.parent().find(".validation-error").eq(0).remove();
+      accountOwner.parent().append("<p class='validation-error'>فیلد دارنده حساب نباید خالی باشد !</p>");
+      validationIsGood=false;
+    }else{
+      accountOwner.removeClass("has-error");
+      accountOwner.parent().find(".validation-error").eq(0).remove();
+    }
 
+    if(validationIsGood){
+      e.target.submit();
+    }
 
   })

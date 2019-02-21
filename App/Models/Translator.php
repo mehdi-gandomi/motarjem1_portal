@@ -201,6 +201,37 @@ class Translator extends Model
             return false;
         }
     }
+
+    //get translator's bank info by user id
+    public static function get_bank_info_by_user_id($userId)
+    {
+        try{
+            $result=static::select("translator_account","*",[],true);
+            return $result ? $result : [];
+        }catch(\Exception $e){
+            return [];
+        }
+    }
+
+    //insert or update translator's bank info #endregion
+    public static function save_bank_info($userId,$data)
+    {
+        try{
+            $isBankInfoExists=self::get_bank_info_by_user_id($userId);
+            $data['card_number']=preg_replace("(\s)","",$data['card_number']);
+            $data['shaba_number']=preg_replace("(\s)","",$data['shaba_number']);
+            if($isBankInfoExists){
+                static::update("translator_account",$data,"translator_id = '$userId'");
+            }else{
+                $data['translator_id']=$userId;
+                static::insert("translator_account",$data);
+            }
+            return true;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+
     protected static function get_current_date_persian()
     {
         $now = new \DateTime("NOW");

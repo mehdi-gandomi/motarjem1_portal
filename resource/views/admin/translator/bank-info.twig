@@ -29,6 +29,7 @@
         }
         .account-info__value{
             margin-right: 0.5rem;
+            unicode-bidi:embed;
         }
     </style>
 {% endblock %}
@@ -54,13 +55,13 @@
                         <strong class="account-info__title">نام دارنده حساب : </strong>
                         <span class="account-info__value">{{account_owner ? account_owner : "مشخص نشده"}}</span>
                     </li>
-                    <li class="account-info col-md-4">
+                    <li class="account-info col-md-4" style="letter-spacing:0.15rem;">
                         <strong class="account-info__title">شماره کارت : </strong>
                         <span class="account-info__value">{{card_number ? card_number : "مشخص نشده"}}</span>
                     </li>
                     <li class="account-info col-12">
-                        <strong class="account-info__title">شماره شبا :</strong>
-                        <span class="account-info__value">{{shaba_number ? shaba_number : "مشخص نشده"}}</span>
+                        <strong class="account-info__title" >شماره شبا :</strong>
+                        <span class="account-info__value" style="letter-spacing:0.15rem;">{{shaba_number ? shaba_number : "مشخص نشده"}}</span>
                     </li>
                 </ul>
             </div>
