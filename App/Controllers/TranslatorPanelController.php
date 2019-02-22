@@ -145,7 +145,7 @@ class TranslatorPanelController extends Controller
         $bankInfo = Translator::get_bank_info_by_user_id($_SESSION['user_id']);
         if ($bankInfo) {
             $bankInfo['card_number'] = $this->format_credit_card($bankInfo['card_number'], "-");
-            $bankInfo['shaba_number'] = $this->format_shaba_number($bankInfo['shaba_number'], "-");
+            $bankInfo['shaba_number'] = "IR ".$this->format_shaba_number($bankInfo['shaba_number'], "-");
         }
         return $this->view->render($res, "admin/translator/bank-info.twig", $bankInfo);
     }
@@ -178,6 +178,12 @@ class TranslatorPanelController extends Controller
         $_SESSION['oldBankInfoData'] = $body;
         return $res->withRedirect("/translator/bank-info/edit");
     }
+
+    public function get_account_report_page($req,$res,$args)
+    {
+        return $this->view->render($res,"admin/translator/account-report.twig");
+    }
+
     //format credit card
     protected function format_credit_card($creditCard, $delimiter = " ")
     {

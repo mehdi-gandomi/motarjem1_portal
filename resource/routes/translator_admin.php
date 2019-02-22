@@ -47,6 +47,7 @@ $app->group('/translator', function ($app) use ($container) {
     $app->get('/bank-info', "App\Controllers\TranslatorPanelController:get_account_info_page");
     $app->get('/bank-info/edit', "App\Controllers\TranslatorPanelController:get_bank_info_edit_page");
     $app->post('/bank-info/edit', "App\Controllers\TranslatorPanelController:post_edit_bank_info");
+    $app->get('/account-report', "App\Controllers\TranslatorPanelController:get_account_report_page");
 })->add(function ($req, $res, $next) use ($container) {
 
     if (isset($_SESSION['is_translator_logged_in'])) {
