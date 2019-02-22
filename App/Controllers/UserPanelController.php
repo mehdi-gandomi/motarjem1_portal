@@ -3,6 +3,7 @@ namespace App\Controllers;
 
 use App\Dependencies\Pay\Payment;
 use App\Models\User;
+use App\Models\Ticket;
 use Core\Config;
 use Core\Controller;
 
@@ -24,9 +25,9 @@ class UserPanelController extends Controller
         $userOrders = User::get_orders_by_user_id($_SESSION['user_id'], 1, 3);
         $workingOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], ['is_done' => 0, 'is_accepted' => 1]);
         $completedOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], ['is_done' => 1, 'is_accepted' => 1]);
-        $unreadMessagesCount = User::get_unread_messages_count_by_user_id($_SESSION['user_id']);
-        $lastThreeMessages = User::get_messages_by_id($_SESSION['user_id'], 1, 3);
-        $this->view->render($res, "admin/user/dashboard.twig", ['orders' => $userOrders, 'completedOrdersCount' => $completedOrdersCount, 'workingOrdersCount' => $workingOrdersCount, 'unreadMessagesCount' => $unreadMessagesCount, 'lastMessages' => $lastThreeMessages]);
+        $unreadTicketsCount = Ticket::get_unread_tickets_count_by_user_id($_SESSION['user_id'],"1");
+        $lastThreeTickets = Ticket::get_tickets_by_user_id($_SESSION['user_id'],"1", 1, 3);
+        $this->view->render($res, "admin/user/dashboard.twig", ['orders' => $userOrders, 'completedOrdersCount' => $completedOrdersCount, 'workingOrdersCount' => $workingOrdersCount, 'unreadTicketsCount' => $unreadTicketsCount, 'lastTickets' => $lastThreeTickets]);
     }
     //get translator info and send that as json
     public function get_translator_info($req, $res, $args)
@@ -109,77 +110,36 @@ class UserPanelController extends Controller
         
     }
 
-    public function get_message_details($req, $res, $args)
+    public function get_ticket_details($req, $res, $args)
     {
-        \App\Models\Message::set_message_reply_as_read($args['msg_id']);
-        $messageDetails = \App\Models\Message::get_details_by_id($args['msg_id']);
-        return $this->view->render($res, "admin/user/view-message.twig", ['messages' => $messageDetails]);
+        Ticket::set_as_read($args['ticket_number']);
+        $ticketDetails = Ticket::get_details_by_ticket_number($args['ticket_number']);
+        $ticketMessages=Ticket::get_ticket_messages_by_ticket_number($args['ticket_number']);
+        return $this->view->render($res, "admin/user/view-ticket.twig", ['ticket_details' => $ticketDetails,'ticket_messages'=>$ticketMessages]);
     }
-    public function get_messages_page($req, $res, $args)
+    public function get_tickets_page($req, $res, $args)
     {
         $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
-        $readQS = $req->getQueryParam("read") === null ? 'unset' : \explode(",", $req->getQueryParam("read"));
-        $answeredQS = $req->getQueryParam("answered") === null ? 'unset' : \explode(",", $req->getQueryParam("answered"));
-        $filtering_options = [];
-        $read = true;
-        $unread = true;
-        $answered = true;
-        $unanswered = true;
-        if ($readQS != 'unset') {
-            $filtering_options['is_read'] = $readQS;
-            if (count($readQS)<2) {
-                
-                if ($readQS[0] == "0") {
-                    
-                    $unread = true;
-                    $read = false;
-                } else {
-                    $unread = false;
-                    $read = true;
-                }
-            }
-        }
-        if ($answeredQS != 'unset') {
-            $filtering_options['is_answered'] = $answeredQS;
-            if (count($answeredQS)< 2) {
-                if ($answeredQS[0] == "0") {
-                    $unanswered = true;
-                    $answered = false;
-                } else {
-                    $unanswered = false;
-                    $answered = true;
-                }
-            }
-        }
-
-        $userMessages = User::get_messages_by_id($_SESSION['user_id'], $page, 10, $filtering_options);
-        $userMessagesCount = User::get_messages_count_by_id($_SESSION['user_id'], $filtering_options);
-
-        return $this->view->render($res, "admin/user/messages.twig", ["messages" => $userMessages,'current_page'=>$page, 'messages_count' => $userMessagesCount, 'read' => $read, 'unread' => $unread, 'answered' => $answered, 'unanswered' => $unanswered]);
+        $state = $req->getQueryParam("state") === null ? ['waiting','answered'] : \explode(",", $req->getQueryParam("state"));
+        $read = $req->getQueryParam("read") === null ? ['0','1'] : \explode(",", $req->getQueryParam("read"));
+        $userTickets = Ticket::get_tickets_by_user_id($_SESSION['user_id'],"1", $page, 10, ['state'=>$state,'read'=>$read]);
+        $userTicketsCount = Ticket::get_tickets_count_by_user_id($_SESSION['user_id'],"1", $state);
+        return $this->view->render($res, "admin/user/tickets.twig", ["tickets" => $userTickets,'current_page'=>$page, 'tickets_count' => $userTicketsCount,'state'=>$state,'read'=>$read]);
     }
-    public function get_messages_json($req, $res, $args)
+    public function get_tickets_json($req, $res, $args)
     {
         $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
-        $readQS = $req->getQueryParam("read") === null ? 'unset' : \explode(",", $req->getQueryParam("read"));
-        $answeredQS = $req->getQueryParam("answered") === null ? 'unset' : \explode(",", $req->getQueryParam("answered"));
-        $filtering_options = [];
-        if ($readQS != 'unset') {
-            $filtering_options['is_read'] = $readQS;
-        }
-        if ($answeredQS != 'unset') {
-            $filtering_options['is_answered'] = $answeredQS;
-        }
-
-        $userMessages = User::get_messages_by_id($_SESSION['user_id'], $page, 10, $filtering_options);
-        $userMessagesCount = User::get_messages_count_by_id($_SESSION['user_id'], $filtering_options);
-
-        return $res->withJson(['messages' => $userMessages, 'messages_count' => intval($userMessagesCount), 'current_page' => $page]);
+        $state = $req->getQueryParam("state") === null ? ['waiting','answered'] : \explode(",", $req->getQueryParam("state"));
+        $read = $req->getQueryParam("read") === null ? ['0','1'] : \explode(",", $req->getQueryParam("read"));
+        $userTickets = Ticket::get_tickets_by_user_id($_SESSION['user_id'],"1", $page, 10, ['state'=>$state,'read'=>$read]);
+        $userTicketsCount = Ticket::get_tickets_count_by_user_id($_SESSION['user_id'],"1", $state);
+        return $res->withJson(['tickets' => $userTickets, 'tickets_count' => intval($userTicketsCount), 'current_page' => $page]);
     }
 
     //this function gets message data that user sends and return a json respose if it all goes well
-    public function post_send_message($req, $res, $args)
+    public function post_send_ticket($req, $res, $args)
     {
-        $result = \App\Models\Message::create($_SESSION['user_id'], $req->getParsedBody());
+        $result = Ticket::create($_SESSION['user_id'],"1", $req->getParsedBody());
         return $res->withJson([
             'status' => $result,
         ]);

@@ -144,68 +144,9 @@ class User extends Model
             return false;
         }
     }
-    //this function gets unread messages by user
-    public static function get_unread_messages_count_by_user_id($userId)
-    {
-        try {
-            $db = static::getDB();
-            $sql = "SELECT COUNT(*) AS messages_count FROM `messaging` WHERE `reciever_id`= '$userId' AND user_type='1' AND `is_read`= '0'";
-            $result = $db->query($sql);
-            return $result ? $result->fetch(PDO::FETCH_ASSOC)['messages_count'] : false;
-
-        } catch (\Exception $e) {
-            return false;
-        }
-    }
-
-    //this function gets  user messages by id
-    public static function get_messages_by_id($userId,$page, $amount,$filtering_Options=null)
-    {
-        try{
-            $db=static::getDB();
-            $result=false;
-            $page_limit = ($page - 1) * $amount;
-            $sql="SELECT messaging.msg_id,messaging.parent_msg_id,messaging.create_date_persian,messaging.update_date_persian,messaging.subject,messaging.body,messaging.is_answered,messaging.is_read FROM messaging WHERE  messaging.sender_id = :sender_id AND user_type='1'";
-            if(is_array($filtering_Options) && count($filtering_Options)>0){
-                
-                if(isset($filtering_Options['is_read'])){
-                    $sql.=" AND `is_read` IN (".\implode(",",$filtering_Options['is_read']).")";
-                }
-                if(isset($filtering_Options['is_answered'])){
-                    $sql.=" AND `is_answered` IN (".\implode(",",$filtering_Options['is_answered']).")";
-                }   
-            }
-            $sql.=" ORDER BY update_date DESC LIMIT $page_limit,$amount";
-            $stmt = $db->prepare($sql);
-            // $stmt->bindParam(":reciever_id",$userId);
-            return $stmt->execute(['sender_id'=>$userId]) ? $stmt->fetchAll(PDO::FETCH_ASSOC) : false;
-        }catch(\Exception $e){
-            return false;
-        }
-
-        
-    }
-    //this function gets  user messages count by id
-    public static function get_messages_count_by_id($userId,$filtering_Options)
-    {
-        try{
-            $db=static::getDB();
-            $sql="SELECT COUNT(*) AS messages_count FROM messaging WHERE  messaging.sender_id = :sender_id";
-            if(is_array($filtering_Options) && count($filtering_Options)>0){
-                
-                if(isset($filtering_Options['is_read'])){
-                    $sql.=" AND `is_read` IN (".\implode(",",$filtering_Options['is_read']).")";
-                }
-                if(isset($filtering_Options['is_answered'])){
-                    $sql.=" AND `is_answered` IN (".\implode(",",$filtering_Options['is_answered']).")";
-                }   
-            }
-            $stmt = $db->prepare($sql);
-            return $stmt->execute(['sender_id'=>$userId]) ? $stmt->fetch(PDO::FETCH_ASSOC)['messages_count'] : false;
-        }catch(\Exception $e){
-            return false;
-        }
-    }
+    
+    
+    
     //this function lets you update user data by user id
     public static function edit_by_id($userId,$userData)
     {

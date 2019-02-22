@@ -51,7 +51,7 @@
 
                             <div class="info-card__content">
                                 <div class="info-card__content__title">پیام های خوانده نشده</div>
-                                <div class="info-card__content__value">{{unreadMessagesCount}}</div>
+                                <div class="info-card__content__value">{{unreadTicketsCount}}</div>
                             </div>
                         </a>
                     </div>
@@ -109,25 +109,27 @@
                         </div>
                         <div class="card-body">
                             <div class="list-group ticket-list">
-                                {% if lastMessages %}
+                                {% if lastTickets %}
 
-                                    {% for message in lastMessages %}
+                                    {% for ticket in lastTickets %}
 
-                                        <a href="/user/message/view/{{message.msg_id}}" class="list-group-item ticket-item">
+                                        <a href="/user/message/view/{{ticket.ticket_number}}" class="list-group-item ticket-item">
                                             <div class="ticket-item__details">
-                                                <span class="ticket-item__code">#{{message.msg_id}}</span>
+                                                <span class="ticket-item__code">#{{ticket.ticket_number}}</span>
                                                 -
-                                                <span class="ticket-item__title">{{message.subject}}</span>
-                                                {% if message.is_answered %}
+                                                <span class="ticket-item__title">{{ticket.subject}}</span>
+                                                {% if ticket.state=='answered' %}
                                                     <span class="ticket-item__status answered">پاسخ داده شده</span >
-                                                {% else %}
-                                                    <span class="ticket-item__status not-answered">پاسخ داده نشده</span >
                                                 {% endif %}
+                                                {% if ticket.state == 'waiting' %}
+                                                    <span class="ticket-item__status not-answered">درانتظار پاسخ</span >
+                                                {% endif %}
+                                                
 
                                             </div>
                                             <p>
                                                 آخرین بروزرسانی
-                                                {{message.update_date_persian}}
+                                                {{ticket.update_date_persian}}
                                             </p>
                                         </a>
 
