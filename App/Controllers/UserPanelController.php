@@ -139,9 +139,15 @@ class UserPanelController extends Controller
     //this function gets message data that user sends and return a json respose if it all goes well
     public function post_send_ticket($req, $res, $args)
     {
-        $result = Ticket::create($_SESSION['user_id'],"1", $req->getParsedBody());
+        $ticketNumber = Ticket::create($_SESSION['user_id'],"1", $req->getParsedBody());
+        if($ticketNumber){
+            return $res->withJson([
+                'status' => true,
+                'ticket_number'=>$ticketNumber
+            ]);
+        }
         return $res->withJson([
-            'status' => $result,
+            'status' => false
         ]);
     }
 

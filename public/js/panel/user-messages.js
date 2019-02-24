@@ -10,7 +10,7 @@ function getQueryString(name, url) {
   var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
     results = regex.exec(url);
   if (!results) return null;
-  if (!results[2]) return "";
+  if (!results[2]) return null;
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 //this function converts js object to querystring to use on urls
@@ -97,10 +97,12 @@ function showPagination(data, queryString,visibleNumbers) {
 
 //this function gets data from server based on given filters
 function applyFilters(queryString) {
+  url=location.origin + location.pathname;
+  url= queryString ? url+"?" + queryString:url;
   window.history.pushState(
     "filtered messages",
     "پیام های فیلتر شده",
-    location.origin + location.pathname + "?" + queryString
+    url
   );
   $.get("/user/messages/json?" + queryString, function(res, status) {
     console.log(status);
@@ -112,156 +114,64 @@ function applyFilters(queryString) {
 }
 
 //START this functions gets called when a checkbox state changes
-$("#read-messages").change(function(e) {
-  let pageQs = getQueryString("page");
-  let queryStringObject = {};
-  if (pageQs) {
-    queryStringObject["page"] = pageQs;
-  }
-  let isUnreadChecked = document.getElementById("unread-messages").checked;
-  let isAnsweredChecked = document.getElementById("answered-messages").checked;
-  let isUnansweredChecked = document.getElementById("unanswered-messages")
-    .checked;
-  queryStringObject["read"] = [];
-  queryStringObject["answered"] = [];
-  if (e.currentTarget.checked) {
-    queryStringObject["read"].push("1");
-  }
-  if (isUnreadChecked) {
-    queryStringObject["read"].push("0");
-  }
-  if (isAnsweredChecked) {
-    queryStringObject["answered"].push("1");
-  }
-  if (isUnansweredChecked) {
-    queryStringObject["answered"].push("0");
-  }
-  queryStringObject["read"] =queryStringObject["read"].join(",");
-  queryStringObject["answered"] = queryStringObject["answered"].join(",");
-  let queryString = serializeQSObject(queryStringObject);
 
+$(".table-filter input[type=checkbox]").on("change",function(e){
+  let queryStringObj={state:[],read:[]};
+  $("input[name=read]").each(function(){
+    if($(this).is(":checked")){
+      queryStringObj['read'].push($(this).val());
+    }
+  })
+  $("input[name=state]").each(function(){
+    if($(this).is(":checked")){
+      queryStringObj['state'].push($(this).val());
+      
+    }
+  })
+  if(queryStringObj['state'].length>0){
+    queryStringObj['state']=queryStringObj['state'].join(",");   
+  }
+  if(queryStringObj['read'].length>0){
+    queryStringObj['read']=queryStringObj['read'].join(",");
+  } 
+  let page=getQueryString("page");
+  if(page){
+    queryStringObj['page']=page;
+  }
+  queryString=serializeQSObject(queryStringObj);
   applyFilters(queryString);
-});
-$("#unread-messages").change(function(e) {
-  let pageQs = getQueryString("page");
-  let queryStringObject = {};
-  if (pageQs) {
-    queryStringObject["page"] = pageQs;
-  }
-  let isReadChecked = document.getElementById("read-messages").checked;
-  let isAnsweredChecked = document.getElementById("answered-messages").checked;
-  let isUnansweredChecked = document.getElementById("unanswered-messages")
-    .checked;
-  queryStringObject["read"] = [];
-  queryStringObject["answered"] = [];
-  if (e.currentTarget.checked) {
-    queryStringObject["read"].push("0");
-  }
-  if (isReadChecked) {
-    queryStringObject["read"].push("1");
-  }
-  if (isAnsweredChecked) {
-    queryStringObject["answered"].push("1");
-  }
-  if (isUnansweredChecked) {
-    queryStringObject["answered"].push("0");
-  }
-  queryStringObject["read"] =queryStringObject["read"].join(",");
-  queryStringObject["answered"] = queryStringObject["answered"].join(",");
-  let queryString = serializeQSObject(queryStringObject);
-  applyFilters(queryString);
-});
+})
 
-$("#answered-messages").change(function(e) {
-  let pageQs = getQueryString("page");
-  let queryStringObject = {};
-  if (pageQs) {
-    queryStringObject["page"] = pageQs;
-  }
-  let isReadChecked = document.getElementById("read-messages").checked;
-  let isUnreadChecked = document.getElementById("unread-messages").checked;
-  let isUnansweredChecked = document.getElementById("unanswered-messages")
-    .checked;
-  queryStringObject["read"] = [];
-  queryStringObject["answered"] = [];
-  if (e.currentTarget.checked) {
-    queryStringObject["answered"].push("1");
-  }
-  if (isUnansweredChecked) {
-    queryStringObject["answered"].push("0");
-  }
-  if (isReadChecked) {
-    queryStringObject["read"].push("1");
-  }
-  if (isUnreadChecked) {
-    queryStringObject["read"].push("0");
-  }
-  queryStringObject["read"] =queryStringObject["read"].join(",");
-  queryStringObject["answered"] = queryStringObject["answered"].join(",");
-  let queryString = serializeQSObject(queryStringObject);
-
-  applyFilters(queryString);
-});
-$("#unanswered-messages").change(function(e) {
-  let pageQs = getQueryString("page");
-  let queryStringObject = {};
-  if (pageQs) {
-    queryStringObject["page"] = pageQs;
-  }
-  let isReadChecked = document.getElementById("read-messages").checked;
-  let isUnreadChecked = document.getElementById("unread-messages").checked;
-  let isAnsweredChecked = document.getElementById("answered-messages").checked;
-  queryStringObject["read"] = [];
-  queryStringObject["answered"] = [];
-  if (e.currentTarget.checked) {
-    queryStringObject["answered"].push("0");
-  }
-  if (isAnsweredChecked) {
-    queryStringObject["answered"].push("1");
-  }
-  if (isReadChecked) {
-    queryStringObject["read"].push("1");
-  }
-  if (isUnreadChecked) {
-    queryStringObject["read"].push("0");
-  }
-  queryStringObject["read"] =queryStringObject["read"].join(",");
-  queryStringObject["answered"] = queryStringObject["answered"].join(",");
-  let queryString = serializeQSObject(queryStringObject);
-
-  applyFilters(queryString);
-});
 //END this functions gets called when a checkbox state changes
 
 //send message with ajax request
-$("#send-message-btn").click(function(e){
-  let subject=$("#subject").val();
-  let body=$("#medium-editor").val();
-  if(subject == ""){
-    alert("باید حداقل یک عنوان وارد نمایید!");
-    return;
+$("#send-message-btn").click(function (e) {
+  let subject = $("#subject").val();
+  let body = $("#medium-editor").val();
+  if (subject == "") {
+      alert("باید حداقل یک عنوان وارد نمایید!");
+      return;
   }
-  if(body == ""){
-    alert("باید متن پیام تان را وارد نمایید !");
-    return;
+  if (body == "") {
+      alert("باید متن پیام تان را وارد نمایید !");
+      return;
   }
 
   $.ajax({
-    type:"POST",
-    url:$("#sendMessageForm").attr("action"),
-    data:{
-      subject:subject,
-      body:body
-    },
-    success:function(data,status){
-      if(status && data.status){
-        $("#newMessageModal").modal("hide");
-        Swal.fire(
-          'موفقیت آمیز !',
-          'پیام شما با موفقیت ارسال شد !',
-          'success'
-        )
+      type: "POST",
+      url: $("#sendMessageForm").attr("action"),
+      data: {
+          subject: subject,
+          body: body
+      },
+      success: function (data, status) {
+          if (status && data.status) {
+              $("#newMessageModal").modal("hide");
+              Swal.fire('موفق', "پیام شما با موفقیت ارسال شد ! <br> شماره پیگیری : <span style='font-family: sans-serif;direction: ltr;text-align: left;unicode-bidi: embed;'>#"+data.ticket_number+"<span>", 'success')
+          }else{
+              $("#newMessageModal").modal("hide");
+              Swal.fire('خطا', 'خطایی در ارسال پیام شما رخ داد', 'error')
+          }
       }
-    }
   })
 })

@@ -33,9 +33,9 @@ class Ticket extends Model{
                 $ticketData['sender_id']=$userId;
                 static::insert("Ticket_Messages",$ticketData);
             }
-            return true;
+            return $ticketNumber;
         }catch(\Exception $e){
-            return false;
+            \var_dump($e);
         }
     }
     public static function create_reply($userId,$msgData)
@@ -65,7 +65,7 @@ class Ticket extends Model{
             $sql="SELECT * FROM Tickets WHERE creator_id = :creator_id AND user_type = :user_type";
             if(is_array($filteringOptions) && count($filteringOptions)>0){
                 if(isset($filteringOptions['state'])){
-                    $sql.=" AND state IN (".implode(",",$filteringOptions['state']).")";
+                    $sql.=" AND state IN ('".implode("','",$filteringOptions['state'])."')";
                 }
                 if(isset($filteringOptions['read'])){
                     $sql.=" AND is_read IN (".implode(",",$filteringOptions['read']).")";
@@ -74,7 +74,6 @@ class Ticket extends Model{
             }
             $sql.=" ORDER BY update_date DESC LIMIT $page_limit,$amount";
             $stmt = $db->prepare($sql);
-            var_dump($sql);
             return $stmt->execute(['creator_id'=>$userId,'user_type'=>$userType]) ? $stmt->fetchAll(PDO::FETCH_ASSOC) : false;
         }catch(\Exception $e){
             return false;
@@ -88,7 +87,6 @@ class Ticket extends Model{
         try{
             $db=static::getDB();
             $result=false;
-            $page_limit = ($page - 1) * $amount;
             $sql="SELECT COUNT(*) AS tickets_count FROM Tickets WHERE creator_id = :creator_id AND user_type = :user_type";
             if(is_array($filteringOptions) && count($filteringOptions)>0){
                 if(isset($filteringOptions['state'])){
@@ -100,7 +98,6 @@ class Ticket extends Model{
                 
             }
             $stmt = $db->prepare($sql);
-            var_dump($sql);
             return $stmt->execute(['creator_id'=>$userId,'user_type'=>$userType]) ? $stmt->fetch(PDO::FETCH_ASSOC)['tickets_count'] : 0;
         }catch(\Exception $e){
             return false;
