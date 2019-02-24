@@ -12,7 +12,7 @@
                     <div class="orders-heading">
                         <form class="table-filter">
                             <label class="label-cbx" for="read-messages">
-                                {% if "1" in read|keys %}
+                                {% if "1" in read %}
                                     <input type="checkbox" name="read" class="invisible read-state" id="read-messages" value="1"  checked/>
                                 {% else %}
                                     <input type="checkbox" name="read" class="invisible read-state" id="read-messages" value="1" />
@@ -28,7 +28,7 @@
                             </label>
                             <label class="label-cbx" for="unread-messages">
                                 
-                                {% if "0" in read|keys %}
+                                {% if "0" in read %}
                                     <input type="checkbox" name='read' class="invisible read-state" id="unread-messages" value="0"  checked/>
                                 {% else %}
                                     <input type="checkbox" name='read' class="invisible read-state" id="unread-messages" value="0" />
@@ -44,7 +44,7 @@
                                 </span>
                             </label>
                             <label class="label-cbx" for="answered-messages">
-                                {% if "answered" in state|keys %}
+                                {% if "answered" in state %}
                                     <input name="state" value="answered" id="answered-messages" type="checkbox" class="invisible" checked/>
                                 {% else %}
                                     <input name="state" value="answered" id="answered-messages" type="checkbox" class="invisible"/>
@@ -60,7 +60,7 @@
                                 </span>
                             </label>
                             <label class="label-cbx" for="unanswered-messages">
-                                {% if "waiting" in state|keys %}
+                                {% if "waiting" in state %}
                                     <input name="state" value="waiting" id="unanswered-messages" type="checkbox" class="invisible" checked/>
                                 {% else %}
                                     <input name="state" value="waiting" id="unanswered-messages" type="checkbox" class="invisible"/>
@@ -84,11 +84,10 @@
                     <table class="table is--responsive" id="messages-table">
                         <thead>
                             <tr>
-                                <th class="bg-teal-dark" scope="col">#</th>
+                                <th class="bg-teal-dark" scope="col">شماره تیکت</th>
                                 <th class="bg-teal-dark" scope="col">عنوان پیام</th>
                                 <th class="bg-teal-dark" scope="col">وضعیت خوانده شدن</th>
                                 <th class="bg-teal-dark" scope="col">وضعیت پاسخ داده شدن</th>
-                                <th class="bg-teal-dark" scope="col">زمان ارسال</th>
                                 <th class="bg-teal-dark" scope="col">آخرین بروزرسانی</th>
                                 <th class="bg-teal-dark" scope="col">جزییات</th>
                             </tr>
@@ -97,25 +96,20 @@
                             {% for ticket in tickets %}
                                 <tr>
                                     <td data-label="شماره پیام">
-                                        {{ ticket.msg_id }}</td>
+                                        #{{ ticket.ticket_number }}</td>
                                     <td data-label="عنوان پیام">
                                         {{ ticket.subject }}</td>
                                     <td data-label="وضعیت خوانده شدن">
                                         {{ ticket.is_read == "0" ? "خوانده نشده" : "خوانده شده" }}
                                     </td>
                                     <td data-label="وضعیت پاسخ">
-                                        {{
-                  ticket.is_answered == "0"
-                    ? "پاسخ داده نشده"
-                    : "پاسخ داده شده"
-                }}
+                                    {% if ticket.state=="waiting" %}درانتظار پاسخ{% endif %}
+                                    {% if ticket.state=="answered" %}پاسخ داده شده{% endif %}
                                     </td>
-                                    <td data-label="زمان ارسال">
-                                        {{ ticket.create_date_persian }}</td>
                                     <td data-label="آخرین بروزرسانی">
                                         {{ ticket.update_date_persian }}</td>
                                     <td class="order-more-info" data-label="جزییات">
-                                        <a href="/user/message/view/{{ ticket.msg_id }}">
+                                        <a href="/user/ticket/view/{{ ticket.msg_id }}">
                                             <svg height="23px" viewbox="0 0 50 80" width="13px" xml:space="preserve">
                                                 <polyline fill="none" points="45.63,75.8 0.375,38.087 45.63,0.375 " stroke-linecap="round" stroke-linejoin="round" stroke-width="10" stroke="#a9a9a9"/></svg>
                                         </a>
@@ -124,20 +118,22 @@
                             {% endfor %}
                         </tbody>
                     </table>
-                    {% include 'admin/includes/pagination.twig' with {'count':messages_count,'current_page':current_page,'base_path':'/user/messages','offset':10,'visible_numbers':3 } %}
+                    {% include 'admin/includes/pagination.twig' with {'count':tickets_count,'current_page':current_page,'base_path':'/user/tickets','offset':10,'visible_numbers':3 } %}
                 </div>
             </div>
         </div>
     </main>
     <!-- Modal -->
-    <div aria-hidden="true" aria-labelledby="newMessageModalLabel" class="modal fade" data-backdrop="static" data-keyboard="false" id="newMessageModal" role="dialog" tabindex="-1">
+    <div class="modal fade" id="newMessageModal" tabindex="-1" role="dialog" aria-labelledby="newMessageModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="newMessageModalLabel">ارسال پیام</h5>
                 </div>
                 <div class="modal-body">
-                    <form action="/user/message/send" id="sendMessageForm" method="POST">
+
+                    <form action="/user/ticket/send" id="sendMessageForm" method="POST">
+                        <input type="hidden" name="msg_id" id="msg_id">
                         <div class="row">
                             <div class="form-group col-md-3">
                                 <label for="">نام شما</label>
@@ -145,25 +141,23 @@
                             </div>
                             <div class="form-group col-md-5">
                                 <label for="">ایمیل شما</label>
-                                <input class="form-control" type="email" value="{{ user.email }}" disabled="disabled"/>
+                                <input class="form-control" type="email" value="{{user.email}}" disabled="disabled"/>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="">عنوان پیام</label>
-                                <input class="form-control" id="subject" name="subject" type="text"/>
+                                <input class="form-control" type="text" id="subject" name="subject"/>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="">پیام شما</label>
-                            <textarea cols="30" id="medium-editor" name="body" rows="10"></textarea>
+                            <textarea name="body" id="medium-editor" cols="30" rows="10"></textarea>
                         </div>
-                        <button class="btn btn-primary" id="send-message-btn" type="button">
-                            ارسال
-                        </button>
-                        <button class="btn btn-danger" data-dismiss="modal" type="button">
-                            انصراف
-                        </button>
+                        <button type="button" class="btn btn-primary" id="send-message-btn">ارسال</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">انصراف</button>
                     </form>
+
                 </div>
+
             </div>
         </div>
     </div>

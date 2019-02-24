@@ -65,10 +65,20 @@ class Ticket extends Model{
             $sql="SELECT * FROM Tickets WHERE creator_id = :creator_id AND user_type = :user_type";
             if(is_array($filteringOptions) && count($filteringOptions)>0){
                 if(isset($filteringOptions['state'])){
-                    $sql.=" AND state IN ('".implode("','",$filteringOptions['state'])."')";
+                    if(is_array($filteringOptions['state']) && \count($filteringOptions['state'])>0){
+                        $sql.=" AND state IN ('".implode("','",$filteringOptions['state'])."')";
+                    }else if ($filteringOptions['state']==-1) {
+                        $sql.=" AND state NOT IN ('answered','waiting') ";
+                    }
+                    
                 }
                 if(isset($filteringOptions['read'])){
-                    $sql.=" AND is_read IN (".implode(",",$filteringOptions['read']).")";
+                    if(is_array($filteringOptions['read']) && \count($filteringOptions['read'])>0){
+                        $sql.=" AND is_read IN (".implode(",",$filteringOptions['read']).")";
+                    }else if ($filteringOptions['read']==-1) {
+                        $sql.=" AND is_read NOT IN (0,1) ";
+                    }
+                    
                 }
                 
             }

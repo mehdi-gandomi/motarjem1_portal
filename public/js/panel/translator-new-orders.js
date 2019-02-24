@@ -305,10 +305,9 @@ if(count > offset){
     }else{
 
     startIndex=current_page - (visibleNumbers-1);
-    startIndex= startIndex<=0 ? 1:startIndex;
     endIndex=current_page+ (visibleNumbers-1);
     }
-
+    startIndex= startIndex<=0 ? 1:startIndex;
     for(pageNumber=startIndex;pageNumber<=endIndex;pageNumber++){
     output+= pageNumber==current_page ? "<li class='page-item active'>":"<li class='page-item'>";
     output+="<a class='page-link' href='"+substitute(fullUrl,{"%page%":pageNumber})+"'>"+pageNumber+"</a>";

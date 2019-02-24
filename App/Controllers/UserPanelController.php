@@ -129,8 +129,8 @@ class UserPanelController extends Controller
     public function get_tickets_json($req, $res, $args)
     {
         $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
-        $state = $req->getQueryParam("state") === null ? ['waiting','answered'] : \explode(",", $req->getQueryParam("state"));
-        $read = $req->getQueryParam("read") === null ? ['0','1'] : \explode(",", $req->getQueryParam("read"));
+        $state = $req->getQueryParam("state") === null ? ['answered','waiting'] : \explode(",", $req->getQueryParam("state"));
+        $read = $req->getQueryParam("read") === null ? [0,1] : \explode(",", $req->getQueryParam("read"));
         $userTickets = Ticket::get_tickets_by_user_id($_SESSION['user_id'],"1", $page, 10, ['state'=>$state,'read'=>$read]);
         $userTicketsCount = Ticket::get_tickets_count_by_user_id($_SESSION['user_id'],"1", $state);
         return $res->withJson(['tickets' => $userTickets, 'tickets_count' => intval($userTicketsCount), 'current_page' => $page]);
