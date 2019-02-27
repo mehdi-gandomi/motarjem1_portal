@@ -37,10 +37,11 @@ $app->group('/user', function ($app) use ($container) {
     $app->post("/order/save","App\Controllers\UserPanelController:save_user_order_info")->add($container->get('csrf'));
     $app->get("/order/view/{order_id}","App\Controllers\UserPanelController:get_order_details")->add($container->get('csrf'));
     $app->get("/ticket/view/{ticket_number}","App\Controllers\UserPanelController:get_ticket_details");
+    $app->get("/ticket/view/{ticket_number}/json","App\Controllers\UserPanelController:get_ticket_details_json");
     $app->get("/tickets","App\Controllers\UserPanelController:get_tickets_page");
     $app->get("/tickets/json","App\Controllers\UserPanelController:get_tickets_json");
     $app->post("/ticket/send","App\Controllers\UserPanelController:post_send_ticket");
-    $app->post("/ticket/reply","App\Controllers\UserPanelController:post_reply_ticket");
+    $app->post("/ticket/reply/{ticket_id}","App\Controllers\UserPanelController:post_reply_ticket");
     $app->get("/edit-profile","App\Controllers\UserPanelController:edit_profile_page")->add($container->get('csrf'));
     $app->post("/edit-profile","App\Controllers\UserPanelController:post_edit_profile")->add($container->get('csrf'));
     $app->post("/edit-profile/upload-avatar","App\Controllers\UserPanelController:upload_avatar");

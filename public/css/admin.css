@@ -16324,6 +16324,10 @@ body {
   font-size: 1rem !important;
 }
 
+.no-pad {
+  padding: 0 !important;
+}
+
 .avatar-upload {
   position: relative;
   max-width: 120px;
@@ -17500,7 +17504,11 @@ body {
   margin-left: 0.4rem;
 }
 
-.view-message .card-header {
+.view-tickets {
+  padding-top: 3rem;
+}
+
+.ticket .card-header {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -17512,16 +17520,46 @@ body {
           align-items: center;
 }
 
-.view-message .card-header__title {
+.ticket .card-header__title {
   font-size: 1rem;
 }
 
-.view-message .card-header__title p {
+.ticket .card-header__title p {
   display: inline-block;
 }
 
-.view-message .msg-action {
+.ticket .msg-action {
   margin-top: 2rem;
+}
+
+.answer-card .card-header {
+  cursor: pointer;
+}
+
+.answer-card .card-body {
+  overflow: hidden;
+  padding: 0 !important;
+  height: 0;
+  opacity: 0;
+  -webkit-transition: all 1s ease-in-out;
+  transition: all 1s ease-in-out;
+}
+
+.answer-card .card-body.show {
+  height: auto;
+  padding: 1.25rem !important;
+  opacity: 1;
+}
+
+.ticket-details .list-group-item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.ticket-details .list-group-item__title {
+  color: #b9a3a3;
+  padding-left: 1rem;
 }
 
 .edit-profile__info {

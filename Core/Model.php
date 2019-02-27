@@ -35,10 +35,6 @@ class Model
     public static function select($tblName,$fields="*",$where=[],$is_one=false,$options=false){
         $db=self::getDB();
         $sql="SELECT ".self::prepare_input($fields)." FROM `$tblName`";
-        if ($options){
-            $options=self::prepare_input($options);
-            $sql.=" $options";
-        }
         if (count($where)){
             $whereString=" WHERE ";
             foreach($where as $key=>$value){
@@ -52,6 +48,10 @@ class Model
                 }
             }
             $sql.=$whereString;
+        }
+        if ($options){
+            $options=self::prepare_input($options);
+            $sql.=" $options";
         }
         $stmt=$db->prepare($sql);
         foreach($where as $key=>$value){

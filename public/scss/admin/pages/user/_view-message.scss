@@ -1,5 +1,7 @@
-
-.view-message{
+.view-tickets{
+    padding-top: 3rem;
+}
+.ticket{
     .card-header{
         display: flex;
         justify-content: space-between;
@@ -14,5 +16,32 @@
     }
     .msg-action{
         margin-top: 2rem;
+    }
+}
+.answer-card{
+    .card-header{
+        cursor: pointer;
+    }
+    .card-body{
+        overflow: hidden;
+        padding: 0 !important;
+        height: 0;
+        opacity:0;
+        transition:all 1s ease-in-out;
+        &.show{
+            height: auto;
+            padding: 1.25rem !important;
+            opacity:1;
+        }
+    }
+
+}
+.ticket-details{
+    .list-group-item{
+        display: flex;
+        &__title{
+            color: #b9a3a3;
+            padding-left:1rem;
+        }
     }
 }

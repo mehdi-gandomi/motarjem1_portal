@@ -27,6 +27,7 @@ class UserPanelController extends Controller
         $completedOrdersCount = User::get_orders_count_by_user_id($_SESSION['user_id'], ['is_done' => 1, 'is_accepted' => 1]);
         $unreadTicketsCount = Ticket::get_unread_tickets_count_by_user_id($_SESSION['user_id'],"1");
         $lastThreeTickets = Ticket::get_tickets_by_user_id($_SESSION['user_id'],"1", 1, 3);
+        
         $this->view->render($res, "admin/user/dashboard.twig", ['orders' => $userOrders, 'completedOrdersCount' => $completedOrdersCount, 'workingOrdersCount' => $workingOrdersCount, 'unreadTicketsCount' => $unreadTicketsCount, 'lastTickets' => $lastThreeTickets]);
     }
     //get translator info and send that as json
@@ -114,8 +115,26 @@ class UserPanelController extends Controller
     {
         Ticket::set_as_read($args['ticket_number']);
         $ticketDetails = Ticket::get_details_by_ticket_number($args['ticket_number']);
+        if(!$ticketDetails){
+            return var_dump("تیکت موجود نمی باشد");
+        }
+        if($ticketDetails['creator_id']!=$_SESSION['user_id']){
+            return var_dump("شما اجازه دسترسی به این تیکت را ندارید");
+        }
         $ticketMessages=Ticket::get_ticket_messages_by_ticket_number($args['ticket_number']);
-        return $this->view->render($res, "admin/user/view-ticket.twig", ['ticket_details' => $ticketDetails,'ticket_messages'=>$ticketMessages]);
+        $lastTicketId=$ticketMessages[0]['ticket_id'];        
+        return $this->view->render($res, "admin/user/view-ticket.twig", ['ticket_details' => $ticketDetails,'ticket_messages'=>$ticketMessages,"last_ticket_id"=>$lastTicketId]);
+    }
+    public function get_ticket_details_json($req, $res, $args)
+    {
+        Ticket::set_as_read($args['ticket_number']);
+        $ticketDetails = Ticket::get_details_by_ticket_number($args['ticket_number']);
+        if($ticketDetails['creator_id']!=$_SESSION['user_id']){
+            return $res->withJson(['status'=>false,'message'=>"شما اجازه دسترسی به این تیکت را ندارید"]);
+        }
+        $ticketMessages=Ticket::get_ticket_messages_by_ticket_number($args['ticket_number']);
+        return $res->withJson(['status'=>true,'tickets'=>$ticketMessages]);
+        
     }
     public function get_tickets_page($req, $res, $args)
     {
@@ -152,12 +171,13 @@ class UserPanelController extends Controller
     }
 
     //this function gets reply message data that user sends and return a json respose if it all goes well
-    public function post_reply_message($req, $res, $args)
+    public function post_reply_ticket($req, $res, $args)
     {
-
-        $result = \App\Models\Message::create_reply($_SESSION['user_id'], $req->getParsedBody());
+        $ticketData=$req->getParsedBody();
+        $ticketData['parent_ticket_id']=$args['ticket_id'];
+        $result = Ticket::create_reply($_SESSION['user_id'], $ticketData);
         return $res->withJson([
-            'status' => $result,
+            'status' => $result
         ]);
     }
     public function edit_profile_page($req, $res, $args)

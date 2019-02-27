@@ -1,60 +1,21 @@
 {% extends 'admin/layout/user.twig' %}
 {% block style_below %}
-    <link rel="stylesheet" href="/public/css/medium-editor.min.css"/>
-    <link rel="stylesheet" href="/public/css/medium-theme.min.css"/>
+    <link href="/public/css/medium-editor.min.css" rel="stylesheet"/>
+    <link href="/public/css/medium-theme.min.css" rel="stylesheet"/>
 {% endblock %}
 {% block content %}
-
-    <main class="main  view-message">
-        <div class="container-fluid">
-            {% for message in messages %}
-                {% if message.parent_msg_id == "0" %}
-                    <div class="card card-default is--message">
+    <main class="main  view-tickets">
+        <div class="container-fluid row">
+            <div class="col-md-8 chat-section">
+                {% if ticket_details.state == "answered" %}
+                    <div class="card answer-card">
                         <div class="card-header">
-                        {% else %}
-                            <div class="card  is--answer mt-4">
-                                <div class="card-header bg-primary">
-                                {% endif %}
-                                <div class="card-header__title">
-                                    <i class="icon-user"></i>
-                                    {% if message.sender_id == "0" %}
-                                        <p>ادمین سایت
-                                        </p>
-                                    {% else %}
-                                        <p>{{user.fname ~ " " ~ user.lname}}
-                                            (کاربر)</p>
-                                    {% endif %}
-
-                                </div>
-                                <div class="card-header__date">{{message.update_date_persian}}</div>
-                            </div>
-                            <div class="card-body">
-                                <h4 class="msg-title">{{message.subject}}</h4>
-                                <div class="msg-body">
-                                    {{message.body | raw}}
-                                </div>
-                                {% if message.parent_msg_id != "0" %}
-                                    <div class="msg-action">
-                                        <button class="btn btn-primary" onclick="showReplyModal('1')">پاسخ به این پیام</button>
-                                    </div>
-                                {% endif %}
-
-                            </div>
+                            <i class="icon-note"></i>
+                            پاسخ
                         </div>
-                    {% endfor %}
-                </main>
-
-                <!-- Modal -->
-                <div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-                    <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="replyModalLabel">پاسخ به پیام</h5>
-                            </div>
-                            <div class="modal-body">
-
-                                <form action="/user/message/reply" id="replyMessageForm" method="POST">
-                                    <input type="hidden" name="msg_id" id="msg_id">
+                        <div class="card-body">
+                            <form action="/user/ticket/reply/{{last_ticket_id}}" id="replyMessageForm" method="POST">
+                                <input type="hidden" name="ticket_number" value="{{ticket_details.ticket_number}}">
                                     <div class="row">
                                         <div class="form-group col-md-3">
                                             <label for="">نام شما</label>
@@ -66,66 +27,149 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label for="">عنوان پیام</label>
-                                            <input class="form-control" type="text" id="subject" name="subject"/>
+                                            <input class="form-control" id="subject" name="subject" type="text"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="">پیام شما</label>
-                                        <textarea name="body" id="medium-editor" cols="30" rows="10"></textarea>
+                                        <textarea cols="30" id="medium-editor" name="body" rows="10"></textarea>
                                     </div>
-                                    <button type="button" class="btn btn-primary" id="reply-message-btn">ارسال پاسخ</button>
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal">انصراف</button>
-                                </form>
-
+                                    <input class="btn btn-primary" type="submit" value="ارسال پاسخ"></form>
+                                </div>
                             </div>
-
-                        </div>
-                    </div>
-                </div>
-
-            {% endblock %}
-            {% block script_below %}
-                <script src="/public/js/panel/medium-editor.min.js"></script>
-                <script src="/public/js/sweetalert2@8.js"></script>
-                <script>
-                    let editor = new MediumEditor('#medium-editor', {
-                        elementsContainer: document.getElementById('replyModal') // use your modal element here
-                    });
-                    function showReplyModal(msgId) {
-                        document.getElementById("msg_id").value = msgId;
-                        $("#replyModal").modal("show");
-                    }
-
-                    //send message with ajax request
-                    $("#reply-message-btn").click(function (e) {
-                        let subject = $("#subject").val();
-                        let body = $("#medium-editor").val();
-                        let msgId=$("#msg_id").val();
-                        if (subject == "") {
-                            alert("باید حداقل یک عنوان وارد نمایید!");
-                            return;
-                        }
-                        if (body == "") {
-                            alert("باید متن پیام تان را وارد نمایید !");
-                            return;
-                        }
-
-                        $.ajax({
-                            type: "POST",
-                            url: $("#replyMessageForm").attr("action"),
-                            data: {
-                                subject: subject,
-                                body: body,
-                                msg_id:msgId
-                            },
-                            success: function (data, status) {
-                                console.log(data);
-                                if (status && data.status) {
-                                    $("#replyModal").modal("hide");
-                                    Swal.fire('موفقیت آمیز !', 'پیام شما با موفقیت ارسال شد !', 'success')
+                            {% else %}
+                            {% if ticket_messages | length > 1 %}
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="text-center">برای پیام قبلی شما هنوز پاسخی ارسال نشده است !</h5>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="text-center">تا حالا پاسخی برای این تیکت داده نشده است !</h5>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        {% for ticket in ticket_messages %}
+                            {% if ticket.sender_id == "0" %}
+                                <div class="card card-default ticket is--answer">
+                                    <div class="card-header">
+                                        {% else %}
+                                        <div class="card ticket  is--message mt-4">
+                                            <div class="card-header bg-primary">
+                                            {% endif %}
+                                            <div class="card-header__title">
+                                                <i class="icon-user"></i>
+                                                {% if ticket.sender_id == "0" %}
+                                                    <p>ادمین سایت
+                                                    </p>
+                                                    {% else %}
+                                                    <p>
+                                                        {{user.fname ~ " " ~ user.lname}}
+                                                        (کاربر)</p>
+                                                {% endif %}
+                                            </div>
+                                            <div class="card-header__date">
+                                                {{ticket.sent_date_persian}}</div>
+                                        </div>
+                                        <div class="card-body">
+                                            <h4 class="msg-title">
+                                                {{ticket.subject}}</h4>
+                                            <div class="msg-body">
+                                                {{ticket.body | raw}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card card-default">
+                                    <div class="card-header">
+                                        مشخصات تیکت
+                                    </div>
+                                    <div class="card-body no-pad">
+                                        <ul class="list-group no-pad ticket-details">
+                                            <li class="list-group-item">
+                                                <div class="list-group-item__title">شماره تیکت:</div>
+                                                <div class="list-group-item__value">#{{ticket_details.ticket_number}}</div>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <div class="list-group-item__title">عنوان تیکت:</div>
+                                                <div class="list-group-item__value">{{ticket_details.subject}}</div>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <div class="list-group-item__title">وضعیت:</div>
+                                                <div class="list-group-item__value">{{ticket_details.state=="waiting" ? "در انتظار پاسخ" ? "پاسخ داده شده"}}</div>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <div class="list-group-item__title">تاریخ ایجاد تیکت:</div>
+                                                <div class="list-group-item__value">{{ticket_details.create_date_persian}}</div>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <div class="list-group-item__title">آخرین بروزرسانی:</div>
+                                                <div class="list-group-item__value">{{ticket_details.update_date_persian}}</div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </main>
+                    {% endblock %}
+                    {% block script_below %}
+                        <script src="/public/js/panel/medium-editor.min.js"></script>
+                        <script src="/public/js/sweetalert2@8.js"></script>
+                        <script>
+                            let editor = new MediumEditor('#medium-editor', {
+                                elementsContainer: document.getElementById('replyModal') // use your modal element here
+                            });
+                            // send message with ajax request
+                            $("#replyMessageForm").on("submit", function (e) {
+                                e.preventDefault();
+                                let subject = $("#subject").val();
+                                let body = $("#medium-editor").val();
+                                if (subject == "") {
+                                    alert("باید حداقل یک عنوان وارد نمایید!");
+                                    return;
                                 }
+                                if (body == "") {
+                                    alert("باید متن پیام تان را وارد نمایید !");
+                                    return;
+                                }
+                                $.ajax({
+                                    type: "POST",
+                                    url: $(this).attr("action"),
+                                    data: $(this).serialize(),
+                                    success: function (data, status) {
+                                        if (status && data.status) {
+                                            $("#replyModal").modal("hide");
+                                            Swal.fire('موفقیت آمیز !', 'پیام شما با موفقیت ارسال شد !', 'success')
+                                            $(".answer-card .card-body").toggleClass("show");
+                                            $.get(window.location.href + "/json", function (data) {
+                                                if (data.status) {
+                                                    renderTickets(data.tickets);
+                                                }
+                                            })
+                                        }
+                                    }
+                                })
+                            });
+                            $(".answer-card .card-header").on("click", function (e) {
+                                $(".answer-card .card-body").toggleClass("show");
+                            })
+                            function renderTickets(tickets) {
+                                let output = "<div class='card'><div class='card-body'><h5 class='text-center'>برای پیام قبلی شما هنوز پاسخی ارسال نشده است !</h5></div></div>";
+                                tickets.forEach(function (ticket) {
+                                    output += ticket.sender_id == "0" ? "<div class='card card-default ticket is--answer'><div class='card-header'>" : "<div class='card card-default ticket is--message'><div class='card-header bg-primary'>";
+                                    output += "<div class='card-header__title'><i class='icon-user'></i>";
+                                    output += ticket.sender_id == "0" ? "<p>ادمین سایت</p>" : "<p>" + $(".profile-avatar__text p").text() + "(کاربر)</p>";
+                                    output += "</div><div class='card-header__date'>" + ticket.sent_date_persian + "</div></div>";
+                                    output += "<div class='card-body'><h4 class='msg-title'>" + ticket.subject + "</h4>";
+                                    output += "<div class='msg-body'>" + ticket.body + "</div></div></div>";
+                                });
+                                $(".chat-section").html(output);
                             }
-                        })
-                    })
-                </script>
-            {% endblock %}
+                        </script>
+                    {% endblock %}
+                

@@ -35,23 +35,23 @@ class Ticket extends Model{
             }
             return $ticketNumber;
         }catch(\Exception $e){
-            \var_dump($e);
+            return false;
         }
     }
     public static function create_reply($userId,$msgData)
     {
         try{
             $persianDate=self::getCurrentDatePersian();
-            $msgData['parent_msg_id']=$msgData['msg_id'];
-            unset($msgData['msg_id']);
-            $msgData['create_date_persian']=$persianDate;
-            $msgData['update_date_persian']=$persianDate;
-            $msgData['user_type']=1;
-            $msgData['reciever_id']=0;
+            $msgData['sent_date_persian']=$persianDate;
             $msgData['sender_id']=$userId;
-            static::insert("messaging",$msgData);
+            static::update("Tickets",[
+                'update_date_persian'=>$persianDate,
+                'update_date'=>date("Y-m-d H:i:s"),
+                'state'=>'waiting'
+            ],"ticket_number='".$msgData['ticket_number']."'");
+            static::insert("Ticket_Messages",$msgData);
             return true;
-        }catch(\Exception $e){
+        }catch(\Exception $e){  
             return false;
         }
     }
@@ -119,6 +119,7 @@ class Ticket extends Model{
         try {
             $db = static::getDB();
             $sql = "SELECT COUNT(*) AS tickets_count FROM `Tickets` WHERE `creator_id`= '$userId' AND user_type='$userType' AND `is_read`= '0'";
+            $sql=$userType=="1" ? $sql." AND state = 'answered'":$sql;
             $result = $db->query($sql);
             return $result ? $result->fetch(PDO::FETCH_ASSOC)['tickets_count'] : false;
 
@@ -139,7 +140,7 @@ class Ticket extends Model{
     public static function get_ticket_messages_by_ticket_number($ticketNumber)
     {
         try{
-            return static::select("Ticket_Messages","*",['ticket_number'=>$ticketNumber]);
+            return static::select("Ticket_Messages","*",['ticket_number'=>$ticketNumber],false,"ORDER BY sent_date DESC");
         }catch(\Exception $e){
             return false;
         }
