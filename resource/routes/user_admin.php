@@ -35,7 +35,7 @@ $app->group('/user', function ($app) use ($container) {
     $app->get("/orders/json","App\Controllers\UserPanelController:get_user_orders_json");
     $app->get("/order/new","App\Controllers\UserPanelController:user_new_order_page")->add($container->get('csrf'));
     $app->post("/order/save","App\Controllers\UserPanelController:save_user_order_info")->add($container->get('csrf'));
-    $app->get("/order/view/{order_id}","App\Controllers\UserPanelController:get_order_details")->add($container->get('csrf'));
+    $app->get("/order/view/{order_number}","App\Controllers\UserPanelController:get_order_details")->add($container->get('csrf'));
     $app->get("/ticket/view/{ticket_number}","App\Controllers\UserPanelController:get_ticket_details");
     $app->get("/ticket/view/{ticket_number}/json","App\Controllers\UserPanelController:get_ticket_details_json");
     $app->get("/tickets","App\Controllers\UserPanelController:get_tickets_page");
@@ -45,5 +45,5 @@ $app->group('/user', function ($app) use ($container) {
     $app->get("/edit-profile","App\Controllers\UserPanelController:edit_profile_page")->add($container->get('csrf'));
     $app->post("/edit-profile","App\Controllers\UserPanelController:post_edit_profile")->add($container->get('csrf'));
     $app->post("/edit-profile/upload-avatar","App\Controllers\UserPanelController:upload_avatar");
-    $app->post('/order-payment/{order_id}', "App\Controllers\UserPanelController:order_payment")->add($container->get('csrf'));
+    $app->post('/order-payment/{order_number}', "App\Controllers\UserPanelController:order_payment")->add($container->get('csrf'));
 })->add($authMV);

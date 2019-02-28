@@ -97,20 +97,23 @@
                                             </li>
                                             <li class="list-group-item">
                                                 <div class="list-group-item__title">عنوان تیکت:</div>
-                                                <div class="list-group-item__value">{{ticket_details.subject}}</div>
+                                                <div class="list-group-item__value">
+                                                    {{ticket_details.subject}}</div>
                                             </li>
                                             <li class="list-group-item">
                                                 <div class="list-group-item__title">وضعیت:</div>
-                                
-                                                <div class="list-group-item__value" id="state">{{ticket_details.state=="waiting" ? "در انتظار پاسخ" : "پاسخ داده شده"}}</div>
+                                                <div class="list-group-item__value" id="state">
+                                                    {{ticket_details.state=="waiting" ? "در انتظار پاسخ" : "پاسخ داده شده"}}</div>
                                             </li>
                                             <li class="list-group-item">
                                                 <div class="list-group-item__title">تاریخ ایجاد تیکت:</div>
-                                                <div class="list-group-item__value">{{ticket_details.create_date_persian}}</div>
+                                                <div class="list-group-item__value">
+                                                    {{ticket_details.create_date_persian}}</div>
                                             </li>
                                             <li class="list-group-item">
                                                 <div class="list-group-item__title">آخرین بروزرسانی:</div>
-                                                <div class="list-group-item__value" id="updateDate">{{ticket_details.update_date_persian}}</div>
+                                                <div class="list-group-item__value" id="updateDate">
+                                                    {{ticket_details.update_date_persian}}</div>
                                             </li>
                                         </ul>
                                     </div>
@@ -124,3 +127,4 @@
                         <script src="/public/js/panel/view-ticket.js"></script>
                     {% endblock %}
                 
+            

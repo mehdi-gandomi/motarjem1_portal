@@ -256,7 +256,7 @@ class UserPanelController extends Controller
     //order payment for unpaid orders
     public function order_payment($req, $res, $args)
     {
-        $orderId = $args['order_id'];
+        $orderNumber = $args['order_number'];
         // $_SESSION['pending_order_id']=$orderId;
         $postFields = $req->getParsedBody();
         $this->payment_gateway = $postFields['gateway'];
@@ -265,7 +265,7 @@ class UserPanelController extends Controller
         }
         switch ($this->payment_gateway) {
             case "zarinpal":
-                $result = $this->zarinpal_payment($orderId, $this->payment_gateway);
+                $result = $this->zarinpal_payment($orderNumber, $this->payment_gateway);
                 if ($result->Status == 100) {
                     $this->view->render($res, "website/redirect-page.twig", ['redirect_url' => "https://www.zarinpal.com/pg/StartPay/" . $result->Authority, 'message' => "در حال هدایت به درگاه زرین پال", "message_below" => "لطفا صبر کنید ..."]);
                 } else {
@@ -273,7 +273,7 @@ class UserPanelController extends Controller
                 }
                 break;
             case "mellat":
-                $result = $this->mellat_payment($orderId, $this->payment_gateway);
+                $result = $this->mellat_payment($orderNumber, $this->payment_gateway);
                 break;
         }
     }
@@ -286,12 +286,9 @@ class UserPanelController extends Controller
         // creating a new order
         $orderData = \App\Models\Order::new ($postInfo);
         $priceInfo = $orderData['priceInfo'];
-        $orderId = $orderData['orderId'];
+        $orderNumber = $orderData['orderNumber'];
         //creating order logs
-        $logResult = \App\Models\Order::new_order_log([
-            'order_id' => $orderId,
-            'order_step' => 1,
-        ]);
+        $logResult = \App\Models\Order::new_order_log($orderNumber);
         if ($orderId && $logResult) {
             $tokenArray = $this->get_csrf_token($req);
             $data = array(
@@ -310,26 +307,26 @@ class UserPanelController extends Controller
     }
 
     // START payment functions for unpaid order
-    protected function mellat_payment($orderId, $gateway)
+    protected function mellat_payment($orderNumber, $gateway)
     {
-        $orderData = \App\Models\Order::by_id($orderId);
+        $orderData = \App\Models\Order::by_number($orderNumber);
         $payment = new Payment();
         $payment->set_gateway($gateway);
         $orderPriceRial = \intval($orderData['order_price']) * 10;
         $payment->set_info(array(
             'order_id' => $orderId,
             'price' => $orderPriceRial,
-            'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['order_id'],
+            'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['order_number'],
         ));
         return $payment->pay();
     }
-    protected function zarinpal_payment($orderId, $gateway)
+    protected function zarinpal_payment($orderNumber, $gateway)
     {
-        $orderData = \App\Models\Order::by_id($orderId);
+        $orderData = \App\Models\Order::by_number($orderNumber);
         $payment = new Payment();
         $payment->set_gateway($gateway);
         $payment->set_info(array(
-            'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['order_id'],
+            'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['order_number'],
             'price' => $orderData['order_price'],
             'description' => 'خرید از وبسایت مترجم وان',
         ));

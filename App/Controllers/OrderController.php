@@ -32,53 +32,14 @@ class OrderController extends Controller
             ),
 
         ),
-        'field_types' => array(
-            "0" => "انتخاب کنید",
-            "90" => "ادبیات و زبان شناسی",
-            "89" => "اسناد تجاری",
-            "88" => "اقتصاد",
-            "86" => "برق و الکترونیک",
-            "91" => "تاریخ",
-            "41" => "ترجمه کاتالوگ",
-            "76" => "جغرافیا",
-            "75" => "حسابداری",
-            "74" => "حقوق",
-            "70" => "روان شناسی",
-            "71" => "ریاضی",
-            "72" => "زمین شناسی و معدن",
-            "43" => "زیرنویس فیلم",
-            "73" => "زیست شناسی",
-            "67" => "شیمی",
-            "68" => "صنایع",
-            "69" => "صنایع غذایی",
-            "62" => "علوم اجتماعی",
-            "63" => "علوم سیاسی",
-            "64" => "عمران",
-            "61" => "عمومی",
-            "44" => "فایل صوتی تصویری",
-            "57" => "فقه و علوم اسلامی",
-            "58" => "فلسفه",
-            "59" => "فناوری اطلاعات",
-            "60" => "فیزیک",
-            "50" => "متالورژی و مواد",
-            "51" => "محیط زیست",
-            "49" => "مدیریت",
-            "54" => "منابع طبیعی و شیلات",
-            "53" => "مکانیک",
-            "47" => "نفت،گاز و پتروشیمی",
-            "92" => "هنر و معماری",
-            "46" => "ورزش و تربیت بدنی",
-            "85" => "پزشکی",
-            "93" => "ژنتیک و میکروبیولوژی",
-            "55" => "کامپیوتر",
-            "56" => "کشاورزی",
-        ),
+        
     );
     private $gateways = ['mellat', 'zarinpal'];
     private $payment;
     private $payment_gateway;
     public function get($req, $res, $args)
     {
+        $this->combos['field_types']=Order::get_study_fields();
         $getParams = $req->getQueryParams();
         $tokenArray = $this->get_csrf_token($req);
         $data = array_merge($this->combos, $tokenArray);
@@ -121,13 +82,10 @@ class OrderController extends Controller
         // creating a new order
         $orderData = Order::new ($postInfo);
         $priceInfo = $orderData['priceInfo'];
-        $orderId = $orderData['orderId'];
+        $orderNumber = $orderData['orderNumber'];
         //creating order logs
-        $logResult = Order::new_order_log([
-            'order_id' => $orderId,
-            'order_step' => 1,
-        ]);
-        if ($orderId && $logResult) {
+        $logResult = Order::new_order_log($orderNumber);
+        if ($orderNumber && $logResult) {
             $tokenArray = $this->get_csrf_token($req);
             $data = array(
                 'success' => true,
@@ -136,7 +94,7 @@ class OrderController extends Controller
                 'page_number' => $priceInfo['pageNumber'],
                 'duration' => $priceInfo['duration'],
                 'final_price' => $priceInfo['price'],
-                'order_id' => $orderId,
+                'order_id' => $orderNumber,
                 'page_title' => "پرداخت سفارش",
             );
             $data = \array_merge($data, $tokenArray);
@@ -147,7 +105,7 @@ class OrderController extends Controller
 
     public function order_payment($req, $res, $args)
     {
-        $orderId = $args['order_id'];
+        $orderNumber = $args['order_number'];
         // $_SESSION['pending_order_id']=$orderId;
         $postFields = $req->getParsedBody();
         $this->payment_gateway = $postFields['gateway'];
@@ -156,7 +114,7 @@ class OrderController extends Controller
         }
         switch ($this->payment_gateway) {
             case "zarinpal":
-                $result = $this->zarinpal_payment($orderId, $this->payment_gateway);
+                $result = $this->zarinpal_payment($orderNumber, $this->payment_gateway);
                 if ($result->Status == 100) {
                     $this->view->render($res, "website/redirect-page.twig", ['redirect_url' => "https://www.zarinpal.com/pg/StartPay/" . $result->Authority, 'message' => "در حال هدایت به درگاه زرین پال", "message_below" => "لطفا صبر کنید ..."]);
                 } else {
@@ -164,31 +122,31 @@ class OrderController extends Controller
                 }
                 break;
             case "mellat":
-                $result = $this->mellat_payment($orderId, $this->payment_gateway);
+                $result = $this->mellat_payment($orderNumber, $this->payment_gateway);
                 break;
         }
 
     }
-    protected function mellat_payment($orderId, $gateway)
+    protected function mellat_payment($orderNumber, $gateway)
     {
-        $orderData = Order::by_id($orderId);
+        $orderData = Order::by_number($orderNumber);
         $payment = new Payment();
         $payment->set_gateway($gateway);
         $orderPriceRial = \intval($orderData['order_price']) * 10;
         $payment->set_info(array(
-            'order_id' => $orderId,
+            'order_id' => $orderNumber,
             'price' => $orderPriceRial,
-            'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['order_id'],
+            'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['order_number'],
         ));
         $result = $payment->pay();
     }
-    protected function zarinpal_payment($orderId, $gateway)
+    protected function zarinpal_payment($orderNumber, $gateway)
     {
-        $orderData = Order::by_id($orderId);
+        $orderData = Order::by_number($orderNumber);
         $payment = new Payment();
         $payment->set_gateway($gateway);
         $payment->set_info(array(
-            'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['order_id'],
+            'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['order_number'],
             'price' => $orderData['order_price'],
             'description' => 'خرید از وبسایت مترجم وان',
         ));
@@ -202,8 +160,8 @@ class OrderController extends Controller
         if ($queryParams['Status'] == "NOK") {
             return $this->view->render($res, "website/order-successful.twig", ['status' => false, 'refId' => "دریافت نشد!", "page_title" => "خطا در پرداخت", 'error' => "پرداخت انجام نشد", "latestPosts" => $_SESSION["latestPosts"]]);
         }
-        $orderId = $args['order_id'];
-        $orderData = Order::by_id($orderId, false, true);
+        $orderNumber = $args['order_number'];
+        $orderData = Order::by_number($orderNumber, false, true);
         $payment = new Payment();
         $payment->set_info(['price' => $orderData['order_price']]);
         $result = $payment->validate($queryParams['Authority']);
@@ -212,7 +170,7 @@ class OrderController extends Controller
             $updateResult = Order::update_order_log(array(
                 'transaction_code' => $refId,
                 'order_step' => 2,
-            ), $orderId);
+            ), $orderNumber);
             // if (!$updateResult) {
             //     return $this->view->render($res, "order-successful.twig", ['status' => false]);
             // }
@@ -220,7 +178,7 @@ class OrderController extends Controller
             $data = array(
                 'contact_phone' => '٠٩٣٠٩٥٨٩١٢٢',
                 'contact_email' => 'Motarjem1@yahoo.com',
-                'order_id' => $orderId,
+                'order_id' => $orderNumber,
                 'refId' => $refId,
                 'words' => $orderData['word_numbers'],
                 'page_number' => \ceil($orderData['word_numbers'] / 250),
@@ -244,8 +202,8 @@ class OrderController extends Controller
     }
     public function payment_result_mellat($req, $res, $args)
     {
-        $orderId = $args['order_id'];
-        $orderData = Order::by_id($orderId, false, true);
+        $orderNumber = $args['order_number'];
+        $orderData = Order::by_number($orderNumber, false, true);
         $payment = new Payment("mellat");
         $paymentResult = $payment->validate($_POST);
         $refId = $_POST['RefId'];
@@ -259,7 +217,7 @@ class OrderController extends Controller
             $data = array(
                 'contact_phone' => '٠٩٣٠٩٥٨٩١٢٢',
                 'contact_email' => 'Motarjem1@yahoo.com',
-                'order_id' => $orderId,
+                'order_id' => $orderNumber,
                 'refId' => $refId,
                 'words' => $orderData['word_numbers'],
                 'page_number' => \ceil($orderData['word_numbers'] / 250),
@@ -291,6 +249,7 @@ class OrderController extends Controller
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return false;
         }
+        $orderNumber=$orderData['order_number'];
         $subject = "مترجم وان / رسید سفارش";
         $quality = $orderData['translation_quality'] == 5 ? "نقره ای" : "طلایی";
         $word_numbers = $orderData['word_numbers'];
@@ -366,6 +325,7 @@ class OrderController extends Controller
                               <table class='order'>
                                 <thead>
                                   <tr>
+                                    <th>شماره سفارش</th>
                                     <th>شماره پیگیری</th>
                                     <th>کیفیت <span class='il'>سفارش</span></th>
                                     <th>تعداد کلمات</th>
@@ -381,6 +341,7 @@ class OrderController extends Controller
                                 </thead>
                                 <tbody>
                                   <tr>
+                                    <td>$orderNumber</td>
                                     <td>$refId</td>
                                     <td>$quality</td>
                                     <td>$word_numbers</td>
