@@ -195,9 +195,10 @@ class Order extends Model
     public static function request_order($translatorId, $orderNumber)
     {
         try {
+            $orderData=static::select("orders","order_id",['order_number'=>$orderNumber],true);            
             static::insert("translator_order_request", [
                 'translator_id' => $translatorId,
-                'order_number' => $orderNumber,
+                'order_id' => $orderData['order_id'],
                 'state' => 1,
             ]);
             return true;
@@ -208,9 +209,10 @@ class Order extends Model
     public static function deny_order($translatorId, $orderNumber)
     {
         try {
+            $orderData=static::select("orders","order_id",['order_number'=>$orderNumber],true);
             static::insert("translator_order_request", [
                 'translator_id' => $translatorId,
-                'order_number' => $orderNumber,
+                'order_id' => $orderData['order_id'],
                 'state' => 0,
             ]);
             return true;
