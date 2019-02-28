@@ -191,12 +191,12 @@ class Order extends Model
         }
     }
 
-    public static function request_order($translatorId, $orderId)
+    public static function request_order($translatorId, $orderNumber)
     {
         try {
             static::insert("translator_order_request", [
                 'translator_id' => $translatorId,
-                'order_id' => $orderId,
+                'order_number' => $orderNumber,
                 'state' => 1,
             ]);
             return true;
@@ -204,12 +204,12 @@ class Order extends Model
             return false;
         }
     }
-    public static function deny_order($translatorId, $orderId)
+    public static function deny_order($translatorId, $orderNumber)
     {
         try {
             static::insert("translator_order_request", [
                 'translator_id' => $translatorId,
-                'order_id' => $orderId,
+                'order_number' => $orderNumber,
                 'state' => 0,
             ]);
             return true;

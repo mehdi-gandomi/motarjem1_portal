@@ -79,8 +79,8 @@ function getOrders(baseUrl,qsObject){
 
 
 
-function showOrderInfo(orderId){
-  $.get("/translator/order/info/"+orderId,function(data,status){
+function showOrderInfo(orderNumber){
+  $.get("/translator/order/info/"+orderNumber,function(data,status){
       let output="<div class='order-details row'>";
       let translationLang=data.translation_lang=="1" ? "انگلیسی به فارسی":"فارسی به انگلیسی";
       let translationQuality=data.translation_quality == "5" ? "نقره ای":"طلایی";
@@ -93,7 +93,7 @@ function showOrderInfo(orderId){
       }else{
           deliveryType="فوری";
       }
-      output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>شماره سفارش</div><div class='order-details__detail__value'>"+data.order_id+"</div></div>";
+      output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>شماره سفارش</div><div class='order-details__detail__value'>"+data.order_number+"</div></div>";
       output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>تعداد صفحات</div><div class='order-details__detail__value'>"+Math.ceil(data.word_numbers/250)+"</div></div>";
       output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>زبان ترجمه</div><div class='order-details__detail__value'>"+translationLang+"</div></div>";
       output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>کیفیت ترجمه</div><div class='order-details__detail__value'>"+translationQuality+"</div></div>";
@@ -140,7 +140,7 @@ function showOrderInfo(orderId){
   //   })
 }
 //accept order process
-function acceptOrder(orderId,translatorId){
+function acceptOrder(orderNumber,translatorId){
     
     Swal.fire({
         title: 'آیا مطمینید ؟',
@@ -157,7 +157,7 @@ function acceptOrder(orderId,translatorId){
                 type:"POST",
                 url:"/translator/order/request",
                 data:{
-                    order_id:orderId,
+                    order_number:orderNumber,
                     translator_id:translatorId
                 },
                 success:function(data,status){
@@ -193,7 +193,7 @@ function acceptOrder(orderId,translatorId){
     
 }
 
-function declineOrder(orderId,translatorId){
+function declineOrder(orderNumber,translatorId){
     Swal.fire({
         title: 'آیا مطمینید ؟',
         text: "آیا می خواهید این ترجمه را رد کنید ؟",
@@ -209,7 +209,7 @@ function declineOrder(orderId,translatorId){
                 type:"POST",
                 url:"/translator/order/decline",
                 data:{
-                    order_id:orderId,
+                    order_number:orderNumber,
                     translator_id:translatorId
                 },
                 success:function(data,status){
@@ -254,7 +254,7 @@ function renderOrders(orders,translatorId,choice){
         let translationLang=orders[index].translation_lang == "1"? "انگلیسی به فارسی": "فارسی به انگلیسی";
         let translationQuality=orders[index].translation_quality == "5" ? "نقره ای" : "طلایی";
         output+="<tr>";
-            output+="<td data-label='شماره سفارش'>"+orders[index].order_id+"</td>";
+            output+="<td data-label='شماره سفارش'>"+orders[index].order_number+"</td>";
             output+="<td data-label='تعداد صفحات'>"+Math.ceil(orders[index].word_numbers / 250)+"</td>";
             output+="<td data-label='زبان ترجمه'>"+translationLang+"</td>";
             output+="<td data-label='رشته'>"+orders[index].study_field+"</td>";
@@ -263,13 +263,13 @@ function renderOrders(orders,translatorId,choice){
             output+="<td data-label='سهم شما'>"+Math.ceil((orders[index].order_price*70)/100)+"</td>";
             output+="<td data-label='عملیات' class='order-actions'>";
             if(choice=="new"){
-                output+="<button onclick='showOrderInfo(\""+orders[index].order_id+"\")' class='expand-button order-action is--primary is--medium'><span data-hover='جزییات سفارش'><i class='icon-info'></i></span></button>";
-                output+="<button onclick='acceptOrder(\""+orders[index].order_id+"\",\""+translatorId+"\")' class='expand-button order-action is--success is--large'><span data-hover='درخواست انجام سفارش'><i class='icon-check'></i></span></button>";
-                output+="<button onclick='declineOrder(\""+orders[index].order_id+"\",\""+translatorId+"\")' class='expand-button order-action is--danger'><span data-hover='رد سفارش'><i class='icon-check'></i></span></button>";
+                output+="<button onclick='showOrderInfo(\""+orders[index].order_number+"\")' class='expand-button order-action is--primary is--medium'><span data-hover='جزییات سفارش'><i class='icon-info'></i></span></button>";
+                output+="<button onclick='acceptOrder(\""+orders[index].order_number+"\",\""+translatorId+"\")' class='expand-button order-action is--success is--large'><span data-hover='درخواست انجام سفارش'><i class='icon-check'></i></span></button>";
+                output+="<button onclick='declineOrder(\""+orders[index].order_number+"\",\""+translatorId+"\")' class='expand-button order-action is--danger'><span data-hover='رد سفارش'><i class='icon-check'></i></span></button>";
             }else if (choice=="requested") {
-                output+="<button onclick='showOrderInfo(\""+orders[index].order_id+"\")' class='btn btn-primary'><i class='icon-info' style='margin-left:0.5rem'></i><span>جزییات سفارش</span></button>";
+                output+="<button onclick='showOrderInfo(\""+orders[index].order_number+"\")' class='btn btn-primary'><i class='icon-info' style='margin-left:0.5rem'></i><span>جزییات سفارش</span></button>";
             }else{
-                output+="<button onclick='showOrderInfo(\""+orders[index].order_id+"\")' class='btn btn-primary'><i class='icon-info' style='margin-left:0.5rem'></i><span>جزییات سفارش</span></button>";
+                output+="<button onclick='showOrderInfo(\""+orders[index].order_number+"\")' class='btn btn-primary'><i class='icon-info' style='margin-left:0.5rem'></i><span>جزییات سفارش</span></button>";
             }
             output+="</td>";
         output+="</tr>";

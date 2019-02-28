@@ -47,15 +47,15 @@ class TranslatorPanelController extends Controller
     }
     public function get_order_info($req, $res, $args)
     {
-        $orderId = $args['order_id'];
-        $orderData = Order::by_id($orderId, false, true);
+        $orderNumber = $args['order_number'];
+        $orderData = Order::by_number($orderNumber, false, true);
         return $res->withJson($orderData);
     }
     //requesting to do the translation by translator
     public function request_order($req, $res, $args)
     {
         $body = $req->getParsedBody();
-        if (Order::request_order($body['translator_id'], $body['order_id'])) {
+        if (Order::request_order($body['translator_id'], $body['order_number'])) {
             return $res->withJson(['status' => true]);
         }
         return $res->withJson(['status' => false]);
@@ -65,7 +65,7 @@ class TranslatorPanelController extends Controller
     public function decline_order($req, $res, $args)
     {
         $body = $req->getParsedBody();
-        if (Order::deny_order($body['translator_id'], $body['order_id'])) {
+        if (Order::deny_order($body['translator_id'], $body['order_number'])) {
             return $res->withJson(['status' => true]);
         }
         return $res->withJson(['status' => false]);

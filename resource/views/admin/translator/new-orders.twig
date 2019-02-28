@@ -74,7 +74,7 @@
                         <tbody id="newOrdersWrap">
                             {% for order in new_orders %}
                                 <tr>
-                                    <td data-label="شماره سفارش">{{ order.order_id }}</td>
+                                    <td data-label="شماره سفارش">{{ order.order_number }}</td>
                                     <td data-label="تعداد صفحات">
                                         {{order.word_numbers / 250 | round(0,'ceil') }}
                                     </td>
@@ -100,23 +100,23 @@
                                     </td>
                                     <td data-label="عملیات" class="order-actions">
                                         {% if choice == "new" %}
-                                            <button onclick="showOrderInfo('{{ order.order_id }}')" class="expand-button order-action is--primary is--medium">
+                                            <button onclick="showOrderInfo('{{ order.order_number }}')" class="expand-button order-action is--primary is--medium">
                                                 <span data-hover="جزییات سفارش">
                                                     <i class="icon-info"></i>
                                                 </span>
                                             </button>
-                                            <button onclick="acceptOrder('{{ order.order_id }}','{{user.user_id}}')" class="expand-button order-action is--success is--large">
+                                            <button onclick="acceptOrder('{{ order.order_number }}','{{user.user_id}}')" class="expand-button order-action is--success is--large">
                                                 <span data-hover="درخواست انجام سفارش">
                                                     <i class="icon-check"></i>
                                                 </span>
                                             </button>
-                                        <button onclick="declineOrder('{{ order.order_id }}','{{user.user_id}}')" class="expand-button order-action is--danger">
+                                        <button onclick="declineOrder('{{ order.order_number }}','{{user.user_id}}')" class="expand-button order-action is--danger">
                                                 <span data-hover="رد سفارش">
                                                     <i class="icon-close"></i>
                                                 </span>
                                             </button>
                                         {% else %}
-                                            <button onclick="showOrderInfo('{{ order.order_id }}')" class="btn btn-primary order-action">
+                                            <button onclick="showOrderInfo('{{ order.order_number }}')" class="btn btn-primary order-action">
                                                 <i class="icon-info" style="margin-left:0.5rem"></i>
                                                 <span>جزییات سفارش</span>
                                             </button>
