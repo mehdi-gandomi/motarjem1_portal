@@ -16,7 +16,7 @@ class TranslatorPanelController extends Controller
             $data['lastMessages'] = Translator::get_messages_by_id($_SESSION['user_id'], 1, 3);
             $data['unread_messages_count'] = Translator::get_unread_messages_count_by_user_id($_SESSION['user_id']);
             $data['translator_orders_count'] = Order::get_orders_count_by_user_id($_SESSION['user_id']);
-            $data['translator_revenue'] = \Core\Model::select("translator_account", "account_credit", ['translator_id' => $_SESSION['user_id']], true)['account_credit'];
+            $data['translator_revenue'] = number_format(\Core\Model::select("translator_account", "account_credit", ['translator_id' => $_SESSION['user_id']], true)['account_credit']);
         } else {
             $data['study_fields'] = Order::get_study_fields();
         }
@@ -181,7 +181,15 @@ class TranslatorPanelController extends Controller
 
     public function get_account_report_page($req,$res,$args)
     {
-        return $this->view->render($res,"admin/translator/account-report.twig");
+        $orderPage=$req->getParam("order_page") ? $req->getParam("order_page"):1;
+        $checkoutPage=$req->getParam("checkout_page") ? $req->getParam("checkout_page"):1;
+
+        $accountInfo=Translator::get_account_info_by_user_id($_SESSION['user_id']);
+        $completedOrders=Translator::get_completed_orders_by_user_id($_SESSION['user_id'],$orderPage,10);
+        $checkouts=Translator::get_account_checkouts_by_user_id($_SESSION['user_id'],$checkoutPage,10);
+        $checkoutsCount=Translator::get_account_checkouts_count_by_user_id($_SESSION['user_id']);
+        $completedOrdersCount=Translator::get_completed_orders_count_by_user_id($_SESSION['user_id']);
+        return $this->view->render($res,"admin/translator/account-report.twig",['revenue'=>number_format($accountInfo['revenue']),'account_balance'=>number_format($accountInfo['account_credit']),'completed_orders'=>$completedOrders,'completed_orders_count'=>$completedOrdersCount,'completed_orders_current_page'=>$orderPage,'checkout_logs'=>$checkouts,'checkouts_count'=>$checkoutsCount,'checkouts_current_page'=>$checkoutPage]);
     }
 
     //format credit card

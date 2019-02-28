@@ -1,8 +1,9 @@
 <nav class="page-navigation" aria-label="Page navigation example">
     <ul class="pagination">
+        
         {% if count > offset %}
             {% set last_page = (count / 10) | round(0, 'ceil') %}
-
+            {% set pageQs=page_prefix ? page_prefix ~ "page":"page" %}
             {% if current_page != 1 %}
                 <li class="page-item">
                     <a class="page-link" href="{{base_path}}" aria-label="Previous">
@@ -10,7 +11,7 @@
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="{{base_path ~ '?page=' ~ (current_page - 1) }}" aria-label="Previous">
+                    <a class="page-link" href="{{base_path ~ "?" ~ pageQs ~ "=" ~ (current_page - 1) }}" aria-label="Previous">
                         قبلی
                     </a>
                 </li>
@@ -33,18 +34,18 @@
                 {% endif %}
 
                 <li class="{{ pagination_class }}">
-                    <a class="page-link" href="{{base_path ~ '?page=' ~ page_number }}">{{ page_number }}</a >
+                    <a class="page-link" href="{{base_path ~ '?' ~ pageQs ~ '=' ~ page_number }}">{{ page_number }}</a >
                 </li>
             {% endfor %}
             {% if current_page != last_page %}
 
                 <li class="page-item">
-                    <a class="page-link" href="{{base_path ~ '?page=' ~ (current_page + 1) }}" aria-label="Previous">
+                    <a class="page-link" href="{{base_path ~ '?' ~ pageQs ~ '=' ~ (current_page + 1) }}" aria-label="Previous">
                         بعدی
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="{{base_path ~ '?page=' ~ last_page }}" aria-label="Next">
+                    <a class="page-link" href="{{base_path ~ '?' ~ pageQs ~ '=' ~ last_page }}" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>

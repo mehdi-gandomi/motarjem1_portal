@@ -16328,6 +16328,10 @@ body {
   padding: 0 !important;
 }
 
+.bg-purple {
+  background: #ae58ff !important;
+}
+
 .avatar-upload {
   position: relative;
   max-width: 120px;
@@ -17619,5 +17623,40 @@ body {
 
 .ltr {
   direction: ltr;
+}
+
+.info-card.is--revenue .info-card__content {
+  background: #007da9 !important;
+  color: #fff !important;
+}
+
+.info-card.is--revenue .info-card__content__title {
+  color: #f0f0f0 !important;
+}
+
+.info-card.is--checkout .info-card__content {
+  background: #2d844b !important;
+  color: #fff !important;
+}
+
+.info-card.is--checkout .info-card__content__title {
+  color: #f0f0f0 !important;
+}
+
+.info-card.is--balance .info-card__content {
+  background: #782ebd !important;
+  color: #fff !important;
+}
+
+.info-card.is--balance .info-card__content__title {
+  color: #f0f0f0 !important;
+}
+
+.info-card.is--balance .info-card__content__link a {
+  color: #9bffbe !important;
+}
+
+.info-card.is--balance .info-card__content__link a:hover {
+  color: #1cff6b !important;
 }
 /*# sourceMappingURL=admin.css.map */

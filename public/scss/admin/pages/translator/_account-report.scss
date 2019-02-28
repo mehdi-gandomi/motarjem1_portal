@@ -1,0 +1,40 @@
+.info-card{
+ &.is--revenue{
+     .info-card__content{
+        background: #007da9 !important;
+        color:#fff !important;
+     }
+     .info-card__content__title{
+        color: #f0f0f0 !important;
+     }
+ }   
+ &.is--checkout{
+    
+    .info-card__content{
+        background: #2d844b !important;
+        color: #fff !important;
+     }
+     .info-card__content__title{
+        color: #f0f0f0 !important;
+     }
+ }
+ &.is--balance{
+    
+    .info-card__content{
+        background: #782ebd !important;
+        color: #fff !important;
+     }
+     .info-card__content__title{
+        color: #f0f0f0 !important;
+     }
+     .info-card__content__link{
+         a{
+             color: #9bffbe !important;
+            &:hover{
+                color:darken( #9bffbe,25) !important;
+            }
+         }
+     }
+ }
+ 
+}

@@ -2,53 +2,168 @@
 {% block content %}
     <main class="main" style="min-height:550px">
         <div class="card">
-            <div class="card-body">
-                <h4>گزارش حساب شما</h4>
+            <div class="card-body container">
+                <h4 class="text-center mt-3">گزارش حساب شما</h4>
+                <div class="info-cards ">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="info-card is--revenue">
+                                <div class="info-card__icon bg-primary">
+                                    <img src="/public/images/icon/income.svg" alt="revenue"/>
+                                </div>
+
+                                <div class="info-card__content">
+                                    <div class="info-card__content__title">
+                                        میزان درآمد شما تا کنون
+                                    </div>
+                                    <div class="info-card__content__value">
+                                        {{ revenue ? revenue : 0}}
+                                        <span class="f-1rem ml-2">تومان</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-card is--balance">
+                                <div class="info-card__icon bg-purple">
+                                    <img src="/public/images/icon/wallet.svg" alt=""/>
+                                </div>
+
+                                <div class="info-card__content">
+                                    <div class="info-card__content__title">میزان اعتبار حساب شما</div>
+                                    <div class="info-card__content__value">
+                                        {{ account_balance ? account_balance : 0 }}
+                                        <span class="f-1rem ml-1">تومان</span>
+                                    </div>
+                                    <div class="info-card__content__link">
+                                        <a href="/account/checkout">درخواست پرداخت وجه</a>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div  class="info-card is--checkout">
+                                <div class="info-card__icon bg-success">
+                                    <img src="/public/images/icon/atm.svg"  alt=""/>
+                                </div>
+
+                                <div class="info-card__content">
+                                    <div class="info-card__content__title">میزان برداشتی شما تا کنون</div>
+                                    <div class="info-card__content__value">
+                                        {{ total_checkout ? total_checkout : 0 }}
+                                        <span class="f-1rem">تومان</span>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <h4 class="text-center mt-5">پروژه های تکمیل شده توسط شما</h4>
                 <div class="row">
-                    <div class="col-md-9">
+                    <div class="col-12">
+                        <table id="orders-table" class="table is--responsive">
+                            <thead>
+                                <tr>
+                                    <th class="bg-teal-dark" scope="col">#</th>
+                                    <th class="bg-teal-dark" scope="col">زبان ترجمه</th>
+                                    <th class="bg-teal-dark" scope="col">کیفیت ترجمه</th>
+                                    <th class="bg-teal-dark" scope="col">هزینه ترجمه</th>
+                                    <th class="bg-teal-dark" scope="col">سهم شما</th>
+                                    <th class="bg-teal-dark" scope="col">جزییات</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody id="user-orders">
+                            {% if completed_orders %}
+                                    {% for order in completed_orders %}
+                                            {% set page_number = order.word_numbers / 250 | round(0,'ceil')  %}
+                                            <tr>
+                                                <td data-label="شماره سفارش">{{ order.order_number }}</td>
+                                                <td data-label="زبان ترجمه">
+                                                    {{
+                                order.translation_lang == "1"
+                                ? "انگلیسی به فارسی"
+                                : "فارسی به انگلیسی"
+                            }}
+                                                </td>
+                                                <td data-label="کیفیت ترجمه">
+                                                    {{ order.translation_quality == "5" ? "نقره ای" : "طلایی" }}
+                                                </td>
+
+                                                <td data-label="هزینه ترجمه">{{ order.order_price }}
+                                                    تومان</td>
+                                                <td data-label="سهم شما">{{ (order.order_price*70)/100 | round(0,'ceil') }}
+                                                <td data-label="جزییات" class="order-more-info">
+                                                    <a href="/user/order/view/{{ order.order_number }}">
+                                                        <svg width="13px" height="23px" viewbox="0 0 50 80" xml:space="preserve">
+                                                            <polyline fill="none" stroke="#a9a9a9" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "/></svg >
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                            {% else %}
+                                    <tr>
+                                        <td colspan="6"><h5 class="text-center">شما تاکنون پروژه ای را به اتمام نرسانده اید !</h5></td>
+                                    </tr>
+                            {% endif %}
+                            
+                            </tbody>
+                        </table>
+                        {% include 'admin/includes/pagination.twig' with {
+                            'count' : completed_orders_count,
+                            'page_prefix':'order_',
+                            'current_page' : completed_orders_current_page,
+                            'base_path' : '/translator/account-report',
+                            'offset' : 10,
+                            'visible_numbers' : 3
+                        } %}
+                    </div>
+                </div>
+                <h4 class="text-center mt-5">جدول برداشتی های شما</h4>
+                <div class="row">
+                    <div class="col-12">
                         <table id="orders-table" class="table is--responsive">
                         <thead>
                             <tr>
                                 <th class="bg-teal-dark" scope="col">#</th>
-                                <th class="bg-teal-dark" scope="col">زبان ترجمه</th>
-                                <th class="bg-teal-dark" scope="col">کیفیت ترجمه</th>
-                                <th class="bg-teal-dark" scope="col">هزینه ترجمه</th>
-                                <th class="bg-teal-dark" scope="col">سهم شما</th>
-                                <th class="bg-teal-dark" scope="col">جزییات</th>
-                                
+                                <th class="bg-teal-dark" scope="col">مبلغ پرداخت شده</th>
+                                <th class="bg-teal-dark" scope="col">تاریخ درخواست</th>
+                                <th class="bg-teal-dark" scope="col">تاریخ واریز</th>
+                                <th class="bg-teal-dark" scope="col">شماره پیگیری</th>
                             </tr>
                         </thead>
                         <tbody id="user-orders">
-                            {% for order in completed_orders %}
-                                {% set page_number = order.word_numbers / 250 | round(0,'ceil')  %}
+                            {% if checkout_logs %}
+                                {% for log in checkout_logs %}
+                                    
+                                    <tr>
+                                        <td data-label="ردیف">{{ log.id }}</td>
+                                        <td data-label="مبلغ پرداخت شده">{{ log.amount }}</td>
+                                        <td data-label="تاریخ درخواست">{{ log.request_date_persian }}</td>
+                                        <td data-label="تاریخ واریز">{{ log.settle_date_persian }}</td>
+                                        <td data-label="شماره پیگیری">{{ log.refer_code }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
                                 <tr>
-                                    <td data-label="شماره سفارش">{{ order.order_number }}</td>
-                                    <td data-label="زبان ترجمه">
-                                        {{
-                    order.translation_lang == "1"
-                      ? "انگلیسی به فارسی"
-                      : "فارسی به انگلیسی"
-                  }}
-                                    </td>
-                                    <td data-label="کیفیت ترجمه">
-                                        {{ order.translation_quality == "5" ? "نقره ای" : "طلایی" }}
-                                    </td>
-
-                                    <td data-label="هزینه ترجمه">{{ order.order_price }}
-                                        تومان</td>
-                                    <td data-label="سهم شما">{{ (order.order_price*70)/100 | round(0,'ceil') }}
-                                    <td data-label="جزییات" class="order-more-info">
-                                        <a href="/user/order/view/{{ order.order_number }}">
-                                            <svg width="13px" height="23px" viewbox="0 0 50 80" xml:space="preserve">
-                                                <polyline fill="none" stroke="#a9a9a9" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "/></svg >
-                                        </a>
-                                    </td>
+                                    <td colspan="5"><h5 class="text-center">تاکنون برداشتی از حسابتان نداشته اید !</h5></td>
                                 </tr>
-                            {% endfor %}
+                            {% endif %}
+                            
                         </tbody>
                     </table>
+                    {% include 'admin/includes/pagination.twig' with {
+                            'count' : checkouts_count,
+                            'page_prefix':'checkout_',
+                            'current_page' : checkouts_current_page,
+                            'base_path' : '/translator/account-report',
+                            'offset' : 10,
+                            'visible_numbers' : 3
+                        } %}
                     </div>
-                    <div class="col-md-3"></div>
                 </div>
             </div>
         </div>
