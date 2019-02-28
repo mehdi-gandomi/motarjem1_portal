@@ -7,7 +7,7 @@ use PDO;
 class Order extends Model
 {
 
-    function new ($postInfo) {
+    public static function new ($postInfo) {
         try {
             unset($postInfo['csrf_value']);
             unset($postInfo['csrf_name']);
@@ -55,6 +55,7 @@ class Order extends Model
             return false;
         }
     }
+
     public static function by_number($number, $with_translator_data = false, $with_orderer_data = false, $ordererId = false)
     {
         try {
@@ -81,10 +82,10 @@ class Order extends Model
     }
     
 
-    public function new_order_log($orderNumber,$isDone=0)
+    public static function new_order_log($orderNumber,$isDone=0)
     {
         try {
-            $orderData=self::by_number($orderNumber);
+            $orderData=static::select("orders","order_id",['order_number'=>$orderNumber],true);
             static::insert("order_logs", [
                 'order_id'=>$orderData['order_id'],
                 'is_done'=>$isDone
@@ -240,7 +241,7 @@ class Order extends Model
     public static function update_order_log($data, $orderNumber)
     {
         try {
-            $orderData=self::by_number($orderNumber);
+            $orderData=static::select("orders","order_id",['order_number'=>$orderNumber],true);
             static::update("order_logs", $data, "order_id='".$orderData['order_id']."'");
             return true;
         } catch (\Exception $e) {

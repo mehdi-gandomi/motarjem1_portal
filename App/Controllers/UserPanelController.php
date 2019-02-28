@@ -287,6 +287,7 @@ class UserPanelController extends Controller
         $orderData = \App\Models\Order::new ($postInfo);
         $priceInfo = $orderData['priceInfo'];
         $orderNumber = $orderData['orderNumber'];
+        var_dump($orderData);
         //creating order logs
         $logResult = \App\Models\Order::new_order_log($orderNumber);
         if ($orderNumber && $logResult) {
