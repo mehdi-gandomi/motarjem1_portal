@@ -68,7 +68,7 @@
                             {% for order in orders %}
                                 {% set page_number = order.word_numbers / 250 | round(0,'ceil')  %}
                                 <tr>
-                                    <td>{{ order.order_id }}</td>
+                                    <td>{{ order.order_number }}</td>
                                     <td>{{ page_number }}</td>
                                     <td>
                                         {{
@@ -100,7 +100,7 @@
 
                                     </td>
                                     <td class="order-more-info">
-                                        <a href="/user/order/view/{{ order.order_id }}">
+                                        <a href="/user/order/view/{{ order.order_number }}">
                                             <svg width="13px" height="23px" viewbox="0 0 50 80" xml:space="preserve">
                                                 <polyline fill="none" stroke="#a9a9a9" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "/></svg >
                                         </a>

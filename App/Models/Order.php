@@ -113,7 +113,7 @@ class Order extends Model
         try {
             $db = static::getDB();
             $page_limit = ($page - 1) * $offset;
-            $sql = "SELECT orders.order_id,orders.word_numbers,orders.translation_lang,study_fields.title AS study_field,orders.translation_quality,orders.order_price FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE order_logs.is_accepted = '0' AND orders.order_id NOT IN (SELECT order_id FROM translator_order_request WHERE translator_id='$userId') LIMIT $page_limit,$offset";
+            $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.translation_lang,study_fields.title AS study_field,orders.translation_quality,orders.order_price FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE order_logs.is_accepted = '0' AND orders.order_id NOT IN (SELECT order_id FROM translator_order_request WHERE translator_id='$userId') LIMIT $page_limit,$offset";
             $result = $db->query($sql);
             return $result ? $result->fetchAll(PDO::FETCH_ASSOC) : false;
         } catch (\Exception $e) {
@@ -149,7 +149,7 @@ class Order extends Model
         try{
             $db=static::getDB();
             $page_limit = ($page - 1) * $offset;
-            $sql="SELECT orders.order_id,orders.word_numbers,orders.translation_lang,study_fields.title AS study_field,orders.translation_quality,orders.order_price FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id INNER JOIN translator_order_request ON orders.order_id=translator_order_request.order_id WHERE order_logs.is_accepted = '0' AND translator_order_request.state = '1' AND translator_order_request.translator_id='$userId' LIMIT $page_limit,$offset";
+            $sql="SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.translation_lang,study_fields.title AS study_field,orders.translation_quality,orders.order_price FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id INNER JOIN translator_order_request ON orders.order_id=translator_order_request.order_id WHERE order_logs.is_accepted = '0' AND translator_order_request.state = '1' AND translator_order_request.translator_id='$userId' LIMIT $page_limit,$offset";
             $result=$db->query($sql);
             return $result ? $result->fetchAll(PDO::FETCH_ASSOC):false;
         }catch(\Exception $e){

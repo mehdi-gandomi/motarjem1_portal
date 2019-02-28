@@ -93,7 +93,7 @@ class UserPanelController extends Controller
     //this function gets order details from db and renders the page
     public function get_order_details($req, $res, $args)
     {
-        $orderData = \App\Models\Order::by_id($args['order_id'],false,false,$_SESSION['user_id']);
+        $orderData = \App\Models\Order::by_number($args['order_number'],false,false,$_SESSION['user_id']);
         if($orderData){
             $orderData['found']=true;
             if ($orderData['translator_id'] != "0") {
@@ -289,7 +289,7 @@ class UserPanelController extends Controller
         $orderNumber = $orderData['orderNumber'];
         //creating order logs
         $logResult = \App\Models\Order::new_order_log($orderNumber);
-        if ($orderId && $logResult) {
+        if ($orderNumber && $logResult) {
             $tokenArray = $this->get_csrf_token($req);
             $data = array(
                 'success' => true,
@@ -298,7 +298,7 @@ class UserPanelController extends Controller
                 'page_number' => $priceInfo['pageNumber'],
                 'duration' => $priceInfo['duration'],
                 'final_price' => $priceInfo['price'],
-                'order_id' => $orderId,
+                'order_id' => $orderNumber,
                 'page_title' => "پرداخت سفارش",
             );
             $data = \array_merge($data, $tokenArray);
@@ -314,7 +314,7 @@ class UserPanelController extends Controller
         $payment->set_gateway($gateway);
         $orderPriceRial = \intval($orderData['order_price']) * 10;
         $payment->set_info(array(
-            'order_id' => $orderId,
+            'order_id' => $orderNumber,
             'price' => $orderPriceRial,
             'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['order_number'],
         ));

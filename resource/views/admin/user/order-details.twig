@@ -76,7 +76,7 @@ based on db info #}
                             شماره سفارش
                         </div>
                         <div class="order-details__detail__value">
-                            {{ order_id }}
+                            {{ order_number }}
                         </div>
                     </div>
                     <div class="order-details__detail col-md-2">
@@ -245,7 +245,7 @@ based on db info #}
                         </div>
                         <div class="col-12">
                             <div class="payment-gateways">
-                                <form action="/user/order-payment/{{order_id}}" method="POST">
+                                <form action="/user/order-payment/{{order_number}}" method="POST">
                                     <input type="hidden" name="csrf_name" value="{{csrf_name}}">
                                     <input type="hidden" name="csrf_value" value="{{csrf_value}}">
                                     <div class="mellat">

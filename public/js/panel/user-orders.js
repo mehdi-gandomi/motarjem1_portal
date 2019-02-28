@@ -42,7 +42,7 @@ function showOrders(data) {
         accepted = "تایید شده";
       }
       output += "<tr>";
-      output += "<td>" + order.order_id + "</td>";
+      output += "<td>" + order.order_number + "</td>";
       output += "<td>" + pageNumber + "</td>";
       output += "<td>" + translation_type + "</td>";
       output += "<td>" + translation_quality + "</td>";
@@ -60,7 +60,7 @@ function showOrders(data) {
         "</a></td>";
       output +=
         "<td><a href='/user/order/view/" +
-        order.order_id +
+        order.order_number +
         "' class='btn btn-primary'>مشاهده سفارش</a></td>";
     });
   }
