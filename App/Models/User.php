@@ -66,13 +66,8 @@ class User extends Model
     public static function create($userData)
     {
         try {
-            $now = new \DateTime("NOW");
-            $year = $now->format("Y");
-            $month = $now->format("m");
-            $day = $now->format("d");
-            $time = $now->format("H:i");
-            $persianDate = gregorian_to_jalali($year, $month, $day);
-            $userData['register_date_persian'] = $persianDate[0] . "/" . $persianDate[1] . "/" . $persianDate[2] . " " . $time;
+
+            $userData['register_date_persian'] = get_current_date_persian();
             $userData['password'] = \md5(\md5($userData['password']));
             $userData['is_active'] = 0;
             static::insert("users", $userData);
@@ -172,5 +167,15 @@ class User extends Model
         }catch(\Exception $e){
             return false;
         }
+    }
+    public static function get_current_date_persian()
+    {
+        $now = new \DateTime("NOW");
+        $year = $now->format("Y");
+        $month = $now->format("m");
+        $day = $now->format("d");
+        $time = $now->format("H:i");
+        $persianDate = gregorian_to_jalali($year, $month, $day);
+        return $persianDate[0] . "/" . $persianDate[1] . "/" . $persianDate[2] . " " . $time;
     }
 }

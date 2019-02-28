@@ -133,7 +133,7 @@ class UserPanelController extends Controller
             return $res->withJson(['status'=>false,'message'=>"شما اجازه دسترسی به این تیکت را ندارید"]);
         }
         $ticketMessages=Ticket::get_ticket_messages_by_ticket_number($args['ticket_number']);
-        return $res->withJson(['status'=>true,'tickets'=>$ticketMessages]);
+        return $res->withJson(['status'=>true,'tickets'=>$ticketMessages,'date'=>User::get_current_date_persian()]);
         
     }
     public function get_tickets_page($req, $res, $args)
