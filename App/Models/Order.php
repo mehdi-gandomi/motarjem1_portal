@@ -36,7 +36,7 @@ class Order extends Model
         try {
             $db = static::getDB();
             if (!$with_translator_data && !$with_orderer_data) {
-                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE orders.order_id = :order_id";
+                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,order_logs.translator_id,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE orders.order_id = :order_id";
             } else if ($with_translator_data && !$with_orderer_data) {
                 $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study  INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translators ON order_logs.translator_id=translators.translator_id WHERE orders.order_id= :order_id";
             } else if ($with_orderer_data && !$with_translator_data) {
@@ -61,7 +61,7 @@ class Order extends Model
         try {
             $db = static::getDB();
             if (!$with_translator_data && !$with_orderer_data) {
-                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE orders.order_number = :order_number";
+                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,order_logs.translator_id,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE orders.order_number = :order_number";
             } else if ($with_translator_data && !$with_orderer_data) {
                 $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study  INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translators ON order_logs.translator_id=translators.translator_id WHERE orders.order_number= :order_number";
             } else if ($with_orderer_data && !$with_translator_data) {
@@ -73,8 +73,7 @@ class Order extends Model
                 $sql .= " AND orders.orderer_id='$ordererId'";
             }
             $stmt = $db->prepare($sql);
-            $stmt->bindParam(":order_number", $number);
-            return $stmt->execute() ? $stmt->fetch(PDO::FETCH_ASSOC) : false;
+            return $stmt->execute(['order_number'=>$number]) ? $stmt->fetch(PDO::FETCH_ASSOC) : false;
 
         } catch (\Exeption $e) {
             return false;
@@ -82,14 +81,12 @@ class Order extends Model
     }
     
 
-    public static function new_order_log($orderNumber,$isDone=0)
+    public static function new_order_log($orderNumber,$data)
     {
         try {
             $orderData=static::select("orders","order_id",['order_number'=>$orderNumber],true);
-            static::insert("order_logs", [
-                'order_id'=>$orderData['order_id'],
-                'is_done'=>$isDone
-            ]);
+            $data['order_id']=$orderData['order_id'];
+            static::insert("order_logs",$data);
             return true;
         } catch (\Exception $e) {
             return false;

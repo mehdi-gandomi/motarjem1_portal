@@ -48,7 +48,7 @@
                         </a>
                     </div>
 
-                    <table id="orders-table" class="table">
+                    <table id="orders-table" class="table is--responsive">
                         <thead>
                             <tr>
                                 <th class="bg-teal-dark">شماره سفارش</th>
@@ -68,30 +68,30 @@
                             {% for order in orders %}
                                 {% set page_number = order.word_numbers / 250 | round(0,'ceil')  %}
                                 <tr>
-                                    <td>{{ order.order_number }}</td>
-                                    <td>{{ page_number }}</td>
-                                    <td>
+                                    <td data-label='شماره سفارش' style='unicode-bidi: embed;direction: ltr;'>#{{ order.order_number }}</td>
+                                    <td data-label='تعداد صفحات'>{{ page_number }}</td>
+                                    <td data-label='زبان ترجمه'>
                                         {{
                     order.translation_lang == "1"
                       ? "انگلیسی به فارسی"
                       : "فارسی به انگلیسی"
                   }}
                                     </td>
-                                    <td>
+                                    <td data-label='کییفیت ترجمه'>
                                         {{ order.translation_quality == "5" ? "نقره ای" : "طلایی" }}
                                     </td>
 
-                                    <td>{{ order.order_price }}
+                                    <td data-label='هزینه ترجمه'>{{ order.order_price }}
                                         تومان</td>
-                                    <td>
+                                    <td data-label='وضعیت پرداخت'>
                                         {% if order.transaction_code == '0' %}
                                             <p>پرداخت نشده</p>
                                         {% else %}
                                             <p>پرداخت شده</p>
                                         {% endif %}
                                     </td>
-                                    <td>{{ order.is_accepted == "0" ? "تایید نشده" : "تایید شده" }}</td>
-                                    <td>
+                                    <td data-label='وضعیت تایید'>{{ order.is_accepted == "0" ? "تایید نشده" : "تایید شده" }}</td>
+                                    <td data-label='مترجم'>
                                         {% if order.translator_id == '0' %}
                                             <p>مشخص نشده</p>
                                         {% else %}
@@ -99,7 +99,7 @@
                                         {% endif %}
 
                                     </td>
-                                    <td class="order-more-info">
+                                    <td data-label='جزییات' class="order-more-info">
                                         <a href="/user/order/view/{{ order.order_number }}">
                                             <svg width="13px" height="23px" viewbox="0 0 50 80" xml:space="preserve">
                                                 <polyline fill="none" stroke="#a9a9a9" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "/></svg >

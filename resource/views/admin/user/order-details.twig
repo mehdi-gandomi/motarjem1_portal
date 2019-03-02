@@ -186,7 +186,7 @@ based on db info #}
                             {% if translator_id == 0 %}
                                 <p>مشخص نشده</p>
                             {% else %}
-                                {{translator_fname ~ " " ~ translator_lname}}
+                                <a onclick="showTranslatorInfo('{{ translator_id }}')" style="cursor:pointer;color:#20a8d8">{{translator_fname ~ " " ~ translator_lname}}</a>    
                             {% endif %}
                         </div>
                     </div>
@@ -272,5 +272,56 @@ based on db info #}
             </div>
         </div>
     </div>
+   {# translator info modal #}
+        <!-- Modal -->
+        <div aria-hidden="true" aria-labelledby="translatorInfoLabel" class="modal fade" id="translatorInfo" role="dialog" tabindex="-1">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="translatorInfoLabel">اطلاعات مترجم</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="translator-info">
+                            <div class="translator-info__avatar">
+                                <img alt="" id="translator-avatar" src=""></div>
+                                <div class="translator-info__info">
+                                    <div class="translator-info__info__item">
+                                        <label for="">نام مترجم :‌
+                                        </label>
+                                        <strong id="translator-name"></strong>
+                                    </div>
+                                    <div class="translator-info__info__item">
+                                        <label for="">ایمیل :
+                                        </label>
+                                        <strong id="translator-email"></strong>
+                                    </div>
+                                    <div class="translator-info__info__item">
+                                        <label for="">شماره موبایل</label>
+                                        <strong id="translator-phone"></strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}
 
+{% block script_below %}
+    <script>
+        function showTranslatorInfo(translatorId) {
+                console.log(translatorId);
+                $("#translatorInfo").modal("show");
+                $.get("/user/translator/getinfo/" + translatorId, function (res) {
+                    $("#translator-avatar").attr("src", "/public/uploads/avatars/user/" + res.avatar);
+                    $("#translator-name").text(res.fname + " " + res.lname);
+                    $("#translator-email").text(res.email);
+                    $("#translator-phone").text(res.cell_phone);
+                });
+            }
+    </script>
 {% endblock %}

@@ -288,7 +288,9 @@ class UserPanelController extends Controller
         $orderNumber = $orderData['orderNumber'];
         var_dump($orderData);
         //creating order logs
-        $logResult = \App\Models\Order::new_order_log($orderNumber);
+        $logResult = \App\Models\Order::new_order_log($orderNumber,[
+            'order_step'=>1
+        ]);
         if ($orderNumber && $logResult) {
             $tokenArray = $this->get_csrf_token($req);
             $data = array(

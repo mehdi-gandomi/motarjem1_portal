@@ -1,63 +1,60 @@
 {% extends 'admin/layout/user.twig' %}
 {% block style_below %}
-    <link rel="stylesheet" href="/public/css/medium-editor.min.css"/>
-    <link rel="stylesheet" href="/public/css/medium-theme.min.css"/>
+    <link href="/public/css/medium-editor.min.css" rel="stylesheet"/>
+    <link href="/public/css/medium-theme.min.css" rel="stylesheet"/>
 {% endblock %}
 {% block content %}
-
     <main class="main">
         <!-- Breadcrumb-->
         {#
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item">Home</li>
-    <li class="breadcrumb-item"><a href="#">Admin</a></li>
-    <li class="breadcrumb-item active">Dashboard</li>
-    <!-- Breadcrumb Menu-->
-    <!-- <li class="breadcrumb-menu d-md-down-none"> <div class="btn-group" role="group" aria-label="Button group"> <a class="btn" href="#"> <i class="icon-speech"></i> </a> <a class="btn" href="//public/"> <i class="icon-graph"></i> Dashboard</a> <a class="btn" href="#"> <i class="icon-settings"></i> Settings</a> </div> </li> -->
-  </ol>
-  #}
-        <div class="container">
-            <div class="info-cards ">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">Home</li>
+            <li class="breadcrumb-item"><a href="#">Admin</a></li>
+            <li class="breadcrumb-item active">Dashboard</li>
+            <!-- Breadcrumb Menu-->
+            <!-- <li class="breadcrumb-menu d-md-down-none"> <div class="btn-group" role="group" aria-label="Button group"> <a class="btn" href="#"> <i class="icon-speech"></i> </a> <a class="btn" href="//public/"> <i class="icon-graph"></i> Dashboard</a> <a class="btn" href="#"> <i class="icon-settings"></i> Settings</a> </div> </li> -->
+          </ol>
+          #}
+            <div class="container"> <div class="info-cards ">
                 <div class="row">
                     <div class="col-md-4">
-                        <a href="/user/orders?pending=true" class="info-card">
+                        <a class="info-card" href="/user/orders?pending=true">
                             <div class="info-card__icon bg-primary">
-                                <img src="/public/images/icon/writing.svg" alt=""/>
+                                <img alt="" src="/public/images/icon/writing.svg"/>
                             </div>
-
                             <div class="info-card__content">
                                 <div class="info-card__content__title">ترجمه های درحال انجام</div>
-                                <div class="info-card__content__value">{{workingOrdersCount}}</div>
+                                <div class="info-card__content__value">
+                                    {{workingOrdersCount}}</div>
                             </div>
                         </a>
                     </div>
                     <div class="col-md-4">
-                        <a href="/user/orders?completed=true" class="info-card">
+                        <a class="info-card" href="/user/orders?completed=true">
                             <div class="info-card__icon bg-success">
-                                <img src="/public/images/icon/delivery-complete.svg" alt=""/>
+                                <img alt="" src="/public/images/icon/delivery-complete.svg"/>
                             </div>
-
                             <div class="info-card__content">
                                 <div class="info-card__content__title">ترجمه های انجام شده</div>
-                                <div class="info-card__content__value">{{completedOrdersCount}}</div>
+                                <div class="info-card__content__value">
+                                    {{completedOrdersCount}}</div>
                             </div>
                         </a>
                     </div>
                     <div class="col-md-4">
-                        <a href="/user/messages" class="info-card">
+                        <a class="info-card" href="/user/messages">
                             <div class="info-card__icon bg-danger">
-                                <img src="/public/images/icon/message.svg" alt=""/>
+                                <img alt="" src="/public/images/icon/message.svg"/>
                             </div>
-
                             <div class="info-card__content">
                                 <div class="info-card__content__title">پیام های خوانده نشده</div>
-                                <div class="info-card__content__value">{{unreadTicketsCount}}</div>
+                                <div class="info-card__content__value">
+                                    {{unreadTicketsCount}}</div>
                             </div>
                         </a>
                     </div>
                 </div>
             </div>
-
             <div class="row mt-3">
                 <div class="col-md-4">
                     <div class=" card">
@@ -69,26 +66,30 @@
                             <div class="item">
                                 <span>نام شما :
                                 </span>
-                                <strong>{{ user.fname }}</strong>
+                                <strong>
+                                    {{ user.fname }}</strong>
                             </div>
                             <div class="item">
                                 <span>نام خانوادگی شما :
                                 </span>
-                                <strong>{{ user.lname }}</strong>
+                                <strong>
+                                    {{ user.lname }}</strong>
                             </div>
                             <div class="item">
                                 <span>ایمیل شما :
                                 </span>
-                                <strong>{{ user.email }}</strong>
+                                <strong>
+                                    {{ user.email }}</strong>
                             </div>
                             <div class="item">
                                 <span>شماره همراه شما :
                                 </span>
-                                <strong>{{ user.phone }}</strong>
+                                <strong>
+                                    {{ user.phone }}</strong>
                             </div>
                         </div>
                         <div class="card-footer">
-                            <a href="/user/edit-profile" class="btn btn-success btn-block profile-edit-btn">
+                            <a class="btn btn-success btn-block profile-edit-btn" href="/user/edit-profile">
                                 <i class="icon-note"></i>
                                 بروزرسانی
                             </a>
@@ -110,34 +111,29 @@
                         <div class="card-body">
                             <div class="list-group ticket-list">
                                 {% if lastTickets %}
-
                                     {% for ticket in lastTickets %}
-
-                                        <a href="/user/ticket/view/{{ticket.ticket_number}}" class="list-group-item ticket-item">
+                                        <a class="list-group-item ticket-item" href="/user/ticket/view/{{ticket.ticket_number}}">
                                             <div class="ticket-item__details">
                                                 <span class="ticket-item__code">#{{ticket.ticket_number}}</span>
                                                 -
-                                                <span class="ticket-item__title">{{ticket.subject}}</span>
+                                                <span class="ticket-item__title">
+                                                    {{ticket.subject}}</span>
                                                 {% if ticket.state=='answered' %}
-                                                    <span class="ticket-item__status answered">پاسخ داده شده</span >
+                                                    <span class="ticket-item__status answered">پاسخ داده شده</span>
                                                 {% endif %}
                                                 {% if ticket.state == 'waiting' %}
-                                                    <span class="ticket-item__status not-answered">درانتظار پاسخ</span >
+                                                    <span class="ticket-item__status not-answered">درانتظار پاسخ</span>
                                                 {% endif %}
-                                                
-
                                             </div>
                                             <p>
                                                 آخرین بروزرسانی
                                                 {{ticket.update_date_persian}}
                                             </p>
                                         </a>
-
                                     {% endfor %}
-                                {% else %}
+                                    {% else %}
                                     <h6 class="text-center p-3">تاکنون پیامی ارسال نکرده اید !</h6>
                                 {% endif %}
-
                             </div>
                         </div>
                     </div>
@@ -165,10 +161,10 @@
                             </ul>
                             <h6 class="text-center">مارا در شبکه های اجتماعی دنبال کنید</h6>
                             <div class="contact-info__social-media">
-                                <a href="" class="icon-social-instagram"></a>
-                                <a href="" class="icon-social-linkedin"></a>
-                                <a href="" class="icon-social-twitter"></a>
-                                <a href="" class="icon-paper-plane"></a>
+                                <a class="icon-social-instagram" href=""></a>
+                                <a class="icon-social-linkedin" href=""></a>
+                                <a class="icon-social-twitter" href=""></a>
+                                <a class="icon-paper-plane" href=""></a>
                             </div>
                         </div>
                     </div>
@@ -182,13 +178,12 @@
                                 <i class="icon-basket-loaded"></i>
                                 سفارشات اخیر
                             </div>
-
                             <div class="card-header__action">
-                                <a href="user/order/new" class="btn compact-btn teal">
+                                <a class="btn compact-btn teal" href="user/order/new">
                                     <i class="icon-plus"></i>
                                     ثبت سفارش جدید
                                 </a>
-                                <a href="user/orders" class="btn compact-btn primary">
+                                <a class="btn compact-btn primary" href="user/orders">
                                     <i class="icon-basket"></i>
                                     صفحه سفارشات
                                 </a>
@@ -209,186 +204,178 @@
                                     </thead>
                                     <tbody>
                                         {% for order in orders %}
-                                            {% set page_number = order.word_numbers / 250 %}
+                                            {% set page_number = (order.word_numbers / 250) | round(0,'ceil') %}
                                             {% if order.delivery_type == '1' %}
                                                 {% set delivery_type = "معمولی" %}
                                             {% endif %}
-
                                             {% if order.delivery_type == '2' %}
                                                 {% set delivery_type = "نیمه فوری" %}
                                             {% endif %}
-
                                             {% if order.delivery_type == '3' %}
                                                 {% set delivery_type = "فوری" %}
                                             {% endif %}
                                             <tr>
-                                                <td data-label="شماره سفارش">{{ order.order_id }}</td>
-                                                <td data-label="تعداد صفحات">{{ page_number }}</td>
+                                                <td data-label="شماره سفارش">
+                                                    {{ order.order_id }}</td>
+                                                <td data-label="تعداد صفحات">
+                                                    {{ page_number }}</td>
                                                 <td data-label="زبان ترجمه">
                                                     {{ order.translation_type == "1" ? "انگلیسی به فارسی" : "فارسی به انگلیسی" }}
                                                 </td>
                                                 <td data-label="کیفیت ترجمه">
                                                     {{ order.translation_quality == "5" ? "نقره ای" : "طلایی" }}
                                                 </td>
-                                                <td data-label="زمان تحویل">{{delivery_type}}</td>
-                                                <td data-label="هزینه ترجمه">{{order.order_price}}
+                                                <td data-label="زمان تحویل">
+                                                    {{delivery_type}}</td>
+                                                <td data-label="هزینه ترجمه">
+                                                    {{order.order_price}}
                                                     تومان</td>
-                                                <td data-label="وضعیت تایید">{{order.accepted == '0' ?  'تایید نشده' : 'تایید شده' }}</td>
+                                                <td data-label="وضعیت تایید">
+                                                    {{order.accepted == '0' ?  'تایید نشده' : 'تایید شده' }}</td>
                                                 <td data-label="مترجم">
                                                     {% if order.translator_id == "0" %}
                                                         <p>مشخص نشده</p>
                                                     {% else %}
-                                                        <a style="cursor:pointer;color:#20a8d8" onclick="showTranslatorInfo('{{ order.translator_id }}')">مشاهده اطلاعات مترجم</a>
+                                                        <a onclick="showTranslatorInfo('{{ order.translator_id }}')" style="cursor:pointer;color:#20a8d8">مشاهده اطلاعات مترجم</a>
                                                     {% endif %}
-
                                                 </td>
                                             </tr>
                                         {% endfor %}
-
                                     </tbody>
                                 </table>
-                            {% else %}
+                                {% else %}
                                 <h5 class="text-center">تاکنون سفارشی ثبت نکرده اید !</h5>
                             {% endif %}
-
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
+        </main>
         {# translator info modal #}
         <!-- Modal -->
-        <div class="modal fade" id="translatorInfo" tabindex="-1" role="dialog" aria-labelledby="translatorInfoLabel" aria-hidden="true">
+        <div aria-hidden="true" aria-labelledby="translatorInfoLabel" class="modal fade" id="translatorInfo" role="dialog" tabindex="-1">
             <div class="modal-dialog modal-sm" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="translatorInfoLabel">اطلاعات مترجم</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
                         <div class="translator-info">
-
                             <div class="translator-info__avatar">
-                                <img src="" alt="" id="translator-avatar">
+                                <img alt="" id="translator-avatar" src=""></div>
+                                <div class="translator-info__info">
+                                    <div class="translator-info__info__item">
+                                        <label for="">نام مترجم :‌
+                                        </label>
+                                        <strong id="translator-name"></strong>
+                                    </div>
+                                    <div class="translator-info__info__item">
+                                        <label for="">ایمیل :
+                                        </label>
+                                        <strong id="translator-email"></strong>
+                                    </div>
+                                    <div class="translator-info__info__item">
+                                        <label for="">شماره موبایل</label>
+                                        <strong id="translator-phone"></strong>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="translator-info__info">
-                                <div class="translator-info__info__item">
-                                    <label for="">نام مترجم :‌
-                                    </label>
-                                    <strong id="translator-name"></strong>
+                        </div>
+                        {# <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary">Save changes</button>
+                                            </div> #}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div aria-hidden="true" aria-labelledby="newMessageModalLabel" class="modal fade" data-backdrop="static" data-keyboard="false" id="newMessageModal" role="dialog" tabindex="-1">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="newMessageModalLabel">ارسال پیام</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/user/ticket/send" id="sendMessageForm" method="POST">
+                            <input id="msg_id" name="msg_id" type="hidden">
+                                <div class="row">
+                                    <div class="form-group col-md-3">
+                                        <label for="">نام شما</label>
+                                        <input class="form-control" type="text" value="{{user.fname ~ " " ~ user.lname}}" disabled="disabled"/>
+                                    </div>
+                                    <div class="form-group col-md-5">
+                                        <label for="">ایمیل شما</label>
+                                        <input class="form-control" type="email" value="{{user.email}}" disabled="disabled"/>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="">عنوان پیام</label>
+                                        <input class="form-control" id="subject" name="subject" type="text"/>
+                                    </div>
                                 </div>
-
-                                <div class="translator-info__info__item">
-                                    <label for="">ایمیل :
-                                    </label>
-                                    <strong id="translator-email"></strong>
+                                <div class="form-group">
+                                    <label for="">پیام شما</label>
+                                    <textarea cols="30" id="medium-editor" name="body" rows="10"></textarea>
                                 </div>
-                                <div class="translator-info__info__item">
-                                    <label for="">شماره موبایل</label>
-                                    <strong id="translator-phone"></strong>
-                                </div>
-                            </div>
+                                <button class="btn btn-primary" id="send-message-btn" type="button">ارسال</button>
+                                <button class="btn btn-danger" data-dismiss="modal" type="button">انصراف</button>
+                            </form>
                         </div>
                     </div>
-                    {# <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
-                    </div> #}
                 </div>
             </div>
-        </div>
-    </main>
-    <!-- Modal -->
-    <div class="modal fade" id="newMessageModal" tabindex="-1" role="dialog" aria-labelledby="newMessageModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="newMessageModalLabel">ارسال پیام</h5>
-                </div>
-                <div class="modal-body">
-
-                    <form action="/user/ticket/send" id="sendMessageForm" method="POST">
-                        <input type="hidden" name="msg_id" id="msg_id">
-                        <div class="row">
-                            <div class="form-group col-md-3">
-                                <label for="">نام شما</label>
-                                <input class="form-control" type="text" value="{{user.fname ~ " " ~ user.lname}}" disabled="disabled"/>
-                            </div>
-                            <div class="form-group col-md-5">
-                                <label for="">ایمیل شما</label>
-                                <input class="form-control" type="email" value="{{user.email}}" disabled="disabled"/>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="">عنوان پیام</label>
-                                <input class="form-control" type="text" id="subject" name="subject"/>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="">پیام شما</label>
-                            <textarea name="body" id="medium-editor" cols="30" rows="10"></textarea>
-                        </div>
-                        <button type="button" class="btn btn-primary" id="send-message-btn">ارسال</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">انصراف</button>
-                    </form>
-
-                </div>
-
-            </div>
-        </div>
-    </div>
-{% endblock %}
-{% block script_below %}
-    <script src="/public/js/panel/medium-editor.min.js"></script>
-    <script src="/public/js/sweetalert2@8.js"></script>
-    <script>
-        let editor = new MediumEditor('#medium-editor', {
-            elementsContainer: document.getElementById('newMessageModal') // use your modal element here
-        });
-        function showTranslatorInfo(translatorId) {
-            console.log(translatorId);
-            $("#translatorInfo").modal("show");
-            $.get("/user/translator/getinfo/" + translatorId, function (res) {
-
-                $("#translator-avatar").attr("src", "/public/uploads/avatars/user/" + res.avatar);
-                $("#translator-name").text(res.fname + " " + res.lname);
-                $("#translator-email").text(res.email);
-                $("#translator-phone").text(res.cell_phone);
-
-            });
-        }
-        //send message with ajax request
-        $("#send-message-btn").click(function (e) {
-            let subject = $("#subject").val();
-            let body = $("#medium-editor").val();
-            if (subject == "") {
-                alert("باید حداقل یک عنوان وارد نمایید!");
-                return;
-            }
-            if (body == "") {
-                alert("باید متن پیام تان را وارد نمایید !");
-                return;
-            }
-
-            $.ajax({
-                type: "POST",
-                url: $("#sendMessageForm").attr("action"),
-                data: {
-                    subject: subject,
-                    body: body
-                },
-                success: function (data, status) {
-                    if (status && data.status) {
-                        $("#newMessageModal").modal("hide");
-                        Swal.fire('موفق', "پیام شما با موفقیت ارسال شد ! <br> شماره پیگیری : <span style='font-family: sans-serif;direction: ltr;text-align: left;unicode-bidi: embed;'>#"+data.ticket_number+"<span>", 'success')
-                    }else{
-                        $("#newMessageModal").modal("hide");
-                        Swal.fire('خطا', 'خطایی در ارسال پیام شما رخ داد', 'error')
-                    }
+        {% endblock %}
+        {% block script_below %}
+            <script src="/public/js/panel/medium-editor.min.js"></script>
+            <script src="/public/js/sweetalert2@8.js"></script>
+            <script>
+                let editor = new MediumEditor('#medium-editor', {
+                    elementsContainer: document.getElementById('newMessageModal') // use your modal element here
+                });
+                function showTranslatorInfo(translatorId) {
+                    console.log(translatorId);
+                    $("#translatorInfo").modal("show");
+                    $.get("/user/translator/getinfo/" + translatorId, function (res) {
+                        $("#translator-avatar").attr("src", "/public/uploads/avatars/user/" + res.avatar);
+                        $("#translator-name").text(res.fname + " " + res.lname);
+                        $("#translator-email").text(res.email);
+                        $("#translator-phone").text(res.cell_phone);
+                    });
                 }
-            })
-        })
-    </script>
-{% endblock %}
+                // send message with ajax request
+                $("#send-message-btn").click(function (e) {
+                    let subject = $("#subject").val();
+                    let body = $("#medium-editor").val();
+                    if (subject == "") {
+                        alert("باید حداقل یک عنوان وارد نمایید!");
+                        return;
+                    }
+                    if (body == "") {
+                        alert("باید متن پیام تان را وارد نمایید !");
+                        return;
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: $("#sendMessageForm").attr("action"),
+                        data: {
+                            subject: subject,
+                            body: body
+                        },
+                        success: function (data, status) {
+                            if (status && data.status) {
+                                $("#newMessageModal").modal("hide");
+                                Swal.fire('موفق', "پیام شما با موفقیت ارسال شد ! <br> شماره پیگیری : <span style='font-family: sans-serif;direction: ltr;text-align: left;unicode-bidi: embed;'>#" + data.ticket_number + "<span>", 'success')
+                            } else {
+                                $("#newMessageModal").modal("hide");
+                                Swal.fire('خطا', 'خطایی در ارسال پیام شما رخ داد', 'error')
+                            }
+                        }
+                    })
+                })
+            </script>
+        {% endblock %}
+    
