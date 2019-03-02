@@ -17,6 +17,7 @@ class TranslatorAuthController extends Controller
     {
 
         $data = $this->get_csrf_token($req);
+        if(isset($_SESSION['is_translator_logged_in'])) return $res->withRedirect("/translator");
         if (isset($_SESSION['oldLoginFields'])) {
             $data = array_merge($data, $_SESSION['oldLoginFields']);
             $data['page_title'] = "خطا در ورود";
@@ -55,6 +56,7 @@ class TranslatorAuthController extends Controller
                     );
                     return $res->withRedirect('/translator/login');
                 } else {
+                    
                     $_SESSION['is_translator_logged_in'] = true;
                     $_SESSION['fname'] = $translatorData['fname'];
                     $_SESSION['lname'] = $translatorData['lname'];
@@ -66,7 +68,6 @@ class TranslatorAuthController extends Controller
                     $_SESSION['is_employed']=$translatorData['is_employed'];
                     //user level that logged in valid values are : user,admin,translator
                     $_SESSION['user_type'] = "translator";
-                    \setcookie(\session_name(), \session_id(), time() + (86400 * 7));
                     return $res->withRedirect('/translator');
                 }
             } else {
@@ -99,7 +100,7 @@ class TranslatorAuthController extends Controller
         unset($_SESSION['phone']);
         unset($_SESSION['email']);
         unset($_COOKIE[\session_name()]);
-        \setcookie(\session_name(), "", \time() - 3600);
+        // \setcookie(\session_name(), "", \time() - 3600);
         return $res->withRedirect('/');
 
     }
@@ -198,7 +199,7 @@ class TranslatorAuthController extends Controller
         }
         //this is the token that created based on database info for the user
         $createdTokenBasedOnUser = $this->createVerifyLink($translatorData, true);
-        \var_dump($verifyToken, $createdTokenBasedOnUser);
+
 
         if ($verifyToken === $createdTokenBasedOnUser) {
             Translator::activate($username);

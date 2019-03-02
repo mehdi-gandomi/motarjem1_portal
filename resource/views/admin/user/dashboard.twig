@@ -234,7 +234,7 @@
                                                 <td data-label="زمان تحویل">
                                                     {{delivery_type}}</td>
                                                 <td data-label="هزینه ترجمه">
-                                                    {{order.order_price}}
+                                                    {{order.order_price |number_format}}
                                                     تومان</td>
                                                 <td data-label="وضعیت تایید">
                                                     {{order.accepted == '0' ?  'تایید نشده' : 'تایید شده' }}</td>

@@ -46,8 +46,7 @@ class UserAuthController extends Controller
                     $_SESSION['phone'] = $userData['phone'];
                     $_SESSION['email'] = $userData['email'];
                     //user level that logged in valid values are : user,admin,translator
-                    $_SESSION['user_type'] = "user";
-                    \setcookie(\session_name(), \session_id(), time() + (86400 * 7));
+                    $_SESSION['user_type'] = "user";                    
                     return $res->withRedirect('/user');
                 } else {
                     $this->flash->addMessage('userActivationError', "حساب کاربری شما غیرفعال می باشد ! لطفا از طریق <strong><a  onclick='sendVerificationCode(\"$postFields[username]\")'>این لینک</a></strong> آن را فعال کنید.");
@@ -107,7 +106,7 @@ class UserAuthController extends Controller
         unset($_SESSION['phone']);
         unset($_SESSION['email']);
         unset($_COOKIE[\session_name()]);
-        \setcookie(\session_name(), "", \time() - 3600);
+        // \setcookie(\session_name(), "", \time() - 3600);
         return $res->withRedirect('/');
 
     }

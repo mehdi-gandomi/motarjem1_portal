@@ -92,10 +92,10 @@
                                         {{ order.translation_quality == "5" ? "نقره ای" : "طلایی" }}
                                     </td>
 
-                                    <td data-label="هزینه ترجمه">{{ order.order_price }}
+                                    <td data-label="هزینه ترجمه">{{ order.order_price |number_format }}
                                         تومان</td>
                                     <td data-label="سهم شما">
-                                        {{ (order.order_price*70)/100 | round(0,'ceil') }}
+                                        {{ ((order.order_price*70)/100 | round(0,'ceil')) |number_format }}
                                         تومان
                                     </td>
                                     <td data-label="عملیات" class="order-actions">

@@ -104,8 +104,8 @@ function renderOrders(orders){
             output+="<td data-label='زبان ترجمه'>"+translationLang+"</td>";
             output+="<td data-label='رشته'>"+orders[index].study_field+"</td>";
             output+="<td data-label='کیفیت ترجمه'>"+translationQuality+"</td>";
-            output+="<td data-label='هزینه ترجمه'>"+orders[index].order_price+"</td>";
-            output+="<td data-label='سهم شما'>"+Math.ceil((orders[index].order_price*70)/100)+"</td>";
+            output+="<td data-label='هزینه ترجمه'>"+parseInt(orders[index].order_price).toLocaleString("us")+"</td>";
+            output+="<td data-label='سهم شما'>"+Math.ceil((orders[index].order_price*70)/100).toLocaleString("us")+"</td>";
             
             output+="<td data-label='جزییات' class='order-more-info'>";
             output+="<a onclick='showOrderInfo(\""+orders[index].order_id+"\")'><svg height='23px' viewBox='0 0 50 80' width='13px' xml:space='preserve'><polyline fill='none' points='45.63,75.8 0.375,38.087 45.63,0.375 ' stroke-linecap='round' stroke-linejoin='round' stroke-width='10' stroke='#a9a9a9'></polyline></svg></a>";

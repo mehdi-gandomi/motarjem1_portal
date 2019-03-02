@@ -104,8 +104,8 @@ function showOrderInfo(orderNumber){
       output+="<div class='order-details__detail col-md-4'><div class='order-details__detail__label'>نام سفارش دهنده</div><div class='order-details__detail__value'>"+data.orderer_fname+" "+data.orderer_lname+"</div></div>";
       output+="<div class='order-details__detail col-md-5'><div class='order-details__detail__label'>ایمیل سفارش دهنده</div><div class='order-details__detail__value'>"+data.email+"</div></div>";
       output+="<div class='order-details__detail col-md-4'><div class='order-details__detail__label'>تاریخ ثبت سفارش</div><div class='order-details__detail__value'>"+data.order_date_persian+"</div></div>";
-      output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>قیمت کل سفارش</div><div class='order-details__detail__value'>"+data.order_price+"</div></div>";
-      output+="<div class='order-details__detail col-md-5'><div class='order-details__detail__label'>سهم شما از این سفارش</div><div class='order-details__detail__value'>"+Math.ceil((data.order_price*70)/100)+"</div></div>";
+      output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>قیمت کل سفارش</div><div class='order-details__detail__value'>"+parseInt(data.order_price).toLocaleString("us")+"</div></div>";
+      output+="<div class='order-details__detail col-md-5'><div class='order-details__detail__label'>سهم شما از این سفارش</div><div class='order-details__detail__value'>"+Math.ceil((data.order_price*70)/100).toLocaleString("us")+"</div></div>";
       if(data.description){
           output+="<div class='order-details__detail col-md-8'><div class='order-details__detail__label'>توضیحات</div><div class='order-details__detail__value'>"+data.description+"</div></div>";
       }
@@ -247,7 +247,6 @@ function declineOrder(orderNumber,translatorId){
 
 
 function renderOrders(orders,translatorId,choice){
-    console.log(orders);
     let output="";
     $(".newOrderTable thead").css("display","table-header-group");
     for(let index in orders){
@@ -259,8 +258,8 @@ function renderOrders(orders,translatorId,choice){
             output+="<td data-label='زبان ترجمه'>"+translationLang+"</td>";
             output+="<td data-label='رشته'>"+orders[index].study_field+"</td>";
             output+="<td data-label='کیفیت ترجمه'>"+translationQuality+"</td>";
-            output+="<td data-label='هزینه ترجمه'>"+orders[index].order_price+"</td>";
-            output+="<td data-label='سهم شما'>"+Math.ceil((orders[index].order_price*70)/100)+"</td>";
+            output+="<td data-label='هزینه ترجمه'>"+parseInt(orders[index].order_price).toLocaleString("us")+" تومان</td>";
+            output+="<td data-label='سهم شما'>"+Math.ceil((orders[index].order_price*70)/100).toLocaleString("us")+" تومان</td>";
             output+="<td data-label='عملیات' class='order-actions'>";
             if(choice=="new"){
                 output+="<button onclick='showOrderInfo(\""+orders[index].order_number+"\")' class='expand-button order-action is--primary is--medium'><span data-hover='جزییات سفارش'><i class='icon-info'></i></span></button>";

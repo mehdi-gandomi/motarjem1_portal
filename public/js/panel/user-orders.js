@@ -47,7 +47,7 @@ function showOrders(data) {
       output += "<td>" + translation_type + "</td>";
       output += "<td>" + translation_quality + "</td>";
       output += "<td>" + delivery_type + "</td>";
-      output += "<td>" + order.order_price + "</td>";
+      output += "<td>" + parseInt(order.order_price).toLocaleString("us") + "</td>";
       output += "<td>" + accepted + "</td>";
 
       output +=
