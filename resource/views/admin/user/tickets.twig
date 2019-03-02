@@ -12,10 +12,10 @@
                     <div class="orders-heading">
                         <form class="table-filter">
                             <label class="label-cbx" for="read-messages">
-                                {% if "1" in read %}
-                                    <input type="checkbox" name="read" class="invisible read-state" id="read-messages" value="1"  checked/>
+                                {% if "read" in state %}
+                                    <input type="checkbox" name="state" class="invisible read-state" id="read-messages" value="read"  checked/>
                                 {% else %}
-                                    <input type="checkbox" name="read" class="invisible read-state" id="read-messages" value="1" />
+                                    <input type="checkbox" name="state" class="invisible read-state" id="read-messages" value="read" />
                                 {% endif %}
                                 
                                 <div class="checkbox">
@@ -28,10 +28,10 @@
                             </label>
                             <label class="label-cbx" for="unread-messages">
                                 
-                                {% if "0" in read %}
-                                    <input type="checkbox" name='read' class="invisible read-state" id="unread-messages" value="0"  checked/>
+                                {% if "unread" in state %}
+                                    <input type="checkbox" name='state' class="invisible read-state" id="unread-messages" value="unread"  checked/>
                                 {% else %}
-                                    <input type="checkbox" name='read' class="invisible read-state" id="unread-messages" value="0" />
+                                    <input type="checkbox" name='state' class="invisible read-state" id="unread-messages" value="unread" />
                                 {% endif %}
                                 
                                 <div class="checkbox">
@@ -85,28 +85,29 @@
                         <thead>
                             <tr>
                                 <th class="bg-teal-dark" scope="col">شماره تیکت</th>
-                                <th class="bg-teal-dark" scope="col">عنوان پیام</th>
-                                <th class="bg-teal-dark" scope="col">وضعیت خوانده شدن</th>
-                                <th class="bg-teal-dark" scope="col">وضعیت پاسخ داده شدن</th>
-                                <th class="bg-teal-dark" scope="col">آخرین بروزرسانی</th>
+                                <th class="bg-teal-dark" scope="col">عنوان تیکت</th>
+                                <th class="bg-teal-dark" scope="col">وضعیت</th>
+                                <th class="bg-teal-dark" scope="col">تاریخ ایجاد تیکت</th>
+                                <th class="bg-teal-dark" scope="col">آخرین تاریخ بروزرسانی</th>
                                 <th class="bg-teal-dark" scope="col">جزییات</th>
                             </tr>
                         </thead>
                         <tbody id="user-messages">
                             {% for ticket in tickets %}
                                 <tr>
-                                    <td data-label="شماره پیام">
+                                    <td data-label="شماره تیکت">
                                         #{{ ticket.ticket_number }}</td>
-                                    <td data-label="عنوان پیام">
+                                    <td data-label="عنوان تیکت">
                                         {{ ticket.subject }}</td>
-                                    <td data-label="وضعیت خوانده شدن">
-                                        {{ ticket.is_read == "0" ? "خوانده نشده" : "خوانده شده" }}
+                                    <td data-label="وضعیت">
+                                        {% if ticket.state=="read" %}خوانده شده{% endif %}
+                                        {% if ticket.state=="unread" %}خوانده نشده{% endif %}
+                                        {% if ticket.state=="waiting" %}درانتظار پاسخ{% endif %}
+                                        {% if ticket.state=="answered" %}پاسخ داده شده{% endif %}
                                     </td>
-                                    <td data-label="وضعیت پاسخ">
-                                    {% if ticket.state=="waiting" %}درانتظار پاسخ{% endif %}
-                                    {% if ticket.state=="answered" %}پاسخ داده شده{% endif %}
-                                    </td>
-                                    <td data-label="آخرین بروزرسانی">
+                                    <td data-label="تاریخ ایجاد تیکت">
+                                        {{ ticket.create_date_persian }}</td>
+                                    <td data-label="آخرین تاریخ بروزرسانی">
                                         {{ ticket.update_date_persian }}</td>
                                     <td class="order-more-info" data-label="جزییات">
                                         <a href="/user/ticket/view/{{ ticket.ticket_number }}">

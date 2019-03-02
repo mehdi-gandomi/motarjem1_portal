@@ -53,15 +53,24 @@ function showTickets(data) {
   let output = "";
   // if (data.messages.length > 0) {
   data.tickets.forEach(function(ticket) {
-    let isRead = ticket.is_read == "0" ? "خوانده نشده" : "خوانده شده";
-    let isAnswered =
-      ticket.is_answered == "0" ? "پاسخ داده نشده" : "پاسخ داده شده";
+    let state;
+    if(ticket.state=="read"){
+      state="خوانده شده"
+    }
+    else if(ticket.state=="unread"){
+      state="خوانده نشده"
+    }
+    else if(ticket.state=="waiting"){
+      state="در انتظار پاسخ";
+    }else{
+      state="پاسخ داده شده";
+    }
     output += "<tr>";
-    output += "<td>#" + ticket.ticket_number + "</td>";
-    output += "<td>" + ticket.subject + "</td>";
-    output += "<td>" + isRead + "</td>";
-    output += "<td>" + isAnswered + "</td>";
-    output += "<td>" + ticket.update_date_persian + "</td>";
+    output += "<td data-label='شماره تیکت'>#" + ticket.ticket_number + "</td>";
+    output += "<td data-label='عنوان تیکت'>" + ticket.subject + "</td>";
+    output += "<td data-label='وضعیت'>" + state + "</td>";
+    output += "<td data-label='تاریخ ایجاد تیکت'>" + ticket.create_date_persian + "</td>";
+    output += "<td data-label='آخرین تاریخ بروزرسانی'>" + ticket.update_date_persian + "</td>";
     output +=
       "<td class='order-more-info'><a href='/user/ticket/view/" +
       ticket.ticket_number +
@@ -125,11 +134,6 @@ function applyFilters(queryString) {
 
 $(".table-filter input[type=checkbox]").on("change", function(e) {
   let queryStringObj = { state: [], read: [] };
-  $("input[name=read]").each(function() {
-    if ($(this).is(":checked")) {
-      queryStringObj["read"].push($(this).val());
-    }
-  });
   $("input[name=state]").each(function() {
     if ($(this).is(":checked")) {
       queryStringObj["state"].push($(this).val());
@@ -137,9 +141,6 @@ $(".table-filter input[type=checkbox]").on("change", function(e) {
   });
   if (queryStringObj["state"].length > 0) {
     queryStringObj["state"] = queryStringObj["state"].join(",");
-  }
-  if (queryStringObj["read"].length > 0) {
-    queryStringObj["read"] = queryStringObj["read"].join(",");
   }
   let page = getQueryString("page");
   if (page) {

@@ -139,11 +139,10 @@ class UserPanelController extends Controller
     public function get_tickets_page($req, $res, $args)
     {
         $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
-        $state = $req->getQueryParam("state") === null ? ['waiting','answered'] : \explode(",", $req->getQueryParam("state"));
-        $read = $req->getQueryParam("read") === null ? ['0','1'] : \explode(",", $req->getQueryParam("read"));
-        $userTickets = Ticket::get_tickets_by_user_id($_SESSION['user_id'],"1", $page, 10, ['state'=>$state,'read'=>$read]);
+        $state = $req->getQueryParam("state") === null ? ['read','unread','waiting','answered'] : \explode(",", $req->getQueryParam("state"));
+        $userTickets = Ticket::get_tickets_by_user_id($_SESSION['user_id'],"1", $page, 10, ['state'=>$state]);
         $userTicketsCount = Ticket::get_tickets_count_by_user_id($_SESSION['user_id'],"1", $state);
-        return $this->view->render($res, "admin/user/tickets.twig", ["tickets" => $userTickets,'current_page'=>$page, 'tickets_count' => $userTicketsCount,'state'=>$state,'read'=>$read]);
+        return $this->view->render($res, "admin/user/tickets.twig", ["tickets" => $userTickets,'current_page'=>$page, 'tickets_count' => $userTicketsCount,'state'=>$state]);
     }
     public function get_tickets_json($req, $res, $args)
     {

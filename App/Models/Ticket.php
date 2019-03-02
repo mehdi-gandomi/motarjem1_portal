@@ -72,14 +72,6 @@ class Ticket extends Model{
                     }
                     
                 }
-                if(isset($filteringOptions['read'])){
-                    if(is_array($filteringOptions['read']) && \count($filteringOptions['read'])>0){
-                        $sql.=" AND is_read IN (".implode(",",$filteringOptions['read']).")";
-                    }else if ($filteringOptions['read']==-1) {
-                        $sql.=" AND is_read NOT IN (0,1) ";
-                    }
-                    
-                }
                 
             }
             $sql.=" ORDER BY update_date DESC LIMIT $page_limit,$amount";
@@ -99,13 +91,9 @@ class Ticket extends Model{
             $result=false;
             $sql="SELECT COUNT(*) AS tickets_count FROM Tickets WHERE creator_id = :creator_id AND user_type = :user_type";
             if(is_array($filteringOptions) && count($filteringOptions)>0){
-                if(isset($filteringOptions['state'])){
+                if(isset($filteringOptions['state']) && \count($filteringOptions['state'])>0){
                     $sql.=" AND state IN (".implode(",",$filteringOptions['state']).")";
                 }
-                if(isset($filteringOptions['read'])){
-                    $sql.=" AND is_read IN (".implode(",",$filteringOptions['read']).")";
-                }
-                
             }
             $stmt = $db->prepare($sql);
             return $stmt->execute(['creator_id'=>$userId,'user_type'=>$userType]) ? $stmt->fetch(PDO::FETCH_ASSOC)['tickets_count'] : 0;
@@ -148,7 +136,7 @@ class Ticket extends Model{
     public static function set_as_read($ticketNumber)
     {
         try{
-            return static::update("Tickets",["state"=>'read'],"ticket_nuber = '$ticketNumber'");
+            return static::update("Tickets",["is_read"=>1],"ticket_number = '$ticketNumber'");
         }catch(\Exception $e){
             return false;
         }
