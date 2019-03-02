@@ -103,7 +103,11 @@
                                             <li class="list-group-item">
                                                 <div class="list-group-item__title">وضعیت:</div>
                                                 <div class="list-group-item__value" id="state">
-                                                    {{ticket_details.state=="waiting" ? "در انتظار پاسخ" : "پاسخ داده شده"}}</div>
+                                                {% if ticket_details.state=="read" %}خوانده شده{% endif %}
+                                                {% if ticket_details.state=="unread" %}خوانده نشده{% endif %}
+                                                {% if ticket_details.state=="waiting" %}درانتظار پاسخ{% endif %}
+                                                {% if ticket_details.state=="answered" %}پاسخ داده شده{% endif %}
+                                              </div>
                                             </li>
                                             <li class="list-group-item">
                                                 <div class="list-group-item__title">تاریخ ایجاد تیکت:</div>

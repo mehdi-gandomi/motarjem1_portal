@@ -103,7 +103,7 @@
                                 <i class="icon-earphones-alt"></i>
                                 <span>پیام های اخیر</span>
                             </div>
-                            <button data-toggle="modal" data-target="#newMessageModal" class="btn new-ticket-btn">
+                            <button class="btn new-ticket-btn" data-target="#newMessageModal" data-toggle="modal">
                                 <i class="icon-plus"></i>
                                 ارسال پیام جدید
                             </button>
@@ -118,6 +118,12 @@
                                                 -
                                                 <span class="ticket-item__title">
                                                     {{ticket.subject}}</span>
+                                                {% if ticket.state == 'read' %}
+                                                    <span class="ticket-item__status bg-primary ">خوانده شده</span>
+                                                {% endif %}
+                                                {% if ticket.state == 'unread' %}
+                                                    <span class="ticket-item__status bg-danger">خوانده نشده</span>
+                                                {% endif %}
                                                 {% if ticket.state=='answered' %}
                                                     <span class="ticket-item__status answered">پاسخ داده شده</span>
                                                 {% endif %}
