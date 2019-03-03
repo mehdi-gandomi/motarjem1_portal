@@ -181,15 +181,43 @@ class TranslatorPanelController extends Controller
 
     public function get_account_report_page($req,$res,$args)
     {
+        $data=[];
         $orderPage=$req->getParam("order_page") ? $req->getParam("order_page"):1;
         $checkoutPage=$req->getParam("checkout_page") ? $req->getParam("checkout_page"):1;
-
+        $checkoutRequestPage=$req->getParam("checkout_request_page") ? $req->getParam("checkout_request_page"):1;
+        //get revenue and ccount credit
         $accountInfo=Translator::get_account_info_by_user_id($_SESSION['user_id']);
+        //get orders that user completed
         $completedOrders=Translator::get_completed_orders_by_user_id($_SESSION['user_id'],$orderPage,10);
-        $checkouts=Translator::get_account_checkouts_by_user_id($_SESSION['user_id'],$checkoutPage,10);
-        $checkoutsCount=Translator::get_account_checkouts_count_by_user_id($_SESSION['user_id']);
+        //get count of orders that user completed
         $completedOrdersCount=Translator::get_completed_orders_count_by_user_id($_SESSION['user_id']);
-        return $this->view->render($res,"admin/translator/account-report.twig",['revenue'=>number_format($accountInfo['revenue']),'account_balance'=>number_format($accountInfo['account_credit']),'completed_orders'=>$completedOrders,'completed_orders_count'=>$completedOrdersCount,'completed_orders_current_page'=>$orderPage,'checkout_logs'=>$checkouts,'checkouts_count'=>$checkoutsCount,'checkouts_current_page'=>$checkoutPage]);
+        //get all checkouts done by translator
+        $checkouts=Translator::get_account_checkouts_by_user_id($_SESSION['user_id'],$checkoutPage,10);
+        //get all checkouts count done by translator
+        $checkoutsCount=Translator::get_account_checkouts_count_by_user_id($_SESSION['user_id']);
+        
+        //get checkout requests that trnslator sent to admin
+        $checkoutRequests=Translator::get_account_checkout_requests_by_user_id($_SESSION['user_id'],$checkoutRequestPage,10);
+        //get count of checkout requests that trnslator sent to admin
+        $checkoutRequestsCount=Translator::get_account_checkout_requests_count_by_user_id($_SESSION['user_id']);
+        //get total checkout price done by translator
+        $totalCheckouts=Translator::get_total_checkout_price_by_user_id($_SESSION['user_id']);
+        $totalCheckouts=$totalCheckouts ? $totalCheckouts:0;
+
+        $data['revenue']=number_format($accountInfo['revenue']);
+        $data['account_balance']=number_format($accountInfo['account_credit']);
+        $data['completed_orders']=$completedOrders;
+        $data['completed_orders_count']=$completedOrdersCount;
+        $data['completed_orders_current_page']=$orderPage;
+        $data['checkout_logs']=$checkouts;
+        $data['checkouts_count']=$checkoutsCount;
+        $data['checkouts_current_page']=$checkoutPage;
+        $data['checkoutـrequest_logs']=$checkoutRequests;
+        $data['checkoutـrequest_logs_count']=$checkoutRequestsCount;
+        $data['checkoutـrequest_logs_current_page']=$checkoutRequestPage;
+        $data['total_checkouts']=$totalCheckouts;
+
+        return $this->view->render($res,"admin/translator/account-report.twig",$data);
     }
 
     //format credit card

@@ -291,6 +291,43 @@ class Translator extends Model
             return false;
         }
     }
+    //get requests for checkouts that translator sent to admin and is not paid yet
+    public static function get_account_checkout_requests_by_user_id($userId,$page,$offset)
+    {
+        try{
+            $db=static::getDB();
+            $page_limit = ($page - 1) * $offset;
+            $sql="SELECT * FROM translator_checkout_request WHERE translator_id='$userId' LIMIT $page_limit,$offset";
+            $result=$db->query($sql);
+            return $result ? $result->fetchAll(PDO::FETCH_ASSOC):false;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+    //get count of requests for checkouts that translator sent to admin and is not paid yet
+    public static function get_account_checkout_requests_count_by_user_id($userId)
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT COUNT(*) AS checkout_count FROM translator_checkout_request WHERE translator_id='$userId'";
+            $result=$db->query($sql);
+            return $result ? $result->fetch(PDO::FETCH_ASSOC)['checkout_count']:false;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+    //get total price of all trnslator checkouts by user id
+    public static function get_total_checkout_price_by_user_id($userId)
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT SUM(amount) AS totalCheckoutsPrice FROM payment_logs WHERE translator_id='$userId'";
+            $result=$db->query($sql);
+            return $result ? $result->fetch(PDO::FETCH_ASSOC)['totalCheckoutsPrice']:false;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
     protected static function get_current_date_persian()
     {
         $now = new \DateTime("NOW");
