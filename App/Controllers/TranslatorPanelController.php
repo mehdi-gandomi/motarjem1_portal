@@ -3,6 +3,7 @@ namespace App\Controllers;
 
 use App\Models\Order;
 use App\Models\Translator;
+use App\Models\Ticket;
 use Core\Controller;
 
 class TranslatorPanelController extends Controller
@@ -13,14 +14,19 @@ class TranslatorPanelController extends Controller
         $data = [];
         if ($_SESSION['is_employed']) {
             $data['new_orders'] = Order::get_orders_without_requested_by_user_id($_SESSION['user_id'], 1, 3);
-            $data['lastMessages'] = Translator::get_messages_by_id($_SESSION['user_id'], 1, 3);
-            $data['unread_messages_count'] = Translator::get_unread_messages_count_by_user_id($_SESSION['user_id']);
+            $data['lastMessages'] = Ticket::get_tickets_by_user_id($_SESSION['user_id'],"2", 1, 3);
+            $data['unread_messages_count'] = Ticket::get_unread_tickets_count_by_user_id($_SESSION['user_id'],"2");
             $data['translator_orders_count'] = Order::get_orders_count_by_user_id($_SESSION['user_id']);
             $data['translator_revenue'] = number_format(\Core\Model::select("translator_account", "account_credit", ['translator_id' => $_SESSION['user_id']], true)['account_credit']);
         } else {
             $data['study_fields'] = Order::get_study_fields();
         }
         return $this->view->render($res, "admin/translator/dashboard.twig", $data);
+    }
+    public function get_last_tickets_json($req,$res,$args)
+    {
+        $lastThreeTickets = Ticket::get_tickets_by_user_id($_SESSION['user_id'],"2", 1, 3);
+        return $res->withJson(["tickets"=>$lastThreeTickets]);
     }
     public function get_test_json($req, $res, $args)
     {
@@ -248,6 +254,76 @@ class TranslatorPanelController extends Controller
         $checkoutRequestsCount=Translator::get_account_checkout_requests_count_by_user_id($_SESSION['user_id']);
         return $res->withJson(['requests'=>$checkoutRequests,'count'=>$checkoutRequestsCount,'current_page'=>$page]);
     }
+
+    public function get_tickets_page($req,$res,$args)
+    {
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
+        $state = $req->getQueryParam("state") === null ? ['read','unread','waiting','answered'] : \explode(",", $req->getQueryParam("state"));
+        $userTickets = Ticket::get_tickets_by_user_id($_SESSION['user_id'],"2", $page, 10, ['state'=>$state]);
+        $userTicketsCount = Ticket::get_tickets_count_by_user_id($_SESSION['user_id'],"2", $state);
+        return $this->view->render($res, "admin/translator/tickets.twig", ["tickets" => $userTickets,'current_page'=>$page, 'tickets_count' => $userTicketsCount,'state'=>$state]);
+    }
+
+    public function get_ticket_details($req, $res, $args)
+    {
+        Ticket::set_as_read($args['ticket_number']);
+        $ticketDetails = Ticket::get_details_by_ticket_number($args['ticket_number']);
+        if(!$ticketDetails){
+            return var_dump("تیکت موجود نمی باشد");
+        }
+        if($ticketDetails['creator_id']!=$_SESSION['user_id']){
+            return var_dump("شما اجازه دسترسی به این تیکت را ندارید");
+        }
+        $ticketMessages=Ticket::get_ticket_messages_by_ticket_number($args['ticket_number']);
+        $lastTicketId=$ticketMessages[0]['ticket_id'];        
+        return $this->view->render($res, "admin/translator/view-ticket.twig", ['ticket_details' => $ticketDetails,'ticket_messages'=>$ticketMessages,"last_ticket_id"=>$lastTicketId]);
+    }
+    public function get_ticket_details_json($req, $res, $args)
+    {
+        Ticket::set_as_read($args['ticket_number']);
+        $ticketDetails = Ticket::get_details_by_ticket_number($args['ticket_number']);
+        if($ticketDetails['creator_id']!=$_SESSION['user_id']){
+            return $res->withJson(['status'=>false,'message'=>"شما اجازه دسترسی به این تیکت را ندارید"]);
+        }
+        $ticketMessages=Ticket::get_ticket_messages_by_ticket_number($args['ticket_number']);
+        return $res->withJson(['status'=>true,'tickets'=>$ticketMessages,'date'=>User::get_current_date_persian()]);
+        
+    }
+    public function get_tickets_json($req, $res, $args)
+    {
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
+        $state = $req->getQueryParam("state") === null ? ['read','unread','waiting','answered'] : \explode(",", $req->getQueryParam("state"));
+        $userTickets = Ticket::get_tickets_by_user_id($_SESSION['user_id'],"2", $page, 10, ['state'=>$state]);
+        $userTicketsCount = Ticket::get_tickets_count_by_user_id($_SESSION['user_id'],"2", ['state'=>$state]);
+        return $res->withJson(['tickets' => $userTickets, 'tickets_count' => intval($userTicketsCount), 'current_page' => $page]);
+    }
+
+    //this function gets message data that user sends and return a json respose if it all goes well
+    public function post_send_ticket($req, $res, $args)
+    {
+        $ticketNumber = Ticket::create($_SESSION['user_id'],"2", $req->getParsedBody());
+        if($ticketNumber){
+            return $res->withJson([
+                'status' => true,
+                'ticket_number'=>$ticketNumber
+            ]);
+        }
+        return $res->withJson([
+            'status' => false
+        ]);
+    }
+
+    //this function gets reply message data that user sends and return a json respose if it all goes well
+    public function post_reply_ticket($req, $res, $args)
+    {
+        $ticketData=$req->getParsedBody();
+        $ticketData['parent_ticket_id']=$args['ticket_id'];
+        $result = Ticket::create_reply($_SESSION['user_id'], $ticketData);
+        return $res->withJson([
+            'status' => $result
+        ]);
+    }
+
     //format credit card
     protected function format_credit_card($creditCard, $delimiter = " ")
     {

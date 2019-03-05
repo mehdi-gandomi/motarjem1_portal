@@ -25,11 +25,37 @@ $("#send-message-btn").click(function (e) {
         success: function (data, status) {
             if (status && data.status) {
                 $("#newMessageModal").modal("hide");
-                Swal.fire("موفقیت آمیز !", "پیام شما با موفقیت ارسال شد !", "success");
+                Swal.fire('موفق', "پیام شما با موفقیت ارسال شد ! <br> شماره پیگیری : <span style='font-family: sans-serif;direction: ltr;text-align: left;unicode-bidi: embed;'>#" + data.ticket_number + "<span>", 'success')
+                $.get("/translator/tickets/last/json",renderLastThreeTickets);
+            }else {
+                $("#newMessageModal").modal("hide");
+                Swal.fire('خطا', 'خطایی در ارسال پیام شما رخ داد', 'error')
             }
         }
     });
 });
+function renderLastThreeTickets(data,status){
+    let output="";
+    data.tickets.forEach(function(ticket){
+        console.log(ticket);
+        output+="<a class='list-group-item ticket-item' href='/user/ticket/view/"+ticket.ticket_number+"'>";
+        output+="<div class='ticket-item__details'>";
+        output+="<span class='ticket-item__code'>#"+ticket.ticket_number+"</span>-";
+        output+="<span class='ticket-item__title'>"+ticket.subject+"</span>";                        
+        if(ticket.state=="read"){
+            output+="<span class='ticket-item__status bg-primary '>خوانده شده</span>";
+        }else if(ticket.state=="unread"){
+            output+="<span class='ticket-item__status bg-danger '>خوانده نشده</span>";
+        }else if(ticket.state=="answered"){
+            output+="<span class='ticket-item__status answered '>پاسخ داده شده</span>";
+        }else{
+            output+="<span class='ticket-item__status not-answered'>درانتظار پاسخ</span>";
+        }
+        output+="</div>";
+        output+="<p>آخرین بروزرسانی"+ticket.update_date_persian+"</p></a>";                    
+    })
+    $(".ticket-list").html(output);
+}
 $("#testFilterForm").submit(function (e) {
     e.preventDefault();
     let language = $("#language").val();
@@ -327,3 +353,5 @@ $("#requestCheckoutForm").on("submit",function(e){
     }
     $(this).val(amount.toLocaleString("us"));
   })
+
+ 

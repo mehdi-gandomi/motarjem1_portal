@@ -46,4 +46,6 @@ $app->group('/user', function ($app) use ($container) {
     $app->post("/edit-profile","App\Controllers\UserPanelController:post_edit_profile")->add($container->get('csrf'));
     $app->post("/edit-profile/upload-avatar","App\Controllers\UserPanelController:upload_avatar");
     $app->post('/order-payment/{order_number}', "App\Controllers\UserPanelController:order_payment")->add($container->get('csrf'));
+    $app->get("/tickets/last/json","App\Controllers\UserPanelController:get_last_tickets_json");
+    
 })->add($authMV);

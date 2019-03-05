@@ -49,8 +49,14 @@ $app->group('/translator', function ($app) use ($container) {
     $app->post('/bank-info/edit', "App\Controllers\TranslatorPanelController:post_edit_bank_info");
     $app->get('/account-report', "App\Controllers\TranslatorPanelController:get_account_report_page");
     $app->post('/account/checkout-request', "App\Controllers\TranslatorPanelController:post_request_checkout");
-    
     $app->get('/account-report/checkout-requests/json', "App\Controllers\TranslatorPanelController:get_checkout_requests_json");
+    $app->get('/tickets', "App\Controllers\TranslatorPanelController:get_tickets_page");
+    $app->get("/ticket/view/{ticket_number}","App\Controllers\TranslatorPanelController:get_ticket_details");
+    $app->get("/ticket/view/{ticket_number}/json","App\Controllers\TranslatorPanelController:get_ticket_details_json");
+    $app->get("/tickets/json","App\Controllers\TranslatorPanelController:get_tickets_json");
+    $app->post("/ticket/send","App\Controllers\TranslatorPanelController:post_send_ticket");
+    $app->post("/ticket/reply/{ticket_id}","App\Controllers\TranslatorPanelController:post_reply_ticket");
+    $app->get("/tickets/last/json","App\Controllers\TranslatorPanelController:get_last_tickets_json");
 })->add(function ($req, $res, $next) use ($container) {
 
     if (isset($_SESSION['is_translator_logged_in'])) {

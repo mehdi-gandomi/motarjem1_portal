@@ -30,6 +30,11 @@ class UserPanelController extends Controller
         
         $this->view->render($res, "admin/user/dashboard.twig", ['orders' => $userOrders, 'completedOrdersCount' => $completedOrdersCount, 'workingOrdersCount' => $workingOrdersCount, 'unreadTicketsCount' => $unreadTicketsCount, 'lastTickets' => $lastThreeTickets]);
     }
+    public function get_last_tickets_json($req,$res,$args)
+    {
+        $lastThreeTickets = Ticket::get_tickets_by_user_id($_SESSION['user_id'],"1", 1, 3);
+        return $res->withJson(["tickets"=>$lastThreeTickets]);
+    }
     //get translator info and send that as json
     public function get_translator_info($req, $res, $args)
     {
@@ -147,10 +152,9 @@ class UserPanelController extends Controller
     public function get_tickets_json($req, $res, $args)
     {
         $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
-        $state = $req->getQueryParam("state") === null ? ['answered','waiting'] : \explode(",", $req->getQueryParam("state"));
-        $read = $req->getQueryParam("read") === null ? [0,1] : \explode(",", $req->getQueryParam("read"));
-        $userTickets = Ticket::get_tickets_by_user_id($_SESSION['user_id'],"1", $page, 10, ['state'=>$state,'read'=>$read]);
-        $userTicketsCount = Ticket::get_tickets_count_by_user_id($_SESSION['user_id'],"1", $state);
+        $state = $req->getQueryParam("state") === null ? ['read','unread','waiting','answered'] : \explode(",", $req->getQueryParam("state"));
+        $userTickets = Ticket::get_tickets_by_user_id($_SESSION['user_id'],"1", $page, 10, ['state'=>$state]);
+        $userTicketsCount = Ticket::get_tickets_count_by_user_id($_SESSION['user_id'],"1", ['state'=>$state]);
         return $res->withJson(['tickets' => $userTickets, 'tickets_count' => intval($userTicketsCount), 'current_page' => $page]);
     }
 

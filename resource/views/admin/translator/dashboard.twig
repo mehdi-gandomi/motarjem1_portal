@@ -91,7 +91,7 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <a href="/user/edit-profile" class="btn btn-success btn-block profile-edit-btn">
+                                <a href="/translator/edit-profile" class="btn btn-success btn-block profile-edit-btn">
                                     <i class="icon-note"></i>
                                     بروزرسانی
                                 </a>
@@ -113,25 +113,31 @@
                             <div class="card-body">
                                 <div class="list-group ticket-list">
                                     {% if lastMessages %}
-                                        {% for message in lastMessages %}
-
-                                            <a href="/user/message/view/{{ message.msg_id }}" class="list-group-item ticket-item">
+                                        {% for ticket in lastMessages %}
+                                            <a class="list-group-item ticket-item" href="/translator/ticket/view/{{ticket.ticket_number}}">
                                                 <div class="ticket-item__details">
-                                                    <span class="ticket-item__code">#{{ message.msg_id }}</span>
+                                                    <span class="ticket-item__code">#{{ticket.ticket_number}}</span>
                                                     -
-                                                    <span class="ticket-item__title">{{ message.subject }}</span>
-                                                    {% if message.is_answered %}
-                                                        <span class="ticket-item__status answered">پاسخ داده شده</span >
-                                                    {% else %}
-                                                        <span class="ticket-item__status not-answered">پاسخ داده نشده</span >
+                                                    <span class="ticket-item__title">
+                                                        {{ticket.subject}}</span>
+                                                    {% if ticket.state == 'read' %}
+                                                        <span class="ticket-item__status bg-primary ">خوانده شده</span>
+                                                    {% endif %}
+                                                    {% if ticket.state == 'unread' %}
+                                                        <span class="ticket-item__status bg-danger">خوانده نشده</span>
+                                                    {% endif %}
+                                                    {% if ticket.state=='answered' %}
+                                                        <span class="ticket-item__status answered">پاسخ داده شده</span>
+                                                    {% endif %}
+                                                    {% if ticket.state == 'waiting' %}
+                                                        <span class="ticket-item__status not-answered">درانتظار پاسخ</span>
                                                     {% endif %}
                                                 </div>
                                                 <p>
                                                     آخرین بروزرسانی
-                                                    {{ message.update_date_persian }}
+                                                    {{ticket.update_date_persian}}
                                                 </p>
                                             </a>
-
                                         {% endfor %}
                                     {% else %}
                                         <h6 class="text-center p-3">تاکنون پیامی ارسال نکرده اید !</h6>
@@ -295,7 +301,7 @@
                     <h5 class="modal-title" id="newMessageModalLabel">ارسال پیام</h5>
                 </div>
                 <div class="modal-body">
-                    <form action="/user/message/send" id="sendMessageForm" method="POST">
+                    <form action="/translator/ticket/send" id="sendMessageForm" method="POST">
                         <input type="hidden" name="msg_id" id="msg_id"/>
                         <div class="row">
                             <div class="form-group col-md-3">
