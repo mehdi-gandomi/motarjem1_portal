@@ -17652,11 +17652,21 @@ body {
   color: #f0f0f0 !important;
 }
 
-.info-card.is--balance .info-card__content__link a {
+.info-card.is--balance .info-card__content__link a.request-checkout {
+  background: #000;
+  display: inline-block;
+  padding: 0.3rem 0.7em;
+  margin-top: 0.5rem;
   color: #9bffbe !important;
+  -webkit-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  border: 2px solid #000;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
-.info-card.is--balance .info-card__content__link a:hover {
-  color: #1cff6b !important;
+.info-card.is--balance .info-card__content__link a.request-checkout:hover {
+  background: #fff;
+  color: #003513 !important;
 }
 /*# sourceMappingURL=admin.css.map */

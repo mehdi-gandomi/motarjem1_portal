@@ -28,10 +28,20 @@
         color: #f0f0f0 !important;
      }
      .info-card__content__link{
-         a{
+         a.request-checkout{
+            background: #000;
+            display: inline-block;
+            padding: 0.3rem 0.7em;
+            margin-top: 0.5rem;
              color: #9bffbe !important;
+             transition: all 0.3s ease-out;
+             border: 2px solid #000;
+             border-radius: 10px;
+             cursor: pointer;
             &:hover{
-                color:darken( #9bffbe,25) !important;
+               
+               background: #fff;
+               color:darken( #9bffbe,70) !important;
             }
          }
      }

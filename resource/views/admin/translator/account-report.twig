@@ -36,7 +36,7 @@
                                         <span class="f-1rem ml-1">تومان</span>
                                     </div>
                                     <div class="info-card__content__link">
-                                        <a href="/account/checkout">درخواست پرداخت وجه</a>
+                                        <a class="request-checkout" data-target="#requestCheckoutModal" data-toggle="modal">درخواست پرداخت وجه</a>
                                     </div>
                                 </div>
                             </div>
@@ -80,7 +80,8 @@
               set page_number = order.word_numbers / 250 | round(0,'ceil') %}
                                         <tr>
                                             <td data-label="شماره سفارش">
-                                                {{ order.order_number }}</td>
+                                                {{ order.order_number }}
+                                            </td>
                                             <td data-label="زبان ترجمه">
                                                 {{
                     order.translation_lang == "1"
@@ -92,13 +93,14 @@
                                                 {{ order.translation_quality == "5" ? "نقره ای" : "طلایی" }}
                                             </td>
                                             <td data-label="هزینه ترجمه">
-                                                {{ order.order_price |number_format }}
-                                                تومان</td>
+                                                {{ order.order_price | number_format }}
+                                                تومان
+                                            </td>
                                             <td data-label="سهم شما">
                                                 {{ ((order.order_price*70)/100 | round(0,'ceil')) | number_format }}
                                             </td>
                                             <td class="order-more-info" data-label="جزییات">
-                                                <a onclick="showOrderInfo('{{order.order_number}}')">
+                                                <a onclick="showOrderInfo('{{ order.order_number }}')">
                                                     <svg height="23px" viewBox="0 0 50 80" width="13px" xml:space="preserve">
                                                         <polyline fill="none" points="45.63,75.8 0.375,38.087 45.63,0.375 " stroke-linecap="round" stroke-linejoin="round" stroke-width="10" stroke="#a9a9a9"></polyline>
                                                     </svg>
@@ -129,7 +131,7 @@
                         <div class="col-12">
                             <h4 class="text-center mt-4">درخواست های برداشت شما</h4>
                         </div>
-                        <div class="col-12">
+                        <div class="col-12 checkout-requests-wrap">
                             <table class="table is--responsive" id="orders-table">
                                 <thead>
                                     <tr>
@@ -138,15 +140,16 @@
                                         <th class="bg-teal-dark" scope="col">تاریخ درخواست</th>
                                     </tr>
                                 </thead>
-                                <tbody id="user-orders">
+                                <tbody id="user-checkout-requests">
                                     {% if checkoutـrequest_logs %}
-                                        {% for log in
-                checkoutـrequest_logs %}
+                                        {% for log in checkoutـrequest_logs %}
                                             <tr>
                                                 <td data-label="ردیف">
-                                                    {{ log.id }}</td>
+                                                    {{ log.id }}
+                                                </td>
                                                 <td data-label="مبلغ درخواستی">
-                                                    {{ log.amount }}</td>
+                                                    {{ log.amount }}
+                                                </td>
                                                 <td data-label="تاریخ درخواست">
                                                     {{ log.request_date_persian }}
                                                 </td>
@@ -164,9 +167,10 @@
                                 </tbody>
                             </table>
                             {% include 'admin/includes/pagination.twig' with { 'count' :
-            checkoutـrequest_logs_count, 'page_prefix':'checkout_request_', 'current_page' :
-            checkoutـrequest_logs_current_page, 'base_path' : '/translator/account-report',
-            'offset' : 10, 'visible_numbers' : 3 } %}
+            checkoutـrequest_logs_count, 'page_prefix':'checkout_request_',
+            'current_page' : checkoutـrequest_logs_current_page, 'base_path' :
+            '/translator/account-report', 'offset' : 10, 'visible_numbers' : 3 }
+            %}
                         </div>
                     </div>
                     <div class="col-md-7 row">
@@ -189,9 +193,11 @@
                                         {% for log in checkout_logs %}
                                             <tr>
                                                 <td data-label="ردیف">
-                                                    {{ log.id }}</td>
+                                                    {{ log.id }}
+                                                </td>
                                                 <td data-label="مبلغ پرداخت شده">
-                                                    {{ log.amount }}</td>
+                                                    {{ log.amount }}
+                                                </td>
                                                 <td data-label="تاریخ درخواست">
                                                     {{ log.request_date_persian }}
                                                 </td>
@@ -199,7 +205,8 @@
                                                     {{ log.settle_date_persian }}
                                                 </td>
                                                 <td data-label="شماره پیگیری">
-                                                    {{ log.refer_code }}</td>
+                                                    {{ log.refer_code }}
+                                                </td>
                                             </tr>
                                         {% endfor %}
                                         {% else %}
@@ -224,85 +231,79 @@
         </div>
     </main>
     <!-- Modal -->
-            <div aria-hidden="true" aria-labelledby="orderDetailsModalLabel" class="modal fade" id="orderDetailsModal" role="dialog" tabindex="-1">
-                <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header justify-content-center">
-                            <h5 class="modal-title" id="orderDetailsModalLabel">اطلاعات سفارش</h5>
-                            {# <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button> #}
+    <div aria-hidden="true" aria-labelledby="orderDetailsModalLabel" class="modal fade" id="orderDetailsModal" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h5 class="modal-title" id="orderDetailsModalLabel">اطلاعات سفارش</h5>
+                    {#
+                                                <button
+                                                  type="button"
+                                                  class="close"
+                                                  data-dismiss="modal"
+                                                  aria-label="Close"
+                                                >
+                                                  <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                #}
+                </div>
+                <div class="modal-body" id="orderDetailsWrap" style="padding:2rem"></div>
+                <div class="modal-footer justify-content-start">
+                    <button class="btn btn-secondary" data-dismiss="modal" type="button">
+                        بستن
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Request Checkout Modal -->
+    <div aria-hidden="true" aria-labelledby="requestCheckoutModalLabel" class="modal fade" id="requestCheckoutModal" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h5 class="modal-title" id="requestCheckoutModalLabel">
+                        درخواست برداشت وجه
+                    </h5>
+                    {#
+                                                <button
+                                                  type="button"
+                                                  class="close"
+                                                  data-dismiss="modal"
+                                                  aria-label="Close"
+                                                >
+                                                  <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                #}
+                </div>
+                <div class="modal-body" style="padding:2rem">
+                    <form action="/translator/account/checkout-request" id="requestCheckoutForm" method="post">
+                        <input type="hidden" name="csrf_name" value="{{csrf_name}}">
+                            <input type="hidden" name="csrf_value" value="{{csrf_value}}">
+                                <div class="row">
+                                    <div class="col-md-7 offset-md-1">
+                                        <div class="form-group">
+                                            <label for="amount">مبلغ درخواستی (تومان)</label>
+                                            <input class="form-control ltr f-1rem font-weight-bold" id="amount" name="amount" type="text"/>
+                                        </div>
+                                        <span class='amount-hint'></span>
+                                    </div>
+                                    <div class="col-md-3 d-flex align-items-center pt-3">
+                                        <input class="btn btn-success" type="submit" value="ارسال"/>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                        <div class="modal-body" id="orderDetailsWrap" style="padding:2rem"></div>
                         <div class="modal-footer justify-content-start">
-                            <button class="btn btn-secondary" data-dismiss="modal" type="button">بستن</button>
+                            <button class="btn btn-secondary" data-dismiss="modal" type="button">
+                                بستن
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-{% endblock %}
-
-{% block script_below %}
-<script>
-function showOrderInfo(orderNumber){
-    $.get("/translator/order/info/"+orderNumber,function(data,status){
-        let output="<div class='order-details row'>";
-        let translationLang=data.translation_lang=="1" ? "انگلیسی به فارسی":"فارسی به انگلیسی";
-        let translationQuality=data.translation_quality == "5" ? "نقره ای":"طلایی";
-        let translationKind=data.translation_kind == '1' ? "عمومی":"تخصصی";
-        let deliveryType;
-        if(data.delivery_type=="1"){
-            deliveryType="معمولی";
-        }else if(data.delivery_type=="2"){
-            deliveryType="نیمه فوری";
-        }else{
-            deliveryType="فوری";
-        }
-        output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>شماره سفارش</div><div class='order-details__detail__value'>"+data.order_number+"</div></div>";
-        output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>تعداد صفحات</div><div class='order-details__detail__value'>"+Math.ceil(data.word_numbers/250)+"</div></div>";
-        output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>زبان ترجمه</div><div class='order-details__detail__value'>"+translationLang+"</div></div>";
-        output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>کیفیت ترجمه</div><div class='order-details__detail__value'>"+translationQuality+"</div></div>";
-        output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>نوع ترجمه</div><div class='order-details__detail__value'>"+translationKind+"</div></div>";
-        output+="<div class='order-details__detail col-md-4'><div class='order-details__detail__label'>رشته دانشگاهی</div><div class='order-details__detail__value'>"+data.study_field+"</div></div>";
-        output+="<div class='order-details__detail col-md-5'><div class='order-details__detail__label'>زمان تحویل</div><div class='order-details__detail__value'>"+deliveryType+"</div></div>";
-        output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>زمان تخمینی برحسب روز</div><div class='order-details__detail__value'>"+data.delivery_days+"</div></div>";
-        output+="<div class='order-details__detail col-md-4'><div class='order-details__detail__label'>نام سفارش دهنده</div><div class='order-details__detail__value'>"+data.orderer_fname+" "+data.orderer_lname+"</div></div>";
-        output+="<div class='order-details__detail col-md-5'><div class='order-details__detail__label'>ایمیل سفارش دهنده</div><div class='order-details__detail__value'>"+data.email+"</div></div>";
-        output+="<div class='order-details__detail col-md-4'><div class='order-details__detail__label'>تاریخ ثبت سفارش</div><div class='order-details__detail__value'>"+data.order_date_persian+"</div></div>";
-        output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>قیمت کل سفارش</div><div class='order-details__detail__value'>"+parseInt(data.order_price).toLocaleString("us")+"</div></div>";
-        output+="<div class='order-details__detail col-md-5'><div class='order-details__detail__label'>سهم شما از این سفارش</div><div class='order-details__detail__value'>"+Math.ceil((data.order_price*70)/100).toLocaleString("us")+"</div></div>";
-        if(data.description){
-            output+="<div class='order-details__detail col-md-8'><div class='order-details__detail__label'>توضیحات</div><div class='order-details__detail__value'>"+data.description+"</div></div>";
-        }
-        if(data.order_files){
-            let files=data.order_files.split(",");
-            let filesHtml="";
-            files.forEach(function(file){
-                filesHtml+="<a style='display:block' href='/public/uploads/order/"+file+"' download='"+file+"'>"+file+"</a>"
-            })
-            output+="<div class='order-details__detail col-md-4'><div class='order-details__detail__label'>فایل ها</div><div class='order-details__detail__value'>"+filesHtml+"</div></div>";
-        }
-        output+="</div>";
-        $("#orderDetailsWrap").html(output);
-        $("#orderDetailsModal").modal("show");
-    });
-    // Swal.fire({
-    //     title: '<strong>HTML <u>example</u></strong>',
-    //     type: 'info',
-    //     html:
-    //       'You can use <b>bold text</b>, ' +
-    //       '<a href="//github.com">links</a> ' +
-    //       'and other HTML tags',
-    //     showCloseButton: true,
-    //     showCancelButton: true,
-    //     focusConfirm: false,
-    //     confirmButtonText:
-    //       '<i class="fa fa-thumbs-up"></i> Great!',
-    //     confirmButtonAriaLabel: 'Thumbs up, great!',
-    //     cancelButtonText:
-    //       '<i class="fa fa-thumbs-down"></i>',
-    //     cancelButtonAriaLabel: 'Thumbs down',
-    //   })
-  }
-</script>
-{% endblock %}
+        {% endblock %}
+        {% block script_below %}
+            <script src="/public/js/sweetalert2@8.js"></script>
+            <script src="/public/js/panel/translator-account-report.js"></script>
+        {% endblock %}
+    

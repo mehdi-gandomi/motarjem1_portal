@@ -215,11 +215,36 @@ class TranslatorPanelController extends Controller
         $data['checkoutـrequest_logs']=$checkoutRequests;
         $data['checkoutـrequest_logs_count']=$checkoutRequestsCount;
         $data['checkoutـrequest_logs_current_page']=$checkoutRequestPage;
-        $data['total_checkouts']=$totalCheckouts;
-
+        $data['total_checkouts']=\number_format($totalCheckouts);
+        // $data=array_merge($data,$this->get_csrf_token($req));
         return $this->view->render($res,"admin/translator/account-report.twig",$data);
     }
 
+    //save translator checkout request in db
+    public function post_request_checkout($req,$res,$args)
+    {
+        $body=$req->getParsedBody();
+        //remove ',' from amount value
+        $body['amount']=\preg_replace("/\,/","",$body['amount']);
+        //check if the amount that a translator requested is not more than his credit
+        $accountInfo=Translator::get_account_info_by_user_id($_SESSION['user_id']);
+        if(intval($body['amount']) > intval($accountInfo['account_credit'])) return $res->withJson(['status'=>false,'message'=>'مبلغ درخواستی نمی تواند بیشتر از موجودی حسابتان باشد !']);
+        //save the request
+        $result=Translator::request_checkout($body);
+        if(!$result) return $res->withJson(['status'=>false,'message'=>'خطایی در ارسال درخواست رخ داد !']);
+        return $res->withJson(['status'=>true]);
+    }
+
+    //get checkout requests data as json
+    public function get_checkout_requests_json($req,$res,$args)
+    {
+        $page=$req->getParam("page") ? $req->getParam("page"):1;
+        //get checkout requests that trnslator sent to admin
+        $checkoutRequests=Translator::get_account_checkout_requests_by_user_id($_SESSION['user_id'],$page,10);
+        //get count of checkout requests that trnslator sent to admin
+        $checkoutRequestsCount=Translator::get_account_checkout_requests_count_by_user_id($_SESSION['user_id']);
+        return $res->withJson(['requests'=>$checkoutRequests,'count'=>120,'current_page'=>$page]);
+    }
     //format credit card
     protected function format_credit_card($creditCard, $delimiter = " ")
     {

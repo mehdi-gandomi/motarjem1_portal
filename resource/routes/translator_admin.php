@@ -48,6 +48,9 @@ $app->group('/translator', function ($app) use ($container) {
     $app->get('/bank-info/edit', "App\Controllers\TranslatorPanelController:get_bank_info_edit_page");
     $app->post('/bank-info/edit', "App\Controllers\TranslatorPanelController:post_edit_bank_info");
     $app->get('/account-report', "App\Controllers\TranslatorPanelController:get_account_report_page");
+    $app->post('/account/checkout-request', "App\Controllers\TranslatorPanelController:post_request_checkout");
+    
+    $app->get('/account-report/checkout-requests/json', "App\Controllers\TranslatorPanelController:get_checkout_requests_json");
 })->add(function ($req, $res, $next) use ($container) {
 
     if (isset($_SESSION['is_translator_logged_in'])) {

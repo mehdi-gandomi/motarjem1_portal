@@ -328,6 +328,21 @@ class Translator extends Model
             return false;
         }
     }
+
+    public static function request_checkout($data)
+    {
+        try{
+            unset($data['csrf_name']);
+            unset($data['csrf_value']);
+            $data['request_date_persian']=self::get_current_date_persian();
+            $data['translator_id']=$_SESSION['user_id'];
+            static::insert("translator_checkout_request",$data);
+            return true;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+
     protected static function get_current_date_persian()
     {
         $now = new \DateTime("NOW");

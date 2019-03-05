@@ -179,7 +179,7 @@ function acceptOrder(orderNumber,translatorId){
                           })
                     }else{
                         Swal.fire(
-                            'موفق !',
+                            'خطا !',
                             'خطایی در ثبت اطلاعات رخ داد !',
                             'error'
                           )
@@ -231,7 +231,7 @@ function declineOrder(orderNumber,translatorId){
                           })
                     }else{
                         Swal.fire(
-                            'موفق !',
+                            'خطا !',
                             'خطایی در ثبت اطلاعات رخ داد !',
                             'error'
                           )
