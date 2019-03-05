@@ -266,3 +266,64 @@ function renderOrders(orders,translatorId,el){
     }
     
 }
+
+//request checkout functions
+$("#requestCheckoutForm").on("submit",function(e){
+    e.preventDefault();
+    if($("#amount").val()=="") {
+        return Swal.fire(
+            'خطا !',
+            "فیلد مبلغ نباید خالی باشد !",
+            'error'
+          );
+    }
+    $.ajax({
+        type:"POST",
+        url:$(this).attr("action"),
+        data:$(this).serialize(),
+        success:function(data,status){
+            if (!status) {
+                Swal.fire(
+                    'خطا !',
+                    "خطایی رخ داد لطفا صفحه را رفرش کنید !",
+                    'error'
+                  );
+            }
+            if(status && data.status){
+                Swal.fire(
+                    'موفق !',
+                    'درخواست شما با موفقیت ارسال شد !',
+                    'success'
+                  );
+                  queryString={};
+                  page=getQueryString("checkout_request_page");
+                  if(page) queryString['page']=page;
+                  $.get("/translator/account-report/checkout-requests/json",queryString,function(data,status){
+                    renderCheckoutRequests(data.requests);
+                    showPagination(data.count,data.current_page,10,window.location.origin+window.location.pathname, "",3,".checkout-requests-wrap .pagination","checkout_request_");
+                  })
+                  $("#requestCheckoutModal").modal("hide");
+                  $("#amount").val("");
+                  
+            }else{
+                Swal.fire(
+                    'خطا !',
+                    data.message,
+                    'error'
+                  );
+            }
+            
+        }
+    });
+    
+  })
+  $("#amount").on("input",function(e){
+    let amount=$(this).val();
+    amount=amount.replace(/\,/g,"");
+    amount=parseInt(amount);
+    if(isNaN(amount)) {
+        $(this).val("");
+        return;
+    }
+    $(this).val(amount.toLocaleString("us"));
+  })

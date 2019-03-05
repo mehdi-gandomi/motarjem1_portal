@@ -328,12 +328,21 @@ class Translator extends Model
             return false;
         }
     }
-
+    //get total of checkout requests by user id
+    public static function get_total_checkout_requests_price_by_user_id($userId)
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT SUM(amount) AS totalCheckoutsPrice FROM translator_checkout_request WHERE translator_id='$userId'";
+            $result=$db->query($sql);
+            return $result ? intval($result->fetch(PDO::FETCH_ASSOC)['totalCheckoutsPrice']):false;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
     public static function request_checkout($data)
     {
         try{
-            unset($data['csrf_name']);
-            unset($data['csrf_value']);
             $data['request_date_persian']=self::get_current_date_persian();
             $data['translator_id']=$_SESSION['user_id'];
             static::insert("translator_checkout_request",$data);

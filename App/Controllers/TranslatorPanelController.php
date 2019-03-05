@@ -229,6 +229,9 @@ class TranslatorPanelController extends Controller
         //check if the amount that a translator requested is not more than his credit
         $accountInfo=Translator::get_account_info_by_user_id($_SESSION['user_id']);
         if(intval($body['amount']) > intval($accountInfo['account_credit'])) return $res->withJson(['status'=>false,'message'=>'مبلغ درخواستی نمی تواند بیشتر از موجودی حسابتان باشد !']);
+        $totalCheckoutRequestPrice=Translator::get_total_checkout_requests_price_by_user_id($_SESSION['user_id']);
+        $totalCheckoutRequestPrice= $totalCheckoutRequestPrice ? intval($totalCheckoutRequestPrice):$totalCheckoutRequestPrice;
+        if(($totalCheckoutRequestPrice+intval($body['amount']))>$accountInfo['account_credit']) return $res->withJson(['status'=>false,'message'=>'مجموع درخواست های شما از موجودی حساب می باشد !']);
         //save the request
         $result=Translator::request_checkout($body);
         if(!$result) return $res->withJson(['status'=>false,'message'=>'خطایی در ارسال درخواست رخ داد !']);
@@ -243,7 +246,7 @@ class TranslatorPanelController extends Controller
         $checkoutRequests=Translator::get_account_checkout_requests_by_user_id($_SESSION['user_id'],$page,10);
         //get count of checkout requests that trnslator sent to admin
         $checkoutRequestsCount=Translator::get_account_checkout_requests_count_by_user_id($_SESSION['user_id']);
-        return $res->withJson(['requests'=>$checkoutRequests,'count'=>120,'current_page'=>$page]);
+        return $res->withJson(['requests'=>$checkoutRequests,'count'=>$checkoutRequestsCount,'current_page'=>$page]);
     }
     //format credit card
     protected function format_credit_card($creditCard, $delimiter = " ")
