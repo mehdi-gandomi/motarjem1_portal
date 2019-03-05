@@ -324,6 +324,16 @@ class TranslatorPanelController extends Controller
         ]);
     }
 
+    //render edit profile page
+    public function get_edit_profile_page($req,$res,$args)
+    {
+        $tokens = $this->get_csrf_token($req);
+        $userData = Translator::by_id($_SESSION['user_id'], "username,email,cell_phone,phone,address,sex,fname,lname");
+        $data = ['userData' => $userData];
+        $data = array_merge($data, $tokens);
+        return $this->view->render($res, "admin/translator/edit-profile.twig", $data);
+    }
+
     //format credit card
     protected function format_credit_card($creditCard, $delimiter = " ")
     {

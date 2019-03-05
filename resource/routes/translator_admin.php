@@ -57,6 +57,8 @@ $app->group('/translator', function ($app) use ($container) {
     $app->post("/ticket/send","App\Controllers\TranslatorPanelController:post_send_ticket");
     $app->post("/ticket/reply/{ticket_id}","App\Controllers\TranslatorPanelController:post_reply_ticket");
     $app->get("/tickets/last/json","App\Controllers\TranslatorPanelController:get_last_tickets_json");
+    $app->get("/edit-profile","App\Controllers\TranslatorPanelController:get_edit_profile_page")->add($container->get('csrf'));
+    $app->post("/edit-profile","App\Controllers\TranslatorPanelController:post_edit_profile")->add($container->get('csrf'));
 })->add(function ($req, $res, $next) use ($container) {
 
     if (isset($_SESSION['is_translator_logged_in'])) {
