@@ -334,6 +334,102 @@ class TranslatorPanelController extends Controller
         $data = array_merge($data, $tokens);
         return $this->view->render($res, "admin/translator/edit-profile.twig", $data);
     }
+    //edit profile data 
+    public function post_edit_profile($req,$res,$args)
+    {
+        $postFields=$req->getParsedBody();
+        unset($postFields['csrf_name']);
+        unset($postFields['csrf_value']);
+        $status=true;
+        $message="";
+        if (!isset($postFields['new_password']) || $postFields['new_password'] == "") {
+            unset($postFields['new_password']);
+            unset($postFields['old_password']);
+            unset($postFields['new_password_confirm']);
+            if(!isset($postFields['avatar']) || $postFields['avatar']=="") unset($postFields['avatar']);
+            $result = User::edit_by_id($_SESSION['user_id'], $postFields);
+            if ($result) {
+                $_SESSION['fname'] = $postFields['fname'];
+                $_SESSION['lname'] = $postFields['lname'];
+                $_SESSION['avatar'] = $postFields['avatar'];
+                $_SESSION['phone'] = $postFields['phone'];
+                $_SESSION['email'] = $postFields['email'];
+                $message="اطلاعات با موفقیت ویرایش شد";
+            } else {
+                $status=false;
+                $message="خطایی در ثبت اطلاعات رخ داد !";
+            }
+        } else {
+            $oldPassword = User::by_id($_SESSION['user_id'], "password")['password'];
+            if ($oldPassword === md5(md5($postFields['old_password']))) {
+                if ($postFields['new_password'] === $postFields['new_password_confirm']) {
+                    $postFields['password'] = $postFields['new_password'];
+                    unset($postFields['new_password']);
+                    unset($postFields['old_password']);
+                    unset($postFields['new_password_confirm']);
+                    if(!isset($postFields['avatar']) || $postFields['avatar']=="") unset($postFields['avatar']);
+                    $result = User::edit_by_id($_SESSION['user_id'], $postFields);
+                    if ($result) {
+                        $message="اطلاعات با موفقیت ویرایش شد";
+                    } else {
+                        $status=false;
+                        $message="خطایی در ثبت اطلاعات رخ داد !";
+                    }
+                    
+                } else {
+                    $status=false;
+                    $message="فیلد پسورد با فیلد تایید پسورد مطابقت ندارد !";
+                }
+            } else {
+                $status=false;
+                $message= "پسورد قبلی اشتباه می باشد !";
+            }
+        }
+        return $res->withJson(['status'=>$status,'message'=>$message]);
+    }
+
+
+    //validate profile page values
+    // protected function validate_profile_data($req,$res,$args)
+    // {
+        
+    // }
+    //upload the translator avatar
+    public function upload_avatar($req,$res,$args)
+    {
+        $uploadedFiles = $req->getUploadedFiles();
+        $uploadedFile = $uploadedFiles['file'];
+        $directory = dirname(dirname(__DIR__)) . '/public/uploads/avatars/translator';
+        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+            try {
+                $filename = $this->moveUploadedFile($directory, $uploadedFile);
+                $_SESSION['avatar'] = $filename;
+                return $res->withJson(['filename' => $filename]);
+            } catch (\Exception $e) {
+                $res->write("error while uploading file "+$e->getMessage())->withStatus(500);
+            }
+        } else {
+            $res->write($uploadedFile->getError())->withStatus(500);
+        }
+    }
+
+    //upload the translator melicard photo
+    public function upload_melicard_photo($req,$res,$args)
+    {
+        $uploadedFiles = $req->getUploadedFiles();
+        $uploadedFile = $uploadedFiles['file'];
+        $directory = dirname(dirname(__DIR__)) . '/public/uploads/translator/melicard';
+        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+            try {
+                $filename = $this->moveUploadedFile($directory, $uploadedFile);
+                return $res->withJson(['filename' => $filename]);
+            } catch (\Exception $e) {
+                $res->write("error while uploading file "+$e->getMessage())->withStatus(500);
+            }
+        } else {
+            $res->write($uploadedFile->getError())->withStatus(500);
+        }
+    }
     //render notification page
     public function get_notifications_page($req,$res,$args)
     {

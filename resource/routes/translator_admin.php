@@ -59,7 +59,10 @@ $app->group('/translator', function ($app) use ($container) {
     $app->get("/tickets/last/json","App\Controllers\TranslatorPanelController:get_last_tickets_json");
     $app->get("/edit-profile","App\Controllers\TranslatorPanelController:get_edit_profile_page")->add($container->get('csrf'));
     $app->post("/edit-profile","App\Controllers\TranslatorPanelController:post_edit_profile")->add($container->get('csrf'));
+    $app->post("/edit-profile/upload-avatar","App\Controllers\TranslatorPanelController:upload_avatar");
+    $app->post("/edit-profile/melicard-photo/upload","App\Controllers\TranslatorPanelController:upload_melicard_photo");
     $app->get("/notifications","App\Controllers\TranslatorPanelController:get_notifications_page");
+    
 })->add(function ($req, $res, $next) use ($container) {
 
     if (isset($_SESSION['is_translator_logged_in'])) {
