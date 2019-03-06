@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Models\Order;
 use App\Models\Translator;
 use App\Models\Ticket;
+use App\Models\Notification;
 use Core\Controller;
 
 class TranslatorPanelController extends Controller
@@ -328,10 +329,16 @@ class TranslatorPanelController extends Controller
     public function get_edit_profile_page($req,$res,$args)
     {
         $tokens = $this->get_csrf_token($req);
-        $userData = Translator::by_id($_SESSION['user_id'], "username,email,cell_phone,phone,address,sex,fname,lname");
+        $userData = Translator::by_id($_SESSION['user_id']);
         $data = ['userData' => $userData];
         $data = array_merge($data, $tokens);
         return $this->view->render($res, "admin/translator/edit-profile.twig", $data);
+    }
+    //render notification page
+    public function get_notifications_page($req,$res,$args)
+    {
+        $notifications=Notification::get_all();
+        return $this->view->render("/admin/translator/notifications.twig",['notifications'=>$notifications]);
     }
 
     //format credit card

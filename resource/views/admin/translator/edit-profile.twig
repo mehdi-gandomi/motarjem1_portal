@@ -1,0 +1,177 @@
+{% extends 'admin/layout/translator.twig' %}
+{% block content %}
+
+    <main class="main">
+        <div class="card mt-2">
+
+            <div class="card-body edit-profile">
+                <form class="row" action="/user/edit-profile" method="post">
+                    <input type="hidden" name="csrf_name" value="{{ csrf_name }}"/>
+                    <input type="hidden" name="csrf_value" value="{{ csrf_value }}"/>
+                    <input type="hidden" name="avatar" id="user-avatar-input" />
+                    <div class="col-12">
+                        <h4 class="text-center mt-4 mb-4">ویرایش اطلاعات پروفایل</h4>
+                    </div>
+                    <div class="col-lg-3 change-avatar-wrap">
+                        <div class="avatar-upload edit-profile__avatar">
+                            <div class="avatar-edit">
+                                <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg"/>
+                                <label for="imageUpload"></label>
+                            </div>
+                            <div class="avatar-preview">
+                                <div id="imagePreview" style="background-image: url({{'/public/uploads/avatars/user/' ~ user.avatar}});"></div>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                                <label for="username">نام کاربری</label>
+                                <input type="text" id="username" name="username" class="form-control" value="{{userData.username}}">
+                            </div>
+                        <div class="form-group">
+                            <label for="fname">نام</label>
+                            <input type="text" id="fname" name="fname" class="form-control" value="{{userData.fname}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="lname">نام خانوادگی</label>
+                            <input type="text" id="lname" name="lname" class="form-control" value="{{userData.lname}}">
+                        </div>
+                        <div class="form-group mt-4">
+                            <label class="f-1rem" style="margin-left: 1rem">جنسیت</label>
+                            <div class="form-check form-check-inline f-1rem">
+                                <input class="form-check-input" type="radio" name="sex" id="male" value="1" checked="checked">
+                                <label class="form-check-label" for="male">مرد</label>
+                            </div>
+                            <div class="form-check form-check-inline f-1rem">
+                                <input class="form-check-input" type="radio" name="sex" id="female" value="2" {{userData.sex=="0" ? "checked":""}}>
+                                <label class="form-check-label" for="female">زن</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="edit-profile__info col-lg-9 ">
+                        
+                        <h6>اطلاعات تماس</h6>
+                        <hr>
+                        <div class="row contact-info">
+                            <div class="form-group col-lg-5">
+                            <label for="email">ایمیل</label>
+                            <input type="email" id="email" name="email" class="form-control" value="{{userData.email}}">
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label for="cell_phone">تلفن همراه</label>
+                            <input type="number" id="cell_phone" name="cell_phone" class="form-control" value="{{userData.cell_phone}}">
+                        </div>
+                        <div class="form-group col-lg-3">
+                            <label for="phone">تلفن ثابت</label>
+                            <input type="number" id="phone" name="phone" class="form-control" value="{{userData.phone}}">
+                        </div>
+                        <div class="form-group col-lg-12">
+                            <label for="address">آدرس منزل</label>
+                            <textarea rows="5" id="address" name="address" class="form-control">{{userData.address}}</textarea>
+                        </div>
+                        </div>
+                        <h6>اطلاعات بیشتر</h6>
+                        <hr>
+                        <div class="row auth-info">
+                            <div class="form-group col-lg-4">
+                                <label for="meli_card_photo">تصویر کارت ملی</label>
+                                <div class="avatar-upload melicard">
+                                    <div class="avatar-edit">
+                                        <input type='file' id="melicardUpload" accept=".png, .jpg, .jpeg"/>
+                                        <label for="melicardUpload"></label>
+                                    </div>
+                                    <div class="avatar-preview">
+                                        <div class="imagePreview" style="background-image: url({{'/public/uploads/translator/melicard/' ~ userData.melicard_photo}});" aria-label="{{userData.fname ~ " " ~ userData.lname}}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-3">
+                                <div>
+                                    <label for="meli_code">کد ملی</label>
+                                    <input type="text" id="meli_code" name="meli_code" class="form-control" value="{{userData.meli_code}}">
+                                </div>
+                                <div class="mt-4">
+                                    <label for="degree">تحصیلات</label>
+                                    <input type="text" id="degree" name="degree" class="form-control" value="{{userData.degree}}">
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-5">
+                                <div>
+                                    <label for="exp_years">سابقه کار (به سال)</label>
+                                    <input type="text" id="exp_years" name="exp_years" class="form-control" value="{{userData.exp_years}}">
+                                </div>
+                                <div class="mt-4">
+                            
+                                    <label style="margin-left: 1rem;display: block">زبان های ترجمه</label>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="en_to_fa" id="en-to-fa" value="1" {{userData.en_to_fa=="1" ? "checked":""}}>
+                                        <label class="form-check-label" for="en-to-fa">انگلیسی به فارسی</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="fa_to_en" id="fa-to-en" value="1" {{userData.fa_to_en=="1" ? "checked":""}}>
+                                        <label class="form-check-label" for="fa-to-en">فارسی به انگلیسی</label>
+                                    </div>
+                            
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-4 change-password-wrap">
+                            <h6>تغییر پسورد</h6>
+                            <hr>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="oldPassword">پسورد قبلی</label>
+                                        <input class="form-control" type="password" name="old_password" id="oldPassword">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="newPassword">پسورد جدید</label>
+                                        <input class="form-control" type="password" name="new_password" id="newPassword">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="newPasswordConfirm">تکرار پسورد جدید</label>
+                                        <input class="form-control" type="password" name="new_password_confirm" id="newPasswordConfirm">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <input class="btn btn-primary" type="submit" value="ویرایش اطلاعات">
+                        </div>
+                        <div class="col-lg-5">
+                            {% for error in flash("profileEditErrors") %}
+                                <div class="alert alert-danger text-center">
+                                    {{error}}
+                                </div>
+                            {% endfor %}
+                            {% for success in flash("profileEditSuccess") %}
+                                <div class="alert alert-success text-center">
+                                    {{success}}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+{# show melicard photo in zoom mode #}
+<div id="melicardModal" class="lightbox">
+
+  <!-- The Close Button -->
+  <span id="closeModal" class="close">&times;</span>
+
+  <!-- Modal Content (The Image) -->
+  <img class="lightbox-content" id="melicardPhoto">
+
+  <!-- Modal Caption (Image Text) -->
+  <div id="caption"></div>
+</div>
+{% endblock %}
+{% block script_below %}
+    <script src="/public/js/panel/translator-edit-profile.js"></script>
+{% endblock %}
