@@ -91,3 +91,12 @@
        
       }
   }
+  .validation-error{
+    text-align: center;
+    margin-top: 0.3rem;
+    color: #ff5858;
+    font-size: 0.85rem;
+  }
+  input.not-valid{
+    border: 1px solid #ff5858 !important;
+  }

@@ -46,14 +46,21 @@ $("#melicardUpload").change(function(){
 })
 
 //function to validate input based on their pattern
-function validateInputs(index,element){
+function addValidationListeners(index,element){
     element.addEventListener("blur",function(e){
-        let pattern2=$(this).attr("pattern");
         let value=$(this).val();
         if(value==""){
+            $(this).addClass("not-valid");
             $(this).parent().append("<p class='validation-error'>این فیلد نباید خالی باشد !</p>");
-        }else if(){
-
+        }else{
+            let isValid=e.target.checkValidity();
+            if(!isValid){
+                $(this).addClass("not-valid");
+                $(this).parent().append("<p class='validation-error'>"+$(this).attr("data-pattern-error")+"</p>");
+            }else{
+                $(this).removeClass("not-valid");
+                $(this).parent().find(".validation-error").eq(0).remove();
+            }
         }
 
     })
@@ -62,14 +69,57 @@ function validateInputs(index,element){
 // function setCustomValidationMessages(index,element){
 // element.setCustomValidity(element.getAttribute("data-pattern-error"));
 // }
-
 //listener for validation
-$("#editProfileDataForm").find(".validate-it").each(validateInputs);
+$("#editProfileDataForm").find(".validate-it").each(addValidationListeners);
 
 // listener for form submit
 $("#editProfileDataForm").on("submit",function(e){
     e.preventDefault();
-
+    let validationIsGood=true;
+    $("#editProfileDataForm").find(".validate-it").each(function(index,element){    
+        if(element.value==""){
+            element.classList.add("not-valid");
+            element.parentElement.innerHTML+="<p class='validation-error'>این فیلد نباید خالی باشد !</p>";
+            validationIsGood=false;
+        }else{
+            let isValid=e.target.checkValidity();
+            if(!isValid){
+                element.classList.add("not-valid");
+                element.parentElement.innerHTML+="<p class='validation-error'>"+element.dataset['pattern-error']+"</p>";
+                validationIsGood=false;
+            }else{
+                element.classList.remove("not-valid");
+                let parent=element.parentElement;
+                let child=parent.querySelector(".validation-error");
+                if(child) parent.removeChild(child);
+            }
+        }
+    });
+    if(validationIsGood){
+        $.ajax({
+            type: "POST",
+            url: e.target.getAttribute("action"),
+            data:$(this).serialize(),
+            success: function (data) {
+                if (data.status) {
+                    Swal.fire({
+                        title: 'موفق !',
+                        text: data.message,
+                        type: 'success',
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'باشه'
+                      }).then((result) => {
+                        if (result.value) {
+                          window.location.reload();
+                        }
+                      })
+                } else {
+                    Swal.fire('خطا !', data.message, 'error')
+                }
+            }
+        });
+    }
 })
 
 

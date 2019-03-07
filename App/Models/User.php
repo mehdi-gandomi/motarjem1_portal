@@ -63,6 +63,30 @@ class User extends Model
         }
 
     }
+    public static function check_existance_by_username($postFields)
+    {
+        try {
+            $db = static::getDB();
+            $sql = "SELECT username FROM users WHERE username='" . $postFields['username'] ."'";
+            return $db->query($sql)->fetch(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            return true;
+
+        }
+
+    }
+    public static function check_existance_by_email($postFields)
+    {
+        try {
+            $db = static::getDB();
+            $sql = "SELECT email FROM users WHERE email='" . $postFields['email'] . "'";
+            return $db->query($sql)->fetch(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            return true;
+
+        }
+
+    }
     public static function create($userData)
     {
         try {
@@ -147,12 +171,18 @@ class User extends Model
         try{
             if(isset($userData['password'])){
                 $userData['password'] = \md5(\md5($userData['password']));                
+            }   
+            $existData=self::by_id($userId,"username,email");
+            if($existData['username']!=$userData['username'] && self::check_existance_by_username($userData)){
+                return ['status'=>false,'message'=>'این نام کاربری از قبل موجود است !'];
+            }
+            if($existData['email']!=$userData['email'] && self::check_existance_by_email($userData)){
+                return ['status'=>false,'message'=>'این ایمیل از قبل موجود است !'];
             }
             static::update("users",$userData,"`user_id` = '$userId'");
-            return true;
+            return ['status'=>true,'message'=>'اطلاعات با موفقیت ثبت شد !'];
         }catch(\Exception $e){
-            
-            return false;
+            return ['status'=>false,'message'=>'خطایی در ذخیره اطلاعات رخ داد !'];
         }
     }
     //change the password for reset password page

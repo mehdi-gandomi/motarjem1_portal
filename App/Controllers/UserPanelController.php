@@ -202,15 +202,17 @@ class UserPanelController extends Controller
             unset($postFields['new_password_confirm']);
             if(!isset($postFields['avatar']) || $postFields['avatar']=="") unset($postFields['avatar']);
             $result = User::edit_by_id($_SESSION['user_id'], $postFields);
-            if ($result) {
+            if ($result['status']) {
                 $_SESSION['fname'] = $postFields['fname'];
                 $_SESSION['lname'] = $postFields['lname'];
-                $_SESSION['avatar'] = $postFields['avatar'];
+                if(isset($postFields['avatar'])){
+                    $_SESSION['avatar']= $postFields['avatar'];
+                }
                 $_SESSION['phone'] = $postFields['phone'];
                 $_SESSION['email'] = $postFields['email'];
-                $this->flash->addMessage('profileEditSuccess', "اطلاعات با موفقیت ویرایش شد");
+                $this->flash->addMessage('profileEditSuccess', $result['message']);
             } else {
-                $this->flash->addMessage('profileEditErrors', "خطایی در ثبت اطلاعات رخ داد !");
+                $this->flash->addMessage('profileEditErrors', $result['message']);
             }
         } else {
             $oldPassword = User::by_id($_SESSION['user_id'], "password")['password'];
@@ -222,10 +224,17 @@ class UserPanelController extends Controller
                     unset($postFields['new_password_confirm']);
                     if(!isset($postFields['avatar']) || $postFields['avatar']=="") unset($postFields['avatar']);
                     $result = User::edit_by_id($_SESSION['user_id'], $postFields);
-                    if ($result) {
-                        $this->flash->addMessage('profileEditSuccess', "اطلاعات با موفقیت ویرایش شد");
+                    if ($result['status']) {
+                        $_SESSION['fname'] = $postFields['fname'];
+                        $_SESSION['lname'] = $postFields['lname'];
+                        if(isset($postFields['avatar'])){
+                            $_SESSION['avatar']= $postFields['avatar'];
+                        }
+                        $_SESSION['phone'] = $postFields['phone'];
+                        $_SESSION['email'] = $postFields['email'];
+                        $this->flash->addMessage('profileEditSuccess', $result['message']);
                     } else {
-                        $this->flash->addMessage('profileEditErrors', "خطایی در ثبت اطلاعات رخ داد !");
+                        $this->flash->addMessage('profileEditErrors', $result['message']);
                     }
                 } else {
                     $this->flash->addMessage('profileEditErrors', "فیلد پسورد با فیلد تایید پسورد مطابقت ندارد !");

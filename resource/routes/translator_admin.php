@@ -57,8 +57,8 @@ $app->group('/translator', function ($app) use ($container) {
     $app->post("/ticket/send","App\Controllers\TranslatorPanelController:post_send_ticket");
     $app->post("/ticket/reply/{ticket_id}","App\Controllers\TranslatorPanelController:post_reply_ticket");
     $app->get("/tickets/last/json","App\Controllers\TranslatorPanelController:get_last_tickets_json");
-    $app->get("/edit-profile","App\Controllers\TranslatorPanelController:get_edit_profile_page")->add($container->get('csrf'));
-    $app->post("/edit-profile","App\Controllers\TranslatorPanelController:post_edit_profile")->add($container->get('csrf'));
+    $app->get("/edit-profile","App\Controllers\TranslatorPanelController:get_edit_profile_page");
+    $app->post("/edit-profile","App\Controllers\TranslatorPanelController:post_edit_profile");
     $app->post("/edit-profile/upload-avatar","App\Controllers\TranslatorPanelController:upload_avatar");
     $app->post("/edit-profile/melicard-photo/upload","App\Controllers\TranslatorPanelController:upload_melicard_photo");
     $app->get("/notifications","App\Controllers\TranslatorPanelController:get_notifications_page");

@@ -48,6 +48,30 @@ class Translator extends Model
         }
 
     }
+    public static function check_existance_by_username($postFields)
+    {
+        try {
+            $db = static::getDB();
+            $sql = "SELECT username FROM translators WHERE username='" . $postFields['username'] ."'";
+            return $db->query($sql)->fetch(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            return true;
+
+        }
+
+    }
+    public static function check_existance_by_email($postFields)
+    {
+        try {
+            $db = static::getDB();
+            $sql = "SELECT email FROM translators WHERE email='" . $postFields['email'] . "'";
+            return $db->query($sql)->fetch(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            return true;
+
+        }
+
+    }
     public static function login_check($username, $password)
     {
         try {
@@ -73,6 +97,29 @@ class Translator extends Model
 
         } catch (\Exception $e) {
             return false;
+        }
+    }
+    //this function lets you update translator data by user id
+    public static function edit_by_id($userId,$userData)
+    {
+        try{
+            if(isset($userData['password'])){
+                $userData['password'] = \md5(\md5($userData['password']));                
+            }
+            $userData['en_to_fa']= isset($userData['en_to_fa']) ? 1:0;
+            $userData['fa_to_en']= isset($userData['fa_to_en']) ? 1:0;
+            
+            $translatorData=self::by_id($userId,"username,email");
+            if($translatorData['username']!=$userData['username'] && self::check_existance_by_username($userData)){
+                return ['status'=>false,'message'=>'این نام کاربری از قبل موجود است !'];
+            }
+            if($translatorData['email']!=$userData['email'] && self::check_existance_by_email($userData)){
+                return ['status'=>false,'message'=>'این ایمیل از قبل موجود است !'];
+            }
+            static::update("translators",$userData,"`translator_id` = '$userId'");
+            return ['status'=>true,'message'=>'اطلاعات با موفقیت ثبت شد !'];
+        }catch(\Exception $e){
+            return ['status'=>false,'message'=>'خطایی در ذخیره اطلاعات رخ داد !'];
         }
     }
 

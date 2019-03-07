@@ -338,42 +338,59 @@ class TranslatorPanelController extends Controller
     public function post_edit_profile($req,$res,$args)
     {
         $postFields=$req->getParsedBody();
-        unset($postFields['csrf_name']);
-        unset($postFields['csrf_value']);
         $status=true;
         $message="";
         if (!isset($postFields['new_password']) || $postFields['new_password'] == "") {
             unset($postFields['new_password']);
             unset($postFields['old_password']);
             unset($postFields['new_password_confirm']);
-            if(!isset($postFields['avatar']) || $postFields['avatar']=="") unset($postFields['avatar']);
-            $result = User::edit_by_id($_SESSION['user_id'], $postFields);
-            if ($result) {
+            if(!isset($postFields['avatar']) || $postFields['avatar']==""){
+                unset($postFields['avatar']);
+            } 
+            if(!isset($postFields['melicard_photo']) || $postFields['melicard_photo']==""){
+                unset($postFields['melicard_photo']);
+            }
+            $result = Translator::edit_by_id($_SESSION['user_id'], $postFields);
+            if ($result['status']) {
                 $_SESSION['fname'] = $postFields['fname'];
                 $_SESSION['lname'] = $postFields['lname'];
-                $_SESSION['avatar'] = $postFields['avatar'];
-                $_SESSION['phone'] = $postFields['phone'];
+                if(isset($postFields['avatar'])){
+                    $_SESSION['avatar']= $postFields['avatar'];
+                }
+                $_SESSION['phone'] = $postFields['cell_phone'];
                 $_SESSION['email'] = $postFields['email'];
-                $message="اطلاعات با موفقیت ویرایش شد";
+                $message=$result['message'];
             } else {
                 $status=false;
-                $message="خطایی در ثبت اطلاعات رخ داد !";
+                $message=$result['message'];
             }
         } else {
-            $oldPassword = User::by_id($_SESSION['user_id'], "password")['password'];
+            $oldPassword = Translator::by_id($_SESSION['user_id'], "password")['password'];
             if ($oldPassword === md5(md5($postFields['old_password']))) {
                 if ($postFields['new_password'] === $postFields['new_password_confirm']) {
                     $postFields['password'] = $postFields['new_password'];
                     unset($postFields['new_password']);
                     unset($postFields['old_password']);
                     unset($postFields['new_password_confirm']);
-                    if(!isset($postFields['avatar']) || $postFields['avatar']=="") unset($postFields['avatar']);
-                    $result = User::edit_by_id($_SESSION['user_id'], $postFields);
-                    if ($result) {
+                    if(!isset($postFields['avatar']) || $postFields['avatar']==""){
+                        unset($postFields['avatar']);
+                    } 
+                    if(!isset($postFields['melicard_photo']) || $postFields['melicard_photo']==""){
+                        unset($postFields['melicard_photo']);
+                    }
+                    $result = Translator::edit_by_id($_SESSION['user_id'], $postFields);
+                    if ($result['status']) {
+                        $_SESSION['fname'] = $postFields['fname'];
+                        $_SESSION['lname'] = $postFields['lname'];
+                        if(isset($postFields['avatar'])){
+                            $_SESSION['avatar']= $postFields['avatar'];
+                        }
+                        $_SESSION['phone'] = $postFields['cell_phone'];
+                        $_SESSION['email'] = $postFields['email'];
                         $message="اطلاعات با موفقیت ویرایش شد";
                     } else {
                         $status=false;
-                        $message="خطایی در ثبت اطلاعات رخ داد !";
+                        $message=$result['message'];
                     }
                     
                 } else {
