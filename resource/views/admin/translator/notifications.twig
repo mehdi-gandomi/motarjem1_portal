@@ -1,28 +1,46 @@
 {% extends 'admin/layout/translator.twig' %}
 
+{% block style_below %}
+    <style>
+        .global-notifications tbody td,.private-notifications tbody td{
+            text-align:center;
+            text-align: center;
+            height: 80px;
+            border: 1px solid #ebebeb;
+            transition:all 0.3s ease-out;
+        }
+        .global-notifications tbody tr:hover .order-more-info,.private-notifications tbody tr:hover .order-more-info{
+            background: #eadede;
+        }
+            
+    </style>
+{% endblock %}
+
 {% block content %}
     <main class="main">
         <div class="card">
             <div class="card-body">
-                <h3>اطلاعیه ها</h3>
-                <table class="table newOrderTable is--responsive">
-                    {% if new_orders %}
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 class="mt-2 mb-4">اطلاعیه های عمومی</h4>
+                    <table class="table global-notifications is--responsive">
+                    {% if global_notifications %}
                         <thead>
-                            <th class="text-center" scope="col">#</th>
-                            <th class="text-center" scope="col">عنوان اطلاعیه</th>
-                            <th class="text-center" scope="col">تاریخ ارسال</th>
-                            <th class="text-center" scope="col">درجه اهمیت</th>
-                            <th class="text-center" scope="col">جزپیات بیشتر</th>
+                            <th class="text-center bg-teal-dark" scope="col">#</th>
+                            <th class="text-center bg-teal-dark" scope="col">عنوان اطلاعیه</th>
+                            <th class="text-center bg-teal-dark" scope="col">تاریخ ارسال</th>
+                            <th class="text-center bg-teal-dark" scope="col">درجه اهمیت</th>
+                            <th class="text-center bg-teal-dark" scope="col">جزپیات بیشتر</th>
                         </thead>
-                        <tbody id="newOrdersWrap">
-                            {% for notification in notifications %}
-                                {% if notification.notif_type == "1" %}
+                        <tbody >
+                            {% for notification in global_notifications %}
+                                {% if notification.importance == "1" %}
                                     {% set importance = "خیلی مهم" %}
                                 {% endif %}
-                                {% if notification.notif_type == "2" %}
+                                {% if notification.importance == "2" %}
                                     {% set importance = "مهم" %}
                                 {% endif %}
-                                {% if notification.notif_type == "3" %}
+                                {% if notification.importance == "3" %}
                                     {% set importance = "معمولی" %}
                                 {% endif %}
                                 
@@ -37,7 +55,7 @@
                                     <td data-label="اهمیت">
                                         {{importance}}
                                     </td>
-                                    <td data-label="جزپیات بیشتر">
+                                    <td class="order-more-info" data-label="جزپیات بیشتر">
                                         <a onclick="showNotificationInfo('{{notification.notif_id}}')">
                                             <svg height="23px" viewBox="0 0 50 80" width="13px" xml:space="preserve">
                                                 <polyline fill="none" points="45.63,75.8 0.375,38.087 45.63,0.375 " stroke-linecap="round" stroke-linejoin="round" stroke-width="10" stroke="#a9a9a9"></polyline>
@@ -51,26 +69,102 @@
 
                     {% else %}
                         <thead style="display:none">
-                            <th class="text-center" scope="col">#</th>
-                            <th class="text-center" scope="col">تعداد صفحات</th>
-                            <th class="text-center" scope="col">زبان ترجمه</th>
-                            <th class="text-center" scope="col">رشته</th>
-                            <th class="text-center" scope="col">کیفیت ترجمه</th>
-                            <th class="text-center" scope="col">هزینه ترجمه</th>
-                            <th class="text-center" scope="col">سهم شما</th>
-                            <th class="text-center" scope="col">عملیات</th>
+                            <th class="text-center bg-teal-dark" scope="col">#</th>
+                            <th class="text-center bg-teal-dark" scope="col">تعداد صفحات</th>
+                            <th class="text-center bg-teal-dark" scope="col">زبان ترجمه</th>
+                            <th class="text-center bg-teal-dark" scope="col">رشته</th>
+                            <th class="text-center bg-teal-dark" scope="col">کیفیت ترجمه</th>
+                            <th class="text-center bg-teal-dark" scope="col">هزینه ترجمه</th>
+                            <th class="text-center bg-teal-dark" scope="col">سهم شما</th>
+                            <th class="text-center bg-teal-dark" scope="col">عملیات</th>
                         </thead>
                         <h5 class="text-center mt-4 no-data">تا کنون اطلاعیه ای ارسال نشده است</h5>
                         <tbody id="newOrdersWrap"></tbody>
                     {% endif %}
                 </table>
                 {% include 'admin/includes/pagination.twig' with {
-                    'count' : notifications_count,
-                    'current_page' : current_page,
+                    'count' : global_notifications_count,
+                    'page_prefix':'global_',
+                    'current_page' : global_current_page,
                     'base_path' : '/translator/notifications',
                     'offset' : 10,
                     'visible_numbers' : 3
                 } %}
+                </div>
+                
+                <div class="col-md-6">
+                
+                    <h4 class="mt-2 mb-4">اطلاعیه های خصوصی (برای شما)</h4>
+                
+                    <table class="table global-notifications is--responsive" >
+                    {% if private_notifications %}
+                        <thead>
+                            <th class="text-center bg-teal-dark" scope="col">#</th>
+                            <th class="text-center bg-teal-dark" scope="col">عنوان اطلاعیه</th>
+                            <th class="text-center bg-teal-dark" scope="col">تاریخ ارسال</th>
+                            <th class="text-center bg-teal-dark" scope="col">درجه اهمیت</th>
+                            <th class="text-center bg-teal-dark" scope="col">جزپیات بیشتر</th>
+                        </thead>
+                        <tbody id="newOrdersWrap">
+                            {% for notification in private_notifications %}
+                                {% if notification.importance == "1" %}
+                                    {% set importance = "خیلی مهم" %}
+                                {% endif %}
+                                {% if notification.importance == "2" %}
+                                    {% set importance = "مهم" %}
+                                {% endif %}
+                                {% if notification.importance == "3" %}
+                                    {% set importance = "معمولی" %}
+                                {% endif %}
+                                
+                                <tr>
+                                    <td data-label="ردیف">{{ notification.notif_id }}</td>
+                                    <td data-label="عنوان اطلاعیه">
+                                        {{notification.title}}
+                                    </td>
+                                    <td data-label="تاریخ ارسال">
+                                        {{notification.sent_date_persian}}
+                                    </td>
+                                    <td data-label="اهمیت">
+                                        {{importance}}
+                                    </td>
+                                    <td class="order-more-info" data-label="جزپیات بیشتر">
+                                        <a onclick="showNotificationInfo('{{notification.notif_id}}')">
+                                            <svg height="23px" viewBox="0 0 50 80" width="13px" xml:space="preserve">
+                                                <polyline fill="none" points="45.63,75.8 0.375,38.087 45.63,0.375 " stroke-linecap="round" stroke-linejoin="round" stroke-width="10" stroke="#a9a9a9"></polyline>
+                                            </svg>
+                                        </a>
+                                    </td>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    {% else %}
+                        <thead style="display:none">
+                            <th class="text-center bg-teal-dark" scope="col">#</th>
+                            <th class="text-center bg-teal-dark" scope="col">تعداد صفحات</th>
+                            <th class="text-center bg-teal-dark" scope="col">زبان ترجمه</th>
+                            <th class="text-center bg-teal-dark" scope="col">رشته</th>
+                            <th class="text-center bg-teal-dark" scope="col">کیفیت ترجمه</th>
+                            <th class="text-center bg-teal-dark" scope="col">هزینه ترجمه</th>
+                            <th class="text-center bg-teal-dark" scope="col">سهم شما</th>
+                            <th class="text-center bg-teal-dark" scope="col">عملیات</th>
+                        </thead>
+                        <h5 class="text-center mt-4 no-data">تا کنون اطلاعیه ای ارسال نشده است</h5>
+                        <tbody id="newOrdersWrap"></tbody>
+                    {% endif %}
+                </table>
+                {% include 'admin/includes/pagination.twig' with {
+                    'count' : private_notifications_count,
+                    'page_prefix':'private_',
+                    'current_page' : private_current_page,
+                    'base_path' : '/translator/notifications',
+                    'offset' : 10,
+                    'visible_numbers' : 3
+                } %}
+                </div>
+            </div>
             </div>
         </div>
     </main>

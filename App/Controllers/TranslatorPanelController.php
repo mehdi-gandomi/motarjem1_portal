@@ -450,8 +450,13 @@ class TranslatorPanelController extends Controller
     //render notification page
     public function get_notifications_page($req,$res,$args)
     {
-        $notifications=Notification::get_all();
-        return $this->view->render("/admin/translator/notifications.twig",['notifications'=>$notifications]);
+        $globalPage=$req->getParam("global_page") ? $req->getParam("global_page"):1;
+        $privatePage=$req->getParam("private_page") ? $req->getParam("private_page"):1;
+        $notifications=Notification::get_global_notifications($globalPage,10);
+        $notificationsCount=Notification::get_global_notifications_count();
+        $translatorNotifications=Notification::get_private_notifications_by_user_id($_SESSION['user_id'],$privatePage,10);
+        $translatorNotificationsCount=Notification::get_private_notifications_count_by_user_id($_SESSION['user_id']);
+        return $this->view->render($res,"/admin/translator/notifications.twig",['global_notifications'=>$notifications,"private_notifications"=>$translatorNotifications,"global_notifications_count"=>$notificationsCount,"private_notifications_count"=>$translatorNotificationsCount,"global_current_page"=>$globalPage,"private_current_page"=>$privatePage]);
     }
 
     //format credit card

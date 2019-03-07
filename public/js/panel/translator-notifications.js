@@ -7,11 +7,11 @@ function showNotificationInfo(notifId){
 function renderNotification(notification){
     let output="<div class='order-details row'>";
     let importance;
-    if(notification.notif_type=="1"){
+    if(notification.importance=="1"){
         importance="خیلی مهم";
-    }else if(notification.notif_type=="2"){
+    }else if(notification.importance=="2"){
         importance="مهم";
-    }else if(notification.notif_type=="3"){
+    }else if(notification.importance=="3"){
         importance="معمولی";
     }
     output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>ردیف</div><div class='order-details__detail__value'>"+notification.notif_id+"</div></div>";
