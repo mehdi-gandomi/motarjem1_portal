@@ -459,6 +459,11 @@ class TranslatorPanelController extends Controller
         return $this->view->render($res,"/admin/translator/notifications.twig",['global_notifications'=>$notifications,"private_notifications"=>$translatorNotifications,"global_notifications_count"=>$notificationsCount,"private_notifications_count"=>$translatorNotificationsCount,"global_current_page"=>$globalPage,"private_current_page"=>$privatePage]);
     }
 
+    public function get_notification_info_json($req,$res,$args)
+    {
+        $notificationData=Notification::get_data_by_id($req->getParam("notif_id"));
+        return $res->withJson(['status'=>true,'info'=>$notificationData]);
+    }
     //format credit card
     protected function format_credit_card($creditCard, $delimiter = " ")
     {

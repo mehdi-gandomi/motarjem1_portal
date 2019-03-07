@@ -53,6 +53,15 @@ class Notification extends Model
         }
     }
 
+    public static function get_data_by_id($notifId)
+    {
+        try{
+            return static::select("notifications","*",['notif_id'=>$notifId],true);
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+
     protected static function getCurrentDatePersian()
     {
         $now = new \DateTime("NOW");

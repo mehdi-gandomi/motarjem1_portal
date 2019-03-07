@@ -1,6 +1,9 @@
 function showNotificationInfo(notifId){
-    $.get("/translator/notification/info.json",function(data,status){
-        renderNotification(data);
+    $.get("/translator/notification/info",{notif_id:notifId},function(data,status){
+        console.log(data);
+        if(data.status){
+            renderNotification(data.info);
+        }
     })
 }
 
@@ -18,7 +21,7 @@ function renderNotification(notification){
     output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>عنوان اطلاعیه</div><div class='order-details__detail__value'>"+notification.title+"</div></div>";
     output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>تاریخ ارسال اطلاعیه</div><div class='order-details__detail__value'>"+notification.sent_date_persian+"</div></div>";
     output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>درجه اهمیت</div><div class='order-details__detail__value'>"+importance+"</div></div>";
-    output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>متن اطلاعیه</div><div class='order-details__detail__value'>"+notification.body+"</div></div>";
+    output+="<div class='order-details__detail col-md-12'><div class='order-details__detail__label'>متن اطلاعیه</div><div class='order-details__detail__value'>"+notification.body+"</div></div>";
     if(notification.attach_files){
         let files=notification.attach_files.split(",");
         let filesHtml="";

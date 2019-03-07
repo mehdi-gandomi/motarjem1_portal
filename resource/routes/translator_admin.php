@@ -62,6 +62,8 @@ $app->group('/translator', function ($app) use ($container) {
     $app->post("/edit-profile/upload-avatar","App\Controllers\TranslatorPanelController:upload_avatar");
     $app->post("/edit-profile/melicard-photo/upload","App\Controllers\TranslatorPanelController:upload_melicard_photo");
     $app->get("/notifications","App\Controllers\TranslatorPanelController:get_notifications_page");
+    $app->get("/notification/info","App\Controllers\TranslatorPanelController:get_notification_info_json");
+    
     
 })->add(function ($req, $res, $next) use ($container) {
 

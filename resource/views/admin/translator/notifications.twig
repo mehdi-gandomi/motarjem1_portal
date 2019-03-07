@@ -7,6 +7,7 @@
             text-align: center;
             height: 80px;
             border: 1px solid #ebebeb;
+            line-height: 3.6;
             transition:all 0.3s ease-out;
         }
         .global-notifications tbody tr:hover .order-more-info,.private-notifications tbody tr:hover .order-more-info{
@@ -19,10 +20,10 @@
 {% block content %}
     <main class="main">
         <div class="card">
-            <div class="card-body">
+            <div class="card-body" style="min-height:550px">
             <div class="row">
                 <div class="col-md-6">
-                    <h4 class="mt-2 mb-4">اطلاعیه های عمومی</h4>
+                    <h4 class="mt-4 mb-4">اطلاعیه های عمومی</h4>
                     <table class="table global-notifications is--responsive">
                     {% if global_notifications %}
                         <thead>
@@ -94,7 +95,7 @@
                 
                 <div class="col-md-6">
                 
-                    <h4 class="mt-2 mb-4">اطلاعیه های خصوصی (برای شما)</h4>
+                    <h4 class="mt-4 mb-4">اطلاعیه های خصوصی (برای شما)</h4>
                 
                     <table class="table global-notifications is--responsive" >
                     {% if private_notifications %}
@@ -187,6 +188,6 @@
     </div>
 {% endblock %}
 
-{% block scriptbelow %}
+{% block script_below %}
     <script src="/public/js/panel/translator-notifications.js"></script>
 {% endblock %}
