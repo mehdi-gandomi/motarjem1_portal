@@ -30,6 +30,8 @@ class Model
         $sql="INSERT INTO $tbl_name (";
         $sql.=implode(",",$arrayKeys).")"." VALUES(:".implode(",:",$arrayKeys).")";
         $stmt=$db->prepare($sql);
+        $sql=null;
+        $arrayKeys=null;
         return $stmt->execute($data);
     }
     public static function select($tblName,$fields="*",$where=[],$is_one=false,$options=false){

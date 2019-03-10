@@ -8,6 +8,7 @@ session_start([
 ]);
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
+// ini_set('memory_limit', '256M'); 
 date_default_timezone_set('Asia/Tehran');
 use Slim\Http\Request;
 use Slim\Http\Response;

@@ -5,7 +5,7 @@ use App\Models\Translator;
 use Core\Config;
 use Core\Controller;
 use Gregwar\Captcha\CaptchaBuilder;
-
+use Slim\Http\UploadedFile;
 class TranslatorAuthController extends Controller
 {
 
@@ -125,9 +125,9 @@ class TranslatorAuthController extends Controller
 
     public function post_employment($req, $res, $args)
     {
+        
         $postFields = $req->getParsedBody();
         $hasError = $this->validate_employment($postFields);
-
         if ($hasError) {
             unset($postFields['csrf_name']);
             unset($postFields['csrf_value']);
@@ -214,13 +214,13 @@ class TranslatorAuthController extends Controller
     {
         $uploadedFiles = $req->getUploadedFiles();
         $uploadedFile = $uploadedFiles['user_photo_file'];
-        $directory = dirname(dirname(__DIR__)) . '/uploads/avatars/translator';
-        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+        $directory = dirname(dirname(__DIR__)) . '/public/uploads/avatars/translator';
+        if ($uploadedFile->getError() === 0) {
             try {
                 $filename = $this->moveUploadedFile($directory, $uploadedFile);
-                return $res->write($filename);
+                return $res->write(strval($filename));
             } catch (\Exception $e) {
-                $res->write("error while uploading file "+$e->getMessage())->withStatus(500);
+                $res->write("error while uploading file ".$e->getMessage())->withStatus(500);
             }
         } else {
             $res->write($uploadedFile->getError())->withStatus(500);
@@ -230,13 +230,13 @@ class TranslatorAuthController extends Controller
     {
         $uploadedFiles = $req->getUploadedFiles();
         $uploadedFile = $uploadedFiles['meli_card_photo_file'];
-        $directory = dirname(dirname(__DIR__)) . '/uploads/translator/melicard';
+        $directory = dirname(dirname(__DIR__)) . '/public/uploads/translator/melicard';
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
             try {
                 $filename = $this->moveUploadedFile($directory, $uploadedFile);
                 return $res->write($filename);
             } catch (\Exception $e) {
-                $res->write("error while uploading file "+$e->getMessage())->withStatus(500);
+                $res->write("error while uploading file ".$e->getMessage())->withStatus(500);
             }
         } else {
             $res->write($uploadedFile->getError())->withStatus(500);

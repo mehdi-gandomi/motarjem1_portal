@@ -80,12 +80,18 @@ class Translator extends Model
             return false;
         }
     }
-    function new ($postFields) {
+    public static function new ($postFields) {
         try {
             unset($postFields['confirm_pass']);
             unset($postFields['captcha_input']);
             unset($postFields['csrf_name']);
             unset($postFields['csrf_value']);
+            if(isset($postFields['user_photo_file'])){
+                unset($postFields['user_photo_file']);
+            }
+            if(isset($postFields['meli_card_photo_file'])){
+             unset($postFields['meli_card_photo_file']);   
+            }
             $postFields['register_date_persian'] = self::get_current_date_persian();
             $postFields['password'] = \md5(\md5($postFields['password']));
             $postFields['is_active'] = 0;
@@ -93,11 +99,12 @@ class Translator extends Model
             return array(
                 'username' => $postFields['username'],
                 'password' => $postFields['password'],
-            );
+            );   
 
         } catch (\Exception $e) {
             return false;
         }
+         
     }
     //this function lets you update translator data by user id
     public static function edit_by_id($userId,$userData)

@@ -20,7 +20,6 @@ $wpPostsMV=function($request, $response, $next)
     
 };
 
-
 // i added this route group to execute the wpPosts middleware only on this group!
 $app->group('/', function ($app) use ($container) {
     $app->get('', function (Request $request, Response $response, array $args) {
