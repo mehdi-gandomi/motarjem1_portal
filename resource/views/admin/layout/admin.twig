@@ -9,28 +9,15 @@
         <!-- Main styles for this application-->
         <link href="/public/css/admin.min.css" rel="stylesheet">
         {% block style_below %}{% endblock %}
-        <script>
-            window.dataLayer = window.dataLayer || [];
-
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-            gtag('js', new Date());
-            // Shared ID
-            gtag('config', 'UA-118965717-3');
-            // Bootstrap ID
-            gtag('config', 'UA-118965717-5');
-        </script>
     </head>
     <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
-
         {{include("admin/includes/navbar.twig")}}
         <div class="app-body">
             <div class="sidebar">
                 <div class="profile-avatar">
                     <div class="profile-avatar__avatar">
 
-                        <img src="{{'/public/uploads/avatars/translator/' ~ user.avatar}}" alt="{{user.fname ~ " " ~ user.lname}}">
+                        <img src="{{'/public/uploads/avatars/admin/' ~ user.avatar}}" alt="{{user.fname ~ " " ~ user.lname}}">
                     </div>
                     <div class="profile-avatar__text">
                         <h5>خوش آمدید</h5>
@@ -38,7 +25,7 @@
                     </div>
                 </div>
                 <nav class="sidebar-nav">
-                    {{include('admin/includes/translator_sidebar.twig') }}
+                    {{include('admin/includes/admin_sidebar.twig') }}
                 </nav>
                 <button class="sidebar-minimizer brand-minimizer" type="button"></button>
             </div>

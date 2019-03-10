@@ -11,19 +11,19 @@ class Config
      * Database name
      * @var string
      */
-    const DB_NAME = 'motarje6_db';
+    const DB_NAME = 'motarjem1';
     //motarje6_db
     /**
      * Database user
      * @var string
      */
-    const DB_USER = 'motarje6_user';
+    const DB_USER = 'coderguy';
     //motarje6_user
     /**
      * Database password
      * @var string
      */
-    const DB_PASSWORD = 'VGB[13D?XQZ,';
+    const DB_PASSWORD = 'mgmehdi@159';
     //VGB[13D?XQZ,
     /**
      * Show or hide error messages on screen
