@@ -192,11 +192,12 @@ class Order extends Model
     public static function request_order($translatorId, $orderNumber)
     {
         try {
-            $orderData=static::select("orders","order_id",['order_number'=>$orderNumber],true);            
+            $orderData=static::select("orders","order_id",['order_number'=>$orderNumber],true);
             static::insert("translator_order_request", [
                 'translator_id' => $translatorId,
                 'order_id' => $orderData['order_id'],
-                'state' => 1,
+                'request_date_persian'=>$this->getCurrentDatePersian(),
+                'state' => 1
             ]);
             return true;
         } catch (\Exception $e) {
@@ -210,6 +211,7 @@ class Order extends Model
             static::insert("translator_order_request", [
                 'translator_id' => $translatorId,
                 'order_id' => $orderData['order_id'],
+                'request_date_persian'=>$this->getCurrentDatePersian(),
                 'state' => 0,
             ]);
             return true;

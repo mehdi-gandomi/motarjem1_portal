@@ -16332,6 +16332,18 @@ body {
   background: #ae58ff !important;
 }
 
+.bg-dark-purple {
+  background: #9458ce !important;
+}
+
+.bg-dark-yellow {
+  background: #cab945 !important;
+}
+
+.bg-dark-teal {
+  background: #0092bd !important;
+}
+
 .avatar-upload {
   position: relative;
   max-width: 120px;

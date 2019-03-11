@@ -1,9 +1,351 @@
 {% extends 'admin/layout/admin.twig' %}
-
 {% block content %}
-<main class="main">
-    <div class="card card-body">
-        <h3>درحال طراحی</h3>
-    </div>
-</main>
+    <main class="main">
+        <div class="container">
+            <div class="info-cards ">
+                <div class="row">
+                    <div class="col-md-4">
+                        <a class="info-card" href="/admin/new-orders">
+                            <div class="info-card__icon bg-primary">
+                                <img alt="" src="/public/images/icon/order.svg"/>
+                            </div>
+                            <div class="info-card__content">
+                                <div class="info-card__content__title">
+                                    سفارشات جدید
+                                </div>
+                                <div class="info-card__content__value">
+                                    {{ new_orders_count ? new_orders_count : 0}}
+                                    <span class="f-1rem ml-2">سفارش</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-card" href="/translator/account-report">
+                            <div class="info-card__icon bg-dark-yellow">
+                                <img alt="" src="/public/images/icon/stopwatch.svg"/>
+                            </div>
+                            <div class="info-card__content">
+                                <div class="info-card__content__title">سفارشات درحال انجام</div>
+                                <div class="info-card__content__value">
+                                    {{ pending_orders_count ? pending_orders_count : 0 }}
+                                    <span class="f-1rem">سفارش</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="info-card" href="/translator/messages?unread=true">
+                            <div class="info-card__icon bg-success">
+                                <img alt="" src="/public/images/icon/check-form.svg"/>
+                            </div>
+                            <div class="info-card__content">
+                                <div class="info-card__content__title">سفارشات انجام شده تاکنون</div>
+                                <div class="info-card__content__value">
+                                    {{ completed_orders_count ? completed_orders_count : 0 }}
+                                    <span class="f-1rem ml-1">سفارش</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <a class="info-card" href="/translator/messages?unread=true">
+                            <div class="info-card__icon bg-dark-purple">
+                                <img alt="" src="/public/images/icon/income.svg"/>
+                            </div>
+                            <div class="info-card__content">
+                                <div class="info-card__content__title">درآمد شما در این ماه</div>
+                                <div class="info-card__content__value">
+                                    {{ month_revenue ? month_revenue : 0 }}
+                                    <span class="f-1rem ml-1">تومان</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="info-card" href="/translator/messages?unread=true">
+                            <div class="info-card__icon bg-dark-teal">
+                                <img alt="" src="/public/images/icon/money.svg"/>
+                            </div>
+                            <div class="info-card__content">
+                                <div class="info-card__content__title">درآمد شما تاکنون</div>
+                                <div class="info-card__content__value">
+                                    {{ total_revenue ? total_revenue : 0 }}
+                                    <span class="f-1rem ml-1">تومان</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="info-card" href="/translator/messages?unread=true">
+                            <div class="info-card__icon bg-danger">
+                                <img alt="" src="/public/images/icon/message.svg"/>
+                            </div>
+                            <div class="info-card__content">
+                                <div class="info-card__content__title">پیام های خوانده نشده</div>
+                                <div class="info-card__content__value">
+                                    {{ unread_messages_count ? unread_messages_count : 0 }}
+                                    <span class="f-1rem ml-1">پیام</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <div class=" card">
+                        <div class="card-header f-1rem">
+                            <i class="icon-user"></i>
+                            مشخصات شما
+                        </div>
+                        <div class="card-body profile-info">
+                            <div class="item">
+                                <span>نام شما :
+                                </span>
+                                <strong>
+                                    {{ user.fname }}</strong>
+                            </div>
+                            <div class="item">
+                                <span>نام خانوادگی شما :
+                                </span>
+                                <strong>
+                                    {{ user.lname }}</strong>
+                            </div>
+                            <div class="item">
+                                <span>ایمیل شما :
+                                </span>
+                                <strong>
+                                    {{ user.email }}</strong>
+                            </div>
+                            <div class="item">
+                                <span>شماره همراه شما :
+                                </span>
+                                <strong>
+                                    {{ user.phone }}</strong>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a class="btn btn-success btn-block profile-edit-btn" href="/admin/edit-profile">
+                                <i class="icon-note"></i>
+                                بروزرسانی
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card ticket-card">
+                        <div class="card-header f-1rem ">
+                            <div class="card-header__title">
+                                <i class="icon-earphones-alt"></i>
+                                <span>تیکت های اخیر مشتریان</span>
+                            </div>
+                            <a href="/admin/tickets/customer" class="btn new-ticket-btn">
+                                    <i class="icon-plus"></i>
+                                تمام تیکت ها
+                            </a>
+                        </div>
+                        <div class="card-body">
+                             <table class="table is--responsive">
+                                {% if last_customer_tickets %}
+                                    <thead>
+                                        <th class="text-center" scope="col">شماره تیکت</th>
+                                        <th class="text-center" scope="col">عنوان تیکت</th>
+                                        <th class="text-center" scope="col">نام ارسال کننده</th>
+                                        <th class="text-center" scope="col">تاریخ ارسال</th>
+                                        <th class="text-center" scope="col">جزییات تیکت</th>
+                                    </thead>
+                                    <tbody>
+                                        {% for ticket in last_customer_tickets %}
+                                            <tr>
+                                                <td data-label="شماره تیکت">
+                                                    {{ticket.ticket_number}}
+                                                </td>
+                                                    
+                                                <td data-label="عنوان تیکت">
+                                                    {{ticket.subject}}
+                                                </td>
+                                                <td data-label="نام ارسال کننده">
+                                                    {{ticket.creator_fname ~ " " ~ ticket.creator_lname}}
+                                                </td>
+                                                <td data-label="تاریخ ارسال">
+                                                    {{ticket.create_date_persian}}
+                                                </td>
+                                                <td class="order-more-info" data-label="جزییات">
+                                                    <a onclick="showTicketInfo('{{ticket.ticket_number}}')" aria-role="button">
+                                                        <svg height="23px" viewBox="0 0 50 80" width="13px" xml:space="preserve">
+                                                            <polyline fill="none" points="45.63,75.8 0.375,38.087 45.63,0.375 " stroke-linecap="round" stroke-linejoin="round" stroke-width="10" stroke="#a9a9a9"></polyline>
+                                                        </svg>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                {% else %}
+                                    <h6 class="text-center mt-4 no-data">تاکنون تیکتی دریافت نشده است !</h6>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card ticket-card">
+                        <div class="card-header f-1rem ">
+                            <div class="card-header__title">
+                                <i class="icon-earphones-alt"></i>
+                                <span>تیکت های اخیر مترجمان</span>
+                            </div>
+                            <a href="/admin/tickets/translator" class="btn new-ticket-btn">
+                                    <i class="icon-plus"></i>
+                                تمام تیکت ها
+                            </a>
+                        </div>
+                        <div class="card-body">
+                             <table class="table is--responsive">
+                                {% if last_translator_tickets %}
+                                    <thead>
+                                        <th class="text-center" scope="col">شماره تیکت</th>
+                                        <th class="text-center" scope="col">عنوان تیکت</th>
+                                        <th class="text-center" scope="col">نام ارسال کننده</th>
+                                        <th class="text-center" scope="col">تاریخ ارسال</th>
+                                        <th class="text-center" scope="col">جزییات تیکت</th>
+                                    </thead>
+                                    <tbody>
+                                           {% for ticket in last_translator_tickets %}
+                                            <tr>
+                                                <td data-label="شماره تیکت">
+                                                    {{ticket.ticket_number}}
+                                                </td>
+                                                    
+                                                <td data-label="عنوان تیکت">
+                                                    {{ticket.subject}}
+                                                </td>
+                                                <td data-label="نام ارسال کننده">
+                                                    {{ticket.creator_fname ~ " " ~ ticket.creator_lname}}
+                                                </td>
+                                                <td data-label="تاریخ ارسال">
+                                                    {{ticket.create_date_persian}}
+                                                </td>
+                                                <td class="order-more-info" data-label="جزییات">
+                                                    <a onclick="showTicketInfo('{{ticket.ticket_number}}')" aria-role="button">
+                                                        <svg height="23px" viewBox="0 0 50 80" width="13px" xml:space="preserve">
+                                                            <polyline fill="none" points="45.63,75.8 0.375,38.087 45.63,0.375 " stroke-linecap="round" stroke-linejoin="round" stroke-width="10" stroke="#a9a9a9"></polyline>
+                                                        </svg>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                {% else %}
+                                    <h6 class="text-center mt-4 no-data">تاکنون تیکتی دریافت نشده است !</h6>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                 <div class="card mt-3">
+                <div class="card-body row">
+                    <div class="col-12">
+                        <h5>درخواست استخدام مترجم های جدید</h5>
+                        <table>
+                            {% if translator_employment_requests %}
+                                <thead>
+                                    <th class="text-center" scope="col">#</th>
+                                    <th class="text-center" scope="col">عکس پرسنلی مترجم</th>
+                                    <th class="text-center" scope="col">نام مترجم</th>
+                                    <th class="text-center" scope="col">تاربخ ثبت نام</th>
+                                    <th class="text-center" scope="col">تحصیلات</th>
+                                    <th class="text-center" scope="col">سابقه کار</th>
+                                    <th class="text-center" scope="col">جزییات بیشتر</th>
+                                </thead>
+                                <tbody>
+                                    {% for request in translator_employment_requests %}
+                                            <tr>
+                                                <td data-label="شماره سفارش">
+                                                    {{request.order_number}}
+                                                </td>
+                                                <td data-label="تاریخ ثبت سفارش">
+                                                    {{request.order_date_persian}}
+                                                </td>
+                                                <td data-label="هزینه سفارش">
+                                                    {{request.order_price}}
+                                                </td>
+                                                <td data-label="تاریخ درخواست">
+                                                    {{request.request_date_persian}}
+                                                </td>
+                                                <td data-label="نام مترجم">
+                                                    <a href="#" onclick="showTranslatorInfo('{{request.translator_id}}')">{{request.translator_fname ~ " " ~ request.translator_lname}}</a>
+                                                </td>
+                                                <td class="order-more-info" data-label="جزییات سفارش">
+                                                    <a onclick="showOrderInfo('{{request.order_id}}')" aria-role="button">
+                                                        <svg height="23px" viewBox="0 0 50 80" width="13px" xml:space="preserve">
+                                                            <polyline fill="none" points="45.63,75.8 0.375,38.087 45.63,0.375 " stroke-linecap="round" stroke-linejoin="round" stroke-width="10" stroke="#a9a9a9"></polyline>
+                                                        </svg>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    {% else %}
+                                        <h6 class="text-center mt-4 no-data">تاکنون درخواستی ثبت نشده است !</h6>
+                                    {% endif %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-body row">
+                    <div class="col-12">
+                        <h5>درخواست های انجام سفارش مترجمان</h5>
+                        <table>
+                            {% if translator_order_requests %}
+                                <thead>
+                                    <th class="text-center" scope="col">شماره سفارش</th>
+                                    <th class="text-center" scope="col">تاریخ ثبت سفارش</th>
+                                    <th class="text-center" scope="col">هزینه سفارش</th>
+                                    <th class="text-center" scope="col">تاریخ درخواست</th>
+                                    <th class="text-center" scope="col">نام مترجم</th>
+                                    <th class="text-center" scope="col">جزییات سفارش</th>
+                                </thead>
+                                <tbody>
+                                    {% for request in translator_order_requests %}
+                                            <tr>
+                                                <td data-label="شماره سفارش">
+                                                    {{request.order_number}}
+                                                </td>
+                                                <td data-label="تاریخ ثبت سفارش">
+                                                    {{request.order_date_persian}}
+                                                </td>
+                                                <td data-label="هزینه سفارش">
+                                                    {{request.order_price}}
+                                                </td>
+                                                <td data-label="تاریخ درخواست">
+                                                    {{request.request_date_persian}}
+                                                </td>
+                                                <td data-label="نام مترجم">
+                                                    <a href="#" onclick="showTranslatorInfo('{{request.translator_id}}')">{{request.translator_fname ~ " " ~ request.translator_lname}}</a>
+                                                </td>
+                                                <td class="order-more-info" data-label="جزییات سفارش">
+                                                    <a onclick="showOrderInfo('{{request.order_id}}')" aria-role="button">
+                                                        <svg height="23px" viewBox="0 0 50 80" width="13px" xml:space="preserve">
+                                                            <polyline fill="none" points="45.63,75.8 0.375,38.087 45.63,0.375 " stroke-linecap="round" stroke-linejoin="round" stroke-width="10" stroke="#a9a9a9"></polyline>
+                                                        </svg>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    {% else %}
+                                        <h6 class="text-center mt-4 no-data">تاکنون درخواستی ثبت نشده است !</h6>
+                                    {% endif %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
 {% endblock %}
