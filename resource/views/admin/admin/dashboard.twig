@@ -250,19 +250,57 @@
                 <div class="card-body row">
                     <div class="col-12">
                         <h5>درخواست استخدام مترجم های جدید</h5>
-                        <table>
-                            {% if translator_employment_requests %}
+                        <table class="table is--responsive new-translators-request">
+                            {# {% if translator_employment_requests %} #}
                                 <thead>
-                                    <th class="text-center" scope="col">#</th>
-                                    <th class="text-center" scope="col">عکس پرسنلی مترجم</th>
+                                    <th class="text-center" scope="col">تصویر مترجم</th>
+                                    <th class="text-center" scope="col">نام کاربری</th>
                                     <th class="text-center" scope="col">نام مترجم</th>
                                     <th class="text-center" scope="col">تاربخ ثبت نام</th>
                                     <th class="text-center" scope="col">تحصیلات</th>
                                     <th class="text-center" scope="col">سابقه کار</th>
-                                    <th class="text-center" scope="col">جزییات بیشتر</th>
+                                    <th class="text-center" scope="col">عملیات</th>
                                 </thead>
                                 <tbody>
-                                    {% for request in translator_employment_requests %}
+                                    <tr>
+                                         <td data-label="تصویر مترجم">
+                                            <img class="translatorAvatar" src="/public/uploads/avatars/translator/5681a5806483c4c2.jpeg" alt="">
+                                        </td>
+                                        <td data-label="نام کاربری">
+                                            coderguy
+                                        </td>
+                                        <td data-label="نام مترجم">
+                                            مهدی گندمی
+                                        </td>
+                                        <td data-label="تاریخ ثبت نام">
+                                            1397/10/02
+                                        </td>
+                                        <td data-label="تحصیلات">
+                                            کارشناسی نرم افزار
+                                        </td>
+                                        <td data-label="سابقه کار">
+                                            3سال
+                                        </td>
+                                        <td data-label="عملیات" class="order-actions">
+                                                <button onclick="showُTranslatorInfo('{{request.translator_id}}')" class="expand-button order-action is--primary is--medium">
+                                                    <span data-hover="اطلاعات بیشتر">
+                                                        <i class="icon-info"></i>
+                                                    </span>
+                                                </button>
+                                                <button onclick="employTranslator('{{request.translator_id}}')" class="expand-button order-action is--success is--medium">
+                                                    <span data-hover="استخدام مترجم">
+                                                        <i class="icon-check"></i>
+                                                    </span>
+                                                </button>
+                                                <button onclick="denyTranslator('{{request.translator_id}}')" class="expand-button order-action is--danger">
+                                                    <span data-hover="رد مترجم">
+                                                        <i class="icon-close"></i>
+                                                    </span>
+                                                </button>
+
+                                        </td>
+                                    </tr>
+                                    {# {% for request in translator_employment_requests %}
                                             <tr>
                                                 <td data-label="شماره سفارش">
                                                     {{request.order_number}}
@@ -287,11 +325,11 @@
                                                     </a>
                                                 </td>
                                             </tr>
-                                        {% endfor %}
+                                        {% endfor %} #}
                                     </tbody>
-                                    {% else %}
+                                    {# {% else %}
                                         <h6 class="text-center mt-4 no-data">تاکنون درخواستی ثبت نشده است !</h6>
-                                    {% endif %}
+                                    {% endif %} #}
                         </table>
                     </div>
                 </div>
@@ -300,7 +338,7 @@
                 <div class="card-body row">
                     <div class="col-12">
                         <h5>درخواست های انجام سفارش مترجمان</h5>
-                        <table>
+                        <table class="table is--responsive">
                             {% if translator_order_requests %}
                                 <thead>
                                     <th class="text-center" scope="col">شماره سفارش</th>
@@ -348,4 +386,164 @@
             
         </div>
     </main>
+    <!--Translator Info Modal -->
+<div aria-hidden="true" aria-labelledby="translatorInfoLabel" class="modal fade" id="translatorInfo" role="dialog" tabindex="-1">
+   <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+         <div class="modal-header justify-content-between align-items-center">
+            <button type="button" class="modal-close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+            <h5 class="modal-title" id="translatorInfoLabel">اطلاعات سفارش</h5>
+            <div></div>
+         </div>
+         <div class="modal-body" id="translatorInfoWrap" style="padding:2rem">
+            <div class="row ">
+               <div class="col-lg-4 translator-avatar">
+                  <img src="/public/uploads/avatars/translator/default-avatar.svg" alt="">
+               </div>
+               <div class="col-lg-3">
+                  <p class="translator-info">
+                     <strong class="translator-info__title">نام : </strong>
+                     <span class="translator-info__value">مهدی</span>
+                  </p>
+                  <p class="translator-info">
+                     <strong class="translator-info__title">نام خانوادگی : </strong>
+                     <span class="translator-info__value">گندمی</span>
+                  </p>
+                  <p class="translator-info">
+                     <strong class="translator-info__title">جنسیت : </strong>
+                     <span class="translator-info__value">مرد</span>
+                  </p>
+               </div>
+               <div class="col-lg-5">
+                <strong>آدرس</strong>
+                  <div class="translator-address mt-2">
+                     لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. 
+                  </div>
+               </div>
+            </div>
+            <hr>
+            <div class="row mt-5">
+               <div class="col-lg-4 translator-melicard">
+                  <img src="/public/uploads/translator/melicard/card.jpg" alt="">
+               </div>
+               <div class="col-lg-4">
+                  <p class="translator-info">
+                     <strong class="translator-info__title">کد ملی : </strong>
+                     <span class="translator-info__value">0640617743</span>
+                  </p>
+                  <p class="translator-info">
+                     <strong class="translator-info__title">مدرک تحصیلی : </strong>
+                     <span class="translator-info__value">کارشناسی نرم افزار</span>
+                  </p>
+                  <p class="translator-info">
+                     <strong class="translator-info__title">سابقه کار : </strong>
+                     <span class="translator-info__value">3 سال</span>
+                  </p>
+                  <p class="translator-info">
+                     <strong class="translator-info__title">تاریخ ثبت نام : </strong>
+                     <span class="translator-info__value">1397/01/12 9:50</span>
+                  </p>
+                  <p class="translator-info">
+                     <strong class="translator-info__title">ترجمه انگلیسی به فارسی : </strong>
+                     <span class="translator-info__value">خیر</span>
+                  </p>
+               </div>
+               <div class="col-lg-4">
+                  <p class="translator-info">
+                     <strong class="translator-info__title">شماره تلفن ثابت : </strong>
+                     <span class="translator-info__value">05632313094</span>
+                  </p>
+                  <p class="translator-info">
+                     <strong class="translator-info__title">شماره همراه : </strong>
+                     <span class="translator-info__value">09389318493</span>
+                  </p>
+                  <p class="translator-info">
+                     <strong class="translator-info__title">ایمیل : </strong>
+                     <span class="translator-info__value">coderguy1999@gmail.com</span>
+                  </p>
+                  <p class="translator-info">
+                     <strong class="translator-info__title">ترجمه فارسی به انگلیسی : </strong>
+                     <span class="translator-info__value">بله</span>
+                  </p>
+                  
+               </div>
+            </div>
+            <hr style="border-width:2px">
+            <div class="row mt-5">
+               <div class="col-12 mb-4">
+                  <h5 class="text-center">آزمون تربیت بدنی</h5>
+                  <h6 class="text-center">(فارسی به انگلیسی)</h6>
+               </div>
+               <div class="col-lg-6">
+                  <div class="test question">
+                     لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو در زبان فارسی ایجاد کرد. در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.
+                  </div>
+               </div>
+               <div class="col-lg-6">
+                  <div class="test answer">
+                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam a ipsam incidunt quibusdam enim esse iusto architecto sequi ad labore in pariatur libero, quisquam fuga voluptates eligendi eius quod cum.
+                  </div>
+               </div>
+               <div class="col-12">
+                  <div class="more-info__actions d-flex justify-content-center">
+                     <button class="btn btn-success">استخدام مترجم</button>
+                     <button class="btn btn-danger">رد مترجم</button>
+                     <button class="btn btn-secondary" data-dismiss="modal" type="button">بستن</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+         
+      </div>
+   </div>
+</div>
+    {# show translator avatar in zoom mode #}
+    <div id="avatarModal" class="lightbox">
+        <!-- The Close Button -->
+        <span id="closeModal" class="close">&times;</span>
+
+        <!-- Modal Content (The Image) -->
+        <img class="lightbox-content" id="avatarPhoto">
+
+        <!-- Modal Caption (Image Text) -->
+        <div id="caption"></div>
+    </div>
+{% endblock %}
+
+{% block script_below %}
+    <script>
+        function showُTranslatorInfo(translatorId){
+            console.log(translatorId);
+            $("#translatorInfo").modal({backdrop: 'static', keyboard: false});
+        }
+
+        //handle lightbox
+        //show the translator avatar in large mode
+        // Get the modal
+        function handleImgClick(e){
+            modal.style.display = "block";
+            let image=e.currentTarget.src;
+            modalImg.src=image;
+            captionText.innerHTML = e.currentTarget.getAttribute("aria-label");
+        }
+        let modal = document.getElementById('avatarModal');
+
+        // Get the image and insert it inside the modal - use its "alt" text as a caption
+        var images= document.querySelectorAll('.translatorAvatar');
+        var modalImg = document.getElementById("avatarPhoto");
+        var captionText = document.getElementById("caption");
+        images.forEach(function(img){
+            img.addEventListener("click",handleImgClick);
+        })
+        // Get the <span> element that closes the modal
+        var span = document.getElementById("closeModal");
+        // When the user clicks on <span> (x), close the modal
+        span.addEventListener("click",function(e){
+            modal.style.display = "none";
+        })
+
+
+    </script>
 {% endblock %}
