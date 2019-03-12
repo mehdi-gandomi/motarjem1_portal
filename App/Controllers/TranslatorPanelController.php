@@ -21,6 +21,7 @@ class TranslatorPanelController extends Controller
             $data['translator_revenue'] = number_format(\Core\Model::select("translator_account", "account_credit", ['translator_id' => $_SESSION['user_id']], true)['account_credit']);
         } else {
             $data['study_fields'] = Order::get_study_fields();
+            $data['has_tested']=Translator::check_if_translator_has_tested_by_user_id($_SESSION['user_id']);
         }
         return $this->view->render($res, "admin/translator/dashboard.twig", $data);
     }

@@ -16344,6 +16344,13 @@ body {
   background: #0092bd !important;
 }
 
+.flex-d-column {
+  -webkit-box-orient: vertical !important;
+  -webkit-box-direction: normal !important;
+      -ms-flex-direction: column !important;
+          flex-direction: column !important;
+}
+
 .avatar-upload {
   position: relative;
   max-width: 120px;

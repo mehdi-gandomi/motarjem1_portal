@@ -93,7 +93,18 @@ $(document).on("submit", "#testForm", function (e) {
         success: function (data) {
             if (data.status) {
                 $(".test-section").html("");
-                Swal.fire('موفق !', 'پاسخ شما با موفقیت ارسال شد !', 'success')
+                Swal.fire({
+                    title: 'موفق !',
+                    text: "پاسخ شما با موفقیت ارسال شد !",
+                    type: 'success',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'باشه'
+                  }).then((result) => {
+                    if (result.value) {
+                      window.location.reload();
+                    }
+                  })
             } else {
                 Swal.fire('خطا !', data.error, 'error')
             }

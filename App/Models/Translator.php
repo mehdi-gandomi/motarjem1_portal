@@ -405,6 +405,25 @@ class Translator extends Model
             return false;
         }
     }
+    //this function checks if translator has sent the test to admin.if thats true then dont show the test section
+    public static function check_if_translator_has_tested_by_user_id($userId)
+    {
+        try{
+            $result=static::select("translator_tests","translator_id",['translator_id'=>$userId],true);
+            return ($result && isset($result['translator_id'])) ? true:false;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+    //Admin panel functions
+    public function get_employment_requests()
+    {
+        try{
+
+        }catch(\Exception $e){
+
+        }
+    }
 
     protected static function get_current_date_persian()
     {
