@@ -292,7 +292,7 @@ class UserAuthController extends Controller
         $headers = "From:" . $from;
         $headers .= "Reply-To: noreply@motarjem1.com \r\n";
         $headers .= "MIME-Version: 1.0\r\n";
-        $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+        $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
         if (!filter_var($userInfo['email'], FILTER_VALIDATE_EMAIL)) {
             return false;
         }
@@ -302,6 +302,7 @@ class UserAuthController extends Controller
         <!DOCTYPE html>
         <html>
         <head>
+            <meta charset='َUTF-8'>
             <style type='text/css'>
                 @import('https://cdn.rawgit.com/rastikerdar/vazir-font/v19.1.0/dist/font-face.css');
             </style>
@@ -443,7 +444,7 @@ class UserAuthController extends Controller
         $headers = "From:" . $from;
         $headers .= "Reply-To: noreply@motarjem1.com \r\n";
         $headers .= "MIME-Version: 1.0\r\n";
-        $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+        $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return false;
         }
@@ -453,6 +454,7 @@ class UserAuthController extends Controller
         <!DOCTYPE html>
         <html>
         <head>
+            <meta charset='َUTF-8'>
             <style type='text/css'>
                 @import('https://cdn.rawgit.com/rastikerdar/vazir-font/v19.1.0/dist/font-face.css');
             </style>

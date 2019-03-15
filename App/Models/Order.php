@@ -111,7 +111,7 @@ class Order extends Model
         try {
             $db = static::getDB();
             $page_limit = ($page - 1) * $offset;
-            $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.translation_lang,study_fields.title AS study_field,orders.translation_quality,orders.order_price FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE order_logs.is_accepted = '0' AND order_logs.translator_id='0' AND orders.order_id NOT IN (SELECT order_id FROM translator_order_request WHERE translator_id='$userId') LIMIT $page_limit,$offset";
+            $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.translation_lang,study_fields.title AS study_field,orders.translation_quality,orders.order_price FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE order_logs.transaction_code !='0' AND order_logs.is_accepted = '0' AND order_logs.translator_id='0' AND orders.order_id NOT IN (SELECT order_id FROM translator_order_request WHERE translator_id='$userId') LIMIT $page_limit,$offset";
             $result = $db->query($sql);
             return $result ? $result->fetchAll(PDO::FETCH_ASSOC) : false;
         } catch (\Exception $e) {
@@ -220,18 +220,18 @@ class Order extends Model
         }
     }
 
-    //count new orderss
+    //count new orders for translator
     public static function new_orders_count($userId,$choice="new")
     {
         try{
             $db=static::getDB();
             if(!$userId) return false;
             if($choice=="new"){
-                $sql="SELECT COUNT(*) AS orders_count FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE order_logs.is_accepted='0' AND order_logs.translator_id='0' AND orders.order_id NOT IN (SELECT order_id FROM translator_order_request WHERE translator_id='$userId') ";
+                $sql="SELECT COUNT(*) AS orders_count FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE order_logs.transaction_code !='0' AND order_logs.is_accepted='0' AND order_logs.translator_id='0' AND orders.order_id NOT IN (SELECT order_id FROM translator_order_request WHERE translator_id='$userId') ";
             }else if($choice=="requested"){
-                $sql="SELECT COUNT(*) AS orders_count FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translator_order_request ON orders.order_id=translator_order_request.order_id WHERE order_logs.is_accepted='0' AND order_logs.translator_id='0' AND translator_order_request.state='1' AND translator_order_request.translator_id='$userId'";
+                $sql="SELECT COUNT(*) AS orders_count FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translator_order_request ON orders.order_id=translator_order_request.order_id WHERE order_logs.transaction_code !='0' AND order_logs.is_accepted='0' AND order_logs.translator_id='0' AND translator_order_request.state='1' AND translator_order_request.translator_id='$userId'";
             }else{
-                $sql="SELECT COUNT(*) AS orders_count FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translator_order_request ON orders.order_id=translator_order_request.order_id WHERE order_logs.is_accepted='0' AND order_logs.translator_id='0' AND translator_order_request.state='0' AND translator_order_request.translator_id='$userId'";
+                $sql="SELECT COUNT(*) AS orders_count FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translator_order_request ON orders.order_id=translator_order_request.order_id WHERE order_logs.transaction_code !='0' AND order_logs.is_accepted='0' AND order_logs.translator_id='0' AND translator_order_request.state='0' AND translator_order_request.translator_id='$userId'";
             }
             $result=$db->query($sql);
             return $result ? $result->fetch(PDO::FETCH_ASSOC)['orders_count']:0;
@@ -249,7 +249,42 @@ class Order extends Model
             return false;
         }
     }
-
+    //get new orders that is paid but it's not accepted
+    public static function get_new_unaccepted_orders_count()
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT COUNT(*) as new_orders_count FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE order_logs.transaction_code !='0' AND order_logs.is_accepted='0' AND order_logs.translator_id='0'";
+            $result=$db->query($sql);
+            return $result ? intval($result->fetch(PDO::FETCH_ASSOC)['new_orders_count']):0;
+        }catch(\Exception $e){
+            return 0;
+        }
+    }
+    //get count of orders that is accepted by a translator and is in progress and has'nt been completed
+    public static function get_pending_orders_count()
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT COUNT(*) as pending_orders_count FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE order_logs.translator_id !='0' AND order_logs.is_done='0'";
+            $result=$db->query($sql);
+            return $result ? intval($result->fetch(PDO::FETCH_ASSOC)['pending_orders_count']):0;
+        }catch(\Exception $e){
+            return 0;
+        }
+    }
+    //get count of completed orders
+    public static function get_completed_orders()
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT COUNT(*) as completed_orders_count FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE order_logs.translator_id !='0' AND order_logs.is_done='1'";
+            $result=$db->query($sql);
+            return $result ? intval($result->fetch(PDO::FETCH_ASSOC)['completed_orders_count']):0;
+        }catch(\Exception $e){
+            return 0;
+        }
+    }
     protected static function calculatePrice($translate_language, $type, $quality, $delivery_type, $wordsNumber)
     {
         $basePrice = 0;

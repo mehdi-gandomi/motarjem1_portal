@@ -245,7 +245,7 @@ class OrderController extends Controller
         $headers = "From:" . $from;
         $headers .= "Reply-To: noreply@motarjem1.com \r\n";
         $headers .= "MIME-Version: 1.0\r\n";
-        $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+        $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return false;
         }
@@ -262,6 +262,7 @@ class OrderController extends Controller
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset='َUTF-8'>
     <style type='text/css'>
       .order {
         border: 1px solid #eee;
@@ -276,6 +277,7 @@ class OrderController extends Controller
         padding: 1rem;
       }
     </style>
+    
   </head>
   <body
     style='margin:0;padding:0;font-family: Vazir,tahoma, DejaVu Sans, helvetica, arial, freesans, sans-serif;'

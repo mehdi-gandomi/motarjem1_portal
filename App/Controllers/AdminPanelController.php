@@ -1,21 +1,108 @@
 <?php
 namespace App\Controllers;
 use Core\Controller;
-use App\Models\Translator;
+use App\Models\Admin;
+use App\Models\Order;
 class AdminPanelController extends Controller
 {
+
+    //START auth functions
+    public function get_login($req,$res,$args)
+    {
+        if(isset($_SESSION['is_admin_logged_in'])) return $res->withRedirect("/admin");
+        return $this->view->render($res,"/admin/admin/login.twig");
+    }
+    public function post_login($req,$res,$args)
+    {
+        $postFields = $req->getParsedBody();
+        $username = $postFields['username'];
+        $password = $postFields['password'];
+        if ($username == "") {
+            $this->flash->addMessage('loginError', "فیلد نام کاربری نباید خالی باشد !");
+            return $res->withRedirect('/admin/login');
+        }
+        if ($password == "") {
+            $this->flash->addMessage('loginError', "فیلد پسورد نباید خالی باشد !");
+            $_SESSION['oldLoginFields'] = array(
+                'username' => $username,
+            );
+            return $res->withRedirect('/admin/login');
+        }
+        $adminData = Admin::by_username($username, "*");
+        if ($adminData) {
+            if ($adminData['password'] == \md5(\md5($password))) {
+                    //check if user is admin or not
+                    if($adminData['level']=="2"){
+                        $this->flash->addMessage('loginError', "شما نمی توانید به پنل ادمین دسترسی داشته باشید :)");
+                        return $res->withRedirect("/admin/login");
+                    }
+                    $_SESSION['is_admin_logged_in'] = true;
+                    $_SESSION['fname'] = $adminData['fname'];
+                    $_SESSION['lname'] = $adminData['lname'];
+                    $_SESSION['avatar'] = $adminData['avatar'];
+                    $_SESSION['user_id'] = $adminData['translator_id'];
+                    // $_SESSION['username'] = $userData['user_id'];
+                    $_SESSION['phone'] = $adminData['cell_phone'];
+                    $_SESSION['email'] = $adminData['email'];
+                    //user level that logged in valid values are : user,admin,translator
+                    $_SESSION['user_type'] = "admin";
+                    return $res->withRedirect('/admin');
+            } else {
+                $this->flash->addMessage('loginError', "پسورد وارد شده اشتباه می باشد !");
+                $_SESSION['oldLoginFields'] = array(
+                    'username' => $username,
+                    'password' => $password,
+                );
+                return $res->withRedirect('/admin/login');
+            }
+        } else {
+            $this->flash->addMessage('loginError', "کاربری با این مشخصات یافت نشد !");
+            $_SESSION['oldLoginFields'] = array(
+                'username' => $username,
+                'password' => $password,
+            );
+            return $res->withRedirect('/admin/login');
+        }
+
+    }
+    //logout process for admin
+    public function logout($req, $res, $args)
+    {
+        unset($_SESSION['user_id']);
+        unset($_SESSION['is_admin_logged_in']);
+        unset($_SESSION['fname']);
+        unset($_SESSION['avatar']);
+        unset($_SESSION['lname']);
+        unset($_SESSION['user_type']);
+        unset($_SESSION['phone']);
+        unset($_SESSION['email']);
+        unset($_COOKIE[\session_name()]);
+        // \setcookie(\session_name(), "", \time() - 3600);
+        return $res->withRedirect('/');
+
+    }
+    //END auth functions
+
     public function dashboard($req,$res,$args)
     {
         $data=[];
-        $data['translator_employment_requests']=Translator::get_employment_requests();
+        //get new translator employment requests
+        $data['translator_employment_requests']=Admin::get_employment_requests();
+        //count of new orders that is not accepted by any translator yet
+        $data['new_orders_count']=Order::get_new_unaccepted_orders_count();
+        //count of orders that is accepted but is not done anymore
+        $data['pending_orders_count']=Order::get_pending_orders_count();
+        //count of orders that is accepted and a translator had completed it
+        $data['completed_orders_count']=Order::get_completed_orders();
         return $this->view->render($res,"admin/admin/dashboard.twig",$data);
     }
+    
     public function all_translator_info_json($req,$res,$args)
     {
         $translatorId=$req->getParam("translator_id");
         $data=['status'=>true];
         //get translator data and test data in one function and send it as json
-        $translatorAndTestData=Translator::get_translator_test_info_by_user_id($translatorId);
+        $translatorAndTestData=Admin::get_translator_test_info_by_user_id($translatorId);
         $data['status']=$translatorAndTestData && count($translatorAndTestData)<1 ? false:true;
         $data['info']=$translatorAndTestData;
         return $res->withJson($data);

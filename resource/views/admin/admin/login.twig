@@ -1,0 +1,91 @@
+{% extends "website/layout/auth.twig" %}
+
+{% block content %}
+    <main class="login-wrap">
+        <section class="auth center" style="max-width:400px">
+
+            {# <a href="/" class="auth__logo">
+            <img src="/public/images/logo.png" alt="">
+        </a> #}
+
+            <form method="POST" action="/admin/login" class="auth__form center">
+                <input type="hidden" name="csrf_name" value="{{csrf_name}}">
+                <input type="hidden" name="csrf_value" value="{{csrf_value}}">
+                <p class="auth__form__title">ورود ادمین</p>
+                <div class="auth__form__icon">
+                    <img src="/public/images/icon/login-icon.svg" alt="">
+                </div>
+                <div class="form-group">
+                    <label for="username">نام کاربری</label>
+                    <input type="text" name="username" id="username" class="form-control" placeholder="نام کاربری " value="{{username}}">
+                </div>
+                <div class="form-group">
+                    <label for="password">گذرواژه</label>
+                    <input type="password" name="password" id="password" class="form-control" placeholder="گذرواژه" value="{{password}}">
+                </div>
+                <div class="form-group w-100 pr-3">
+                    <input type="submit" id="submit" value="ورود" class="btn btn-success">
+                    <button class="btn btn-primary" onclick="window.history.back();">
+                        بازگشت
+                    </button>
+
+                </div>
+                <div class="error-container">
+                    {% for msg in flash('loginError') %}
+                        <div class="alert is--error text-center mt-4 mb-4">
+                            {{msg | raw}}
+                        </div>
+                    {% endfor %}
+                    {% for error in flash('userActivationError') %}
+                        <div class="alert is--error text-center mt-4 mb-4">
+                            {{error | raw}}
+                        </div>
+                    {% endfor %}
+                    {% for msg in flash('userActivationSuccess') %}
+                        <div class="alert is--success text-center mt-4 mb-4">
+                            {{msg | raw}}
+                        </div>
+                    {% endfor %}
+                </div>
+                <p>پسوردتو فراموش کردی ؟
+                    <a href="/admin/forget-password">کلیک کن</a>
+                </p>
+            </form>
+
+        </section>
+    </main>
+{% endblock %}
+
+{% block scriptbelow %}
+    <script src="/public/js/axios.min.js"></script>
+    <script>
+        addListener("#password", "keyup", function (e) {
+
+            // Cancel the default action, if needed
+            e.preventDefault();
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Trigger the button element with a click
+                select(".auth__form").submit();
+            }
+        });
+        function sendVerificationCode(username) {
+            console.log(username);
+            
+            axios
+                .post('/admin/send-verify/' + username, {token: "bad47df23cb7e6b3b8abf68cbba85d0f"})
+                .then(function (response) {
+                    console.log(response);
+                    if (response.data.status) {
+                        document.querySelector(".error-container").innerHTML = "<p class='alert is--success text-center mt-4'>" + "لینک فعال سازی به ایمیل شما ارسال شد. درصورت مشاهده نکردن ایمیل پوشه spam خود را چک کنید. <a style='cursor:pointer;color:#5842d4' onclick='sendVerificationCode(\"" + username + "\",\"" + el + "\")'>ارسال مجدد</a>" + "</p>";
+                    } else {
+                        document.querySelector(".error-container").innerHTML = "<p class='alert is--error text-center mt-4'>" + response.data.message + "</p>" + '<button style="border: none;background: transparent;color: #1c819e;cursor: pointer;" onclick="sendVerificationCode(\'' + username + '\')">ارسال مجدد</button>';
+                    }
+
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+    </script>
+{% endblock %}
