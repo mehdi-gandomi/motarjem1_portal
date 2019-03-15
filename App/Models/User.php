@@ -91,7 +91,7 @@ class User extends Model
     {
         try {
 
-            $userData['register_date_persian'] = get_current_date_persian();
+            $userData['register_date_persian'] = self::get_current_date_persian();
             $userData['password'] = \md5(\md5($userData['password']));
             $userData['is_active'] = 0;
             static::insert("users", $userData);
