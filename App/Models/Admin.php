@@ -40,5 +40,50 @@ class Admin extends Model
                 return [];
             }
         }
-    
+        //get admin total revenue 
+        public static function get_total_revenue()
+        {
+            try{
+                $db=static::getDB();
+                $sql="SELECT revenue FROM translator_account INNER JOIN translators ON translator_account.translator_id=translators.translator_id WHERE translators.level='1'";
+                $result=$db->query($sql);
+                return $result ? (intval($result->fetch(PDO::FETCH_ASSOC)['revenue'])*15)/100:0;
+            }catch(\Exception $e){
+                return 0;
+            }
+        }
+        //get revenue of this month and calculate admin share of it and return it
+        public static function get_monthly_revenue()
+        {
+            try{
+                $db=static::getDB();
+                $now=new \DateTime("NOW");
+                $sql="SELECT SUM(orders.order_price) AS revenue FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE order_logs.transaction_code != '0' AND order_logs.is_done = '1' AND orders.order_date BETWEEN :last_month AND :today";
+                $stmt=$db->prepare($sql);
+                $stmt->execute([
+                    'today'=>$now->format("Y-m-d"),
+                    'last_month'=>$now->modify("-1 month")->format("Y-m-d")
+                ]);
+                if($stmt){
+                    $revenue=$stmt->fetch(PDO::FETCH_ASSOC)['revenue'];
+                    $revenue=(intval($revenue)*15)/100;
+                    return $revenue;
+                }
+                return 0;
+            }catch(\Exception $e){
+                return 0;
+            }
+        }
+        //get tickets that is sent to admin but admin hasn't read it
+        public static function get_unread_tickets_count()
+        {
+            try{
+                $db=static::getDB();
+                $sql="SELECT COUNT(*) AS unread_count FROM Tickets WHERE state='waiting'";
+                $result=$db->query($sql);
+                return $result ? $result->fetch(PDO::FETCH_ASSOC)['unread_count']:0;
+            }catch(\Exception $e){
+                return 0;
+            }
+        }
 }

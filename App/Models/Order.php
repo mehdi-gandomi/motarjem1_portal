@@ -51,7 +51,7 @@ class Order extends Model
             $stmt->bindParam(":order_id", $id);
             return $stmt->execute() ? $stmt->fetch(PDO::FETCH_ASSOC) : false;
 
-        } catch (\Exeption $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }
@@ -75,7 +75,7 @@ class Order extends Model
             $stmt = $db->prepare($sql);
             return $stmt->execute(['order_number'=>$number]) ? $stmt->fetch(PDO::FETCH_ASSOC) : false;
 
-        } catch (\Exeption $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }

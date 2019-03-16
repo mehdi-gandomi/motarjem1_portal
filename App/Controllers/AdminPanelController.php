@@ -94,6 +94,12 @@ class AdminPanelController extends Controller
         $data['pending_orders_count']=Order::get_pending_orders_count();
         //count of orders that is accepted and a translator had completed it
         $data['completed_orders_count']=Order::get_completed_orders();
+        //get total revenue till now
+        $data['total_revenue']=number_format(Admin::get_total_revenue());
+        //get revenue of this month
+        $data['month_revenue']=number_format(Admin::get_monthly_revenue());
+        //get unread messages
+        $data['unread_messages_count']=Admin::get_unread_tickets_count();
         return $this->view->render($res,"admin/admin/dashboard.twig",$data);
     }
     
