@@ -25,7 +25,7 @@ class Admin extends Model
             try{
                 $db=static::getDB();
                 $page_limit = ($page - 1) * $amount;
-                $sql="SELECT translators.translator_id,translators.avatar AS translator_avatar,translators.username AS translator_username,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.register_date_persian,translators.degree AS translator_degree,translators.exp_years AS translator_exp_years FROM translator_tests INNER JOIN translators ON translator_tests.translator_id=translators.translator_id LIMIT $page_limit,$amount";
+                $sql="SELECT translators.translator_id,translators.avatar AS translator_avatar,translators.username AS translator_username,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.register_date_persian,translators.degree AS translator_degree,translators.exp_years AS translator_exp_years FROM translator_tests INNER JOIN translators ON translator_tests.translator_id=translators.translator_id WHERE translators.is_denied='0' AND translators.is_employed='0' LIMIT $page_limit,$amount";
                 $result=$db->query($sql);
                 return $result ? $result->fetchAll(PDO::FETCH_ASSOC):false;
             }catch(\Exception $e){

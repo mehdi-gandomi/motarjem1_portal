@@ -5,6 +5,7 @@ use Core\Config;
 use App\Models\Admin;
 use App\Models\Order;
 use App\Models\Ticket;
+use App\Models\Translator;
 class AdminPanelController extends Controller
 {
 
@@ -136,7 +137,26 @@ class AdminPanelController extends Controller
         $postFields=$req->getParsedBody();
         $hash = md5(md5(Config::VERIFY_EMAIL_KEY));
         if($postFields['token']===$hash){
-            return $res->withJson(['status'=>true]);
+            $result=Translator::employ($postFields['translator_id']);
+            if($result){
+                return $res->withJson(['status'=>true]);
+            }
+            return $res->withJson(['status'=>false,'message'=>'error in saving data!']);
+        }else{
+            return $res->withJson(['status'=>false,'message'=>'invalid token!']);
+        }
+    }
+    //deny employment request from translator
+    public function post_deny_translator($req,$res,$args)
+    {
+        $postFields=$req->getParsedBody();
+        $hash = md5(md5(Config::VERIFY_EMAIL_KEY));
+        if($postFields['token']===$hash){
+            $result=Translator::deny_employment($postFields['translator_id']);
+            if($result){
+                return $res->withJson(['status'=>true]);
+            }
+            return $res->withJson(['status'=>false,'message'=>'error in saving data!']);
         }else{
             return $res->withJson(['status'=>false,'message'=>'invalid token!']);
         }

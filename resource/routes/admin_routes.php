@@ -15,7 +15,7 @@ $app->group('/admin', function ($app) use ($container) {
     $app->get("/translator-info/all/json","App\Controllers\AdminPanelController:all_translator_info_json");
     $app->get("/ticket-details/json","App\Controllers\AdminPanelController:ticket_details_json");
     $app->post("/translator/employ","App\Controllers\AdminPanelController:post_employ_translator");
-    
+    $app->post("/translator/deny","App\Controllers\AdminPanelController:post_deny_translator");
 })->add(function ($req, $res, $next) use ($container) {
     if (isset($_SESSION['is_admin_logged_in'])) {
         return $next($req, $res);

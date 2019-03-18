@@ -33,37 +33,43 @@ $app->post('/translator/password-reset', "App\Controllers\TranslatorAuthControll
 
 
 $app->group('/translator', function ($app) use ($container) {
-
     $app->get('', "App\Controllers\TranslatorPanelController:get_dashboard");
-    $app->get('/test/filter', "App\Controllers\TranslatorPanelController:get_test_json");
-    $app->post("/test/send","App\Controllers\TranslatorPanelController:save_test_data");
-    $app->get('/order/info/{order_number}', "App\Controllers\TranslatorPanelController:get_order_info");
-    $app->post('/order/request', "App\Controllers\TranslatorPanelController:request_order");
-    $app->post('/order/decline', "App\Controllers\TranslatorPanelController:decline_order");
-    $app->get('/new-orders', "App\Controllers\TranslatorPanelController:get_new_orders");
-    $app->get('/new-orders/json', "App\Controllers\TranslatorPanelController:get_new_orders_json");
-    $app->get('/orders', "App\Controllers\TranslatorPanelController:get_translator_orders");
-    $app->get('/orders/json', "App\Controllers\TranslatorPanelController:get_translator_orders_json");
-    $app->get('/bank-info', "App\Controllers\TranslatorPanelController:get_account_info_page");
-    $app->get('/bank-info/edit', "App\Controllers\TranslatorPanelController:get_bank_info_edit_page");
-    $app->post('/bank-info/edit', "App\Controllers\TranslatorPanelController:post_edit_bank_info");
-    $app->get('/account-report', "App\Controllers\TranslatorPanelController:get_account_report_page");
-    $app->post('/account/checkout-request', "App\Controllers\TranslatorPanelController:post_request_checkout");
-    $app->get('/account-report/checkout-requests/json', "App\Controllers\TranslatorPanelController:get_checkout_requests_json");
-    $app->get('/tickets', "App\Controllers\TranslatorPanelController:get_tickets_page");
-    $app->get("/ticket/view/{ticket_number}","App\Controllers\TranslatorPanelController:get_ticket_details");
-    $app->get("/ticket/view/{ticket_number}/json","App\Controllers\TranslatorPanelController:get_ticket_details_json");
-    $app->get("/tickets/json","App\Controllers\TranslatorPanelController:get_tickets_json");
-    $app->post("/ticket/send","App\Controllers\TranslatorPanelController:post_send_ticket");
-    $app->post("/ticket/reply/{ticket_id}","App\Controllers\TranslatorPanelController:post_reply_ticket");
-    $app->get("/tickets/last/json","App\Controllers\TranslatorPanelController:get_last_tickets_json");
+    $app->group('',function($app) use ($container){
+        $app->get('/test/filter', "App\Controllers\TranslatorPanelController:get_test_json");
+        $app->post("/test/send","App\Controllers\TranslatorPanelController:save_test_data");
+        $app->get('/order/info/{order_number}', "App\Controllers\TranslatorPanelController:get_order_info");
+        $app->post('/order/request', "App\Controllers\TranslatorPanelController:request_order");
+        $app->post('/order/decline', "App\Controllers\TranslatorPanelController:decline_order");
+        $app->get('/new-orders', "App\Controllers\TranslatorPanelController:get_new_orders");
+        $app->get('/new-orders/json', "App\Controllers\TranslatorPanelController:get_new_orders_json");
+        $app->get('/orders', "App\Controllers\TranslatorPanelController:get_translator_orders");
+        $app->get('/orders/json', "App\Controllers\TranslatorPanelController:get_translator_orders_json");
+        $app->get('/bank-info', "App\Controllers\TranslatorPanelController:get_account_info_page");
+        $app->get('/bank-info/edit', "App\Controllers\TranslatorPanelController:get_bank_info_edit_page");
+        $app->post('/bank-info/edit', "App\Controllers\TranslatorPanelController:post_edit_bank_info");
+        $app->get('/account-report', "App\Controllers\TranslatorPanelController:get_account_report_page");
+        $app->post('/account/checkout-request', "App\Controllers\TranslatorPanelController:post_request_checkout");
+        $app->get('/account-report/checkout-requests/json', "App\Controllers\TranslatorPanelController:get_checkout_requests_json");
+        $app->get('/tickets', "App\Controllers\TranslatorPanelController:get_tickets_page");
+        $app->get("/ticket/view/{ticket_number}","App\Controllers\TranslatorPanelController:get_ticket_details");
+        $app->get("/ticket/view/{ticket_number}/json","App\Controllers\TranslatorPanelController:get_ticket_details_json");
+        $app->get("/tickets/json","App\Controllers\TranslatorPanelController:get_tickets_json");
+        $app->post("/ticket/send","App\Controllers\TranslatorPanelController:post_send_ticket");
+        $app->post("/ticket/reply/{ticket_id}","App\Controllers\TranslatorPanelController:post_reply_ticket");
+        $app->get("/tickets/last/json","App\Controllers\TranslatorPanelController:get_last_tickets_json");
+        $app->get("/notifications","App\Controllers\TranslatorPanelController:get_notifications_page");
+        $app->get("/notification/info","App\Controllers\TranslatorPanelController:get_notification_info_json");
+    })->add(function($req,$res,$next) use ($container){
+        if($_SESSION['is_employed'] != "1" || $_SESSION['is_denied']=="1"){
+            //TODO create a 403 page and redirect to that page instead
+            return $res->withRedirect("/translator");
+        }
+        return $next($req, $res);
+    });
     $app->get("/edit-profile","App\Controllers\TranslatorPanelController:get_edit_profile_page");
     $app->post("/edit-profile","App\Controllers\TranslatorPanelController:post_edit_profile");
     $app->post("/edit-profile/upload-avatar","App\Controllers\TranslatorPanelController:upload_avatar");
     $app->post("/edit-profile/melicard-photo/upload","App\Controllers\TranslatorPanelController:upload_melicard_photo");
-    $app->get("/notifications","App\Controllers\TranslatorPanelController:get_notifications_page");
-    $app->get("/notification/info","App\Controllers\TranslatorPanelController:get_notification_info_json");
-    
     
 })->add(function ($req, $res, $next) use ($container) {
 

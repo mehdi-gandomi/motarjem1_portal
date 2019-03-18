@@ -70,17 +70,105 @@ function showTicketInfo(ticketNumber,userType){
 
 //employment process for translator
 function employTranslator(translatorId){
-$.ajax({
-    type:"POST",
-    url:"/admin/translator/employ",
-    data:{
-        translator_id:translatorId,
-        token:"bad47df23cb7e6b3b8abf68cbba85d0f"
-    },
-    success:function(data,status){
-        console.log(data);
-    }
-})
+
+    Swal.fire({
+        title: 'آیا مطمینید ؟',
+        text: "آیا واقعا می خواهید این مترجم را استخدام کنید ؟",
+        type: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'بله',
+        cancelButtonText:'نه'
+      }).then(function(result) {
+        if (result.value) {
+            $.ajax({
+                type:"POST",
+                url:"/admin/translator/employ",
+                data:{
+                    translator_id:translatorId,
+                    token:"bad47df23cb7e6b3b8abf68cbba85d0f"
+                },
+                success:function(data,status){
+                    if (data.status) {
+                        $("#translatorInfo").modal("hide");
+                        Swal.fire({
+                            title: 'موفق !',
+                            text: "مترجم با موفقیت استخدام شد !",
+                            type: 'success',
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'باشه'
+                        }).then(function(result){
+                            if (result.value) {
+                            window.location.reload();
+                            }
+                        })
+                    } else {
+                        console.log(data.message);
+                        Swal.fire('خطا !', "خطایی در استخدام مترجم رخ داد !", 'error')
+                    }
+                }
+            })             
+        }else{
+
+        }
+      })
+
+
+
+}
+
+//deny employment request from translator
+function denyTranslator(translatorId){
+
+
+
+    Swal.fire({
+        title: 'آیا مطمینید ؟',
+        text: "آیا واقعا می خواهید این مترجم را رد کنید ؟",
+        type: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'بله',
+        cancelButtonText:'نه'
+      }).then(function(result) {
+        if (result.value) {
+            $.ajax({
+                type:"POST",
+                url:"/admin/translator/deny",
+                data:{
+                    translator_id:translatorId,
+                    token:"bad47df23cb7e6b3b8abf68cbba85d0f"
+                },
+                success:function(data,status){
+                    if (data.status) {
+                        $("#translatorInfo").modal("hide");
+                        Swal.fire({
+                            title: 'موفق !',
+                            text: "مترجم رد شد !",
+                            type: 'success',
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'باشه'
+                        }).then(function(result){
+                            if (result.value) {
+                            window.location.reload();
+                            }
+                        })
+                    } else {
+                        console.log(data.message);
+                        Swal.fire('خطا !', "خطایی در رد مترجم رخ داد !", 'error')
+                    }
+                }
+            })   
+        }else{
+
+        }
+      })
+
+    
 }
 
 //handle lightbox

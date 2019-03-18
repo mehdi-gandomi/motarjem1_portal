@@ -66,6 +66,7 @@ class TranslatorAuthController extends Controller
                     $_SESSION['phone'] = $translatorData['cell_phone'];
                     $_SESSION['email'] = $translatorData['email'];
                     $_SESSION['is_employed']=$translatorData['is_employed'];
+                    $_SESSION['is_denied']=$translatorData['is_denied'];
                     //user level that logged in valid values are : user,admin,translator
                     $_SESSION['user_type'] = "translator";
                     return $res->withRedirect('/translator');
@@ -100,6 +101,7 @@ class TranslatorAuthController extends Controller
         unset($_SESSION['phone']);
         unset($_SESSION['email']);
         unset($_SESSION['is_employed']);
+        unset($_SESSION['is_denied']);
         unset($_COOKIE[\session_name()]);
         // \setcookie(\session_name(), "", \time() - 3600);
         return $res->withRedirect('/');

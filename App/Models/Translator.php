@@ -424,7 +424,25 @@ class Translator extends Model
             return false;
         }
     }
-
+    //START admin functions
+    public static function employ($translatorId)
+    {
+        try{
+            static::update("translators",["is_employed"=>'1'],"translator_id = '$translatorId'");
+            return true;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+    public static function deny_employment($translatorId)
+    {
+        try{
+            static::update("translators",["is_denied"=>'1'],"translator_id = '$translatorId'");
+            return true;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
     protected static function get_current_date_persian()
     {
         $now = new \DateTime("NOW");
