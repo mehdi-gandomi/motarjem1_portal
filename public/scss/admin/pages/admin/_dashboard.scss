@@ -48,10 +48,22 @@
             height: 100%;
         }
     }
-    .test{
+    .test,.translator-address{
         border: 0.1em solid #d4d2d2;
         padding: 1rem;
         border-radius: 8px;
+    }
+    .test{
+        height: 100%;
+        margin-top: 1rem;
+        &.ltr{
+            direction: ltr;
+            text-align: left;
+        }
+        &.rtl{
+            direction: rtl;
+            text-align: right;
+        }
     }
     .translator-melicard{
         max-width:100%;
@@ -62,6 +74,7 @@
         }
     }
     .more-info__actions{
+        margin-top: 4rem;
         .btn{
             margin: 1rem 0.2rem;
         }
@@ -70,4 +83,15 @@
 
 #avatarModal .lightbox-content{
     max-width: 480px !important;
+}
+tr.as-link{
+    &:hover{
+        cursor: pointer;
+        background: #eee;
+    }
+}
+@media(min-width:992px){
+    #ticketDetailsModal .modal-dialog{
+        max-width: 950px !important;
+    }
 }

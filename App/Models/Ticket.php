@@ -133,6 +133,23 @@ class Ticket extends Model{
             return false;
         }
     }
+    //get full details including sender name by a ticket number
+    public static function admin_get_details_by_ticket_number($ticketNumber,$userType='user')
+    {
+        try{
+            $db=static::getDB();
+            if($userType=="translator"){
+                $sql="SELECT Tickets.ticket_number,Tickets.creator_id,Tickets.user_type,Tickets.subject,Tickets.create_date_persian,Tickets.update_date_persian,Tickets.state,translators.fname AS creator_fname,translators.lname AS creator_lname FROM `Tickets` INNER JOIN translators ON translators.translator_id=Tickets.creator_id WHERE Tickets.ticket_number=:ticket_number";
+            }else{
+                $sql="SELECT Tickets.ticket_number,Tickets.creator_id,Tickets.user_type,Tickets.subject,Tickets.create_date_persian,Tickets.update_date_persian,Tickets.state,users.fname AS creator_fname,users.lname AS creator_lname FROM `Tickets` INNER JOIN users ON users.user_id=Tickets.creator_id WHERE Tickets.ticket_number=:ticket_number";
+            }
+            $stmt=$db->prepare($sql);
+            $stmt->bindParam(":ticket_number",$ticketNumber);
+            return $stmt->execute() ? $stmt->fetch(PDO::FETCH_ASSOC):false;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
     public static function set_as_read($ticketNumber)
     {
         try{
@@ -140,5 +157,32 @@ class Ticket extends Model{
         }catch(\Exception $e){
             return false;
         }
+    }
+    //get all tickets that translators sent to admin
+    public static function get_translator_tickets($page,$amount)
+    {
+        try{
+            //user type 2 means translator and 1 means user(customer)
+            $db=static::getDB();
+            $page_limit = ($page - 1) * $amount;
+            $sql="SELECT translators.fname AS creator_fname,translators.lname AS creator_lname,Tickets.ticket_number,Tickets.subject,Tickets.create_date_persian FROM Tickets INNER JOIN translators ON translators.translator_id=Tickets.creator_id WHERE Tickets.user_type='2' LIMIT $page_limit,$amount";
+            $result=$db->query($sql);
+            return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+        }catch(\Exception $e){
+            return [];
+        }
+    }
+    public static function get_customer_tickets($page,$amount)
+    {
+        try{
+            //user type 2 means translator and 1 means user(customer)
+            $db=static::getDB();
+            $page_limit = ($page - 1) * $amount;
+            $sql="SELECT users.fname AS creator_fname,users.lname AS creator_lname,Tickets.ticket_number,Tickets.subject,Tickets.create_date_persian FROM Tickets INNER JOIN users ON users.user_id=Tickets.creator_id WHERE Tickets.user_type='1' LIMIT $page_limit,$amount";
+            $result=$db->query($sql);
+            return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+        }catch(\Exception $e){
+            return [];
+        }        
     }
 }

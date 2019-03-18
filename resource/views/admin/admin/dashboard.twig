@@ -1,7 +1,7 @@
 {% extends 'admin/layout/admin.twig' %}
 {% block content %}
     <main class="main">
-        <div class="container">
+        <div class="container" style="overflow:hidden">
             <div class="info-cards ">
                 <div class="row">
                     <div class="col-md-4">
@@ -95,7 +95,7 @@
                 </div>
             </div>
             <div class="row mt-3">
-                <div class="col-md-4">
+                {# <div class="col-md-4">
                     <div class=" card">
                         <div class="card-header f-1rem">
                             <i class="icon-user"></i>
@@ -134,8 +134,8 @@
                             </a>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4">
+                </div> #}
+                <div class="col-md-6">
                     <div class="card ticket-card">
                         <div class="card-header f-1rem ">
                             <div class="card-header__title">
@@ -155,11 +155,10 @@
                                         <th class="text-center" scope="col">عنوان تیکت</th>
                                         <th class="text-center" scope="col">نام ارسال کننده</th>
                                         <th class="text-center" scope="col">تاریخ ارسال</th>
-                                        <th class="text-center" scope="col">جزییات تیکت</th>
                                     </thead>
                                     <tbody>
                                         {% for ticket in last_customer_tickets %}
-                                            <tr>
+                                            <tr class="as-link" onclick="showTicketInfo('{{ticket.ticket_number}}','user')">
                                                 <td data-label="شماره تیکت">
                                                     {{ticket.ticket_number}}
                                                 </td>
@@ -173,13 +172,6 @@
                                                 <td data-label="تاریخ ارسال">
                                                     {{ticket.create_date_persian}}
                                                 </td>
-                                                <td class="order-more-info" data-label="جزییات">
-                                                    <a onclick="showTicketInfo('{{ticket.ticket_number}}')" aria-role="button">
-                                                        <svg height="23px" viewBox="0 0 50 80" width="13px" xml:space="preserve">
-                                                            <polyline fill="none" points="45.63,75.8 0.375,38.087 45.63,0.375 " stroke-linecap="round" stroke-linejoin="round" stroke-width="10" stroke="#a9a9a9"></polyline>
-                                                        </svg>
-                                                    </a>
-                                                </td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
@@ -190,7 +182,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="card ticket-card">
                         <div class="card-header f-1rem ">
                             <div class="card-header__title">
@@ -205,37 +197,30 @@
                         <div class="card-body">
                              <table class="table is--responsive">
                                 {% if last_translator_tickets %}
+                                
                                     <thead>
                                         <th class="text-center" scope="col">شماره تیکت</th>
                                         <th class="text-center" scope="col">عنوان تیکت</th>
                                         <th class="text-center" scope="col">نام ارسال کننده</th>
                                         <th class="text-center" scope="col">تاریخ ارسال</th>
-                                        <th class="text-center" scope="col">جزییات تیکت</th>
                                     </thead>
                                     <tbody>
                                            {% for ticket in last_translator_tickets %}
-                                            <tr>
-                                                <td data-label="شماره تیکت">
-                                                    {{ticket.ticket_number}}
-                                                </td>
-                                                    
-                                                <td data-label="عنوان تیکت">
-                                                    {{ticket.subject}}
-                                                </td>
-                                                <td data-label="نام ارسال کننده">
-                                                    {{ticket.creator_fname ~ " " ~ ticket.creator_lname}}
-                                                </td>
-                                                <td data-label="تاریخ ارسال">
-                                                    {{ticket.create_date_persian}}
-                                                </td>
-                                                <td class="order-more-info" data-label="جزییات">
-                                                    <a onclick="showTicketInfo('{{ticket.ticket_number}}')" aria-role="button">
-                                                        <svg height="23px" viewBox="0 0 50 80" width="13px" xml:space="preserve">
-                                                            <polyline fill="none" points="45.63,75.8 0.375,38.087 45.63,0.375 " stroke-linecap="round" stroke-linejoin="round" stroke-width="10" stroke="#a9a9a9"></polyline>
-                                                        </svg>
-                                                    </a>
-                                                </td>
-                                            </tr>
+                                                <tr class="as-link" onclick="showTicketInfo('{{ticket.ticket_number}}','translator')">
+                                                    <td data-label="شماره تیکت">
+                                                        {{ticket.ticket_number}}
+                                                    </td>
+                                                        
+                                                    <td data-label="عنوان تیکت">
+                                                        {{ticket.subject}}
+                                                    </td>
+                                                    <td data-label="نام ارسال کننده">
+                                                        {{ticket.creator_fname ~ " " ~ ticket.creator_lname}}
+                                                    </td>
+                                                    <td data-label="تاریخ ارسال">
+                                                        {{ticket.create_date_persian}}
+                                                    </td>
+                                                </tr>
                                         {% endfor %}
                                     </tbody>
                                 {% else %}
@@ -381,19 +366,38 @@
       </div>
    </div>
 </div>
-    {# show translator avatar in zoom mode #}
-    <div id="avatarModal" class="lightbox">
-        <!-- The Close Button -->
-        <span id="closeModal" class="close">&times;</span>
+{# show translator avatar in zoom mode #}
+<div id="avatarModal" class="lightbox">
+    <!-- The Close Button -->
+    <span id="closeModal" class="close">&times;</span>
 
-        <!-- Modal Content (The Image) -->
-        <img class="lightbox-content" id="avatarPhoto">
+    <!-- Modal Content (The Image) -->
+    <img class="lightbox-content" id="avatarPhoto">
 
-        <!-- Modal Caption (Image Text) -->
-        <div id="caption"></div>
+    <!-- Modal Caption (Image Text) -->
+    <div id="caption"></div>
+</div>
+{# show ticket information #}
+<!-- Modal -->
+<div class="modal fade" id="ticketDetailsModal" tabindex="-1" role="dialog" aria-labelledby="ticketDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h5 class="modal-title" id="ticketDetailsModalLabel">اطلاعات تیکت</h5>
+                {# <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> #}
+            </div>
+            <div class="modal-body" id="ticketDetailsWrap" style="padding:2rem"></div>
+            <div class="modal-footer justify-content-start">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
     </div>
+</div>
 {% endblock %}
 
 {% block script_below %}
+    <script src="/public/js/panel/medium-editor.min.js"></script>
     <script src="/public/js/panel/admin-dashboard.js"></script>
 {% endblock %}

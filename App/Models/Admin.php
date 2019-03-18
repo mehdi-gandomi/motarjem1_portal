@@ -9,19 +9,23 @@ class Admin extends Model
         public static function by_username($username, $fields = "*")
         {
             try {
-                return static::select("translators", $fields, ['username' => $username], true);
-
+                $db=static::getDB();
+                $sql="SELECT * FROM translators WHERE username=:username AND level='1'";
+                $stmt=$db->prepare($sql);
+                $stmt->bindParam(":username",$username);
+                return $stmt->execute() ? $stmt->fetch(PDO::FETCH_ASSOC):false;
             } catch (\Exception $e) {
                 return false;
             }
 
         }
         //Admin panel functions
-        public static function get_employment_requests()
+        public static function get_employment_requests($page,$amount)
         {
             try{
                 $db=static::getDB();
-                $sql="SELECT translators.translator_id,translators.avatar AS translator_avatar,translators.username AS translator_username,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.register_date_persian,translators.degree AS translator_degree,translators.exp_years AS translator_exp_years FROM translator_tests INNER JOIN translators ON translator_tests.translator_id=translators.translator_id";
+                $page_limit = ($page - 1) * $amount;
+                $sql="SELECT translators.translator_id,translators.avatar AS translator_avatar,translators.username AS translator_username,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.register_date_persian,translators.degree AS translator_degree,translators.exp_years AS translator_exp_years FROM translator_tests INNER JOIN translators ON translator_tests.translator_id=translators.translator_id LIMIT $page_limit,$amount";
                 $result=$db->query($sql);
                 return $result ? $result->fetchAll(PDO::FETCH_ASSOC):false;
             }catch(\Exception $e){

@@ -151,7 +151,7 @@ function acceptOrder(orderNumber,translatorId){
         cancelButtonColor: '#d33',
         confirmButtonText: 'بله',
         cancelButtonText:'نه'
-      }).then((result) => {
+      }).then(function(result){
         if (result.value) {
             $.ajax({
                 type:"POST",
@@ -203,7 +203,7 @@ function declineOrder(orderNumber,translatorId){
         cancelButtonColor: '#d33',
         confirmButtonText: 'بله',
         cancelButtonText:'نه'
-      }).then((result) => {
+      }).then(function(result) {
         if (result.value) {
             $.ajax({
                 type:"POST",

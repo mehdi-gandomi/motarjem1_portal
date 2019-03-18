@@ -9,8 +9,11 @@ class Translator extends Model
     public static function by_username($username, $fields = "*")
     {
         try {
-            return static::select("translators", $fields, ['username' => $username], true);
-
+            $db=static::getDB();
+            $sql="SELECT * FROM translators WHERE username=:username AND level='2'";
+            $stmt=$db->prepare($sql);
+            $stmt->bindParam(":username",$username);
+            return $stmt->execute() ? $stmt->fetch(PDO::FETCH_ASSOC):false;
         } catch (\Exception $e) {
             return false;
         }
@@ -19,8 +22,11 @@ class Translator extends Model
     public static function by_email($email, $fields = "*")
     {
         try {
-            return static::select("translators", $fields, ['email' => $email], true);
-
+            $db=static::getDB();
+            $sql="SELECT * FROM translators WHERE email=:email AND level='2'";
+            $stmt=$db->prepare($sql);
+            $stmt->bindParam(":email",$email);
+            return $stmt->execute() ? $stmt->fetch(PDO::FETCH_ASSOC):false;
         } catch (\Exception $e) {
             return false;
         }
@@ -29,8 +35,11 @@ class Translator extends Model
     public static function by_id($translatorId, $fields = "*")
     {
         try {
-            return static::select("translators", $fields, ['translator_id' => $translatorId], true);
-
+            $db=static::getDB();
+            $sql="SELECT * FROM translators WHERE translator_id=:translator_id AND level='2'";
+            $stmt=$db->prepare($sql);
+            $stmt->bindParam(":translator_id",$translatorId);
+            return $stmt->execute() ? $stmt->fetch(PDO::FETCH_ASSOC):false;
         } catch (\Exception $e) {
             return false;
         }

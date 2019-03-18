@@ -100,7 +100,7 @@ $(document).on("submit", "#testForm", function (e) {
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'باشه'
-                  }).then((result) => {
+                  }).then(function(result){
                     if (result.value) {
                       window.location.reload();
                     }
@@ -184,7 +184,7 @@ function acceptOrder(orderNumber,translatorId){
         cancelButtonColor: '#d33',
         confirmButtonText: 'بله',
         cancelButtonText:'نه'
-      }).then((result) => {
+      }).then(function(result) {
         if (result.value) {
             $.ajax({
                 type:"POST",
@@ -232,7 +232,7 @@ function declineOrder(orderNumber,translatorId){
         cancelButtonColor: '#d33',
         confirmButtonText: 'بله',
         cancelButtonText:'نه'
-      }).then((result) => {
+      }).then(function(result){
         if (result.value) {
             $.ajax({
                 type:"POST",

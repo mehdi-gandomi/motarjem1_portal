@@ -109,7 +109,7 @@ $("#editProfileDataForm").on("submit",function(e){
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
                         confirmButtonText: 'باشه'
-                      }).then((result) => {
+                      }).then(function(result){
                         if (result.value) {
                           window.location.reload();
                         }

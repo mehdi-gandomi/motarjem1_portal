@@ -1,8 +1,10 @@
 <?php
 namespace App\Controllers;
 use Core\Controller;
+use Core\Config;
 use App\Models\Admin;
 use App\Models\Order;
+use App\Models\Ticket;
 class AdminPanelController extends Controller
 {
 
@@ -86,8 +88,6 @@ class AdminPanelController extends Controller
     public function dashboard($req,$res,$args)
     {
         $data=[];
-        //get new translator employment requests
-        $data['translator_employment_requests']=Admin::get_employment_requests();
         //count of new orders that is not accepted by any translator yet
         $data['new_orders_count']=Order::get_new_unaccepted_orders_count();
         //count of orders that is accepted but is not done anymore
@@ -100,6 +100,12 @@ class AdminPanelController extends Controller
         $data['month_revenue']=number_format(Admin::get_monthly_revenue());
         //get unread messages
         $data['unread_messages_count']=Admin::get_unread_tickets_count();
+        //get last three tickets sent by translators
+        $data['last_translator_tickets']=Ticket::get_translator_tickets(1,3);
+        //get last three tickets sent by customers
+        $data['last_customer_tickets']=Ticket::get_customer_tickets(1,3);
+        //get new translator employment requests
+        $data['translator_employment_requests']=Admin::get_employment_requests(1,3);
         return $this->view->render($res,"admin/admin/dashboard.twig",$data);
     }
     
@@ -112,5 +118,27 @@ class AdminPanelController extends Controller
         $data['status']=$translatorAndTestData && count($translatorAndTestData)<1 ? false:true;
         $data['info']=$translatorAndTestData;
         return $res->withJson($data);
+    }
+    public function ticket_details_json($req,$res,$args)
+    {
+        $ticketNumber=$req->getParam("ticket_number");
+        $userType=$req->getParam("user_type");
+        $ticketDetails=Ticket::admin_get_details_by_ticket_number($ticketNumber,$userType);
+        $ticketMessages=Ticket::get_ticket_messages_by_ticket_number($ticketNumber);
+        if(!$ticketDetails){
+            return $res->withJson(['status'=>false,'message'=>'پیام درخواستی یافت نشد !']);
+        }
+        return $res->withJson(['status'=>true,'info'=>$ticketDetails,'messages'=>$ticketMessages]);
+    }
+    //employ the new translator
+    public function post_employ_translator($req,$res,$args)
+    {
+        $postFields=$req->getParsedBody();
+        $hash = md5(md5(Config::VERIFY_EMAIL_KEY));
+        if($postFields['token']===$hash){
+            return $res->withJson(['status'=>true]);
+        }else{
+            return $res->withJson(['status'=>false,'message'=>'invalid token!']);
+        }
     }
 }
