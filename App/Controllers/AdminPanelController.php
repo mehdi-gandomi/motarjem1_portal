@@ -181,4 +181,32 @@ class AdminPanelController extends Controller
             return $res->withJson(['status'=>false,'message'=>'invalid token!']);
         }
     }
+    public static function accept_translator_order_request($req,$res,$args)
+    {
+        $postFields=$req->getParsedBody();
+        $hash = md5(md5(Config::VERIFY_EMAIL_KEY));
+        if($postFields['token']===$hash){
+            $result=Order::accept_translator_order_request($postFields['request_id'],$postFields['translator_id']);
+            if($result){
+                return $res->withJson(['status'=>true]);
+            }
+            return $res->withJson(['status'=>false,'message'=>'error in saving data!']);
+        }else{
+            return $res->withJson(['status'=>false,'message'=>'invalid token!']);
+        }
+    }
+    public static function deny_translator_order_request($req,$res,$args)
+    {
+        $postFields=$req->getParsedBody();
+        $hash = md5(md5(Config::VERIFY_EMAIL_KEY));
+        if($postFields['token']===$hash){
+            $result=Order::deny_translator_order_request($postFields['request_id'],$postFields['translator_id']);
+            if($result){
+                return $res->withJson(['status'=>true]);
+            }
+            return $res->withJson(['status'=>false,'message'=>'error in saving data!']);
+        }else{
+            return $res->withJson(['status'=>false,'message'=>'invalid token!']);
+        }
+    }
 }

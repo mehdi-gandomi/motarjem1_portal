@@ -193,12 +193,97 @@ function denyTranslator(translatorId){
 
 //accept translator's request to do the order
 function acceptRequest(requestId,translatorId){
-    console.log(requestId,translatorId);
+    Swal.fire({
+        title: 'آیا مطمینید ؟',
+        text: "آیا میخواهید این درخواست را قبول کنید ؟",
+        type: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'بله',
+        cancelButtonText:'نه'
+      }).then(function(result) {
+        if (result.value) {
+            $.ajax({
+                type:"POST",
+                url:"/admin/translator-order-request/accept",
+                data:{
+                    request_id:requestId,
+                    translator_id:translatorId,
+                    token:"bad47df23cb7e6b3b8abf68cbba85d0f"
+                },
+                success:function(data,status){
+                    if (data.status) {
+                        Swal.fire({
+                            title: 'موفق !',
+                            text: "اطلاعات با موفقیت ثبت شد !",
+                            type: 'success',
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'باشه'
+                        }).then(function(result){
+                            if (result.value) {
+                            window.location.reload();
+                            }
+                        })
+                    } else {
+                        console.log(data.message);
+                        Swal.fire('خطا !', "خطایی در ثبت اطلاعات رخ داد !", 'error')
+                    }
+                }
+            })             
+        }else{
+
+        }
+      })
+
 }
 
 //deny translator's request to do the order
 function denyRequest(requestId,translatorId){
-    console.log(requestId,translatorId);
+    Swal.fire({
+        title: 'آیا مطمینید ؟',
+        text: "آیا میخواهید این درخواست را قبول کنید ؟",
+        type: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'بله',
+        cancelButtonText:'نه'
+      }).then(function(result) {
+        if (result.value) {
+            $.ajax({
+                type:"POST",
+                url:"/admin/translator-order-request/deny",
+                data:{
+                    request_id:requestId,
+                    translator_id:translatorId,
+                    token:"bad47df23cb7e6b3b8abf68cbba85d0f"
+                },
+                success:function(data,status){
+                    if (data.status) {
+                        Swal.fire({
+                            title: 'موفق !',
+                            text: "اطلاعات با موفقیت ثبت شد !",
+                            type: 'success',
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'باشه'
+                        }).then(function(result){
+                            if (result.value) {
+                            window.location.reload();
+                            }
+                        })
+                    } else {
+                        console.log(data.message);
+                        Swal.fire('خطا !', "خطایی در ثبت اطلاعات رخ داد !", 'error')
+                    }
+                }
+            })             
+        }else{
+
+        }
+      })
 }
 
 //show order info in modal

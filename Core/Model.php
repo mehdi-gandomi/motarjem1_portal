@@ -90,7 +90,6 @@ class Model
         $db=self::getDB();
         $where=self::prepare_input($where);
         $sql="DELETE FROM `$tbl_name` WHERE $where";
-        var_dump($sql);
         return $db->query($sql);
     }
   

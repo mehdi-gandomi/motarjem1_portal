@@ -285,6 +285,30 @@ class Order extends Model
             return 0;
         }
     }
+
+
+    //START admin functions
+    public static function accept_translator_order_request($requestId,$translatorId)
+    {
+        try{
+            $orderId=static::select("translator_order_request","order_id",['id'=>$requestId],true)['order_id'];
+            $db=static::getDB();
+            $sql="UPDATE order_logs SET is_accepted='1',accept_date=:accept_date,accept_date_persian=:accept_date_persian,order_step='3',translator_id=:translator_id WHERE order_id=:order_id";
+            $stmt=$db->prepare($sql);
+            $now=date("Y-m-d H:i");
+            $nowPersian=self::getCurrentDatePersian();
+            $stmt->bindParam(":accept_date",$now);
+            $stmt->bindParam(":accept_date_persian",$nowPersian);
+            $stmt->bindParam(":translator_id",$translatorId);
+            $stmt->bindParam(":order_id",$orderId);
+            if($stmt->execute()){
+                static::delete("translator_order_request","id = '$requestId'");
+                return true;
+            }
+        }catch(\Exception $e){
+            return false;
+        }
+    }
     protected static function calculatePrice($translate_language, $type, $quality, $delivery_type, $wordsNumber)
     {
         $basePrice = 0;
