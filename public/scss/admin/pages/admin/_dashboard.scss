@@ -9,12 +9,12 @@
         }
     }
     td{
-        line-height: 4.6;
+        line-height: 4.4;
         text-align: center;
     }
 }
 @media (min-width: 992px){
-    #translatorInfo .modal-dialog{
+    #translatorInfo .modal-dialog.modal-lg{
         max-width: 900px !important;
     }
 }
@@ -93,5 +93,15 @@ tr.as-link{
 @media(min-width:992px){
     #ticketDetailsModal .modal-dialog{
         max-width: 950px !important;
+    }
+}
+#translatorOrderRequests{
+    text-align: center;
+    line-height: 4.45;
+    a{
+        &:hover{
+            text-decoration: none;
+            font-weight: bold;
+        }
     }
 }

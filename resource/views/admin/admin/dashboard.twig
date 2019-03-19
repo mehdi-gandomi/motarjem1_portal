@@ -307,9 +307,9 @@
                                     <th class="text-center" scope="col">هزینه سفارش</th>
                                     <th class="text-center" scope="col">تاریخ درخواست</th>
                                     <th class="text-center" scope="col">نام مترجم</th>
-                                    <th class="text-center" scope="col">جزییات سفارش</th>
+                                    <th class="text-center" scope="col">عملیات</th>
                                 </thead>
-                                <tbody>
+                                <tbody id="translatorOrderRequests">
                                     {% for request in translator_order_requests %}
                                             <tr>
                                                 <td data-label="شماره سفارش">
@@ -325,14 +325,26 @@
                                                     {{request.request_date_persian}}
                                                 </td>
                                                 <td data-label="نام مترجم">
-                                                    <a href="#" onclick="showTranslatorInfo('{{request.translator_id}}')">{{request.translator_fname ~ " " ~ request.translator_lname}}</a>
+                                                    <a title="اطلاعات مترجم" href="javascript:void(0)" aria-role="button"  onclick="showTranslatorBasicInfo('{{request.translator_id}}')">{{request.translator_fname ~ " " ~ request.translator_lname}}</a>
                                                 </td>
-                                                <td class="order-more-info" data-label="جزییات سفارش">
-                                                    <a onclick="showOrderInfo('{{request.order_id}}')" aria-role="button">
-                                                        <svg height="23px" viewBox="0 0 50 80" width="13px" xml:space="preserve">
-                                                            <polyline fill="none" points="45.63,75.8 0.375,38.087 45.63,0.375 " stroke-linecap="round" stroke-linejoin="round" stroke-width="10" stroke="#a9a9a9"></polyline>
-                                                        </svg>
-                                                    </a>
+                                                <td data-label="عملیات" class="order-actions">
+                                                        <button onclick="showOrderInfo('{{request.order_id}}')" class="expand-button order-action is--primary is--medium">
+                                                            <span data-hover="جزییات سفارش">
+                                                                <i class="icon-info"></i>
+                                                            </span>
+                                                        </button>
+
+                                                        <button onclick="acceptRequest('{{request.id}}','{{request.translator_id}}')" class="expand-button order-action is--success is--medium">
+                                                            <span data-hover="قبول درخواست">
+                                                                <i class="icon-check"></i>
+                                                            </span>
+                                                        </button>
+                                                        <button onclick="denyRequest('{{request.id}}','{{request.translator_id}}')" class="expand-button order-action is--danger">
+                                                            <span data-hover="رد درخواست">
+                                                                <i class="icon-close"></i>
+                                                            </span>
+                                                        </button>
+
                                                 </td>
                                             </tr>
                                         {% endfor %}
@@ -359,8 +371,6 @@
             <div></div>
          </div>
          <div class="modal-body" id="translatorInfoWrap" style="padding:2rem">
-            
-            
          </div>
          
       </div>
@@ -392,6 +402,21 @@
             <div class="modal-footer justify-content-start">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">بستن</button>
             </div>
+        </div>
+    </div>
+</div>
+    {# translator info modal #}
+<!-- Modal -->
+<div aria-hidden="true" aria-labelledby="translatorBasicInfoLabel" class="modal fade" id="translatorBasicInfo" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="translatorBasicInfoLabel">اطلاعات مترجم</h5>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="translatorBasicInfoWrap"></div>
         </div>
     </div>
 </div>

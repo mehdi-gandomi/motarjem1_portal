@@ -44,6 +44,15 @@ class Admin extends Model
                 return [];
             }
         }
+        //get translator info from db by user id
+        public static function get_translator_basic_info_by_user_id($userId)
+        {
+            try{
+                return static::select("translators","fname,lname,avatar,degree,fa_to_en,en_to_fa,email,phone,cell_phone",['translator_id'=>$userId],true);
+            }catch(\Exception $e){
+                return false;
+            }
+        }
         //get admin total revenue 
         public static function get_total_revenue()
         {
@@ -88,6 +97,18 @@ class Admin extends Model
                 return $result ? $result->fetch(PDO::FETCH_ASSOC)['unread_count']:0;
             }catch(\Exception $e){
                 return 0;
+            }
+        }
+        public static function get_translator_order_requests($page,$amount)
+        {
+            try{
+                $page_limit = ($page - 1) * $amount;
+                $db=static::getDB();
+                $sql="SELECT translator_order_request.id,translator_order_request.request_date_persian,orders.order_price,orders.order_number,orders.order_id,orders.order_date_persian,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM `translator_order_request` INNER JOIN orders ON orders.order_id=translator_order_request.order_id INNER JOIN translators ON translators.translator_id=translator_order_request.translator_id LIMIT $page_limit,$amount";
+                $result=$db->query($sql);
+                return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+            }catch(\Exception $e){
+                return [];
             }
         }
 }

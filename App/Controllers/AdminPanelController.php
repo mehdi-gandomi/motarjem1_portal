@@ -107,6 +107,8 @@ class AdminPanelController extends Controller
         $data['last_customer_tickets']=Ticket::get_customer_tickets(1,3);
         //get new translator employment requests
         $data['translator_employment_requests']=Admin::get_employment_requests(1,3);
+        //get translator requests for doing orders
+        $data['translator_order_requests']=Admin::get_translator_order_requests(1,3);
         return $this->view->render($res,"admin/admin/dashboard.twig",$data);
     }
     
@@ -118,6 +120,16 @@ class AdminPanelController extends Controller
         $translatorAndTestData=Admin::get_translator_test_info_by_user_id($translatorId);
         $data['status']=$translatorAndTestData && count($translatorAndTestData)<1 ? false:true;
         $data['info']=$translatorAndTestData;
+        return $res->withJson($data);
+    }
+    public function basic_translator_info_json($req,$res,$args)
+    {
+        $translatorId=$req->getParam("translator_id");
+        $data=['status'=>true];
+        //get translator data and test data in one function and send it as json
+        $translatorData=Admin::get_translator_basic_info_by_user_id($translatorId);
+        $data['status']=$translatorData && count($translatorData)<1 ? false:true;
+        $data['info']=$translatorData;
         return $res->withJson($data);
     }
     public function ticket_details_json($req,$res,$args)

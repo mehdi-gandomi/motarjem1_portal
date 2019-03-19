@@ -1,8 +1,10 @@
+//show full translator profile details
 function showُTranslatorInfo(translatorId){    
     $.get("/admin/translator-info/all/json",{translator_id:translatorId},function(data,status){
         //i coded this with template literal but because of low browser support , i converted the code
         //for debugging you have to convert it to es6 with babel.io
         //unfortunately it converted persian to utf :( you have to convert it to text
+        //if you have problem , you can contact me via coderguy1999@gmail.com or @coder_guy in social media
         var output = "\n        <div class=\"row \">\n    <div class=\"col-lg-4 translator-avatar\">\n        <img src=\"/public/uploads/avatars/translator/".concat(data.info.avatar, "\" alt=\"\">\n    </div>\n    <div class=\"col-lg-3\">\n        <p class=\"translator-info\">\n            <strong class=\"translator-info__title\">\u0646\u0627\u0645 : </strong>\n            <span class=\"translator-info__value\">").concat(data.info.fname, "</span>\n        </p>\n        <p class=\"translator-info\">\n            <strong class=\"translator-info__title\">\u0646\u0627\u0645 \u062E\u0627\u0646\u0648\u0627\u062F\u06AF\u06CC : </strong>\n            <span class=\"translator-info__value\">").concat(data.info.lname, "</span>\n        </p>\n        <p class=\"translator-info\">\n            <strong class=\"translator-info__title\">\u062C\u0646\u0633\u06CC\u062A : </strong>\n            <span class=\"translator-info__value\">").concat(data.info.sex === '1' ? 'مرد' : 'زن', "</span>\n        </p>\n    </div>\n    <div class=\"col-lg-5\">\n        <strong>\u0622\u062F\u0631\u0633</strong>\n        <div class=\"translator-address mt-2\">\n            ").concat(data.info.address, "\n        </div>\n    </div>\n</div>\n<hr>\n<div class=\"row mt-5\">\n    <div class=\"col-lg-4 translator-melicard\">\n        <img src=\"/public/uploads/translator/melicard/").concat(data.info.melicard_photo, "\" alt=\"\">\n    </div>\n    <div class=\"col-lg-4\">\n        <p class=\"translator-info\">\n            <strong class=\"translator-info__title\">\u06A9\u062F \u0645\u0644\u06CC : </strong>\n            <span class=\"translator-info__value\">").concat(data.info.meli_code, "</span>\n        </p>\n        <p class=\"translator-info\">\n            <strong class=\"translator-info__title\">\u0645\u062F\u0631\u06A9 \u062A\u062D\u0635\u06CC\u0644\u06CC : </strong>\n            <span class=\"translator-info__value\">").concat(data.info.degree, "</span>\n        </p>\n        <p class=\"translator-info\">\n            <strong class=\"translator-info__title\">\u0633\u0627\u0628\u0642\u0647 \u06A9\u0627\u0631 : </strong>\n            <span class=\"translator-info__value\">").concat(data.info.exp_years, " \u0633\u0627\u0644</span>\n        </p>\n        <p class=\"translator-info\">\n            <strong class=\"translator-info__title\">\u062A\u0627\u0631\u06CC\u062E \u062B\u0628\u062A \u0646\u0627\u0645 : </strong>\n            <span class=\"translator-info__value\">").concat(data.info.register_date_persian, "</span>\n        </p>\n        <p class=\"translator-info\">\n            <strong class=\"translator-info__title\">\u062A\u0631\u062C\u0645\u0647 \u0627\u0646\u06AF\u0644\u06CC\u0633\u06CC \u0628\u0647 \u0641\u0627\u0631\u0633\u06CC : </strong>\n            <span class=\"translator-info__value\">").concat(data.info.en_to_fa == '0' ? 'خیر' : 'بله', "</span>\n        </p>\n    </div>\n    <div class=\"col-lg-4\">\n        <p class=\"translator-info\">\n            <strong class=\"translator-info__title\">\u0634\u0645\u0627\u0631\u0647 \u062A\u0644\u0641\u0646 \u062B\u0627\u0628\u062A : </strong>\n            <span class=\"translator-info__value\">").concat(data.info.phone, "</span>\n        </p>\n        <p class=\"translator-info\">\n            <strong class=\"translator-info__title\">\u0634\u0645\u0627\u0631\u0647 \u0647\u0645\u0631\u0627\u0647 : </strong>\n            <span class=\"translator-info__value\">").concat(data.info.cell_phone, "</span>\n        </p>\n        <p class=\"translator-info\">\n            <strong class=\"translator-info__title\">\u0627\u06CC\u0645\u06CC\u0644 : </strong>\n            <span class=\"translator-info__value\">").concat(data.info.email, "</span>\n        </p>\n        <p class=\"translator-info\">\n            <strong class=\"translator-info__title\">\u062A\u0631\u062C\u0645\u0647 \u0641\u0627\u0631\u0633\u06CC \u0628\u0647 \u0627\u0646\u06AF\u0644\u06CC\u0633\u06CC : </strong>\n            <span class=\"translator-info__value\">").concat(data.info.fa_to_en == '0' ? 'خیر' : 'بله', "</span>\n        </p>\n\n    </div>\n</div>\n<hr style=\"border-width:2px\">\n<div class=\"row mt-5\">\n    <div class=\"col-12 mb-4\">\n        <h5 class=\"text-center\">\u0622\u0632\u0645\u0648\u0646 ").concat(data.info.study_field_title, "</h5>\n        <h6 class=\"text-center\">(").concat(data.info.language_id == '1' ? 'انگلیسی به فارسی' : 'فارسی به انگلیسی', ")</h6>\n    </div>\n    <div class=\"col-lg-6\"><h6>متن اصلی</h6>\n        <div class=\"test question ").concat(data.info.language_id == "1" ? 'ltr' : 'rtl', "\">\n            ").concat(data.info.question_text, "\n        </div>\n    </div>\n    <div class=\"col-lg-6\"><h6>ترجمه کاربر</h6>\n        <div class=\"test answer ").concat(data.info.language_id == "1" ? 'rtl' : 'ltr', "\">\n            ").concat(data.info.translated_text, "\n        </div>\n    </div>\n    <div class=\"col-12\">\n        <div class=\"more-info__actions d-flex justify-content-center\">\n            <button class=\"btn btn-success\" onclick=\"employTranslator('").concat(data.info.translator_id, "')\">\u0627\u0633\u062A\u062E\u062F\u0627\u0645 \u0645\u062A\u0631\u062C\u0645</button>\n            <button class=\"btn btn-danger\" onclick=\"denyTranslator('").concat(data.info.translator_id, "')\">\u0631\u062F \u0645\u062A\u0631\u062C\u0645</button>\n            <button class=\"btn btn-secondary\" data-dismiss=\"modal\" type=\"button\">\u0628\u0633\u062A\u0646</button>\n        </div>\n    </div>\n</div>\n        \n        ");
         $("#translatorInfoWrap").html(output);
         $("#translatorInfo").modal({backdrop: 'static', keyboard: false});
@@ -10,6 +12,22 @@ function showُTranslatorInfo(translatorId){
     
 }
 
+// show translator's basic info
+function showTranslatorBasicInfo(translatorId){
+    console.log(translatorId);
+    $.get("/admin/translator/basic-info/json",{translator_id:translatorId},function(data,status){
+        if(data.status){
+             //i coded this with template literal but because of low browser support , i converted the code
+            //for debugging you have to convert it to es6 with babel.io
+            //unfortunately it converted persian to utf :( you have to convert it to text
+            //if you have problem , you can contact me via coderguy1999@gmail.com or @coder_guy in social media
+            var output = "\n  <div class=\"translator-info\">\n    <div class=\"translator-info__avatar\">\n        <img alt=\"\" src=\"/public/uploads/avatars/translator/".concat(data.info.avatar, "\"></div>\n    <div class=\"translator-info__info\">\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0646\u0627\u0645 \u0645\u062A\u0631\u062C\u0645 :\u200C\n            </label>\n            <strong>").concat(data.info.fname + " " + data.info.lname, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0645\u062F\u0631\u06A9 \u062A\u062D\u0635\u06CC\u0644\u06CC</label>\n            <strong>").concat(data.info.degree, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u062A\u0631\u062C\u0645\u0647 \u0641\u0627\u0631\u0633\u06CC \u0628\u0647 \u0627\u0646\u06AF\u0644\u06CC\u0633\u06CC</label>\n            <strong>").concat(data.info.fa_to_en == "1" ? "بله" : "خیر", "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u062A\u0631\u062C\u0645\u0647 \u0627\u0646\u06AF\u0644\u06CC\u0633\u06CC \u0628\u0647 \u0641\u0627\u0631\u0633\u06CC</label>\n            <strong>").concat(data.info.en_to_fa == "1" ? "بله" : "خیر", "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0627\u06CC\u0645\u06CC\u0644 :\n            </label>\n            <strong>").concat(data.info.email, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0634\u0645\u0627\u0631\u0647 \u062A\u0644\u0641\u0646 \u062B\u0627\u0628\u062A</label>\n            <strong>").concat(data.info.phone, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0634\u0645\u0627\u0631\u0647 \u0645\u0648\u0628\u0627\u06CC\u0644</label>\n            <strong>").concat(data.info.cell_phone, "</strong>\n        </div>\n    </div>\n</div>        \n");
+            $("#translatorBasicInfoWrap").html(output);
+            $("#translatorBasicInfo").modal("show");
+        }
+    })
+}
+//render ticket's info on modal
 function renderTicketInfo(info){
     var state = "";
     switch (info.state) {
@@ -31,6 +49,7 @@ function renderTicketInfo(info){
     //unfortunately it converted persian to utf :( you have to convert it to text
     return "<div class='col-lg-4'><ul class=\"list-group no-pad ticket-details\">\n   <li class=\"list-group-item\">\n      <div class=\"list-group-item__title\">\u0634\u0645\u0627\u0631\u0647 \u062A\u06CC\u06A9\u062A:</div>\n      <div class=\"list-group-item__value\">#".concat(info.ticket_number, "</div>\n   </li>\n   <li class=\"list-group-item\">\n      <div class=\"list-group-item__title\">\u0639\u0646\u0648\u0627\u0646 \u062A\u06CC\u06A9\u062A:</div>\n      <div class=\"list-group-item__value\">\n\t\t").concat(info.subject, "\n      </div>\n   </li>\n   <li class=\"list-group-item\">\n      <div class=\"list-group-item__title\">\u0648\u0636\u0639\u06CC\u062A:</div>\n      <div class=\"list-group-item__value\" id=\"state\">\n         ").concat(state, "\n      </div>\n   </li>\n   <li class=\"list-group-item\">\n      <div class=\"list-group-item__title\">\u062A\u0627\u0631\u06CC\u062E \u0627\u06CC\u062C\u0627\u062F \u062A\u06CC\u06A9\u062A:</div>\n      <div class=\"list-group-item__value\">\n         ").concat(info.create_date_persian, "\n      </div>\n   </li>\n   <li class=\"list-group-item\">\n      <div class=\"list-group-item__title\">\u0622\u062E\u0631\u06CC\u0646 \u0628\u0631\u0648\u0632\u0631\u0633\u0627\u0646\u06CC:</div>\n      <div class=\"list-group-item__value\" id=\"updateDate\">\n         ").concat(info.update_date_persian, "\n      </div>\n   </li>\n<li class='list-group-item'><a class='btn btn-primary' href='/admin/ticket/view/"+info.ticket_number+"'>اطلاعات بیشتر</a></li></ul></div>");
 }
+//render all ticket messages in modal
 function renderTicketMessages(messages,fullname,ticketNumber){ 
     var output = "<div class='col-lg-8'>";
     //i coded this with template literal but because of low browser support , i converted the code
@@ -169,6 +188,17 @@ function denyTranslator(translatorId){
       })
 
     
+}
+
+
+//accept translator's request to do the order
+function acceptRequest(requestId,translatorId){
+    console.log(requestId,translatorId);
+}
+
+//deny translator's request to do the order
+function denyRequest(requestId,translatorId){
+    console.log(requestId,translatorId);
 }
 
 //handle lightbox

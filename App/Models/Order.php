@@ -196,7 +196,7 @@ class Order extends Model
             static::insert("translator_order_request", [
                 'translator_id' => $translatorId,
                 'order_id' => $orderData['order_id'],
-                'request_date_persian'=>$this->getCurrentDatePersian(),
+                'request_date_persian'=>self::getCurrentDatePersian(),
                 'state' => 1
             ]);
             return true;
