@@ -143,6 +143,14 @@ class AdminPanelController extends Controller
         }
         return $res->withJson(['status'=>true,'info'=>$ticketDetails,'messages'=>$ticketMessages]);
     }
+    //get order details and send it as json
+    public function order_info_json($req,$res,$args)
+    {
+        $orderNumber = $args['order_number'];
+        $orderData = Order::by_number($orderNumber, false, true);
+        return $res->withJson($orderData);
+    }
+
     //employ the new translator
     public function post_employ_translator($req,$res,$args)
     {
