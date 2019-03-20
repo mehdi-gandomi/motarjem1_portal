@@ -159,30 +159,70 @@ class Ticket extends Model{
         }
     }
     //get all tickets that translators sent to admin
-    public static function get_translator_tickets($page,$amount)
+    public static function get_translator_tickets($page,$amount,$filteringOptions=null)
     {
         try{
             //user type 2 means translator and 1 means user(customer)
             $db=static::getDB();
             $page_limit = ($page - 1) * $amount;
-            $sql="SELECT translators.fname AS creator_fname,translators.lname AS creator_lname,Tickets.ticket_number,Tickets.subject,Tickets.create_date_persian FROM Tickets INNER JOIN translators ON translators.translator_id=Tickets.creator_id WHERE Tickets.user_type='2' LIMIT $page_limit,$amount";
+            $sql="SELECT translators.fname AS creator_fname,translators.lname AS creator_lname,Tickets.ticket_number,Tickets.subject,Tickets.create_date_persian,Tickets.update_date_persian,Tickets.state FROM Tickets INNER JOIN translators ON translators.translator_id=Tickets.creator_id WHERE Tickets.user_type='2'";
+            if(is_array($filteringOptions) && count($filteringOptions)>0){
+                if(isset($filteringOptions['state'])){
+                    if(is_array($filteringOptions['state']) && \count($filteringOptions['state'])>0){
+                        $sql.=" AND state IN ('".implode("','",$filteringOptions['state'])."')";
+                    }else if ($filteringOptions['state']==-1) {
+                        $sql.=" AND state NOT IN ('answered','waiting') ";
+                    }                   
+                }
+            }
+            $sql.=" LIMIT $page_limit,$amount";
             $result=$db->query($sql);
             return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
         }catch(\Exception $e){
             return [];
         }
     }
-    public static function get_customer_tickets($page,$amount)
+    public static function get_customer_tickets($page,$amount,$filteringOptions=null)
     {
         try{
             //user type 2 means translator and 1 means user(customer)
             $db=static::getDB();
             $page_limit = ($page - 1) * $amount;
-            $sql="SELECT users.fname AS creator_fname,users.lname AS creator_lname,Tickets.ticket_number,Tickets.subject,Tickets.create_date_persian FROM Tickets INNER JOIN users ON users.user_id=Tickets.creator_id WHERE Tickets.user_type='1' LIMIT $page_limit,$amount";
+            $sql="SELECT users.fname AS creator_fname,users.lname AS creator_lname,Tickets.ticket_number,Tickets.subject,Tickets.create_date_persian,Tickets.update_date_persian,Tickets.state FROM Tickets INNER JOIN users ON users.user_id=Tickets.creator_id WHERE Tickets.user_type='1'";
+            if(is_array($filteringOptions) && count($filteringOptions)>0){
+                if(isset($filteringOptions['state'])){
+                    if(is_array($filteringOptions['state']) && \count($filteringOptions['state'])>0){
+                        $sql.=" AND state IN ('".implode("','",$filteringOptions['state'])."')";
+                    }else if ($filteringOptions['state']==-1) {
+                        $sql.=" AND state NOT IN ('answered','waiting') ";
+                    }                   
+                }
+            }
+            $sql.=" LIMIT $page_limit,$amount";
             $result=$db->query($sql);
             return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
         }catch(\Exception $e){
             return [];
         }        
+    }
+    public static function get_tickets_count($userType=1,$filteringOptions=null)
+    {
+        try{
+            $db=static::getDB(); 
+            $sql="SELECT COUNT(*) AS tickets_count FROM Tickets WHERE user_type='$userType'";
+            if(is_array($filteringOptions) && count($filteringOptions)>0){
+                if(isset($filteringOptions['state'])){
+                    if(is_array($filteringOptions['state']) && \count($filteringOptions['state'])>0){
+                        $sql.=" AND state IN ('".implode("','",$filteringOptions['state'])."')";
+                    }else if ($filteringOptions['state']==-1) {
+                        $sql.=" AND state NOT IN ('answered','waiting') ";
+                    }                   
+                }
+            }
+            $result=$db->query($sql);
+            return $result ? $result->fetch(PDO::FETCH_ASSOC)['tickets_count']:0;
+        }catch(\Exception $e){
+            return 0;
+        }
     }
 }

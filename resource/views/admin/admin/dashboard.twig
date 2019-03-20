@@ -143,7 +143,7 @@
                                 <span>تیکت های اخیر مشتریان</span>
                             </div>
                             <a href="/admin/tickets/customer" class="btn new-ticket-btn">
-                                    <i class="icon-plus"></i>
+                                    <i class="icon-envelope-letter"></i>
                                 تمام تیکت ها
                             </a>
                         </div>
@@ -190,7 +190,7 @@
                                 <span>تیکت های اخیر مترجمان</span>
                             </div>
                             <a href="/admin/tickets/translator" class="btn new-ticket-btn">
-                                    <i class="icon-plus"></i>
+                                    <i class="icon-envelope-letter"></i>
                                 تمام تیکت ها
                             </a>
                         </div>
@@ -231,10 +231,19 @@
                     </div>
                 </div>
             </div>
-                 <div class="card mt-3">
+                 <div class="card mt-3 ticket-card">
+                 <div class="card-header  f-1rem ">
+                    <div class="card-header__title">
+                                <i class="icon-user"></i>
+                                <span>درخواست استخدام مترجم های جدید</span>
+                    </div>
+                    <a href="/admin/new-translators" class="btn new-ticket-btn">
+                                    <i class="icon-envelope"></i>
+                                تمام درخواست ها
+                    </a>
+                 </div>
                 <div class="card-body row">
                     <div class="col-12">
-                        <h5 class="mb-3">درخواست استخدام مترجم های جدید</h5>
                         <table class="table is--responsive new-translators-request">
                                     {% if translator_employment_requests %}
                                         <thead>
@@ -295,10 +304,19 @@
                     </div>
                 </div>
             </div>
-            <div class="card mt-3">
-                <div class="card-body row">
+            <div class="card mt-3 ticket-card">
+            <div class="card-header  f-1rem ">
+                    <div class="card-header__title">
+                                <i class="icon-user"></i>
+                                <span>درخواست های انجام سفارش مترجمان</span>
+                    </div>
+                    <a href="/admin/new-translators" class="btn new-ticket-btn">
+                                    <i class="icon-envelope"></i>
+                                تمام درخواست ها
+                    </a>
+                 </div>
+                <div class="card-body row ">
                     <div class="col-12">
-                        <h5>درخواست های انجام سفارش مترجمان</h5>
                         <table class="table is--responsive">
                             {% if translator_order_requests %}
                                 <thead>

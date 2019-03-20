@@ -72,7 +72,7 @@ String.prototype.replaceAll = function(search, replacement) {
       output += "<td data-label='تاریخ ایجاد تیکت'>" + ticket.create_date_persian + "</td>";
       output += "<td data-label='آخرین تاریخ بروزرسانی'>" + ticket.update_date_persian + "</td>";
       output +=
-        "<td class='order-more-info'><a href='/translator/ticket/view/" +
+        "<td class='order-more-info'><a href='/admin/ticket/view/" +
         ticket.ticket_number +
         '\'><svg width="13px" height="23px" viewBox="0 0 50 80" xml:space="preserve"><polyline fill="none" stroke="#a9a9a9" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "/></svg></a></td>';
       output += "</tr>";
@@ -122,7 +122,7 @@ String.prototype.replaceAll = function(search, replacement) {
     url = location.origin + location.pathname;
     url = queryString ? url + "?" + queryString : url;
     window.history.pushState("filtered messages", "پیام های فیلتر شده", url);
-    $.get("/translator/tickets/json?" + queryString, function(res, status) {
+    $.get(window.location.pathname+"/json?" + queryString, function(res, status) {
       if (status) {
         showTickets(res);
         showPagination(res.tickets_count,res.current_page,10,3,queryString);
@@ -131,9 +131,8 @@ String.prototype.replaceAll = function(search, replacement) {
   }
   
   //START this functions gets called when a checkbox state changes
-  
   $(".table-filter input[type=checkbox]").on("change", function(e) {
-    let queryStringObj = { state: [], read: [] };
+    let queryStringObj = { state: [] };
     $("input[name=state]").each(function() {
       if ($(this).is(":checked")) {
         queryStringObj["state"].push($(this).val());
@@ -151,43 +150,3 @@ String.prototype.replaceAll = function(search, replacement) {
   });
   
   //END this functions gets called when a checkbox state changes
-  
-  //send message with ajax request
-  $("#send-message-btn").click(function(e) {
-    let subject = $("#subject").val();
-    let body = $("#medium-editor").val();
-    if (subject == "") {
-      alert("باید حداقل یک عنوان وارد نمایید!");
-      return;
-    }
-    if (body == "") {
-      alert("باید متن پیام تان را وارد نمایید !");
-      return;
-    }
-  
-    $.ajax({
-      type: "POST",
-      url: $("#sendMessageForm").attr("action"),
-      data: {
-        subject: subject,
-        body: body
-      },
-      success: function(data, status) {
-        if (status && data.status) {
-          $("#newMessageModal").modal("hide");
-          Swal.fire(
-            "موفق",
-            "پیام شما با موفقیت ارسال شد ! <br> شماره پیگیری : <span style='font-family: sans-serif;direction: ltr;text-align: left;unicode-bidi: embed;'>#" +
-              data.ticket_number +
-              "<span>",
-            "success"
-          );
-          applyFilters(window.location.search);
-        } else {
-          $("#newMessageModal").modal("hide");
-          Swal.fire("خطا", "خطایی در ارسال پیام شما رخ داد", "error");
-        }
-      }
-    });
-  });
-  

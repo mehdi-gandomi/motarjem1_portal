@@ -221,4 +221,46 @@ class AdminPanelController extends Controller
         }
         return $res->withJson(['status'=>false,'message'=>'خطایی در ارسال پیام شما رخ داد !']);
     }
+    //render customer tickets page
+    public function customer_tickets_page($req,$res,$args)
+    {
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
+        $state = $req->getQueryParam("state") === null ? ['waiting','answered'] : \explode(",", $req->getQueryParam("state"));
+        //get tickets sent by customers
+        $tickets=Ticket::get_customer_tickets($page,10,['state'=>$state]);
+        $ticketsCount=Ticket::get_tickets_count(1,['state'=>$state]);
+        return $this->view->render($res,"/admin/admin/tickets.twig",["tickets" => $tickets,'current_page'=>$page, 'tickets_count' => $ticketsCount,'state'=>$state,'page_title'=>'پیام های مشتریان','page_url'=>'/admin/tickets/customer']);
+    }
+    //render customer tickets as json
+    public function customer_tickets_json($req,$res,$args)
+    {
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
+        $state = $req->getQueryParam("state") === null ? ['waiting','answered'] : \explode(",", $req->getQueryParam("state"));
+        //get tickets sent by customers
+        $tickets=Ticket::get_customer_tickets($page,10,['state'=>$state]);
+        $ticketsCount=Ticket::get_tickets_count(1,['state'=>$state]);
+        return $res->withJson(["tickets" => $tickets,'current_page'=>$page, 'tickets_count' => $ticketsCount]);
+    }
+
+    //render translator tickets page
+    public function translator_tickets_page($req,$res,$args)
+    {
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
+        $state = $req->getQueryParam("state") === null ? ['waiting','answered'] : \explode(",", $req->getQueryParam("state"));
+        //get tickets sent by customers
+        $tickets=Ticket::get_translator_tickets($page,10,['state'=>$state]);
+        $ticketsCount=Ticket::get_tickets_count(2,['state'=>$state]);
+        return $this->view->render($res,"/admin/admin/tickets.twig",["tickets" => $tickets,'current_page'=>$page, 'tickets_count' => $ticketsCount,'state'=>$state,'page_title'=>'پیام های مترجمان','page_url'=>'/admin/tickets/translator']);
+    }
+
+    //render translator tickets as json
+    public function translator_tickets_json($req,$res,$args)
+    {
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
+        $state = $req->getQueryParam("state") === null ? ['waiting','answered'] : \explode(",", $req->getQueryParam("state"));
+        //get tickets sent by customers
+        $tickets=Ticket::get_translator_tickets($page,10,['state'=>$state]);
+        $ticketsCount=Ticket::get_tickets_count(2,['state'=>$state]);
+        return $res->withJson(["tickets" => $tickets,'current_page'=>$page, 'tickets_count' => $ticketsCount]);
+    }
 }

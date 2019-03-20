@@ -1,0 +1,1 @@
+SQLSTATE[HY000]: General error: 1364 Field 'subject' doesn't have a default value
