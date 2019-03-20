@@ -20,6 +20,8 @@ $app->group('/admin', function ($app) use ($container) {
     $app->get("/tickets/customer/json","App\Controllers\AdminPanelController:customer_tickets_json");
     $app->get("/tickets/translator","App\Controllers\AdminPanelController:translator_tickets_page");
     $app->get("/tickets/translator/json","App\Controllers\AdminPanelController:translator_tickets_json");
+    $app->get("/ticket/view/{ticket_number}","App\Controllers\AdminPanelController:get_ticket_details_page");
+    $app->get("/ticket/view/{ticket_number}/json","App\Controllers\AdminPanelController:get_ticket_details_json");
     $app->post("/translator/employ","App\Controllers\AdminPanelController:post_employ_translator");
     $app->post("/translator/deny","App\Controllers\AdminPanelController:post_deny_translator");
     $app->post("/translator-order-request/accept","App\Controllers\AdminPanelController:accept_translator_order_request");

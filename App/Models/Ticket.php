@@ -175,7 +175,7 @@ class Ticket extends Model{
                     }                   
                 }
             }
-            $sql.=" LIMIT $page_limit,$amount";
+            $sql.="ORDER BY Tickets.create_date DESC LIMIT $page_limit,$amount";
             $result=$db->query($sql);
             return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
         }catch(\Exception $e){
@@ -198,7 +198,7 @@ class Ticket extends Model{
                     }                   
                 }
             }
-            $sql.=" LIMIT $page_limit,$amount";
+            $sql.="ORDER BY Tickets.create_date DESC LIMIT $page_limit,$amount";
             $result=$db->query($sql);
             return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
         }catch(\Exception $e){

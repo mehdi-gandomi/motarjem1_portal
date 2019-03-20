@@ -138,7 +138,7 @@ class AdminPanelController extends Controller
         $userType=$req->getParam("user_type");
         $ticketDetails=Ticket::admin_get_details_by_ticket_number($ticketNumber,$userType);
         $ticketMessages=Ticket::get_ticket_messages_by_ticket_number($ticketNumber);
-        $lastMessageId=$ticketMessages[count($ticketMessages)-1]['ticket_id'];
+        $lastMessageId=$ticketMessages[0]['ticket_id'];
         if(!$ticketDetails){
             return $res->withJson(['status'=>false,'message'=>'پیام درخواستی یافت نشد !']);
         }
@@ -229,7 +229,7 @@ class AdminPanelController extends Controller
         //get tickets sent by customers
         $tickets=Ticket::get_customer_tickets($page,10,['state'=>$state]);
         $ticketsCount=Ticket::get_tickets_count(1,['state'=>$state]);
-        return $this->view->render($res,"/admin/admin/tickets.twig",["tickets" => $tickets,'current_page'=>$page, 'tickets_count' => $ticketsCount,'state'=>$state,'page_title'=>'پیام های مشتریان','page_url'=>'/admin/tickets/customer']);
+        return $this->view->render($res,"/admin/admin/tickets.twig",["tickets" => $tickets,'current_page'=>$page, 'tickets_count' => $ticketsCount,'state'=>$state,'page_title'=>'پیام های مشتریان','page_url'=>'/admin/tickets/customer','user_type'=>'user']);
     }
     //render customer tickets as json
     public function customer_tickets_json($req,$res,$args)
@@ -239,7 +239,7 @@ class AdminPanelController extends Controller
         //get tickets sent by customers
         $tickets=Ticket::get_customer_tickets($page,10,['state'=>$state]);
         $ticketsCount=Ticket::get_tickets_count(1,['state'=>$state]);
-        return $res->withJson(["tickets" => $tickets,'current_page'=>$page, 'tickets_count' => $ticketsCount]);
+        return $res->withJson(["tickets" => $tickets,'current_page'=>$page, 'tickets_count' => $ticketsCount,'user_type'=>'user']);
     }
 
     //render translator tickets page
@@ -250,7 +250,7 @@ class AdminPanelController extends Controller
         //get tickets sent by customers
         $tickets=Ticket::get_translator_tickets($page,10,['state'=>$state]);
         $ticketsCount=Ticket::get_tickets_count(2,['state'=>$state]);
-        return $this->view->render($res,"/admin/admin/tickets.twig",["tickets" => $tickets,'current_page'=>$page, 'tickets_count' => $ticketsCount,'state'=>$state,'page_title'=>'پیام های مترجمان','page_url'=>'/admin/tickets/translator']);
+        return $this->view->render($res,"/admin/admin/tickets.twig",["tickets" => $tickets,'current_page'=>$page, 'tickets_count' => $ticketsCount,'state'=>$state,'page_title'=>'پیام های مترجمان','page_url'=>'/admin/tickets/translator','user_type'=>'translator']);
     }
 
     //render translator tickets as json
@@ -261,6 +261,27 @@ class AdminPanelController extends Controller
         //get tickets sent by customers
         $tickets=Ticket::get_translator_tickets($page,10,['state'=>$state]);
         $ticketsCount=Ticket::get_tickets_count(2,['state'=>$state]);
-        return $res->withJson(["tickets" => $tickets,'current_page'=>$page, 'tickets_count' => $ticketsCount]);
+        return $res->withJson(["tickets" => $tickets,'current_page'=>$page, 'tickets_count' => $ticketsCount,'user_type'=>'translator']);
+    }
+
+    //render view ticket page
+    public function get_ticket_details_page($req,$res,$args)
+    {
+        $userType=$req->getParam("type");
+        $ticketDetails = Ticket::admin_get_details_by_ticket_number($args['ticket_number'],$userType);
+        if(!$ticketDetails){
+            return var_dump("تیکت موجود نمی باشد");
+        }
+        $ticketMessages=Ticket::get_ticket_messages_by_ticket_number($args['ticket_number']);
+        $lastTicketId=$ticketMessages[0]['ticket_id'];        
+        return $this->view->render($res, "admin/admin/view-ticket.twig", ['ticket_details' => $ticketDetails,'ticket_messages'=>$ticketMessages,"last_ticket_id"=>$lastTicketId]);
+    }
+    //render view ticket as json
+    public function get_ticket_details_json($req,$res,$args)
+    {
+        $userType=$req->getParam("type");
+        $ticketDetails = Ticket::admin_get_details_by_ticket_number($args['ticket_number'],$userType);
+        $ticketMessages=Ticket::get_ticket_messages_by_ticket_number($args['ticket_number']);
+        return $res->withJson(['status'=>true,'date'=>Ticket::getCurrentDatePersian(),'ticket_details' => $ticketDetails,'tickets'=>$ticketMessages]);
     }
 }

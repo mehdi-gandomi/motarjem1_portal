@@ -54,13 +54,7 @@ String.prototype.replaceAll = function(search, replacement) {
     // if (data.messages.length > 0) {
     data.tickets.forEach(function(ticket) {
       let state;
-      if(ticket.state=="read"){
-        state="خوانده شده"
-      }
-      else if(ticket.state=="unread"){
-        state="خوانده نشده"
-      }
-      else if(ticket.state=="waiting"){
+      if(ticket.state=="waiting"){
         state="در انتظار پاسخ";
       }else{
         state="پاسخ داده شده";
@@ -73,8 +67,7 @@ String.prototype.replaceAll = function(search, replacement) {
       output += "<td data-label='آخرین تاریخ بروزرسانی'>" + ticket.update_date_persian + "</td>";
       output +=
         "<td class='order-more-info'><a href='/admin/ticket/view/" +
-        ticket.ticket_number +
-        '\'><svg width="13px" height="23px" viewBox="0 0 50 80" xml:space="preserve"><polyline fill="none" stroke="#a9a9a9" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "/></svg></a></td>';
+        ticket.ticket_number +'?type='+data.user_type+'\'><svg width="13px" height="23px" viewBox="0 0 50 80" xml:space="preserve"><polyline fill="none" stroke="#a9a9a9" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "/></svg></a></td>';
       output += "</tr>";
     });
     // }
