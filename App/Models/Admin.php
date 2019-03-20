@@ -32,6 +32,47 @@ class Admin extends Model
                 return false;
             }
         }
+        //get count of translator employment requests
+        public static function get_employment_requests_count()
+        {
+            try{
+                $db=static::getDB();
+                $sql="SELECT COUNT(*) AS requests_count FROM translator_tests INNER JOIN translators ON translator_tests.translator_id=translators.translator_id WHERE translators.is_denied='0' AND translators.is_employed='0'";
+                $result=$db->query($sql);
+                return $result ? $result->fetch(PDO::FETCH_ASSOC)['requests_count']:0;
+            }catch(\Exception $e){
+                return 0;
+            }
+        }
+
+        //get denied requests
+        public static function get_denied_requests($page,$amount)
+        {
+            try{
+                $db=static::getDB();
+                $page_limit = ($page - 1) * $amount;
+                $sql="SELECT translators.translator_id,translators.avatar AS translator_avatar,translators.username AS translator_username,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.register_date_persian,translators.degree AS translator_degree,translators.exp_years AS translator_exp_years FROM translators WHERE translators.is_denied='1' LIMIT $page_limit,$amount";
+                $result=$db->query($sql);
+                return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+            }catch(\Exception $e){
+                return [];
+            }
+
+        }
+
+        //count of get denied requests
+        public static function get_denied_requests_count()
+        {
+            try{
+                $db=static::getDB();
+                $sql="SELECT COUNT(*) AS denied_count FROM translators WHERE translators.is_denied='1'";
+                $result=$db->query($sql);
+                return $result ? $result->fetch(PDO::FETCH_ASSOC)['denied_count']:0;
+            }catch(\Exception $e){
+                return 0;
+            }
+
+        }
         //get translator data and test (text that they have to translate) data in one function
         public static function get_translator_test_info_by_user_id($userId)
         {

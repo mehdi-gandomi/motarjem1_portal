@@ -1,0 +1,177 @@
+{% extends 'admin/layout/admin.twig' %}
+
+{% block content %}
+
+<main class="main">
+
+    <div class="card mt-3">
+        <div class="card-header">
+            <div class="card-header__title">
+                    <i class="icon-user"></i>
+                    <span>درخواست استخدام مترجم های جدید</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="col-12">
+                <table class="table is--responsive new-translators-request">
+                            {% if translator_employment_requests %}
+                                <thead>
+                                    <th class="text-center" scope="col">تصویر مترجم</th>
+                                    <th class="text-center" scope="col">نام کاربری</th>
+                                    <th class="text-center" scope="col">نام مترجم</th>
+                                    <th class="text-center" scope="col">تاربخ ثبت نام</th>
+                                    <th class="text-center" scope="col">تحصیلات</th>
+                                    <th class="text-center" scope="col">سابقه کار</th>
+                                    <th class="text-center" scope="col">عملیات</th>
+                                </thead>
+                                <tbody>
+                                {% for request in translator_employment_requests %}
+                                        <tr>
+                                        <td data-label="تصویر مترجم">
+                                            <img class="translatorAvatar" src="/public/uploads/avatars/translator/{{request.translator_avatar}}" alt="">
+                                        </td>
+                                        <td data-label="نام کاربری">
+                                            {{request.translator_username}}
+                                        </td>
+                                        <td data-label="نام مترجم">
+                                            {{request.translator_fname ~ " " ~ request.translator_lname}}
+                                        </td>
+                                        <td data-label="تاریخ ثبت نام">
+                                            {{request.register_date_persian}}
+                                        </td>
+                                        <td data-label="تحصیلات">
+                                            {{request.translator_degree}}
+                                        </td>
+                                        <td data-label="سابقه کار">
+                                            {{request.translator_exp_years}} سال
+                                        </td>
+                                        <td data-label="عملیات" class="order-actions">
+                                                <button onclick="showُTranslatorInfo('{{request.translator_id}}')" class="expand-button order-action is--primary is--medium">
+                                                    <span data-hover="اطلاعات بیشتر">
+                                                        <i class="icon-info"></i>
+                                                    </span>
+                                                </button>
+                                                <button onclick="employTranslator('{{request.translator_id}}')" class="expand-button order-action is--success is--medium">
+                                                    <span data-hover="استخدام مترجم">
+                                                        <i class="icon-check"></i>
+                                                    </span>
+                                                </button>
+                                                <button onclick="denyTranslator('{{request.translator_id}}')" class="expand-button order-action is--danger">
+                                                    <span data-hover="رد مترجم">
+                                                        <i class="icon-close"></i>
+                                                    </span>
+                                                </button>
+
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                {% endfor %}
+                            {% else %}
+                                <h6 class="text-center mt-4">تاکنون مترجم جدیدی درخواست نکرده است !</h6>        
+                            {% endif %}
+                </table>
+                {% include 'admin/includes/pagination.twig' with { 'count' :translator_employment_requests_count, 'page_prefix':'new_', 'current_page' :new_current_page, 'base_path' :'/admin/new-translators', 'offset' : 10, 'visible_numbers' : 3 } %}
+            </div>    
+        </div>
+    </div>
+    <div class="card mt-3">
+        <div class="card-header">
+            <div class="card-header__title">
+                    <i class="icon-user"></i>
+                    <span>مترجم های رد شده</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="col-12">
+                <table class="table is--responsive new-translators-request">
+                            {% if denied_requests %}
+                                <thead>
+                                    <th class="text-center" scope="col">تصویر مترجم</th>
+                                    <th class="text-center" scope="col">نام کاربری</th>
+                                    <th class="text-center" scope="col">نام مترجم</th>
+                                    <th class="text-center" scope="col">تاربخ ثبت نام</th>
+                                    <th class="text-center" scope="col">تحصیلات</th>
+                                    <th class="text-center" scope="col">سابقه کار</th>
+                                    <th class="text-center" scope="col">عملیات</th>
+                                </thead>
+                                <tbody>
+                                {% for request in denied_requests %}
+                                        <tr>
+                                        <td data-label="تصویر مترجم">
+                                            <img class="translatorAvatar" src="/public/uploads/avatars/translator/{{request.translator_avatar}}" alt="">
+                                        </td>
+                                        <td data-label="نام کاربری">
+                                            {{request.translator_username}}
+                                        </td>
+                                        <td data-label="نام مترجم">
+                                            {{request.translator_fname ~ " " ~ request.translator_lname}}
+                                        </td>
+                                        <td data-label="تاریخ ثبت نام">
+                                            {{request.register_date_persian}}
+                                        </td>
+                                        <td data-label="تحصیلات">
+                                            {{request.translator_degree}}
+                                        </td>
+                                        <td data-label="سابقه کار">
+                                            {{request.translator_exp_years}} سال
+                                        </td>
+                                        <td data-label="عملیات" class="order-actions">
+                                                <button onclick="showُTranslatorInfo('{{request.translator_id}}')" class="expand-button order-action is--primary is--medium">
+                                                    <span data-hover="اطلاعات بیشتر">
+                                                        <i class="icon-info"></i>
+                                                    </span>
+                                                </button>
+                                                <button onclick="employTranslator('{{request.translator_id}}')" class="expand-button order-action is--success is--medium">
+                                                    <span data-hover="استخدام مترجم">
+                                                        <i class="icon-check"></i>
+                                                    </span>
+                                                </button>
+
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                {% endfor %}
+                            {% else %}
+                                <h6 class="text-center mt-4">تاکنون مترجم جدیدی درخواست نکرده است !</h6>        
+                            {% endif %}
+                </table>
+                {% include 'admin/includes/pagination.twig' with { 'count' :denied_requests_count, 'page_prefix':'deny_', 'current_page' :denied_current_page, 'base_path' :'/admin/new-translators', 'offset' : 10, 'visible_numbers' : 3 } %}
+            </div>
+        </div>
+    </div>
+    
+
+</main>
+{# show translator avatar in zoom mode #}
+<div id="avatarModal" class="lightbox">
+    <!-- The Close Button -->
+    <span id="closeModal" class="close">&times;</span>
+
+    <!-- Modal Content (The Image) -->
+    <img class="lightbox-content" id="avatarPhoto">
+
+    <!-- Modal Caption (Image Text) -->
+    <div id="caption"></div>
+</div>
+<!--Translator Info Modal -->
+<div aria-hidden="true" aria-labelledby="translatorInfoLabel" class="modal fade" id="translatorInfo" role="dialog" tabindex="-1">
+   <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+         <div class="modal-header justify-content-between align-items-center">
+            <button type="button" class="modal-close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+            <h5 class="modal-title" id="translatorInfoLabel">اطلاعات مترجم</h5>
+            <div></div>
+         </div>
+         <div class="modal-body" id="translatorInfoWrap" style="padding:2rem">
+         </div>
+         
+      </div>
+   </div>
+</div>
+{% endblock %}
+{% block script_below %}
+    <script src="/public/js/sweetalert2@8.js"></script>
+    <script src="/public/js/panel/admin-new-translators.js"></script>
+{% endblock %}

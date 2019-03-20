@@ -428,7 +428,7 @@ class Translator extends Model
     public static function employ($translatorId)
     {
         try{
-            static::update("translators",["is_employed"=>'1'],"translator_id = '$translatorId'");
+            static::update("translators",["is_employed"=>'1','is_denied'=>'0'],"translator_id = '$translatorId'");
             return true;
         }catch(\Exception $e){
             return false;

@@ -284,4 +284,30 @@ class AdminPanelController extends Controller
         $ticketMessages=Ticket::get_ticket_messages_by_ticket_number($args['ticket_number']);
         return $res->withJson(['status'=>true,'date'=>Ticket::getCurrentDatePersian(),'ticket_details' => $ticketDetails,'tickets'=>$ticketMessages]);
     }
+    //get new translators employment requests and render the page
+    public function get_new_unemployed_translators_page($req,$res,$args)
+    {
+        $newPage = $req->getQueryParam("new_page") ? $req->getQueryParam("new_page") : 1;
+        $deniedPage=$req->getQueryParam("deny_page") ? $req->getQueryParam("deny_page") : 1;
+        // $acceptedPage=$req->getQueryParam("accept_page") ? $req->getQueryParam("accept_page") : 1;
+        $data=[];
+        $data['translator_employment_requests']=Admin::get_employment_requests($newPage,10);
+        $data['translator_employment_requests_count']=Admin::get_employment_requests_count();
+        $data['new_current_page']=$newPage;
+
+        $data['denied_requests']=Admin::get_denied_requests($deniedPage,10);
+        $data['denied_requests_count']=Admin::get_denied_requests_count();
+        $data['denied_current_page']=$deniedPage;
+        
+        // $data['accepted_requests']=Admin::get_accepted_requests($page,10);
+        // $data['accepted_requests_count']=Admin::get_accepted_requests_count();
+        // $data['accepted_current_page']=$deniedPage;
+
+        return $this->view->render($res,"/admin/admin/new-translators.twig",$data);
+    }
+    //get new translator requests and render the page
+    public function get_translators_order_requests_page($req,$res,$args)
+    {
+        
+    }
 }

@@ -22,6 +22,8 @@ $app->group('/admin', function ($app) use ($container) {
     $app->get("/tickets/translator/json","App\Controllers\AdminPanelController:translator_tickets_json");
     $app->get("/ticket/view/{ticket_number}","App\Controllers\AdminPanelController:get_ticket_details_page");
     $app->get("/ticket/view/{ticket_number}/json","App\Controllers\AdminPanelController:get_ticket_details_json");
+    $app->get("/new-translators","App\Controllers\AdminPanelController:get_new_unemployed_translators_page");
+    $app->get("/translator/order-requests","App\Controllers\AdminPanelController:get_translators_order_requests_page");
     $app->post("/translator/employ","App\Controllers\AdminPanelController:post_employ_translator");
     $app->post("/translator/deny","App\Controllers\AdminPanelController:post_deny_translator");
     $app->post("/translator-order-request/accept","App\Controllers\AdminPanelController:accept_translator_order_request");
