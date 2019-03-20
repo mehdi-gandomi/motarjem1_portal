@@ -17,17 +17,13 @@
                             <form action="/user/ticket/reply/{{last_ticket_id}}" id="replyMessageForm" method="POST">
                                 <input type="hidden" name="ticket_number" value="{{ticket_details.ticket_number}}">
                                     <div class="row">
-                                        <div class="form-group col-md-3">
+                                        <div class="form-group col-md-6">
                                             <label for="">نام شما</label>
                                             <input class="form-control" type="text" value="{{user.fname ~ " " ~ user.lname}}" disabled="disabled"/>
                                         </div>
-                                        <div class="form-group col-md-5">
+                                        <div class="form-group col-md-6">
                                             <label for="">ایمیل شما</label>
                                             <input class="form-control" type="email" value="{{user.email}}" disabled="disabled"/>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="">عنوان پیام</label>
-                                            <input class="form-control" id="subject" name="subject" type="text"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -75,8 +71,6 @@
                                                 {{ticket.sent_date_persian}}</div>
                                         </div>
                                         <div class="card-body">
-                                            <h4 class="msg-title">
-                                                {{ticket.subject}}</h4>
                                             <div class="msg-body">
                                                 {{ticket.body | raw}}
                                             </div>

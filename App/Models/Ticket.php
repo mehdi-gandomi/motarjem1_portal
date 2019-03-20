@@ -38,7 +38,7 @@ class Ticket extends Model{
             return false;
         }
     }
-    public static function create_reply($userId,$msgData)
+    public static function create_reply($userId,$msgData,$state="waiting")
     {
         try{
             $persianDate=self::getCurrentDatePersian();
@@ -47,7 +47,7 @@ class Ticket extends Model{
             static::update("Tickets",[
                 'update_date_persian'=>$persianDate,
                 'update_date'=>date("Y-m-d H:i:s"),
-                'state'=>'waiting'
+                'state'=>$state
             ],"ticket_number='".$msgData['ticket_number']."'");
             static::insert("Ticket_Messages",$msgData);
             return true;

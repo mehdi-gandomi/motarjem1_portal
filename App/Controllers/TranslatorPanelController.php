@@ -288,7 +288,7 @@ class TranslatorPanelController extends Controller
             return $res->withJson(['status'=>false,'message'=>"شما اجازه دسترسی به این تیکت را ندارید"]);
         }
         $ticketMessages=Ticket::get_ticket_messages_by_ticket_number($args['ticket_number']);
-        return $res->withJson(['status'=>true,'tickets'=>$ticketMessages,'date'=>User::get_current_date_persian()]);
+        return $res->withJson(['status'=>true,'tickets'=>$ticketMessages,'date'=>Translator::get_current_date_persian()]);
         
     }
     public function get_tickets_json($req, $res, $args)

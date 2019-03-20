@@ -138,10 +138,11 @@ class AdminPanelController extends Controller
         $userType=$req->getParam("user_type");
         $ticketDetails=Ticket::admin_get_details_by_ticket_number($ticketNumber,$userType);
         $ticketMessages=Ticket::get_ticket_messages_by_ticket_number($ticketNumber);
+        $lastMessageId=$ticketMessages[count($ticketMessages)-1]['ticket_id'];
         if(!$ticketDetails){
             return $res->withJson(['status'=>false,'message'=>'پیام درخواستی یافت نشد !']);
         }
-        return $res->withJson(['status'=>true,'info'=>$ticketDetails,'messages'=>$ticketMessages]);
+        return $res->withJson(['status'=>true,'info'=>$ticketDetails,'messages'=>$ticketMessages,'last_ticket_id'=>$lastMessageId]);
     }
     //get order details and send it as json
     public function order_info_json($req,$res,$args)
@@ -208,5 +209,16 @@ class AdminPanelController extends Controller
         }else{
             return $res->withJson(['status'=>false,'message'=>'invalid token!']);
         }
+    }
+
+    //reply to tickets
+    public function post_reply_ticket($req,$res,$args)
+    {
+        $postFields=$req->getParsedBody();
+        $result=Ticket::create_reply("0",$postFields,"answered");
+        if($result){
+            return $res->withJson(['status'=>true]);
+        }
+        return $res->withJson(['status'=>false,'message'=>'خطایی در ارسال پیام شما رخ داد !']);
     }
 }

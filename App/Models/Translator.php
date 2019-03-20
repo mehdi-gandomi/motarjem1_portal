@@ -443,7 +443,7 @@ class Translator extends Model
             return false;
         }
     }
-    protected static function get_current_date_persian()
+    public static function get_current_date_persian()
     {
         $now = new \DateTime("NOW");
         $year = $now->format("Y");

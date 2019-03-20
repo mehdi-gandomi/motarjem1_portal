@@ -50,19 +50,19 @@ function renderTicketInfo(info){
     return "<div class='col-lg-4'><ul class=\"list-group no-pad ticket-details\">\n   <li class=\"list-group-item\">\n      <div class=\"list-group-item__title\">\u0634\u0645\u0627\u0631\u0647 \u062A\u06CC\u06A9\u062A:</div>\n      <div class=\"list-group-item__value\">#".concat(info.ticket_number, "</div>\n   </li>\n   <li class=\"list-group-item\">\n      <div class=\"list-group-item__title\">\u0639\u0646\u0648\u0627\u0646 \u062A\u06CC\u06A9\u062A:</div>\n      <div class=\"list-group-item__value\">\n\t\t").concat(info.subject, "\n      </div>\n   </li>\n   <li class=\"list-group-item\">\n      <div class=\"list-group-item__title\">\u0648\u0636\u0639\u06CC\u062A:</div>\n      <div class=\"list-group-item__value\" id=\"state\">\n         ").concat(state, "\n      </div>\n   </li>\n   <li class=\"list-group-item\">\n      <div class=\"list-group-item__title\">\u062A\u0627\u0631\u06CC\u062E \u0627\u06CC\u062C\u0627\u062F \u062A\u06CC\u06A9\u062A:</div>\n      <div class=\"list-group-item__value\">\n         ").concat(info.create_date_persian, "\n      </div>\n   </li>\n   <li class=\"list-group-item\">\n      <div class=\"list-group-item__title\">\u0622\u062E\u0631\u06CC\u0646 \u0628\u0631\u0648\u0632\u0631\u0633\u0627\u0646\u06CC:</div>\n      <div class=\"list-group-item__value\" id=\"updateDate\">\n         ").concat(info.update_date_persian, "\n      </div>\n   </li>\n<li class='list-group-item'><a class='btn btn-primary' href='/admin/ticket/view/"+info.ticket_number+"'>اطلاعات بیشتر</a></li></ul></div>");
 }
 //render all ticket messages in modal
-function renderTicketMessages(messages,fullname,ticketNumber){ 
+function renderTicketMessages(messages,fullname,ticketNumber,parentTicketId){ 
     var output = "<div class='col-lg-8'>";
     //i coded this with template literal but because of low browser support , i converted the code
     //for debugging you have to convert it to es6 with babel.io
     //unfortunately it converted persian to utf :( you have to convert it to text
-    output += "\n<form action=\"/admin/ticket/reply\" id=\"replyMessageForm\" method=\"POST\">\n<input type=\"hidden\" name=\"ticket_number\" value=\"".concat(ticketNumber, "\">\n  <div class=\"form-group\">\n      <label for=\"\">\u067E\u0627\u0633\u062E \u0634\u0645\u0627</label>\n      <textarea cols=\"20\" class='form-control' name=\"body\" rows=\"7\"></textarea>\n  </div>\n  <input class=\"btn btn-primary\" type=\"submit\" value=\"\u0627\u0631\u0633\u0627\u0644 \u067E\u0627\u0633\u062E\">\n</form>\n");
+    output += "\n<form action=\"/admin/ticket/reply\" id=\"replyMessageForm\" method=\"POST\">\n<input type=\"hidden\" name=\"ticket_number\" value=\"".concat(ticketNumber, "\">\n <input type=\"hidden\" name=\"parent_ticket_id\" value='"+parentTicketId+"' > \n  <div class=\"form-group\">\n      <label for=\"\">متن پاسخ</label>\n      <textarea cols=\"20\" class='form-control' name=\"body\" rows=\"7\"></textarea>\n  </div>\n  <input class=\"btn btn-primary\" type=\"submit\" value=\"ارسال پاسخ\">\n</form>\n");
     messages.forEach(function (message) {
         if (message.sender_id == "0") {
             output += "\n            <div class=\"card ticket  is--answer mt-4\">\n               <div class=\"card-header\">\n                  <div class=\"card-header__title\">\n                     <i class=\"icon-user\"></i>\n                     <p>\n                      \u0627\u062F\u0645\u06CC\u0646\n                     </p>\n                  </div>\n            ";
         } else {
             output += "\n          <div class=\"card ticket  is--message mt-4\">\n             <div class=\"card-header bg-primary\">\n                <div class=\"card-header__title\">\n                   <i class=\"icon-user\"></i>\n                   <p>\n                      ".concat(fullname, "\n                   </p>\n          </div>");
         }
-        output += "\n      <div class=\"card-header__date\">\n   \t\t".concat(message.sent_date_persian, "\n\t</div>\n</div>\n<div class=\"card-body\">\n   <h4 class=\"msg-title\">\n\t").concat(message.subject, "\n   </h4>\n   <div class=\"msg-body\">\n      ").concat(message.body, "\n   </div>\n</div>\n</div>\n");
+        output += "\n      <div class=\"card-header__date\">\n   \t\t".concat(message.sent_date_persian, "\n\t</div>\n</div>\n<div class=\"card-body\">\n  ").concat("\n   <div class=\"msg-body\">\n      ").concat(message.body, "\n   </div>\n</div>\n</div>\n");
     });
     output+="</div>";
     return output;
@@ -71,10 +71,9 @@ function renderTicketMessages(messages,fullname,ticketNumber){
 function showTicketInfo(ticketNumber,userType){
     console.log(ticketNumber);
     $.get("/admin/ticket-details/json",{ticket_number:ticketNumber,user_type:userType},function(data,status){
-        console.log(data);
         if(data.status){
             let output="<div class='row'>";            
-            output+=renderTicketMessages(data.messages,data.info.creator_fname+" "+data.info.creator_lname,ticketNumber);
+            output+=renderTicketMessages(data.messages,data.info.creator_fname+" "+data.info.creator_lname,ticketNumber,data.last_ticket_id);
             output+=renderTicketInfo(data.info);
             output+="</div>";
             $("#ticketDetailsWrap").html(output);
@@ -331,6 +330,33 @@ function showOrderInfo(orderNumber){
         $("#orderDetailsModal").modal("show");
     });
 }
+
+//add listener for ticket reply form 
+$(document).on("submit","#replyMessageForm",function(e){
+    e.preventDefault();
+    console.log($(this).serialize());
+    $.ajax({
+        type:"POST",
+        url:"/admin/ticket/reply",
+        data:$(this).serialize(),
+        success:function(data,status){
+            if (data.status) {
+                $("#ticketDetailsModal").modal("hide");
+                Swal.fire({
+                    title: 'موفق !',
+                    text: "پاسخ شما با موفقیت ارسال شد !",
+                    type: 'success',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'باشه'
+                })
+            } else {
+                Swal.fire('خطا !',data.message, 'error')
+            }
+        }
+    })   
+})
+
 
 //handle lightbox
 //show the translator avatar in large mode

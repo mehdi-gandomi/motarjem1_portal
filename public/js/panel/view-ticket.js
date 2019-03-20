@@ -4,12 +4,7 @@ let editor = new MediumEditor('#medium-editor', {
 // send message with ajax request
 $("#replyMessageForm").on("submit", function (e) {
     e.preventDefault();
-    let subject = $("#subject").val();
     let body = $("#medium-editor").val();
-    if (subject == "") {
-        alert("باید حداقل یک عنوان وارد نمایید!");
-        return;
-    }
     if (body == "") {
         alert("باید متن پیام تان را وارد نمایید !");
         return;
@@ -44,8 +39,7 @@ function renderTickets(tickets) {
         output += "<div class='card-header__title'><i class='icon-user'></i>";
         output += ticket.sender_id == "0" ? "<p>ادمین سایت</p>" : "<p>" + $(".profile-avatar__text p").text() + "(کاربر)</p>";
         output += "</div><div class='card-header__date'>" + ticket.sent_date_persian + "</div></div>";
-        output += "<div class='card-body'><h4 class='msg-title'>" + ticket.subject + "</h4>";
-        output += "<div class='msg-body'>" + ticket.body + "</div></div></div>";
+        output += "<div class='card-body'><div class='msg-body'>" + ticket.body + "</div></div></div>";
     });
     $(".chat-section").html(output);
 }
