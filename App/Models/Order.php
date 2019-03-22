@@ -309,6 +309,16 @@ class Order extends Model
             return false;
         }
     }
+    public static function deny_translator_order_request($requestId)
+    {
+        try{
+            static::update("translator_order_request",['is_denied'=>1],"id = '$requestId'");
+            return true;
+        }catch(\Exception $e){
+            file_put_contents("err.txt",$e->getMessage());
+            return false;
+        }
+    }
     protected static function calculatePrice($translate_language, $type, $quality, $delivery_type, $wordsNumber)
     {
         $basePrice = 0;

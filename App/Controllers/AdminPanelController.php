@@ -201,7 +201,7 @@ class AdminPanelController extends Controller
         $postFields=$req->getParsedBody();
         $hash = md5(md5(Config::VERIFY_EMAIL_KEY));
         if($postFields['token']===$hash){
-            $result=Order::deny_translator_order_request($postFields['request_id'],$postFields['translator_id']);
+            $result=Order::deny_translator_order_request($postFields['request_id']);
             if($result){
                 return $res->withJson(['status'=>true]);
             }
@@ -308,6 +308,42 @@ class AdminPanelController extends Controller
     //get new translator requests and render the page
     public function get_translators_order_requests_page($req,$res,$args)
     {
-        
+        $newPage = $req->getQueryParam("new_page") ? $req->getQueryParam("new_page") : 1;
+        $deniedPage=$req->getQueryParam("deny_page") ? $req->getQueryParam("deny_page") : 1;
+        // $acceptedPage=$req->getQueryParam("accept_page") ? $req->getQueryParam("accept_page") : 1;
+        $data=[];
+        $data['translator_order_requests']=Admin::get_translator_order_requests($newPage,10);
+        $data['translator_order_requests_count']=Admin::get_translator_order_requests_count();
+        $data['denied_requests']=Admin::get_translator_denied_order_requests($deniedPage,10);
+        $data['denied_requests_count']=Admin::get_translator_denied_order_requests_count();
+        $data['new_current_page']=$newPage;
+        $data['denied_current_page']=$deniedPage;
+        return $this->view->render($res,"/admin/admin/translator-order-requests.twig",$data);
+    }
+
+    //get hired translators and render a page
+    public function get_hired_translators_page($req,$res,$args)
+    {
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
+        $hiredTranslators=Translator::get_hired_translators($page,10);
+        $hiredTranslatorsCount=Translator::get_hired_translators_count();
+        return $this->view->render($res,"/admin/admin/hired-translators.twig",['hired_translators'=>$hiredTranslators,"count"=>$hiredTranslatorsCount,'current_page'=>$page]);
+    }
+    public function get_translator_info_page($req,$res,$args)
+    {
+        $translatorInfo=Translator::by_username($args['username']);
+        if(!$translatorInfo) {
+            echo("مترجمی با این مشخصات یافت نشد !");
+            return;
+        }
+        $completedPage = $req->getQueryParam("c_page") ? $req->getQueryParam("c_page") : 1;
+        $completedOrders=Translator::get_completed_orders_by_user_id($translatorInfo['translator_id'],$completedPage,10);
+        $completedOrdersCount=Translator::get_completed_orders_count_by_user_id($translatorInfo['translator_id']);
+
+        $pendingPage = $req->getQueryParam("p_page") ? $req->getQueryParam("p_page") : 1;
+        $pendingOrders=Translator::get_pending_orders_by_user_id($translatorInfo['translator_id'],$pendingPage,10);
+        $pendingOrdersCount=Translator::get_pending_orders_count_by_user_id($translatorInfo['translator_id']);
+
+        return $this->view->render($res,"/admin/admin/translator-info.twig",['info'=>$translatorInfo,'completed_orders'=>$completedOrders,'pending_orders'=>$pendingOrders,'pending_count'=>$pendingOrdersCount,'completed_count'=>$completedOrdersCount,'pending_current_page'=>$pendingPage,'completed_current_page'=>$completedPage]);
     }
 }

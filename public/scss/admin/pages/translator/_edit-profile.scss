@@ -32,10 +32,13 @@
   
   /* Modal Content (Image) */
   .lightbox-content {
-    margin: auto;
-    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
     width: 80%;
     max-width: 700px;
+    max-width: 500px;
   }
   
   /* Caption of Modal Image (Image Text) - Same Width as the Image */

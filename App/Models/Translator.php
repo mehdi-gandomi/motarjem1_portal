@@ -310,7 +310,7 @@ class Translator extends Model
         try{
             $db=static::getDB();
             $page_limit = ($page - 1) * $offset;
-            $sql="SELECT orders.order_id,orders.order_number,orders.translation_quality,orders.translation_lang,orders.order_price FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE order_logs.is_done='1' AND order_logs.translator_id='$userId' LIMIT $page_limit,$offset";
+            $sql="SELECT orders.order_id,orders.order_number,orders.translation_quality,orders.translation_lang,orders.order_price,orders.word_numbers,study_fields.title AS study_field FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN study_fields ON orders.field_of_study = study_fields.id WHERE order_logs.is_done='1' AND order_logs.translator_id='$userId' LIMIT $page_limit,$offset";
             $result=$db->query($sql);
             return $result ? $result->fetchAll(PDO::FETCH_ASSOC):false;
         }catch(\Exception $e){
@@ -327,6 +327,32 @@ class Translator extends Model
             return $result ? $result->fetch(PDO::FETCH_ASSOC)['orders_count']:0;
         }catch(\Exception $e){
             return false;
+        }
+    }
+
+    //get orders that is pending means that the translator is working on it (this function needs user id)
+    public static function get_pending_orders_by_user_id($userId,$page,$offset)
+    {
+        try{
+            $db=static::getDB();
+            $page_limit = ($page - 1) * $offset;
+            $sql="SELECT orders.order_id,orders.order_number,orders.translation_quality,orders.translation_lang,orders.order_price,orders.word_numbers,study_fields.title AS study_field FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN study_fields ON orders.field_of_study = study_fields.id WHERE order_logs.is_done='0' AND order_logs.translator_id='$userId' LIMIT $page_limit,$offset";
+            $result=$db->query($sql);
+            return $result ? $result->fetchAll(PDO::FETCH_ASSOC):false;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+    //get orders that is pending means that the translator is working on it (this function needs user id)
+    public static function get_pending_orders_count_by_user_id($userId)
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT COUNT(*) AS orders_count FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE order_logs.is_done='0' AND order_logs.translator_id='$userId'";
+            $result=$db->query($sql);
+            return $result ? $result->fetch(PDO::FETCH_ASSOC)['orders_count']:0;
+        }catch(\Exception $e){
+            return 0;
         }
     }
     //get account withdrawals or account checkouts by user id
@@ -441,6 +467,29 @@ class Translator extends Model
             return true;
         }catch(\Exception $e){
             return false;
+        }
+    }
+    public static function get_hired_translators($page,$offset)
+    {
+        try{
+            $db=static::getDB();
+            $page_limit = ($page - 1) * $offset;
+            $sql="SELECT * FROM `translators` WHERE is_employed='1' AND level='2' LIMIT $page_limit,$offset";
+            $result=$db->query($sql);
+            return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+        }catch(\Exception $e){
+            return [];
+        }
+    }
+    public static function get_hired_translators_count()
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT COUNT(*) AS translators_count FROM `translators` WHERE is_employed='1' AND level='2'";
+            $result=$db->query($sql);
+            return $result ? $result->fetch(PDO::FETCH_ASSOC)['translators_count']:0;
+        }catch(\Exception $e){
+            return 0;
         }
     }
     public static function get_current_date_persian()

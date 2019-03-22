@@ -93,7 +93,8 @@
     }
 } //orders table styles
 #orders-table,
-#messages-table {
+#messages-table,
+.OrdersTable {
     margin-top: 2rem;
     tbody {
         tr:hover {

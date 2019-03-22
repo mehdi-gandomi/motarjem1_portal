@@ -69,7 +69,6 @@ function renderTicketMessages(messages,fullname,ticketNumber,parentTicketId){
 }
 //showing ticket information by ticket number
 function showTicketInfo(ticketNumber,userType){
-    console.log(ticketNumber);
     $.get("/admin/ticket-details/json",{ticket_number:ticketNumber,user_type:userType},function(data,status){
         if(data.status){
             let output="<div class='row'>";            
@@ -82,8 +81,7 @@ function showTicketInfo(ticketNumber,userType){
             // });
             $("#ticketDetailsModal").modal("show");
         }
-    
-    })
+    });
 }
 
 //employment process for translator
@@ -238,11 +236,12 @@ function acceptRequest(requestId,translatorId){
 
 }
 
+
 //deny translator's request to do the order
-function denyRequest(requestId,translatorId){
+function denyRequest(requestId){
     Swal.fire({
         title: 'آیا مطمینید ؟',
-        text: "آیا میخواهید این درخواست را قبول کنید ؟",
+        text: "آیا میخواهید این درخواست را رد کنید ؟",
         type: 'info',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -256,7 +255,6 @@ function denyRequest(requestId,translatorId){
                 url:"/admin/translator-order-request/deny",
                 data:{
                     request_id:requestId,
-                    translator_id:translatorId,
                     token:"bad47df23cb7e6b3b8abf68cbba85d0f"
                 },
                 success:function(data,status){
@@ -270,7 +268,7 @@ function denyRequest(requestId,translatorId){
                             confirmButtonText: 'باشه'
                         }).then(function(result){
                             if (result.value) {
-                            window.location.reload();
+                                window.location.reload();
                             }
                         })
                     } else {
@@ -284,7 +282,6 @@ function denyRequest(requestId,translatorId){
         }
       })
 }
-
 //show order info in modal
 function showOrderInfo(orderNumber){
     $.get("/admin/order/info/json/"+orderNumber,function(data,status){

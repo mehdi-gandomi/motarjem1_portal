@@ -24,11 +24,15 @@ $app->group('/admin', function ($app) use ($container) {
     $app->get("/ticket/view/{ticket_number}/json","App\Controllers\AdminPanelController:get_ticket_details_json");
     $app->get("/new-translators","App\Controllers\AdminPanelController:get_new_unemployed_translators_page");
     $app->get("/translator/order-requests","App\Controllers\AdminPanelController:get_translators_order_requests_page");
+    $app->get("/hired-translators","App\Controllers\AdminPanelController:get_hired_translators_page");
+    $app->get("/translator/info/{username}","App\Controllers\AdminPanelController:get_translator_info_page");
+    $app->get("/order/view/{order_number}","App\Controllers\AdminPanelController:get_order_details_page");
     $app->post("/translator/employ","App\Controllers\AdminPanelController:post_employ_translator");
     $app->post("/translator/deny","App\Controllers\AdminPanelController:post_deny_translator");
     $app->post("/translator-order-request/accept","App\Controllers\AdminPanelController:accept_translator_order_request");
     $app->post("/translator-order-request/deny","App\Controllers\AdminPanelController:deny_translator_order_request");
     $app->post("/ticket/reply","App\Controllers\AdminPanelController:post_reply_ticket");
+
 })->add(function ($req, $res, $next) use ($container) {
     if (isset($_SESSION['is_admin_logged_in'])) {
         return $next($req, $res);

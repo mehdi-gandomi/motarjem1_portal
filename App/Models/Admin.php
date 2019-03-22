@@ -140,16 +140,53 @@ class Admin extends Model
                 return 0;
             }
         }
+        //translators request to do the order
         public static function get_translator_order_requests($page,$amount)
         {
             try{
                 $page_limit = ($page - 1) * $amount;
                 $db=static::getDB();
-                $sql="SELECT translator_order_request.id,translator_order_request.request_date_persian,orders.order_price,orders.order_number,orders.order_id,orders.order_date_persian,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM `translator_order_request` INNER JOIN orders ON orders.order_id=translator_order_request.order_id INNER JOIN translators ON translators.translator_id=translator_order_request.translator_id LIMIT $page_limit,$amount";
+                $sql="SELECT translator_order_request.id,translator_order_request.request_date_persian,orders.order_price,orders.order_number,orders.order_id,orders.order_date_persian,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM `translator_order_request` INNER JOIN orders ON orders.order_id=translator_order_request.order_id INNER JOIN translators ON translators.translator_id=translator_order_request.translator_id WHERE translator_order_request.is_denied='0' LIMIT $page_limit,$amount";
                 $result=$db->query($sql);
                 return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
             }catch(\Exception $e){
                 return [];
+            }
+        }
+        //count of translators request to do the order
+        public static function get_translator_order_requests_count()
+        {
+            try{
+                $db=static::getDB();
+                $sql="SELECT COUNT(*) AS requests_count FROM `translator_order_request` WHERE translator_order_request.is_denied='0'";
+                $result=$db->query($sql);
+                return $result ? $result->fetch(PDO::FETCH_ASSOC)['requests_count']:0;
+            }catch(\Exception $e){
+                return 0;
+            }
+        }
+        public static function get_translator_denied_order_requests($page,$offset)
+        {
+            try{
+                $page_limit = ($page - 1) * $offset;
+                $db=static::getDB();
+                $sql="SELECT translator_order_request.id,translator_order_request.request_date_persian,orders.order_price,orders.order_number,orders.order_id,orders.order_date_persian,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id FROM `translator_order_request` INNER JOIN orders ON orders.order_id=translator_order_request.order_id INNER JOIN translators ON translators.translator_id=translator_order_request.translator_id WHERE translator_order_request.is_denied='1' LIMIT $page_limit,$offset";
+                $result=$db->query($sql);
+                return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+            }catch(\Exception $e){
+                return [];
+            }
+        }
+        public static function get_translator_denied_order_requests_count()
+        {
+            try{
+                $page_limit = ($page - 1) * $offset;
+                $db=static::getDB();
+                $sql="SELECT COUNT(*) AS requests_count FROM `translator_order_request`  WHERE translator_order_request.is_denied='1' LIMIT $page_limit,$offset";
+                $result=$db->query($sql);
+                return $result ? $result->fetch(PDO::FETCH_ASSOC)['requests_count']:0;
+            }catch(\Exception $e){
+                return 0;
             }
         }
 }

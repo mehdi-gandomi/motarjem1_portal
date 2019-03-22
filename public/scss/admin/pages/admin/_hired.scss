@@ -1,0 +1,28 @@
+#hired-translators{
+    .translatorAvatar{
+        width:70px;
+        height:70px;
+        border-radius:50%;
+        transition: all 0.3s ease-out;
+        &:hover{
+            cursor:zoom-in;
+            filter: brightness(0.6);
+        }
+    }
+    tbody{
+        td{
+            line-height:4.6;
+            text-align:center;
+        }
+        tr{
+            &:hover{
+                .order-more-info{
+                    background:#e8e8e8;
+                }
+            }
+        }
+    }
+    th{
+        text-align:center;
+    }
+}

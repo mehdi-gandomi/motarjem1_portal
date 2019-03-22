@@ -1,0 +1,77 @@
+{% extends "/admin/layout/admin.twig" %}
+
+{% block content %}
+
+<main class="main">
+
+<div class="card">
+    <div class="card-body mt-3" style="min-height:550px">
+        <h4 class="mb-4">مترجم های استخدام شده</h4>
+        <table class="table is--responsive OrdersTable" id="hired-translators">
+                {% if hired_translators %}
+                    <thead>
+                        <tr>
+                        <th class="bg-teal-dark" scope="col">تصویر مترجم</th>
+                            <th class="bg-teal-dark" scope="col">نام کاربری</th>
+                            <th class="bg-teal-dark" scope="col">نام مترجم</th>
+                            <th class="bg-teal-dark" scope="col">تاربخ ثبت نام</th>
+                            <th class="bg-teal-dark" scope="col">تحصیلات</th>
+                            <th class="bg-teal-dark" scope="col">سابقه کار</th>
+                            <th class="bg-teal-dark" scope="col">جزییات</th>
+                        </tr>
+                    </thead>
+                    <tbody >
+                        {% for translator in hired_translators %}
+                                <tr>
+                                <td data-label="تصویر مترجم">
+                                    <img class="translatorAvatar" src="/public/uploads/avatars/translator/{{translator.avatar}}" alt="">
+                                </td>
+                                <td data-label="نام کاربری">
+                                    {{translator.username}}
+                                </td>
+                                <td data-label="نام مترجم">
+                                    {{translator.fname ~ " " ~ translator.lname}}
+                                </td>
+                                <td data-label="تاریخ ثبت نام">
+                                    {{translator.register_date_persian}}
+                                </td>
+                                <td data-label="تحصیلات">
+                                    {{translator.degree}}
+                                </td>
+                                <td data-label="سابقه کار">
+                                    {{translator.exp_years}} سال
+                                </td>
+                                <td class="order-more-info" data-label="جزییات">
+                                    <a href="/admin/translator/info/{{translator.username}}">
+                                        <svg height="23px" viewBox="0 0 50 80" width="13px" xml:space="preserve">
+                                            <polyline fill="none" points="45.63,75.8 0.375,38.087 45.63,0.375 " stroke-linecap="round" stroke-linejoin="round" stroke-width="10" stroke="#a9a9a9"></polyline>
+                                        </svg>
+                                    </a>
+                                </td>
+                            </tr>      
+                        {% endfor %}
+                    </tbody>
+                {% else %}
+                    <h6 class="text-center mt-4">تاکنون مترجمی استخدام نشده است !</h6>        
+                {% endif %}
+            </table>
+            {% include 'admin/includes/pagination.twig' with { 'count' :count, 'current_page' :current_page, 'base_path' :'/admin/hired-translators', 'offset' : 10, 'visible_numbers' : 3 } %}
+    </div>
+</div>
+
+</main>
+{# show translator avatar in zoom mode #}
+<div id="avatarModal" class="lightbox">
+    <!-- The Close Button -->
+    <span id="closeModal" class="close">&times;</span>
+
+    <!-- Modal Content (The Image) -->
+    <img class="lightbox-content" id="avatarPhoto">
+
+    <!-- Modal Caption (Image Text) -->
+    <div id="caption"></div>
+</div>
+{% endblock %}
+{% block script_below %}
+<script src="/public/js/panel/admin-hired-translators.js"></script>
+{% endblock %}
