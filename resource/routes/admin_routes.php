@@ -27,6 +27,8 @@ $app->group('/admin', function ($app) use ($container) {
     $app->get("/hired-translators","App\Controllers\AdminPanelController:get_hired_translators_page");
     $app->get("/translator/info/{username}","App\Controllers\AdminPanelController:get_translator_info_page");
     $app->get("/order/view/{order_number}","App\Controllers\AdminPanelController:get_order_details_page");
+    $app->get("/order/orderer-info/{orderer_id}","App\Controllers\AdminPanelController:get_orderer_data_json");
+    $app->get("/order/translator-info/{translator_id}","App\Controllers\AdminPanelController:get_translator_data_json");
     $app->post("/translator/employ","App\Controllers\AdminPanelController:post_employ_translator");
     $app->post("/translator/deny","App\Controllers\AdminPanelController:post_deny_translator");
     $app->post("/translator-order-request/accept","App\Controllers\AdminPanelController:accept_translator_order_request");

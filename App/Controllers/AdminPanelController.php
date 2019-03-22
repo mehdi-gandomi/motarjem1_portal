@@ -6,6 +6,7 @@ use App\Models\Admin;
 use App\Models\Order;
 use App\Models\Ticket;
 use App\Models\Translator;
+use App\Models\User;
 class AdminPanelController extends Controller
 {
 
@@ -345,5 +346,35 @@ class AdminPanelController extends Controller
         $pendingOrdersCount=Translator::get_pending_orders_count_by_user_id($translatorInfo['translator_id']);
 
         return $this->view->render($res,"/admin/admin/translator-info.twig",['info'=>$translatorInfo,'completed_orders'=>$completedOrders,'pending_orders'=>$pendingOrders,'pending_count'=>$pendingOrdersCount,'completed_count'=>$completedOrdersCount,'pending_current_page'=>$pendingPage,'completed_current_page'=>$completedPage]);
+    }
+
+    //get order details and render the page
+    public function get_order_details_page($req,$res,$args)
+    {
+        $orderData=Order::by_number($args['order_number'],true,true);
+        if($orderData){
+            $orderData['found']=count($orderData) ? true:false;
+            $orderData['order_files']=explode(",",$orderData['order_files']);
+        }
+        return $this->view->render($res,"/admin/admin/view-order.twig",$orderData);
+    }
+
+    //get orderer data (customer) and render as json
+    public function get_orderer_data_json($req,$res,$args)
+    {
+        $ordererData=User::by_id($args['orderer_id']);
+        if($ordererData){
+            return $res->withJson(['status'=>true,'info'=>$ordererData]);
+        }
+        return $res->withJson(['status'=>false,'message'=>'user not found !']);
+    }
+    //get translator data (customer) and render as json
+    public function get_translator_data_json($req,$res,$args)
+    {
+        $translatorData=Translator::by_id($args['translator_id']);
+        if($translatorData){
+            return $res->withJson(['status'=>true,'info'=>$translatorData]);
+        }
+        return $res->withJson(['status'=>false,'message'=>'translator not found !']);
     }
 }

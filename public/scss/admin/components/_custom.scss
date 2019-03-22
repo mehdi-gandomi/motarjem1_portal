@@ -84,7 +84,23 @@
     }
   }
 
-
+.user-info{
+    &__avatar{
+        width: 120px;
+        height: 120px;
+        margin:1rem auto;
+        img{
+            max-width: 100%;
+            max-height: 100%;
+            border-radius:50%;
+        }
+    }
+    &__info{
+        &__item{
+            text-align:center;
+        }
+    }
+}
 
 //my utitities 
 .f-1rem{
