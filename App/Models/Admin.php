@@ -235,4 +235,48 @@ class Admin extends Model
                 return 0;
             }
         }
+        //get translators payment requests
+        public static function get_translator_payment_requests($page,$offset,$filtering_options)
+        {
+            try{
+                $db=static::getDB();
+                $page_limit = ($page - 1) * $offset;
+                $sql="SELECT translator_checkout_request.id,translator_checkout_request.amount,translator_checkout_request.request_date_persian,translator_checkout_request.is_paid,translator_checkout_request.state,translators.translator_id,translators.fname AS translator_fname,translators.lname AS translator_lname FROM translator_checkout_request INNER JOIN translators ON translator_checkout_request.translator_id = translators.translator_id";
+                if(is_array($filtering_options) && count($filtering_options)>0){
+                    $sql.=" WHERE ";
+                    $arr=[];
+                    foreach($filtering_options as $key=>$option){
+                        array_push($arr,"`$key` IN ('".implode("','",$option)."')");
+                    }
+                    $sql.=implode(" AND ",$arr);
+                    $arr=null;
+                }
+                $sql.=" LIMIT $page_limit,$offset";
+                $result=$db->query($sql);
+                return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+            }catch(\Exception $e){
+                return [];
+            }
+        }
+        //get count of translators payment requests
+        public static function get_translator_payment_requests_count($filtering_options)
+        {
+            try{
+                $db=static::getDB();
+                $sql="SELECT COUNT(*) AS payment_requests FROM translator_checkout_request INNER JOIN translators ON translator_checkout_request.translator_id = translators.translator_id";
+                if(is_array($filtering_options) && count($filtering_options)>0){
+                    $sql.=" WHERE ";
+                    $arr=[];
+                    foreach($filtering_options as $key=>$option){
+                        array_push($arr,"`$key` IN ('".implode("','",$option)."')");
+                    }
+                    $sql.=implode(" AND ",$arr);
+                    $arr=null;
+                }
+                $result=$db->query($sql);
+                return $result ? $result->fetch(PDO::FETCH_ASSOC)['payment_requests']:0;
+            }catch(\Exception $e){
+                return 0;
+            }
+        }
 }

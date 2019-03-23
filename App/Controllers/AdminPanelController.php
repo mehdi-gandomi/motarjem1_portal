@@ -393,4 +393,24 @@ class AdminPanelController extends Controller
         $completedOrdersCount=Admin::get_all_completed_orders_count();
         return $this->view->render($res,"/admin/admin/completed-orders.twig",['completed_orders'=>$completedOrders,'count'=>$completedOrdersCount,'current_page'=>$page]);
     }
+    //get payments requests of translator and render a page
+    public function get_translators_payment_requests_page($req,$res,$args)
+    {
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
+        $paid=$req->getQueryParam("paid") ? explode(",",$req->getQueryParam("paid")) : ['0','1'];
+        $state=$req->getQueryParam("state") ? explode(",",$req->getQueryParam("state")) : ['-1','0','1'];
+        $paymentRequests=Admin::get_translator_payment_requests($page,10,['state'=>$state,'is_paid'=>$paid]);
+        $paymentRequestsCount=Admin::get_translator_payment_requests_count(['state'=>$state,'is_paid'=>$paid]);
+        return $this->view->render($res,"/admin/admin/payment-requests.twig",['payment_requests'=>$paymentRequests,'count'=>$paymentRequestsCount,'current_page'=>$page,'state'=>$state,'paid'=>$paid]);
+    }
+    //get payments requests and render as json
+    public function get_translators_payment_requests_json($req,$res,$args)
+    {
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
+        $paid=$req->getQueryParam("paid") ? explode(",",$req->getQueryParam("paid")) : ['0','1'];
+        $state=$req->getQueryParam("state") ? explode(",",$req->getQueryParam("state")) : ['-1','0','1'];
+        $paymentRequests=Admin::get_translator_payment_requests($page,10,['state'=>$state,'is_paid'=>$paid]);
+        $paymentRequestsCount=Admin::get_translator_payment_requests_count(['state'=>$state,'is_paid'=>$paid]);
+        return $res->withJson(['payment_requests'=>$paymentRequests,'count'=>$paymentRequestsCount,'current_page'=>$page]);
+    }
 }
