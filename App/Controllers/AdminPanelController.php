@@ -377,4 +377,20 @@ class AdminPanelController extends Controller
         }
         return $res->withJson(['status'=>false,'message'=>'translator not found !']);
     }
+    //get pending orders(orders that is accepted but it's not done)
+    public function get_pending_orders_page($req,$res,$args)
+    {
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
+        $pendingOrders=Admin::get_all_pending_orders($page,10);
+        $pendingOrdersCount=Admin::get_all_pending_orders_count();
+        return $this->view->render($res,"/admin/admin/pending-orders.twig",['pending_orders'=>$pendingOrders,'count'=>$pendingOrdersCount,'current_page'=>$page]);
+    }
+    //get completed orders(orders that is accepted and it's done)
+    public function get_completed_orders_page($req,$res,$args)
+    {
+        $page = $req->getQueryParam("page") ? $req->getQueryParam("page") : 1;
+        $completedOrders=Admin::get_all_completed_orders($page,10);
+        $completedOrdersCount=Admin::get_all_completed_orders_count();
+        return $this->view->render($res,"/admin/admin/completed-orders.twig",['completed_orders'=>$completedOrders,'count'=>$completedOrdersCount,'current_page'=>$page]);
+    }
 }

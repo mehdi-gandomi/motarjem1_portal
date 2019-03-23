@@ -1,0 +1,64 @@
+{% extends 'admin/layout/admin.twig' %}
+{% block content %}
+    <main class="main">
+            <div class="card card-default" style="min-height:550px">
+                <div class="card-body">
+                <h4 class="mt-4">سفارشات انجام شده</h4>
+            <table class="table OrdersTable" >
+                    {% if completed_orders %}
+                        <thead>
+                        <tr>
+                            <th class="bg-teal-dark">شماره سفارش</th>
+                            <th class="bg-teal-dark">تعداد صفحات</th>
+                            <th class="bg-teal-dark">زبان ترجمه</th>
+                            <th class="bg-teal-dark">رشته</th>
+                            <th class="bg-teal-dark">کیفیت ترجمه</th>
+                            <th class="bg-teal-dark">هزینه ترجمه</th>
+                            <th class="bg-teal-dark">سهم شما</th>
+                            <th class="bg-teal-dark">جزییات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in completed_orders %}
+                            <tr>
+                                <td data-label="شماره سفارش">
+                                    {{order.order_number}}</td>
+                                <td data-label="تعداد صفحات">
+                                    {{order.word_numbers / 250 | round(0,'ceil') }}</td>
+                                <td data-label="زبان ترجمه">
+                                    {{order.translation_lang == "1"? "انگلیسی به فارسی": "فارسی به انگلیسی"}}
+                                </td>
+                                <td data-label="رشته">
+                                    {{order.study_field}}
+                                </td>
+                                <td data-label="کیفیت ترجمه">
+                                    {{ order.translation_quality == "5" ? "نقره ای" : "طلایی" }}
+                                </td>
+                                <td data-label="هزینه ترجمه">
+                                    {{order.order_price |number_format}}
+                                    تومان</td>
+                                <td data-label="سهم شما">
+                                    {{ ((order.order_price*15)/100 | round(0,'ceil')) |number_format}}
+                                    تومان</td>
+                                <td class="order-more-info" data-label="جزییات">
+                                    <a href="/admin/order/view/{{order.order_number}}">
+                                        <svg height="23px" viewBox="0 0 50 80" width="13px" xml:space="preserve">
+                                            <polyline fill="none" points="45.63,75.8 0.375,38.087 45.63,0.375 " stroke-linecap="round" stroke-linejoin="round" stroke-width="10" stroke="#a9a9a9"></polyline>
+                                        </svg>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    {% else %}
+                        <h4 class="text-center">تاکنون پروژه ای به اتمام نرسیده است !</h4>                
+                    {% endif %}
+            </table>
+            {% include 'admin/includes/pagination.twig' with { 'count' :count, 'current_page' :current_page, 'base_path' :'/admin/completed-orders', 'offset' : 10, 'visible_numbers' : 3 } %}
+                </div>            
+        </div>
+    </main>
+{% endblock %}
+{% block script_below %}
+    <script src="/public/js/panel/admin-tickets-page.js"></script>
+{% endblock %}

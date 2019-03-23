@@ -120,7 +120,7 @@
                             {{order.order_price |number_format}}
                             تومان</td>
                         <td data-label="سهم شما">
-                            {{ ((order.order_price*70)/100 | round(0,'ceil')) |number_format}}
+                            {{ ((order.order_price*15)/100 | round(0,'ceil')) |number_format}}
                             تومان</td>
                         <td class="order-more-info" data-label="جزییات">
                             <a href="/admin/order/view/{{order.order_number}}">
@@ -180,7 +180,7 @@
                             {{order.order_price |number_format}}
                             تومان</td>
                         <td data-label="سهم شما">
-                            {{ ((order.order_price*70)/100 | round(0,'ceil')) |number_format}}
+                            {{ ((order.order_price*15)/100 | round(0,'ceil')) |number_format}}
                             تومان</td>
                         <td class="order-more-info" data-label="جزییات">
                             <a href="/admin/order/view/{{order.order_number}}">

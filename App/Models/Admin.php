@@ -189,4 +189,50 @@ class Admin extends Model
                 return 0;
             }
         }
+        public static function get_all_pending_orders($page,$offset)
+        {
+            try{
+                $page_limit = ($page - 1) * $offset;
+                $db=static::getDB();
+                $sql="SELECT orders.order_id,orders.order_number,orders.translation_quality,orders.translation_lang,orders.order_price,orders.word_numbers,study_fields.title AS study_field FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN study_fields ON orders.field_of_study = study_fields.id WHERE order_logs.is_done='0' AND order_logs.translator_id != '0' LIMIT $page_limit,$offset";
+                $result=$db->query($sql);
+                return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+            }catch(\Exception $e){
+                return [];
+            }
+        }
+        public static function get_all_pending_orders_count()
+        {
+            try{
+                $db=static::getDB();
+                $sql="SELECT COUNT(*) AS orders_count FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN study_fields ON orders.field_of_study = study_fields.id WHERE order_logs.is_done='0' AND order_logs.translator_id != '0'";
+                $result=$db->query($sql);
+                return $result ? $result->fetch(PDO::FETCH_ASSOC)['orders_count']:0;
+            }catch(\Exception $e){
+                return 0;
+            }
+        }
+        public static function get_all_completed_orders($page,$offset)
+        {
+            try{
+                $page_limit = ($page - 1) * $offset;
+                $db=static::getDB();
+                $sql="SELECT orders.order_id,orders.order_number,orders.translation_quality,orders.translation_lang,orders.order_price,orders.word_numbers,study_fields.title AS study_field FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN study_fields ON orders.field_of_study = study_fields.id WHERE order_logs.is_done='1' AND order_logs.translator_id != '0' LIMIT $page_limit,$offset";
+                $result=$db->query($sql);
+                return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+            }catch(\Exception $e){
+                return [];
+            }
+        }
+        public static function get_all_completed_orders_count()
+        {
+            try{
+                $db=static::getDB();
+                $sql="SELECT COUNT(*) AS orders_count FROM orders INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN study_fields ON orders.field_of_study = study_fields.id WHERE order_logs.is_done='1' AND order_logs.translator_id != '0'";
+                $result=$db->query($sql);
+                return $result ? $result->fetch(PDO::FETCH_ASSOC)['orders_count']:0;
+            }catch(\Exception $e){
+                return 0;
+            }
+        }
 }
