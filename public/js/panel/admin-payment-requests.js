@@ -307,3 +307,18 @@ function denyRequest(requestId) {
     })
 
 }
+
+function showPaymentModal(requestId) {
+    $("#reqId").val(requestId);
+    $("#paymentDetails").modal("show");
+}
+$(document).ready(function (e) {
+    var pd = $('.normal-example').persianDatepicker({
+        timePicker: {
+            enabled: true
+        }
+    });
+    $("#paymentDate").on("change", function (e) {
+        console.log(pd.getState());
+    })
+})
