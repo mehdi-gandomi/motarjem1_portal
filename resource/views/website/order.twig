@@ -47,13 +47,14 @@
                         <div class="form-group field_of_study col-lg-3 col-md-6">
                             {% endif %}
                             <label for="field_of_study">رشته تخصصی</label>
-                            <select name="field_of_study" id="field_of_study" class="form-control">
-                                    {% for key, value in field_types %}
-                                    {% if key == field_of_study %}
-                                    <option value="{{ key }}" selected> {{ value }}</option>
+                                
+                                <option value="0" selected>انتخاب کنید</option>
+                                    {% for field_type in field_types %}
+                                    {% if field_type.id == field_of_study %}
+                                    <option value="{{ field_type.id }}" selected> {{ field_type.title }}</option>
     
                                     {% else %}
-                                    <option value="{{ key }}"> {{ value }}</option>
+                                    <option value="{{ field_type.id }}"> {{ field_type.title }}</option>
                                     {% endif %}
                                     {% endfor %}                                
                             </select>
@@ -136,7 +137,7 @@
                         </p>
                     </div>
                     <div class="col-lg-8 col-sm-12 align-self-center">
-                        <input type="file" class="filepond" name="file" multiple id="file" data-max-file-size="3MB"
+                        <input type="file" class="filepond" name="file" multiple id="file" data-max-file-size="50MB"
                             data-max-files="3" />
                     </div>
                 </div>

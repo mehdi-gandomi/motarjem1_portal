@@ -279,4 +279,24 @@ class Admin extends Model
                 return 0;
             }
         }
+        //accept translator's payment request
+        public static function accept_translator_payment_request($requestId)
+        {
+            try{
+                static::update("translator_checkout_request",['state'=>'1'],"id = '$requestId'");
+                return true;
+            }catch(\Exception $e){
+                return false;
+            }
+        }
+        //deny translator's payment request
+        public static function deny_translator_payment_request($requestId)
+        {
+            try{
+                static::update("translator_checkout_request",['state'=>'0'],"id = '$requestId'");
+                return true;
+            }catch(\Exception $e){
+                return false;
+            }
+        }
 }

@@ -413,4 +413,34 @@ class AdminPanelController extends Controller
         $paymentRequestsCount=Admin::get_translator_payment_requests_count(['state'=>$state,'is_paid'=>$paid]);
         return $res->withJson(['payment_requests'=>$paymentRequests,'count'=>$paymentRequestsCount,'current_page'=>$page]);
     }
+    //accept translator's payment request
+    public function accept_translator_payment_request($req,$res,$args)
+    {
+        $postFields=$req->getParsedBody();
+        $hash = md5(md5(Config::VERIFY_EMAIL_KEY));
+        if($postFields['token']===$hash){
+            $result=Admin::accept_translator_payment_request($postFields['request_id']);
+            if($result){
+                return $res->withJson(['status'=>true]);
+            }
+            return $res->withJson(['status'=>false,'message'=>'error in saving data!']);
+        }else{
+            return $res->withJson(['status'=>false,'message'=>'invalid token!']);
+        }        
+    }
+    //deny translator's payment request
+    public function deny_translator_payment_request($req,$res,$args)
+    {
+        $postFields=$req->getParsedBody();
+        $hash = md5(md5(Config::VERIFY_EMAIL_KEY));
+        if($postFields['token']===$hash){
+            $result=Admin::deny_translator_payment_request($postFields['request_id']);
+            if($result){
+                return $res->withJson(['status'=>true]);
+            }
+            return $res->withJson(['status'=>false,'message'=>'error in saving data!']);
+        }else{
+            return $res->withJson(['status'=>false,'message'=>'invalid token!']);
+        }        
+    }
 }
