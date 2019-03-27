@@ -18025,6 +18025,10 @@ tr.as-link:hover {
           justify-content: center;
 }
 
+.translator-info.no-border {
+  border: none !important;
+}
+
 .translator-info .translator-avatar {
   width: 80%;
   height: 150px;

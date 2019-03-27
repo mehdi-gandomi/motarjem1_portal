@@ -125,18 +125,26 @@
                                     <td data-label="وضعیت پرداخت">
                                         {% if request.is_paid == "1" %}
                                             پرداخت شده
-                                            <a href="javascript:void(0)" style="display: block" onclick="showPaymentInfo('{{ request.payment_log_id }}')">جزییات</a>
                                         {% else %}
                                             پرداخت نشده
                                         {% endif %}
                                     </td>
                                     <td class="order-actions" data-label="عملیات">
                                         {% if request.state == "1" %}
-                                            <button class="expand-button order-action is--primary is--large" onclick="showPaymentModal('{{request.id}}')">
+                                            {% if request.is_paid == "1" %}
+                                                <button class="expand-button order-action is--primary is--large" onclick="showPaymentInfo('{{ request.payment_log_id }}')">
+                                                    <span data-hover="مشاهده اطلاعات پرداخت">
+                                                        <i class="icon-info"></i>
+                                                    </span>
+                                                </button>
+                                            {% else %}
+                                                <button class="expand-button order-action is--primary is--large" onclick="showPaymentModal('{{request.id}}')">
                                                 <span data-hover="ثبت اطلاعات پرداخت">
                                                     <i class="icon-info"></i>
                                                 </span>
-                                            </button>
+                                                </button>
+                                            {% endif %}
+
                                         {% endif %}
                                         {% if request.state == "-1" %}
                                             <button class="expand-button order-action is--success is--medium" onclick="acceptRequest('{{request.id}}')">
@@ -181,7 +189,22 @@
                 </div>
             </div>
         </div>
-        {# order details modal #}
+        {# payment info modal #}
+        <!-- Modal -->
+        <div aria-hidden="true" aria-labelledby="paymentInfoLabel" class="modal fade" id="paymentInfoModal" role="dialog" tabindex="-1">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header justify-content-center">
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h5 class="modal-title" id="paymentInfoLabel">اطلاعات پرداخت</h5>
+                        <div></div>
+                    </div>
+                    <div class="modal-body" id="paymentInfoWrap"></div>
+                </div>
+            </div>
+        </div>
         <!-- Modal -->
         <div aria-hidden="true" aria-labelledby="paymentDetailsLabel" class="modal fade" id="paymentDetails" role="dialog" tabindex="-1">
             <div class="modal-dialog" role="document">
@@ -193,7 +216,7 @@
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     </button> #}
                     </div>
                     <div class="modal-body" style="padding:2rem">
-                        <form id="paymentModalForm" action="/admin/translator/payment-requests/payment-info" class="row" method="post">
+                        <form id="paymentModalForm" action="/admin/translator/payment-requests/set-payment-info" class="row" method="post">
                             {#<input type="hidden" name="payment_date" id="altDate">#}
                             <div class="form-group col-lg-4">
                                 <label for="reqId">شماره درخواست</label>

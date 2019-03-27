@@ -33,6 +33,7 @@ $app->group('/admin', function ($app) use ($container) {
     $app->get("/completed-orders","App\Controllers\AdminPanelController:get_completed_orders_page");
     $app->get("/translator/payment-requests","App\Controllers\AdminPanelController:get_translators_payment_requests_page");
     $app->get("/translator/payment-requests/json","App\Controllers\AdminPanelController:get_translators_payment_requests_json");
+    $app->get("/translator/payment-requests/set-payment-info","App\Controllers\AdminPanelController:get_payment_info_json");
     $app->post("/translator/employ","App\Controllers\AdminPanelController:post_employ_translator");
     $app->post("/translator/deny","App\Controllers\AdminPanelController:post_deny_translator");
     $app->post("/translator-order-request/accept","App\Controllers\AdminPanelController:accept_translator_order_request");
@@ -40,7 +41,7 @@ $app->group('/admin', function ($app) use ($container) {
     $app->post("/ticket/reply","App\Controllers\AdminPanelController:post_reply_ticket");
     $app->post("/translator/payment-requests/accept","App\Controllers\AdminPanelController:accept_translator_payment_request");
     $app->post("/translator/payment-requests/deny","App\Controllers\AdminPanelController:deny_translator_payment_request");
-    $app->post("/translator/payment-requests/payment-info","App\Controllers\AdminPanelController:post_set_payment_info");
+    $app->post("/translator/payment-requests/set-payment-info","App\Controllers\AdminPanelController:post_set_payment_info");
     
 })->add(function ($req, $res, $next) use ($container) {
     if (isset($_SESSION['is_admin_logged_in'])) {

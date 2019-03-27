@@ -452,4 +452,12 @@ class AdminPanelController extends Controller
         }
         return $res->withJson(['status'=>false,'message'=>'error in saving data']);
     }
+
+    public function get_payment_info_json($req,$res,$args)
+    {
+        $logId=$req->getParam("log_id");
+        $paymentInfo=\Core\Model::select("payment_logs","*",['id'=>$logId],true);
+        if ($paymentInfo) return $res->withJson(['status'=>true,'info'=>$paymentInfo]);
+        return $res->withJson(['status'=>false,'message'=>'payment info not found']);
+    }
 }

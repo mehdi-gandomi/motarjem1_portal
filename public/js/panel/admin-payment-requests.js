@@ -178,10 +178,17 @@ function showRequests(requests) {
                 '\n      </td>\n\t  <td class="order-actions" data-label="\u0639\u0645\u0644\u06CC\u0627\u062A">'
             );
         if (request.state == "1")
-            output += '\n  <button class="expand-button order-action is--primary is--large" onclick="showPaymentModal(\''.concat(
-                request.id,
-                '\')">\n                                            <span data-hover="\u062B\u0628\u062A \u0627\u0637\u0644\u0627\u0639\u0627\u062A \u067E\u0631\u062F\u0627\u062E\u062A">\n                                                <i class="icon-info"></i>\n                                            </span>\n                                        </button>\n'
-            );
+            if (request.is_paid){
+                output += '\n  <button class="expand-button order-action is--primary is--large" onclick="showPaymentInfo(\''.concat(
+                    request.payment_log_id,
+                    '\')">\n                                            <span data-hover="مشاهده اطلاعات پرداخت">\n                                                <i class="icon-info"></i>\n                                            </span>\n                                        </button>\n'
+                );
+            } else{
+                output += '\n  <button class="expand-button order-action is--primary is--large" onclick="showPaymentModal(\''.concat(
+                    request.id,
+                    '\')">\n                                            <span data-hover="\u062B\u0628\u062A \u0627\u0637\u0644\u0627\u0639\u0627\u062A \u067E\u0631\u062F\u0627\u062E\u062A">\n                                                <i class="icon-info"></i>\n                                            </span>\n                                        </button>\n'
+                );
+            }
         if (request.state == "-1")
             output += '\n                                        <button class="expand-button order-action is--success is--medium" onclick="acceptRequest(\''
             .concat(
@@ -211,7 +218,7 @@ function showTranslatorInfo(translatorId) {
             //for debugging you have to convert it to es6 with babel.io
             //unfortunately it converted persian to utf :( you have to convert it to text
             //if you have problem , you can contact me via coderguy1999@gmail.com or @coder_guy in social media
-            var output = "\n  <div class=\"translator-info\">\n    <div class=\"translator-info__avatar\">\n        <img alt=\"\" src=\"/public/uploads/avatars/translator/".concat(data.info.avatar, "\"></div>\n    <div class=\"translator-info__info\">\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0646\u0627\u0645 \u0645\u062A\u0631\u062C\u0645 :\u200C\n            </label>\n            <strong>").concat(data.info.fname + " " + data.info.lname, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0645\u062F\u0631\u06A9 \u062A\u062D\u0635\u06CC\u0644\u06CC</label>\n            <strong>").concat(data.info.degree, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u062A\u0631\u062C\u0645\u0647 \u0641\u0627\u0631\u0633\u06CC \u0628\u0647 \u0627\u0646\u06AF\u0644\u06CC\u0633\u06CC</label>\n            <strong>").concat(data.info.fa_to_en == "1" ? "بله" : "خیر", "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u062A\u0631\u062C\u0645\u0647 \u0627\u0646\u06AF\u0644\u06CC\u0633\u06CC \u0628\u0647 \u0641\u0627\u0631\u0633\u06CC</label>\n            <strong>").concat(data.info.en_to_fa == "1" ? "بله" : "خیر", "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0627\u06CC\u0645\u06CC\u0644 :\n            </label>\n            <strong>").concat(data.info.email, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0634\u0645\u0627\u0631\u0647 \u062A\u0644\u0641\u0646 \u062B\u0627\u0628\u062A</label>\n            <strong>").concat(data.info.phone, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0634\u0645\u0627\u0631\u0647 \u0645\u0648\u0628\u0627\u06CC\u0644</label>\n            <strong>").concat(data.info.cell_phone, "</strong>\n        </div>\n    </div>\n</div>        \n");
+            var output = "\n  <div class=\"translator-info no-border\">\n    <div class=\"translator-info__avatar\">\n        <img alt=\"\" src=\"/public/uploads/avatars/translator/".concat(data.info.avatar, "\"></div>\n    <div class=\"translator-info__info\">\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0646\u0627\u0645 \u0645\u062A\u0631\u062C\u0645 :\u200C\n            </label>\n            <strong>").concat(data.info.fname + " " + data.info.lname, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0645\u062F\u0631\u06A9 \u062A\u062D\u0635\u06CC\u0644\u06CC</label>\n            <strong>").concat(data.info.degree, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u062A\u0631\u062C\u0645\u0647 \u0641\u0627\u0631\u0633\u06CC \u0628\u0647 \u0627\u0646\u06AF\u0644\u06CC\u0633\u06CC</label>\n            <strong>").concat(data.info.fa_to_en == "1" ? "بله" : "خیر", "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u062A\u0631\u062C\u0645\u0647 \u0627\u0646\u06AF\u0644\u06CC\u0633\u06CC \u0628\u0647 \u0641\u0627\u0631\u0633\u06CC</label>\n            <strong>").concat(data.info.en_to_fa == "1" ? "بله" : "خیر", "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0627\u06CC\u0645\u06CC\u0644 :\n            </label>\n            <strong>").concat(data.info.email, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0634\u0645\u0627\u0631\u0647 \u062A\u0644\u0641\u0646 \u062B\u0627\u0628\u062A</label>\n            <strong>").concat(data.info.phone, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0634\u0645\u0627\u0631\u0647 \u0645\u0648\u0628\u0627\u06CC\u0644</label>\n            <strong>").concat(data.info.cell_phone, "</strong>\n        </div>\n    </div>\n</div>        \n");
             $("#translatorBasicInfoWrap").html(output);
             $("#translatorBasicInfo").modal("show");
             console.log(output);
@@ -315,8 +322,28 @@ function showPaymentModal(requestId) {
     $("#reqId").val(requestId);
     $("#paymentDetails").modal("show");
 }
+//show payment info that admin has paid
 function showPaymentInfo(logId){
-    console.log(logId);
+    $.get("/admin/translator/payment-requests/set-payment-info",{log_id:logId},function (data) {
+        if (data.status){
+            var output = '\n\t<div class="translator-info no-border">\n    <div class="translator-info__info">\n        <div class="translator-info__info__item">\n            <label for="">\u0634\u0645\u0627\u0631\u0647 \u067E\u06CC\u06AF\u06CC\u0631\u06CC :</label>\n            <strong>'
+                .concat(
+                    data.info.refer_code,
+                    '</strong>\n        </div>\n        <div class="translator-info__info__item">\n            <label for="">\u0645\u0628\u0644\u063A \u067E\u0631\u062F\u0627\u062E\u062A\u06CC :</label>\n            <strong>'
+                )
+                .concat(
+                    data.info.amount,
+                    '</strong>\n        </div>\n\t\t<div class="translator-info__info__item">\n            <label for="">\u062A\u0627\u0631\u06CC\u062E \u067E\u0631\u062F\u0627\u062E\u062A :</label>\n            <strong>'
+                )
+                .concat(
+                    data.info.payment_date_persian,
+                    "</strong>\n        </div>\n    </div>\n</div>\n"
+                );
+            $("#paymentInfoWrap").html(output);
+            $("#paymentInfoModal").modal("show");
+            output="";
+        }
+    })
 }
 function formatDates(){
     //formatting to save in db
