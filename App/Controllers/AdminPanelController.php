@@ -443,4 +443,13 @@ class AdminPanelController extends Controller
             return $res->withJson(['status'=>false,'message'=>'invalid token!']);
         }        
     }
+    public function post_set_payment_info($req,$res,$args)
+    {
+        $body=$req->getParsedBody();
+        $result=Admin::set_payment_info($body);
+        if ($result){
+            return $res->withJson(['status'=>true]);
+        }
+        return $res->withJson(['status'=>false,'message'=>'error in saving data']);
+    }
 }

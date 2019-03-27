@@ -105,7 +105,7 @@
                                         {{request.id}}
                                     </td>
                                     <td data-label="نام مترجم">
-                                        <a aria-role="button" href="javascript:void()" onclick="showTranslatorInfo('{{request.translator_id}}')">{{request.translator_fname ~ " " ~ request.translator_lname}}</a>
+                                        <a aria-role="button" href="javascript:void(0)" onclick="showTranslatorInfo('{{request.translator_id}}')">{{request.translator_fname ~ " " ~ request.translator_lname}}</a>
                                     </td>
                                     <td data-label="مبلغ درخواستی">
                                         {{request.amount | number_format}}
@@ -123,7 +123,12 @@
                                         {% endif %}
                                     </td>
                                     <td data-label="وضعیت پرداخت">
-                                        {{request.is_paid == "1" ? "پرداخت شده":"پرداخت نشده"}}
+                                        {% if request.is_paid == "1" %}
+                                            پرداخت شده
+                                            <a href="javascript:void(0)" style="display: block" onclick="showPaymentInfo('{{ request.payment_log_id }}')">جزییات</a>
+                                        {% else %}
+                                            پرداخت نشده
+                                        {% endif %}
                                     </td>
                                     <td class="order-actions" data-label="عملیات">
                                         {% if request.state == "1" %}
@@ -161,6 +166,21 @@
                 </div>
             </div>
         </main>
+        {# translator info modal #}
+        <!-- Modal -->
+        <div aria-hidden="true" aria-labelledby="translatorBasicInfoLabel" class="modal fade" id="translatorBasicInfo" role="dialog" tabindex="-1">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="translatorBasicInfoLabel">اطلاعات مترجم</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="translatorBasicInfoWrap"></div>
+                </div>
+            </div>
+        </div>
         {# order details modal #}
         <!-- Modal -->
         <div aria-hidden="true" aria-labelledby="paymentDetailsLabel" class="modal fade" id="paymentDetails" role="dialog" tabindex="-1">
@@ -173,19 +193,20 @@
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     </button> #}
                     </div>
                     <div class="modal-body" style="padding:2rem">
-                        <form action="/translator/payment-requests/payment-info" class="row" method="post">
+                        <form id="paymentModalForm" action="/admin/translator/payment-requests/payment-info" class="row" method="post">
+                            {#<input type="hidden" name="payment_date" id="altDate">#}
                             <div class="form-group col-lg-4">
                                 <label for="reqId">شماره درخواست</label>
                                 <input class="form-control ltr" disabled id="reqId" name="request_id" type="text"></div>
                                 <div class="form-group col-lg-8">
                                     <label for="paymentDate">تاریخ پرداخت</label>
-                                    <input class="normal-example form-control" id="paymentDate" name="payment_date"></div>
+                                    <input class="normal-example form-control" id="paymentDate" ></div>
                                     <div class="form-group col-lg-6">
                                         <label for="refId">شماره پیگیری پرداخت</label>
                                         <input class="form-control ltr" id="refId" name="refer_code" type="text"></div>
                                         <div class="form-group col-lg-6">
                                             <label for="paidPrice">مبلغ پرداختی</label>
-                                            <input class="form-control ltr" id="paidPrice" name="paid_price" type="text"></div>
+                                            <input class="form-control ltr" id="paidPrice" name="amount" type="text"></div>
                                             <div class="form-group col-lg-5">
                                                 <input class="btn btn-primary" type="submit" value="ثبت اطلاعات"></div>
                                             </div>
@@ -197,6 +218,7 @@
                                 </div>
                             {% endblock %}
                             {% block script_below %}
+                                <script src="/public/js/sweetalert2@8.js"></script>
                                 <script src="/public/js/persian-date.min.js"></script>
                                 <script src="/public/js/persian-datepicker.min.js"></script>
                                 <script src="/public/js/panel/admin-payment-requests.js"></script>

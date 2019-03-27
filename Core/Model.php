@@ -32,7 +32,8 @@ class Model
         $stmt=$db->prepare($sql);
         $sql=null;
         $arrayKeys=null;
-        return $stmt->execute($data);
+        $stmt->execute($data);
+        return self::get_last_inserted_id();
     }
     public static function select($tblName,$fields="*",$where=[],$is_one=false,$options=false){
         $db=self::getDB();

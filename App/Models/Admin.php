@@ -241,7 +241,7 @@ class Admin extends Model
             try{
                 $db=static::getDB();
                 $page_limit = ($page - 1) * $offset;
-                $sql="SELECT translator_checkout_request.id,translator_checkout_request.amount,translator_checkout_request.request_date_persian,translator_checkout_request.is_paid,translator_checkout_request.state,translators.translator_id,translators.fname AS translator_fname,translators.lname AS translator_lname FROM translator_checkout_request INNER JOIN translators ON translator_checkout_request.translator_id = translators.translator_id";
+                $sql="SELECT translator_checkout_request.id,translator_checkout_request.payment_log_id,translator_checkout_request.amount,translator_checkout_request.request_date_persian,translator_checkout_request.is_paid,translator_checkout_request.state,translators.translator_id,translators.fname AS translator_fname,translators.lname AS translator_lname FROM translator_checkout_request INNER JOIN translators ON translator_checkout_request.translator_id = translators.translator_id";
                 if(is_array($filtering_options) && count($filtering_options)>0){
                     $sql.=" WHERE ";
                     $arr=[];
@@ -299,4 +299,15 @@ class Admin extends Model
                 return false;
             }
         }
+
+    public static function set_payment_info($info)
+    {
+        try{
+            $logId=static::insert("payment_logs",$info);
+            static::update("translator_checkout_request",['payment_log_id'=>$logId,'is_paid'=>1],"id = '$info[request_id]'");
+            return true;
+        }catch (\Exception $e){
+            return false;
+        }
+    }
 }

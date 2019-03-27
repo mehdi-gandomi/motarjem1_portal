@@ -40,7 +40,8 @@ $app->group('/admin', function ($app) use ($container) {
     $app->post("/ticket/reply","App\Controllers\AdminPanelController:post_reply_ticket");
     $app->post("/translator/payment-requests/accept","App\Controllers\AdminPanelController:accept_translator_payment_request");
     $app->post("/translator/payment-requests/deny","App\Controllers\AdminPanelController:deny_translator_payment_request");
-
+    $app->post("/translator/payment-requests/payment-info","App\Controllers\AdminPanelController:post_set_payment_info");
+    
 })->add(function ($req, $res, $next) use ($container) {
     if (isset($_SESSION['is_admin_logged_in'])) {
         return $next($req, $res);

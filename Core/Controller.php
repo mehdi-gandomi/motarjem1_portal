@@ -2,13 +2,14 @@
 namespace Core;
 use Psr\Container\ContainerInterface;
 use Slim\Http\UploadedFile;
+use Slim\Http\Request;
 abstract class Controller{
     public function __construct(ContainerInterface $container) {
         $this->container = $container;
         $this->view=$this->container->get("view");
         $this->flash=$this->container->get("flash");
     }
-    protected function get_csrf_token($req)
+    protected function get_csrf_token(Request $req)
     {
         $nameKey = $this->container->csrf->getTokenNameKey();
         $valueKey = $this->container->csrf->getTokenValueKey();

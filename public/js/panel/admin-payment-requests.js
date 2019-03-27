@@ -1,3 +1,5 @@
+//global variable for date object
+var paymentDateInstance;
 //this fucntion replaces all occurances in string with desired value
 String.prototype.replaceAll = function (search, replacement) {
     var target = this;
@@ -152,7 +154,7 @@ function showRequests(requests) {
         output += '<tr>\n      <td data-label="\u0631\u062F\u06CC\u0641">\n          '
             .concat(
                 request.id,
-                '\n      </td>\n      <td data-label="\u0646\u0627\u0645 \u0645\u062A\u0631\u062C\u0645">\n          <a aria-role="button" href="javascript:void()" onclick="showTranslatorInfo(\''
+                '\n      </td>\n      <td data-label="\u0646\u0627\u0645 \u0645\u062A\u0631\u062C\u0645">\n          <a aria-role="button" href="javascript:void(0)" onclick="showTranslatorInfo(\''
             )
             .concat(request.translator_id, "')\">")
             .concat(
@@ -172,7 +174,7 @@ function showRequests(requests) {
                 '\n      </td>\n      <td data-label="\u0648\u0636\u0639\u06CC\u062A \u067E\u0631\u062F\u0627\u062E\u062A">\n          '
             )
             .concat(
-                request.is_paid == "1" ? "پرداخت شده" : "پرداخت نشده",
+                request.is_paid == "1" ? "پرداخت شده"+"\n <a href='javascript:void(0)' onclick=\"showPaymentInfo('"+request.payment_log_id+"')\">جزییات</a>" : "پرداخت نشده",
                 '\n      </td>\n\t  <td class="order-actions" data-label="\u0639\u0645\u0644\u06CC\u0627\u062A">'
             );
         if (request.state == "1")
@@ -212,6 +214,7 @@ function showTranslatorInfo(translatorId) {
             var output = "\n  <div class=\"translator-info\">\n    <div class=\"translator-info__avatar\">\n        <img alt=\"\" src=\"/public/uploads/avatars/translator/".concat(data.info.avatar, "\"></div>\n    <div class=\"translator-info__info\">\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0646\u0627\u0645 \u0645\u062A\u0631\u062C\u0645 :\u200C\n            </label>\n            <strong>").concat(data.info.fname + " " + data.info.lname, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0645\u062F\u0631\u06A9 \u062A\u062D\u0635\u06CC\u0644\u06CC</label>\n            <strong>").concat(data.info.degree, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u062A\u0631\u062C\u0645\u0647 \u0641\u0627\u0631\u0633\u06CC \u0628\u0647 \u0627\u0646\u06AF\u0644\u06CC\u0633\u06CC</label>\n            <strong>").concat(data.info.fa_to_en == "1" ? "بله" : "خیر", "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u062A\u0631\u062C\u0645\u0647 \u0627\u0646\u06AF\u0644\u06CC\u0633\u06CC \u0628\u0647 \u0641\u0627\u0631\u0633\u06CC</label>\n            <strong>").concat(data.info.en_to_fa == "1" ? "بله" : "خیر", "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0627\u06CC\u0645\u06CC\u0644 :\n            </label>\n            <strong>").concat(data.info.email, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0634\u0645\u0627\u0631\u0647 \u062A\u0644\u0641\u0646 \u062B\u0627\u0628\u062A</label>\n            <strong>").concat(data.info.phone, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0634\u0645\u0627\u0631\u0647 \u0645\u0648\u0628\u0627\u06CC\u0644</label>\n            <strong>").concat(data.info.cell_phone, "</strong>\n        </div>\n    </div>\n</div>        \n");
             $("#translatorBasicInfoWrap").html(output);
             $("#translatorBasicInfo").modal("show");
+            console.log(output);
         }
     })
 }
@@ -312,13 +315,104 @@ function showPaymentModal(requestId) {
     $("#reqId").val(requestId);
     $("#paymentDetails").modal("show");
 }
+function showPaymentInfo(logId){
+    console.log(logId);
+}
+function formatDates(){
+    //formatting to save in db
+    var state=paymentDateInstance.getState();
+    var persianDate=state.selected.year+"/"+(state.selected.date < 10 ? "0"+state.selected.month:state.selected.month)+"/"+(state.selected.date < 10 ? "0"+state.selected.date:state.selected.date)+" "+(state.selected.hour < 10 ? "0"+state.selected.hour:state.selected.hour)+":"+(state.selected.minute < 10 ? "0"+state.selected.minute:state.selected.minute);
+    var gregDate=state.selected.dateObject.ON.gDate;
+    var dateEnglish=gregDate.getFullYear()+"/"+(gregDate.getMonth() < 10 ? "0"+gregDate.getMonth():gregDate.getMonth())+"/"+(gregDate.getDate() < 10 ? "0"+gregDate.getDate():gregDate.getDate())+" "+(gregDate.getHours() < 10 ? "0"+gregDate.getHours():gregDate.getHours())+":"+(gregDate.getMinutes() < 10 ? "0"+gregDate.getMinutes():gregDate.getMinutes());
+    return{
+        persianDate:persianDate,
+        dateEnglish:dateEnglish
+    }
+}
 $(document).ready(function (e) {
-    var pd = $('.normal-example').persianDatepicker({
+    paymentDateInstance= $('.normal-example').persianDatepicker({
         timePicker: {
             enabled: true
         }
     });
-    $("#paymentDate").on("change", function (e) {
-        console.log(pd.getState());
-    })
+    $("#refId").on("blur input",function (e) {
+        if ($(this).val() === ""){
+            $(this).addClass("has-error");
+            $(this).parent().find(".validation-error").eq(0).remove();
+            $(this).parent().append("<p class='validation-error'>کد پیگیری الزامی است !</p>");
+        } else{
+            $(this).removeClass("has-error");
+            $(this).parent().find(".validation-error").eq(0).remove();
+        }
+    });
+    $("#paidPrice").on("blur input",function (e) {
+        if ($(this).val() === ""){
+            $(this).addClass("has-error");
+            $(this).parent().find(".validation-error").eq(0).remove();
+            $(this).parent().append("<p class='validation-error'>باید یک مبلغ وارد کنید!</p>");
+        } else{
+            $(this).removeClass("has-error");
+            $(this).parent().find(".validation-error").eq(0).remove();
+        }
+    });
+    $("#paymentModalForm").on("submit",function(e){
+        e.preventDefault();
+        var validationIsGood=true;
+        var refId=$("#refId");
+        var paidPrice=$("#paidPrice");
+        if (refId.val() === ""){
+            refId.addClass("has-error");
+            refId.parent().find(".validation-error").eq(0).remove();
+            refId.parent().append("<p class='validation-error'>کد پیگیری الزامی است !</p>");
+            validationIsGood=false;
+        }else{
+            refId.removeClass("has-error");
+            refId.parent().find(".validation-error").eq(0).remove();
+        }
+
+        if (paidPrice.val() === ""){
+            paidPrice.addClass("has-error");
+            paidPrice.parent().find(".validation-error").eq(0).remove();
+            paidPrice.parent().append("<p class='validation-error'>باید یک مبلغ وارد کنید!</p>");
+            validationIsGood=false;
+        }else{
+            paidPrice.removeClass("has-error");
+            paidPrice.parent().find(".validation-error").eq(0).remove();
+        }
+        if (validationIsGood){
+            var dates=formatDates();
+            $.ajax({
+                type:"POST",
+                url:$(this).attr("action"),
+                data:{
+                    request_id:$("#reqId").val(),
+                    refer_code:refId.val(),
+                    amount:paidPrice.val(),
+                    payment_date:dates.dateEnglish,
+                    payment_date_persian:dates.persianDate
+                },
+                success:function (data) {
+                    if (data.status) {
+                        Swal.fire({
+                            title: 'موفق !',
+                            text: "اطلاعات با موفقیت ذخیره شد !",
+                            type: 'success',
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'باشه'
+                        }).then(function(result){
+                            if (result.value) {
+                                applyFilters(window.location.search);
+                            }
+                        })
+                    } else {
+                        console.log(data.message);
+                        Swal.fire('خطا !', "خطایی در ذخیره اطلاعات رخ داد !", 'error');
+                    }
+                }
+            });
+        }
+
+    });
+
 })
