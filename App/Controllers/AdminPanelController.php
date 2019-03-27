@@ -469,4 +469,31 @@ class AdminPanelController extends Controller
         $translatorsAccountsCount=Admin::get_all_translators_account_info_count();
         return $this->view->render($res,"admin/admin/translators-account-info.twig",['infos'=>$translatorsAccounts,'current_page'=>$page,'count'=>$translatorsAccountsCount]);
     }
+    //get website revenue and currency info and render a page
+    public function get_website_revenue_page($req,$res,$args)
+    {
+        $data=[];
+        //get total revenue till now
+        $data['total_revenue']=number_format(Admin::get_total_revenue());
+        //get revenue of this month
+        $data['month_revenue']=number_format(Admin::get_monthly_revenue());
+        return $this->view->render($res,"admin/admin/site-revenue.twig",$data);
+    }
+    //get all notifications and render the page
+    public function get_notifications_page($req,$res,$args)
+    {
+        $data=[];
+        $publicPage=$req->getParam("public_page") ? $req->getParam("public_page"):1;
+        $privatePage=$req->getParam("private_page") ? $req->getParam("private_page"):1;
+        $data['public_notifications']=Admin::get_all_public_notifications($publicPage,10);
+        $data['public_notifications_count']=Admin::get_all_public_notifications_count();
+        $data['private_notifications']=Admin::get_all_private_notifications($privatePage,10);
+        $data['private_notifications_count']=Admin::get_all_private_notifications_count();
+        return $this->view->render($res,"admin/admin/notifications.twig",$data);
+    }
+    //render a page to create new notification
+    public function get_new_notification_page($req,$res,$args)
+    {
+
+    }
 }

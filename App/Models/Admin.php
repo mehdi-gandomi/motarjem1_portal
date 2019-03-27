@@ -180,9 +180,8 @@ class Admin extends Model
         public static function get_translator_denied_order_requests_count()
         {
             try{
-                $page_limit = ($page - 1) * $offset;
                 $db=static::getDB();
-                $sql="SELECT COUNT(*) AS requests_count FROM `translator_order_request`  WHERE translator_order_request.is_denied='1' LIMIT $page_limit,$offset";
+                $sql="SELECT COUNT(*) AS requests_count FROM `translator_order_request`  WHERE translator_order_request.is_denied='1'";
                 $result=$db->query($sql);
                 return $result ? $result->fetch(PDO::FETCH_ASSOC)['requests_count']:0;
             }catch(\Exception $e){
@@ -331,6 +330,58 @@ class Admin extends Model
             $sql="SELECT COUNT(*) AS account_count FROM `translator_account` ";
             $result=$db->query($sql);
             return $result ? $result->fetch(PDO::FETCH_ASSOC)['account_count']:0;
+        }catch (\Exception $e){
+            return 0;
+        }
+    }
+    //get all public notifications from db and paginate it
+    public static function get_all_public_notifications($page, $offset)
+    {
+        try{
+            //0 in notif_type means that the notification is public
+            $db=static::getDB();
+            $page_limit = ($page - 1) * $offset;
+            $sql="SELECT * FROM `notifications` WHERE notif_type = '0' LIMIT $page_limit,$offset";
+            $result=$db->query($sql);
+            return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+        }catch (\Exception $e){
+            return [];
+        }
+    }
+    //get count of all public notifications from db
+    public static function get_all_public_notifications_count()
+    {
+        try{
+            //0 in notif_type means that the notification is public
+            $db=static::getDB();
+            $sql="SELECT COUNT(*) AS notif_count FROM `notifications` WHERE notif_type = '0'";
+            $result=$db->query($sql);
+            return $result ? $result->fetch(PDO::FETCH_ASSOC)['notif_count']:0;
+        }catch (\Exception $e){
+            return 0;
+        }
+    }
+    //get all private (sent to specific translator) notifications from db and paginate it
+    public static function get_all_private_notifications($page, $offset)
+    {
+        try{
+            $db=static::getDB();
+            $page_limit = ($page - 1) * $offset;
+            $sql="SELECT notifications.title,notifications.body,notifications.importance,notifications.attach_files,notifications.sent_date_persian,GROUP_CONCAT(notif_translator.translator_id,',') AS translator_ids,GROUP_CONCAT(CONCAT(translators.fname,' ',translators.lname),',') AS translator_names FROM `notif_translator` INNER JOIN notifications ON notif_translator.notif_id = notifications.notif_id INNER JOIN translators ON notif_translator.translator_id = translators.translator_id GROUP BY notifications.notif_id,notif_translator.notif_id LIMIT $page_limit,$offset";
+            $result=$db->query($sql);
+            return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+        }catch (\Exception $e){
+            return [];
+        }
+    }
+    //get count all private (sent to specific translator) notifications from db and paginate it
+    public static function get_all_private_notifications_count()
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT COUNT(*) as notif_count FROM `notif_translator` INNER JOIN notifications ON notif_translator.notif_id = notifications.notif_id";
+            $result=$db->query($sql);
+            return $result ? $result->fetch(PDO::FETCH_ASSOC)['notif_count']:0;
         }catch (\Exception $e){
             return 0;
         }

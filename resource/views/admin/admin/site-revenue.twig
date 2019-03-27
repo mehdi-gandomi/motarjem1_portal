@@ -1,0 +1,61 @@
+{% extends 'admin/layout/admin.twig' %}
+{% block content %}
+<main class="main" >
+    <div class="card" style="min-height: 550px">
+        <div class="card-body container">
+            <h4 class="text-center mt-3">گزارش حساب شما</h4>
+            <div class="info-cards ">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="info-card" href="/translator/messages?unread=true">
+                            <div class="info-card__icon bg-dark-purple">
+                                <img alt="" src="/public/images/icon/income.svg"/>
+                            </div>
+                            <div class="info-card__content" style="background: #7000a0 !important;color: #fff">
+                                <div class="info-card__content__title text-white">درآمد شما در این ماه</div>
+                                <div class="info-card__content__value">
+                                    {{ month_revenue ? month_revenue : 0 }}
+                                    <span class="f-1rem ml-1">تومان</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-card is--revenue">
+                            <div class="info-card__icon bg-primary">
+                                <img alt="revenue" src="/public/images/icon/income.svg"/>
+                            </div>
+                            <div class="info-card__content">
+                                <div class="info-card__content__title">
+                                    میزان درآمد شما تا کنون
+                                </div>
+                                <div class="info-card__content__value">
+                                    {{ revenue ? revenue : 0 }}
+                                    <span class="f-1rem ml-2">تومان</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-card" href="/translator/messages?unread=true">
+                            <div class="info-card__icon " style="background: #dcb939 !important">
+                                <img alt="" src="/public/images/icon/income.svg"/>
+                            </div>
+                            <div class="info-card__content" style="background: #9c9700 !important;color: #fff">
+                                <div class="info-card__content__title text-white">میزان درخواست های این ماه</div>
+                                <div class="info-card__content__value">
+                                    {{ month_requests ? month_requests : 0 }}
+                                    <span class="f-1rem ml-1">تومان</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+{% endblock %}
+{% block script_below %}
+    <script src="/public/js/sweetalert2@8.js"></script>
+{% endblock %}
