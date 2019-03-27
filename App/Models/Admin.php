@@ -310,4 +310,29 @@ class Admin extends Model
             return false;
         }
     }
+
+    public static function get_all_translators_account_info($page,$offset)
+    {
+        try{
+            $db=static::getDB();
+            $page_limit = ($page - 1) * $offset;
+            $sql="SELECT translator_account.id,translator_account.translator_id,translator_account.card_number,translator_account.shaba_number,translator_account.bank_name,translator_account.account_owner,translators.fname AS translator_fname,translators.lname AS translator_lname FROM `translator_account` INNER JOIN translators ON translators.translator_id = translator_account.translator_id LIMIT $page_limit,$offset";
+            $result=$db->query($sql);
+            return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+        }catch (\Exception $e){
+            return [];
+        }
+    }
+
+    public static function get_all_translators_account_info_count()
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT COUNT(*) AS account_count FROM `translator_account` ";
+            $result=$db->query($sql);
+            return $result ? $result->fetch(PDO::FETCH_ASSOC)['account_count']:0;
+        }catch (\Exception $e){
+            return 0;
+        }
+    }
 }

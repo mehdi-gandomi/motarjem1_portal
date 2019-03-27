@@ -1,0 +1,80 @@
+{% extends 'admin/layout/admin.twig' %}
+
+{% block content %}
+
+    <main class="main">
+        <div class="card" style="min-height: 550px">
+            <div class="card-body">
+                <h4 class="mt-3 mb-3">اطلاعات حساب بانکی مترجمان</h4>
+                <table class="table OrdersTable is--responsive">
+                    <thead>
+                    <tr>
+                        <th class="bg-teal-dark text-center">#</th>
+                        <th class="bg-teal-dark text-center">نام مترجم</th>
+                        <th class="bg-teal-dark text-center">شماره کارت</th>
+                        <th class="bg-teal-dark text-center">شماره شبا</th>
+                        <th class="bg-teal-dark text-center">صاحب حساب</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for info in infos %}
+                            <tr>
+                                <td data-label="ردیف">
+                                    {{info.id}}
+                                </td>
+                                <td data-label="نام مترجم">
+                                    <a title="اطلاعات مترجم" href="javascript:void(0)" aria-role="button"  onclick="showTranslatorInfo('{{info.translator_id}}')">{{info.translator_fname ~ " " ~ info.translator_lname}}</a>
+                                </td>
+                                <td data-label="شماره کارت">
+                                    {{info.card_number}}
+                                </td>
+                                <td data-label="شماره شبا">
+                                    {{info.shaba_number ? info.shaba_number:"تعیین نشده"}}
+                                </td>
+                                <td data-label="صاحب حساب">
+                                    {{info.account_owner}}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% include 'admin/includes/pagination.twig' with { 'count' :count, 'current_page' :current_page, 'base_path' :'/admin/translators/account-info', 'offset' : 10, 'visible_numbers' : 3 } %}
+            </div>
+        </div>
+    </main>
+    {# translator info modal #}
+    <!-- Modal -->
+    <div aria-hidden="true" aria-labelledby="translatorBasicInfoLabel" class="modal fade" id="translatorBasicInfo" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="translatorBasicInfoLabel">اطلاعات مترجم</h5>
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="translatorBasicInfoWrap"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script_below %}
+    <script>
+        // show translator's basic info
+        function showTranslatorInfo(translatorId){
+            console.log(translatorId);
+            $.get("/admin/translator/basic-info/json",{translator_id:translatorId},function(data,status){
+                if(data.status){
+                    //i coded this with template literal but because of low browser support , i converted the code
+                    //for debugging you have to convert it to es6 with babel.io
+                    //unfortunately it converted persian to utf :( you have to convert it to text
+                    //if you have problem , you can contact me via coderguy1999@gmail.com or @coder_guy in social media
+                    var output = "\n  <div class=\"translator-info no-border\">\n    <div class=\"translator-info__avatar\">\n        <img alt=\"\" src=\"/public/uploads/avatars/translator/".concat(data.info.avatar, "\"></div>\n    <div class=\"translator-info__info\">\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0646\u0627\u0645 \u0645\u062A\u0631\u062C\u0645 :\u200C\n            </label>\n            <strong>").concat(data.info.fname + " " + data.info.lname, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0645\u062F\u0631\u06A9 \u062A\u062D\u0635\u06CC\u0644\u06CC</label>\n            <strong>").concat(data.info.degree, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u062A\u0631\u062C\u0645\u0647 \u0641\u0627\u0631\u0633\u06CC \u0628\u0647 \u0627\u0646\u06AF\u0644\u06CC\u0633\u06CC</label>\n            <strong>").concat(data.info.fa_to_en == "1" ? "بله" : "خیر", "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u062A\u0631\u062C\u0645\u0647 \u0627\u0646\u06AF\u0644\u06CC\u0633\u06CC \u0628\u0647 \u0641\u0627\u0631\u0633\u06CC</label>\n            <strong>").concat(data.info.en_to_fa == "1" ? "بله" : "خیر", "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0627\u06CC\u0645\u06CC\u0644 :\n            </label>\n            <strong>").concat(data.info.email, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0634\u0645\u0627\u0631\u0647 \u062A\u0644\u0641\u0646 \u062B\u0627\u0628\u062A</label>\n            <strong>").concat(data.info.phone, "</strong>\n        </div>\n        <div class=\"translator-info__info__item\">\n            <label for=\"\">\u0634\u0645\u0627\u0631\u0647 \u0645\u0648\u0628\u0627\u06CC\u0644</label>\n            <strong>").concat(data.info.cell_phone, "</strong>\n        </div>\n    </div>\n</div>        \n");
+                    $("#translatorBasicInfoWrap").html(output);
+                    $("#translatorBasicInfo").modal("show");
+                }
+            })
+        }
+    </script>
+{% endblock %}

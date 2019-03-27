@@ -443,6 +443,7 @@ class AdminPanelController extends Controller
             return $res->withJson(['status'=>false,'message'=>'invalid token!']);
         }        
     }
+    //set payment info by admin
     public function post_set_payment_info($req,$res,$args)
     {
         $body=$req->getParsedBody();
@@ -452,12 +453,20 @@ class AdminPanelController extends Controller
         }
         return $res->withJson(['status'=>false,'message'=>'error in saving data']);
     }
-
+    //get payment info as json
     public function get_payment_info_json($req,$res,$args)
     {
         $logId=$req->getParam("log_id");
         $paymentInfo=\Core\Model::select("payment_logs","*",['id'=>$logId],true);
         if ($paymentInfo) return $res->withJson(['status'=>true,'info'=>$paymentInfo]);
         return $res->withJson(['status'=>false,'message'=>'payment info not found']);
+    }
+    //get all translators account info and render the page
+    public function get_translators_account_info_page($req,$res,$args)
+    {
+        $page=$req->getParam("page") ? $req->getParam("page"):1;
+        $translatorsAccounts=Admin::get_all_translators_account_info($page,10);
+        $translatorsAccountsCount=Admin::get_all_translators_account_info_count();
+        return $this->view->render($res,"admin/admin/translators-account-info.twig",['infos'=>$translatorsAccounts,'current_page'=>$page,'count'=>$translatorsAccountsCount]);
     }
 }
