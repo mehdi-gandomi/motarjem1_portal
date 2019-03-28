@@ -472,12 +472,38 @@ class AdminPanelController extends Controller
     //get website revenue and currency info and render a page
     public function get_website_revenue_page($req,$res,$args)
     {
+        $done=$req->getParam("done") != null ? explode(",",$req->getParam("done")):['0','1'];
+        $fromDate=$req->getParam("from_date") ? $req->getParam("from_date"):0;
+        $toDate=$req->getParam("to_date") ? $req->getParam("to_date"): jstrftime("%Y/%m/%d %H:%M","","","","en");
         $data=[];
-        //get total revenue till now
-        $data['total_revenue']=number_format(Admin::get_total_revenue());
-        //get revenue of this month
-        $data['month_revenue']=number_format(Admin::get_monthly_revenue());
+        $data['total_revenue']=Admin::get_total_revenue_with_filtering(['done'=>$done,'from_date'=>$fromDate,'to_date'=>$toDate]);
+        $data['admin_revenue']=(intval($data['total_revenue'])*15)/100;
+        $data['masoud_revenue']=(intval($data['total_revenue'])*15)/100;
+        $data['translators_revenue']=(intval($data['total_revenue'])*70)/100;
+        $data['pending_orders']=Admin::get_orders_count_by_date(['from_date'=>$fromDate,'to_date'=>$toDate,'done'=>["0"]]);
+        $data['completed_orders']=Admin::get_orders_count_by_date(['from_date'=>$fromDate,'to_date'=>$toDate,'done'=>["1"]]);
+        $data['filtered_orders']=Admin::get_all_orders_by_filters(['done'=>$done,'from_date'=>$fromDate,'to_date'=>$toDate]);
+        $data['filtered_orders_count']=Admin::get_orders_count_by_date(['done'=>$done,'from_date'=>$fromDate,'to_date'=>$toDate]);
+        $data['done']=$done;
         return $this->view->render($res,"admin/admin/site-revenue.twig",$data);
+    }
+    //filter financial data based on given value and return data as json
+    public function post_filter_site_revenue($req,$res,$args)
+    {
+        $data=[];
+        $postFields=$req->getParsedBody();
+        $postFields['from_date']=$postFields['from_date']=== "" ? 0:$this->persian_num_to_english($postFields['from_date']);
+        $postFields['to_date']=$postFields['to_date'] === "" ? jstrftime("%Y/%m/%d %H:%M","","","","en"):$this->persian_num_to_english($postFields['to_date']) ;
+        $totalRevenue=Admin::get_total_revenue_with_filtering($postFields);
+        $data['total_revenue']=number_format($totalRevenue);
+        $data['admin_revenue']=number_format((intval($totalRevenue)*15)/100);
+        $data['masoud_revenue']=number_format((intval($totalRevenue)*15)/100);
+        $data['translators_revenue']=number_format((intval($totalRevenue)*70)/100);
+        $data['pending_orders']=Admin::get_orders_count_by_date($postFields);
+        $data['completed_orders']=Admin::get_orders_count_by_date($postFields);
+        $data['filtered_orders']=Admin::get_all_orders_by_filters($postFields);
+        $data['filtered_orders_count']=Admin::get_orders_count_by_date($postFields);
+        return $res->withJson(['status'=>true,'info'=>$data]);
     }
     //get all notifications and render the page
     public function get_notifications_page($req,$res,$args)
@@ -495,5 +521,14 @@ class AdminPanelController extends Controller
     public function get_new_notification_page($req,$res,$args)
     {
 
+    }
+
+
+    //convert english numbers to english one
+    protected function persian_num_to_english($str)
+    {
+        $persian_nums = array('۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹');
+        $english_nums = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+        return str_replace($persian_nums, $english_nums, $str);
     }
 }

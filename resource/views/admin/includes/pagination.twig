@@ -6,14 +6,26 @@
             {% set pageQs=page_prefix ? page_prefix ~ "page":"page" %}
             {% if current_page != 1 %}
                 <li class="page-item">
-                    <a class="page-link" href="{{base_path}}" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
+                    {% if no_href %}
+                        <a class="page-link" data-page="1" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    {% else %}
+                        <a class="page-link" href="{{base_path}}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    {% endif %}
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="{{base_path ~ "?" ~ pageQs ~ "=" ~ (current_page - 1) }}" aria-label="Previous">
-                        قبلی
-                    </a>
+                    {% if no_href %}
+                        <a class="page-link" data-page="{{ (current_page - 1) }}" aria-label="Previous">
+                            قبلی
+                        </a>
+                    {% else %}
+                        <a class="page-link" href="{{base_path ~ "?" ~ pageQs ~ "=" ~ (current_page - 1) }}" aria-label="Previous">
+                            قبلی
+                        </a>
+                    {% endif %}
                 </li>
             {% endif %}
             {% if current_page + (visible_numbers - 1) > last_page %}
@@ -34,20 +46,36 @@
                 {% endif %}
 
                 <li class="{{ pagination_class }}">
-                    <a class="page-link" href="{{base_path ~ '?' ~ pageQs ~ '=' ~ page_number }}">{{ page_number }}</a >
+                    {% if no_href %}
+                        <a class="page-link" data-page="{{ page_number }}">{{ page_number }}</a >
+                    {% else %}
+                        <a class="page-link" href="{{base_path ~ '?' ~ pageQs ~ '=' ~ page_number }}">{{ page_number }}</a >
+                    {% endif %}
                 </li>
             {% endfor %}
             {% if current_page != last_page %}
 
                 <li class="page-item">
-                    <a class="page-link" href="{{base_path ~ '?' ~ pageQs ~ '=' ~ (current_page + 1) }}" aria-label="Previous">
-                        بعدی
-                    </a>
+                    {% if no_href %}
+                        <a class="page-link" data-page="{{ (current_page + 1) }}" aria-label="Previous">
+                            بعدی
+                        </a>
+                    {% else %}
+                        <a class="page-link" href="{{base_path ~ '?' ~ pageQs ~ '=' ~ (current_page + 1) }}" aria-label="Previous">
+                            بعدی
+                        </a>
+                    {% endif %}
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="{{base_path ~ '?' ~ pageQs ~ '=' ~ last_page }}" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
+                    {% if no_href %}
+                        <a class="page-link" data-page="{{ last_page }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    {% else %}
+                        <a class="page-link" href="{{base_path ~ '?' ~ pageQs ~ '=' ~ last_page }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    {% endif %}
                 </li>
             {% endif %}
 

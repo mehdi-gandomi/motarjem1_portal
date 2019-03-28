@@ -386,4 +386,56 @@ class Admin extends Model
             return 0;
         }
     }
+
+    public static function get_total_revenue_with_filtering(array $filteringOptions)
+    {
+        try{
+            $db=static::getDB();
+            if(is_array($filteringOptions) && count($filteringOptions)>0){
+                $sql="SELECT SUM(orders.order_price) AS total_revenue FROM `orders` INNER JOIN order_logs ON order_logs.order_id = orders.order_id WHERE order_logs.is_done IN ('".implode("','",$filteringOptions['done'])."') AND order_logs.is_accepted = '1' AND orders.order_date_persian BETWEEN :from_date AND :to_date";
+                $stmt=$db->prepare($sql);
+                $stmt->bindParam(":from_date",$filteringOptions['from_date']);
+                $stmt->bindParam(":to_date",$filteringOptions['to_date']);
+                return $stmt->execute() ? $stmt->fetch(PDO::FETCH_ASSOC)['total_revenue']:0;
+            }
+            return 0;
+        }catch (\Exception $e){
+            return 0;
+        }
+
+    }
+
+    public static function get_orders_count_by_date($filteringOptions)
+    {
+        try{
+            $db=static::getDB();
+            if(is_array($filteringOptions) && count($filteringOptions)>0){
+                $sql="SELECT COUNT(*) AS orders_count FROM `orders` INNER JOIN order_logs ON order_logs.order_id = orders.order_id WHERE order_logs.is_accepted = '1' AND order_logs.is_done IN ('".implode("','",$filteringOptions['done'])."') AND orders.order_date_persian BETWEEN :from_date AND :to_date";
+                $stmt=$db->prepare($sql);
+                $stmt->bindParam(":from_date",$filteringOptions['from_date']);
+                $stmt->bindParam(":to_date",$filteringOptions['to_date']);
+                return $stmt->execute() ? $stmt->fetch(PDO::FETCH_ASSOC)['orders_count']:0;
+            }
+            return 0;
+        }catch (\Exception $e){
+            return 0;
+        }
+    }
+
+    public static function get_all_orders_by_filters($filteringOptions)
+    {
+        try{
+            $db=static::getDB();
+            if(is_array($filteringOptions) && count($filteringOptions)>0){
+                $sql="SELECT orders.order_id,orders.orderer_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id ,study_fields.title AS study_field FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translators ON order_logs.translator_id=translators.translator_id WHERE is_done IN ('".implode("','",$filteringOptions['done'])."') AND order_logs.is_accepted = '1' AND orders.order_date_persian BETWEEN :from_date AND :to_date";
+                $stmt=$db->prepare($sql);
+                $stmt->bindParam(":from_date",$filteringOptions['from_date']);
+                $stmt->bindParam(":to_date",$filteringOptions['to_date']);
+                return $stmt->execute() ? $stmt->fetchAll(PDO::FETCH_ASSOC):[];
+            }
+            return [];
+        }catch (\Exception $e){
+            return [];
+        }
+    }
 }
