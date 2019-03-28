@@ -482,8 +482,8 @@ class AdminPanelController extends Controller
         $data['translators_revenue']=(intval($data['total_revenue'])*70)/100;
         $data['pending_orders']=Admin::get_orders_count_by_date(['from_date'=>$fromDate,'to_date'=>$toDate,'done'=>["0"]]);
         $data['completed_orders']=Admin::get_orders_count_by_date(['from_date'=>$fromDate,'to_date'=>$toDate,'done'=>["1"]]);
-        $data['filtered_orders']=Admin::get_all_orders_by_filters(['done'=>$done,'from_date'=>$fromDate,'to_date'=>$toDate]);
-        $data['filtered_orders_count']=Admin::get_orders_count_by_date(['done'=>$done,'from_date'=>$fromDate,'to_date'=>$toDate]);
+        $data['filtered_orders']=Admin::get_all_orders_by_filters(1,10,['done'=>$done,'from_date'=>$fromDate,'to_date'=>$toDate]);
+        $data['filtered_orders_count']=Admin::get_orders_count_by_date(['from_date'=>$fromDate,'to_date'=>$toDate,'done'=>$done]);
         $data['done']=$done;
         return $this->view->render($res,"admin/admin/site-revenue.twig",$data);
     }
@@ -491,6 +491,7 @@ class AdminPanelController extends Controller
     public function post_filter_site_revenue($req,$res,$args)
     {
         $data=[];
+        $page=$req->getParam("page") ? $req->getParam("page"):1;
         $postFields=$req->getParsedBody();
         $postFields['from_date']=$postFields['from_date']=== "" ? 0:$this->persian_num_to_english($postFields['from_date']);
         $postFields['to_date']=$postFields['to_date'] === "" ? jstrftime("%Y/%m/%d %H:%M","","","","en"):$this->persian_num_to_english($postFields['to_date']) ;
@@ -501,8 +502,9 @@ class AdminPanelController extends Controller
         $data['translators_revenue']=number_format((intval($totalRevenue)*70)/100);
         $data['pending_orders']=Admin::get_orders_count_by_date($postFields);
         $data['completed_orders']=Admin::get_orders_count_by_date($postFields);
-        $data['filtered_orders']=Admin::get_all_orders_by_filters($postFields);
+        $data['filtered_orders']=Admin::get_all_orders_by_filters($page,10,$postFields);
         $data['filtered_orders_count']=Admin::get_orders_count_by_date($postFields);
+        $data['current_page']=$page;
         return $res->withJson(['status'=>true,'info'=>$data]);
     }
     //get all notifications and render the page

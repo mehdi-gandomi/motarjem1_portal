@@ -422,12 +422,13 @@ class Admin extends Model
         }
     }
 
-    public static function get_all_orders_by_filters($filteringOptions)
+    public static function get_all_orders_by_filters($page=1,$offset=10,$filteringOptions=null)
     {
         try{
             $db=static::getDB();
+            $page_limit = ($page - 1) * $offset;
             if(is_array($filteringOptions) && count($filteringOptions)>0){
-                $sql="SELECT orders.order_id,orders.orderer_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id ,study_fields.title AS study_field FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translators ON order_logs.translator_id=translators.translator_id WHERE is_done IN ('".implode("','",$filteringOptions['done'])."') AND order_logs.is_accepted = '1' AND orders.order_date_persian BETWEEN :from_date AND :to_date";
+                $sql="SELECT orders.order_id,orders.orderer_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id ,study_fields.title AS study_field FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translators ON order_logs.translator_id=translators.translator_id WHERE is_done IN ('".implode("','",$filteringOptions['done'])."') AND order_logs.is_accepted = '1' AND orders.order_date_persian BETWEEN :from_date AND :to_date LIMIT $page_limit,$offset";
                 $stmt=$db->prepare($sql);
                 $stmt->bindParam(":from_date",$filteringOptions['from_date']);
                 $stmt->bindParam(":to_date",$filteringOptions['to_date']);

@@ -7,6 +7,7 @@ let infoCards={
   pending_orders:"#pendingOrders",
   completed_orders:"#completedOrders",
 };
+let filterFormData;
 $(document).ready(function () {
    var fromDate=$("#fromDate").persianDatepicker({
        initialValue: false,
@@ -29,22 +30,27 @@ $(document).ready(function () {
     $("#infoFilterForm").on("submit",function (e) {
         e.preventDefault();
         addLoaderToCards();
+        filterFormData=$(this).serialize();
         setTimeout(()=>{
             $.ajax({
                 type: "POST",
                 url: $(this).attr("action"),
-                data: $(this).serialize(),
+                data: filterFormData,
                 success: function (data, status) {
                     for (let key in infoCards){
                         $(infoCards[key]).html(data.info[key]);
                     }
                     showOrders(data.info.filtered_orders);
-                    showPagination(count,current_page,offset,baseUrl, queryString,visibleNumbers,el,prefix);
+                    showPagination(data.info.filtered_orders_count,data.info.current_page,10,"/admin/site-revenue", "",3,".pagination");
                 }
             });
         },800);
     });
-    
+    $(".pagination .page-link").on("click",function () {
+        let page=$(this).data("page");
+        console.log(page);
+        //TODO request to api and get data and then render the data
+    })
 });
 
 function addLoaderToCards() {
@@ -92,7 +98,7 @@ function showOrders(orders) {
         output+=`
             <tr>
                <td data-label="شماره سفارش">
-                  {{order.order_number}}
+                  ${order.order_number}
                </td>
                <td data-label="سفارش دهنده">
                   <a aria-role="button" href="javascript:void(0)" onclick="showOrdererInfo('${order.orderer_id}')" >${order.orderer_fname + " " + order.orderer_lname}</a>
