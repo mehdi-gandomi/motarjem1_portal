@@ -17,6 +17,8 @@ let infoCards={
   translators_revenue:"#translatorsRevenue",
   pending_orders:"#pendingOrders",
   completed_orders:"#completedOrders",
+  payment_requests:"#paymentRequests",
+  payment_requests_sum:"#paymentRequestsSum",
 };
 let filterFormData;
 $(document).ready(function () {

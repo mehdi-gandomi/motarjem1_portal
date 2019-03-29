@@ -258,7 +258,7 @@ class Admin extends Model
             }
         }
         //get count of translators payment requests
-        public static function get_translator_payment_requests_count($filtering_options)
+        public static function get_translator_payment_requests_count($filtering_options,$dateFilter=null)
         {
             try{
                 $db=static::getDB();
@@ -271,6 +271,9 @@ class Admin extends Model
                     }
                     $sql.=implode(" AND ",$arr);
                     $arr=null;
+                }
+                if (is_array($dateFilter) && count($dateFilter)>0){
+                    $sql.=" AND request_date_persian BETWEEN '$dateFilter[from_date]' AND '$dateFilter[to_date]'";
                 }
                 $result=$db->query($sql);
                 return $result ? $result->fetch(PDO::FETCH_ASSOC)['payment_requests']:0;
@@ -437,6 +440,30 @@ class Admin extends Model
             return [];
         }catch (\Exception $e){
             return [];
+        }
+    }
+
+    public static function get_translator_payment_requests_sum($filtering_options,$dateFilter=null)
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT SUM(translator_checkout_request.amount) AS requests_sum FROM translator_checkout_request INNER JOIN translators ON translator_checkout_request.translator_id = translators.translator_id";
+            if(is_array($filtering_options) && count($filtering_options)>0){
+                $sql.=" WHERE ";
+                $arr=[];
+                foreach($filtering_options as $key=>$option){
+                    array_push($arr,"`$key` IN ('".implode("','",$option)."')");
+                }
+                $sql.=implode(" AND ",$arr);
+                $arr=null;
+            }
+            if (is_array($dateFilter) && count($dateFilter)>0){
+                $sql.=" AND request_date_persian BETWEEN '$dateFilter[from_date]' AND '$dateFilter[to_date]'";
+            }
+            $result=$db->query($sql);
+            return $result ? $result->fetch(PDO::FETCH_ASSOC)['requests_sum']:0;
+        }catch(\Exception $e){
+            return 0;
         }
     }
 }

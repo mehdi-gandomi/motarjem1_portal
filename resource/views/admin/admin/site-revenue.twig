@@ -42,20 +42,92 @@
                             <span>سفارشات انجام شده</span>
                         </label>
                     </div>
-                    <div class="form-group col-lg-3">
+                    <div class="form-group col-lg-4">
                         <label for="fromDate">ازتاریخ : </label>
                         <input class="normal-example form-control" id="fromDate" placeholder="اگه خالی بماند از اول حساب میشود">
                         <input type="hidden" name="from_date" id="fromDateAlt">
                     </div>
-                    <div class="form-group col-lg-3">
+                    <div class="form-group col-lg-4">
                         <label for="fromDate">تا تاریخ : </label>
                         <input class="normal-example form-control" id="toDate" placeholder="اگه خالی بماند تا الان حساب میشود">
                         <input type="hidden" name="to_date" id="toDateAlt" >
                     </div>
-                    <div  class="form-group col-lg-2 d-inline-flex align-items-center pt-lg-4">
+                    <div class="form-group col-lg-10 mt-4">
+                        <strong>فیلتر های درخواست های پرداخت :</strong>
+                        <label for="waiting_request" class="label-cbx ml-2">
+                            {% if "-1" in payment_state %}
+                                <input id="waiting_request" type="checkbox" name="payment_state[]" value="-1" class="invisible" checked/>
+                            {% else %}
+                                <input id="waiting_request" type="checkbox" name="payment_state[]" value="-1" class="invisible"/>
+                            {% endif %}
+                            <div class="checkbox">
+                                <svg width="20px" height="20px" viewbox="0 0 20 20">
+                                    <path d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z"></path>
+                                    <polyline points="4 11 8 15 16 6"></polyline>
+                                </svg>
+                            </div>
+                            <span>درخواست درحال انتظار تایید</span>
+                        </label>
+                        <label for="denied_request" class="label-cbx ml-2">
+                            {% if "0" in payment_state %}
+                                <input id="denied_request" type="checkbox" name="payment_state[]" value="0" class="invisible" checked/>
+                            {% else %}
+                                <input id="denied_request" type="checkbox" name="payment_state[]" value="0" class="invisible"/>
+                            {% endif %}
+                            <div class="checkbox">
+                                <svg width="20px" height="20px" viewbox="0 0 20 20">
+                                    <path d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z"></path>
+                                    <polyline points="4 11 8 15 16 6"></polyline>
+                                </svg>
+                            </div>
+                            <span>درخواست رد شده</span>
+                        </label>
+                        <label for="accepted_request" class="label-cbx ml-2">
+                            {% if "1" in payment_state %}
+                                <input id="accepted_request" type="checkbox" name="payment_state[]" value="1" class="invisible" checked/>
+                            {% else %}
+                                <input id="accepted_request" type="checkbox" name="payment_state[]" value="1" class="invisible"/>
+                            {% endif %}
+                            <div class="checkbox">
+                                <svg width="20px" height="20px" viewbox="0 0 20 20">
+                                    <path d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z"></path>
+                                    <polyline points="4 11 8 15 16 6"></polyline>
+                                </svg>
+                            </div>
+                            <span>درخواست تایید شده</span>
+                        </label>
+                        <label for="isPaid" class="label-cbx ml-2">
+                            {% if "1" in paid %}
+                                <input id="isPaid" type="checkbox" name="paid[]" value="1" class="invisible" checked/>
+                            {% else %}
+                                <input id="isPaid" type="checkbox" name="paid[]" value="1" class="invisible"/>
+                            {% endif %}
+                            <div class="checkbox">
+                                <svg width="20px" height="20px" viewbox="0 0 20 20">
+                                    <path d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z"></path>
+                                    <polyline points="4 11 8 15 16 6"></polyline>
+                                </svg>
+                            </div>
+                            <span>پرداخت شده</span>
+                        </label>
+                        <label for="notPaid" class="label-cbx ml-2">
+                            {% if "0" in paid %}
+                                <input id="notPaid" type="checkbox" name="paid[]" value="0" class="invisible" checked/>
+                            {% else %}
+                                <input id="notPaid" type="checkbox" name="paid[]" value="0" class="invisible"/>
+                            {% endif %}
+                            <div class="checkbox">
+                                <svg width="20px" height="20px" viewbox="0 0 20 20">
+                                    <path d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z"></path>
+                                    <polyline points="4 11 8 15 16 6"></polyline>
+                                </svg>
+                            </div>
+                            <span>پرداخت نشده</span>
+                        </label>
+                    </div>
+                    <div  class="form-group col-lg-2 d-inline-flex align-items-center pt-lg-3">
                         <input type="submit" value="اعمال فیلتر" class="btn btn-primary">
                     </div>
-
                 </div>
             </form>
             <div class="info-cards ">
@@ -159,7 +231,7 @@
                             <div class="info-card__content" style="background: #257ba5 !important;color: #fff">
                                 <div class="info-card__content__title text-white"> درخواست های پرداخت در این بازه</div>
                                 <div class="info-card__content__value">
-                                    <span id="pendingOrders">{{ payment_requests ? payment_requests : 0 }}</span>
+                                    <span id="paymentRequests">{{ payment_requests ? payment_requests : 0 }}</span>
                                     <span class="f-1rem ml-1">درخواست</span>
                                 </div>
                             </div>
@@ -173,7 +245,7 @@
                             <div class="info-card__content" style="background: #257ba5 !important;color: #fff">
                                 <div class="info-card__content__title text-white">جمع درخواست های پرداخت در این بازه</div>
                                 <div class="info-card__content__value">
-                                    <span id="pendingOrders">{{ payment_requests_sum ? payment_requests_sum : 0 }}</span>
+                                    <span id="paymentRequestsSum">{{ payment_requests_sum ? payment_requests_sum : 0 }}</span>
                                     <span class="f-1rem ml-1">تومان</span>
                                 </div>
                             </div>

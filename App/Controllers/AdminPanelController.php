@@ -477,6 +477,8 @@ class AdminPanelController extends Controller
         $done=$req->getParam("done") != null ? explode(",",$req->getParam("done")):['0','1'];
         $fromDate=$req->getParam("from_date") ? $req->getParam("from_date"):0;
         $toDate=$req->getParam("to_date") ? $req->getParam("to_date"): jstrftime("%Y/%m/%d %H:%M","","","","en");
+        $paymentState=$req->getParam("payment_state") ? explode(",",$req->getParam("payment_state")) : ['-1','0','1'];
+        $paid=$req->getParam("paid") ? explode(",",$req->getParam("paid")) : ['0','1'];
         $data=[];
         $data['total_revenue']=Admin::get_total_revenue_with_filtering(['done'=>$done,'from_date'=>$fromDate,'to_date'=>$toDate]);
         $data['admin_revenue']=(intval($data['total_revenue'])*15)/100;
@@ -486,7 +488,11 @@ class AdminPanelController extends Controller
         $data['completed_orders']=Admin::get_orders_count_by_date(['from_date'=>$fromDate,'to_date'=>$toDate,'done'=>["1"]]);
         $data['filtered_orders']=Admin::get_all_orders_by_filters(1,10,['done'=>$done,'from_date'=>$fromDate,'to_date'=>$toDate]);
         $data['filtered_orders_count']=Admin::get_orders_count_by_date(['from_date'=>$fromDate,'to_date'=>$toDate,'done'=>$done]);
+        $data['payment_requests']=Admin::get_translator_payment_requests_count(['state'=>$paymentState,'is_paid'=>$paid],['from_date'=>$fromDate,'to_date'=>$toDate]);
+        $data['payment_requests_sum']=Admin::get_translator_payment_requests_sum(['state'=>$paymentState,'is_paid'=>$paid],['from_date'=>$fromDate,'to_date'=>$toDate]);
         $data['done']=$done;
+        $data['payment_state']=$paymentState;
+        $data['paid']=$paid;
         return $this->view->render($res,"admin/admin/site-revenue.twig",$data);
     }
     //filter financial data based on given value and return data as json
@@ -507,6 +513,8 @@ class AdminPanelController extends Controller
         $data['completed_orders']=Admin::get_orders_count_by_date($postFields);
         $data['filtered_orders']=Admin::get_all_orders_by_filters($page,10,$postFields);
         $data['filtered_orders_count']=Admin::get_orders_count_by_date($postFields);
+        $data['payment_requests']=Admin::get_translator_payment_requests_count(['state'=>$postFields['payment_state'],'is_paid'=>$postFields['paid']],['from_date'=>$postFields['from_date'],'to_date'=>$postFields['to_date']]);
+        $data['payment_requests_sum']=Admin::get_translator_payment_requests_sum(['state'=>$postFields['payment_state'],'is_paid'=>$postFields['paid']],['from_date'=>$postFields['from_date'],'to_date'=>$postFields['to_date']]);
         $data['current_page']=$page;
         return $res->withJson(['status'=>true,'info'=>$data]);
     }
