@@ -235,7 +235,7 @@ class Admin extends Model
             }
         }
         //get translators payment requests
-        public static function get_translator_payment_requests($page,$offset,$filtering_options)
+        public static function get_translator_payment_requests($page,$offset,$filtering_options,$dateFilter=null)
         {
             try{
                 $db=static::getDB();
@@ -249,6 +249,9 @@ class Admin extends Model
                     }
                     $sql.=implode(" AND ",$arr);
                     $arr=null;
+                }
+                if (is_array($dateFilter) && count($dateFilter)>0){
+                    $sql.=" AND translator_checkout_request.request_date_persian BETWEEN '$dateFilter[from_date]' AND '$dateFilter[to_date]'";
                 }
                 $sql.=" LIMIT $page_limit,$offset";
                 $result=$db->query($sql);
@@ -273,7 +276,7 @@ class Admin extends Model
                     $arr=null;
                 }
                 if (is_array($dateFilter) && count($dateFilter)>0){
-                    $sql.=" AND request_date_persian BETWEEN '$dateFilter[from_date]' AND '$dateFilter[to_date]'";
+                    $sql.=" AND translator_checkout_request.request_date_persian BETWEEN '$dateFilter[from_date]' AND '$dateFilter[to_date]'";
                 }
                 $result=$db->query($sql);
                 return $result ? $result->fetch(PDO::FETCH_ASSOC)['payment_requests']:0;

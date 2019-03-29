@@ -1,5 +1,5 @@
 <nav class="page-navigation" aria-label="Page navigation example">
-    <ul class="pagination">
+    <ul class="pagination {{ parent_class }}">
         
         {% if count > offset %}
             {% set last_page = (count / 10) | round(0, 'ceil') %}

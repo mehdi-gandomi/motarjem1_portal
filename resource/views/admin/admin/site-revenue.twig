@@ -303,7 +303,64 @@
                 {% endfor %}
                 </tbody>
             </table>
-            {% include 'admin/includes/pagination.twig' with { 'count' :filtered_orders_count, 'current_page' :1, 'base_path' :'/admin/site-revenue', 'offset' : 10, 'visible_numbers' : 3,"no_href":true } %}
+            {% include 'admin/includes/pagination.twig' with { 'count' :filtered_orders_count, 'current_page' :1, 'base_path' :'/admin/site-revenue','parent_class':"orders_pagination", 'offset' : 10, 'visible_numbers' : 3,"no_href":true } %}
+
+            <table class="table OrdersTable is--responsive">
+                <thead>
+                <tr>
+                    <th class="bg-teal-dark text-center">#</th>
+                    <th class="bg-teal-dark text-center">نام مترجم</th>
+                    <th class="bg-teal-dark text-center">مبلغ درخواستی</th>
+                    <th class="bg-teal-dark text-center">تاریخ درخواست</th>
+                    <th class="bg-teal-dark text-center">وضعیت تایید</th>
+                    <th class="bg-teal-dark text-center">وضعیت پرداخت</th>
+                    <th class="bg-teal-dark text-center">جزییات</th>
+                </tr>
+                </thead>
+                <tbody id="paymentRequestsWrap">
+                {% for request in filtered_payment_requests %}
+                    <tr>
+                        <td data-label="ردیف">
+                            {{request.id}}
+                        </td>
+                        <td data-label="نام مترجم">
+                            <a aria-role="button" href="javascript:void(0)" onclick="showTranslatorInfo('{{request.translator_id}}')">{{request.translator_fname ~ " " ~ request.translator_lname}}</a>
+                        </td>
+                        <td data-label="مبلغ درخواستی">
+                            {{request.amount | number_format}}
+                            تومان
+                        </td>
+                        <td data-label="تاریخ درخواست">
+                            {{request.request_date_persian}}
+                        </td>
+                        <td data-label="وضعیت تایید">
+                            {% if request.state == "-1" %}درانتظار تایید
+                            {% endif %}
+                            {% if request.state == "0" %}رد شده
+                            {% endif %}
+                            {% if request.state == "1" %}تایید شده
+                            {% endif %}
+                        </td>
+                        <td data-label="وضعیت پرداخت">
+                            {% if request.is_paid == "1" %}
+                                پرداخت شده
+                            {% else %}
+                                پرداخت نشده
+                            {% endif %}
+                        </td>
+                        <td class="order-more-info" data-label="جزییات">
+                            {#TODO create a link that goes to translator payment requests and just show the selected request#}
+                            <a href="/admin/translator/payment-requests">
+                                <svg height="23px" viewBox="0 0 50 80" width="13px" xml:space="preserve">
+                                    <polyline fill="none" points="45.63,75.8 0.375,38.087 45.63,0.375 " stroke-linecap="round" stroke-linejoin="round" stroke-width="10" stroke="#a9a9a9"></polyline>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% include 'admin/includes/pagination.twig' with { 'count' :payment_requests, 'current_page' :1, 'base_path' :'/admin/site-revenue','parent_class':"requests_pagination", 'offset' : 10, 'visible_numbers' : 3,"no_href":true } %}
     </div>
 </main>
 {# translator info modal #}

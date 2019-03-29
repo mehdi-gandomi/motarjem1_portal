@@ -59,7 +59,7 @@ $(document).ready(function () {
             });
         },800);
     });
-    $(document).on("click",".pagination .page-link",function (e) {
+    $(document).on("click",".orders_pagination .page-link",function (e) {
         $.ajax({
             type: "POST",
             url: "/admin/site-revenue/filter?page="+$(this).data("page"),
@@ -67,7 +67,19 @@ $(document).ready(function () {
             success: function (data, status) {
                 console.log(data);
                 showOrders(data.info.filtered_orders);
-                showPagination(parseInt(data.info.filtered_orders_count),parseInt(data.info.current_page),10,"/admin/site-revenue", "",3,".pagination",false,true);
+                showPagination(parseInt(data.info.filtered_orders_count),parseInt(data.info.current_page),10,"/admin/site-revenue", "",3,".orders_pagination",false,true);
+            }
+        });
+    })
+    $(document).on("click",".requests_pagination .page-link",function (e) {
+        $.ajax({
+            type: "POST",
+            url: "/admin/site-revenue/filter?request_page="+$(this).data("page"),
+            data: filterFormData,
+            success: function (data, status) {
+                console.log(data);
+                showRequests(data.info.filtered_payment_requests);
+                showPagination(parseInt(data.info.payment_requests),parseInt(data.info.requests_current_page),10,"/admin/site-revenue", "",3,".requests_pagination",false,true);
             }
         });
     })
@@ -187,4 +199,44 @@ function showPagination(count,current_page,offset,baseUrl, queryString,visibleNu
         }
     }
     $(el).html(output);
+}
+function showRequests(requests) {
+    let output="";
+    let state="";
+    requests.forEach(function (request) {
+        if (request.state == "-1" ) state="درانتظار تایید";
+        else if (request.state == "0") state="رد شده";
+        else if (request.state == "1") state="تایید شده";
+        output+=`
+            <tr>
+               <td data-label="ردیف">
+                  ${request.id}
+               </td>
+               <td data-label="نام مترجم">
+                  <a aria-role="button" href="javascript:void(0)" onclick="showTranslatorInfo('${request.translator_id}')">${request.translator_fname + " " + request.translator_lname}</a>
+               </td>
+               <td data-label="مبلغ درخواستی">
+                  ${parseInt(request.amount).toLocaleString("us")}
+                  تومان
+               </td>
+               <td data-label="تاریخ درخواست">
+                  ${request.request_date_persian}
+               </td>
+               <td data-label="وضعیت تایید">
+                ${state}
+               </td>
+               <td data-label="وضعیت پرداخت">
+                  ${request.is_paid == "1" ? "پرداخت شده":"پرداخت نشده"}
+               </td>
+               <td class="order-more-info" data-label="جزییات">
+                  <a href="/admin/translator/payment-requests">
+                     <svg height="23px" viewBox="0 0 50 80" width="13px" xml:space="preserve">
+                        <polyline fill="none" points="45.63,75.8 0.375,38.087 45.63,0.375 " stroke-linecap="round" stroke-linejoin="round" stroke-width="10" stroke="#a9a9a9"></polyline>
+                     </svg>
+                  </a>
+               </td>
+            </tr>
+        `;
+    })
+    $("#paymentRequestsWrap").html(output);
 }

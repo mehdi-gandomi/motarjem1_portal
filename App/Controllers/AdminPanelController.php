@@ -488,8 +488,9 @@ class AdminPanelController extends Controller
         $data['completed_orders']=Admin::get_orders_count_by_date(['from_date'=>$fromDate,'to_date'=>$toDate,'done'=>["1"]]);
         $data['filtered_orders']=Admin::get_all_orders_by_filters(1,10,['done'=>$done,'from_date'=>$fromDate,'to_date'=>$toDate]);
         $data['filtered_orders_count']=Admin::get_orders_count_by_date(['from_date'=>$fromDate,'to_date'=>$toDate,'done'=>$done]);
-        $data['payment_requests']=Admin::get_translator_payment_requests_count(['state'=>$paymentState,'is_paid'=>$paid],['from_date'=>$fromDate,'to_date'=>$toDate]);
+        $data['payment_requests']=120;
         $data['payment_requests_sum']=Admin::get_translator_payment_requests_sum(['state'=>$paymentState,'is_paid'=>$paid],['from_date'=>$fromDate,'to_date'=>$toDate]);
+        $data['filtered_payment_requests']=Admin::get_translator_payment_requests(1,10,['state'=>$paymentState,'is_paid'=>$paid],['from_date'=>$fromDate,'to_date'=>$toDate]);
         $data['done']=$done;
         $data['payment_state']=$paymentState;
         $data['paid']=$paid;
@@ -500,10 +501,13 @@ class AdminPanelController extends Controller
     {
         $data=[];
         $page=$req->getParam("page") ? $req->getParam("page"):1;
+        $requestsPage=$req->getParam("request_page") ? $req->getParam("request_page"):1;
         $postFields=$req->getParsedBody();
         $postFields['from_date']=(!isset($postFields['from_date']) || $postFields['from_date']=== "") ? 0:$this->persian_num_to_english($postFields['from_date']);
         $postFields['to_date']=(!isset($postFields['to_date']) || $postFields['to_date'] === "") ? jstrftime("%Y/%m/%d %H:%M","","","","en"):$this->persian_num_to_english($postFields['to_date']) ;
         $postFields['done']= !isset($postFields['done']) ? ['0','1']:$postFields['done'];
+        $postFields['payment_state']=!isset($postFields['payment_state']) ? ['-1','0','1']:$postFields['payment_state'];
+        $postFields['paid']=!isset($postFields['paid']) ? ['0','1']:$postFields['paid'];
         $totalRevenue=Admin::get_total_revenue_with_filtering($postFields);
         $data['total_revenue']=number_format($totalRevenue);
         $data['admin_revenue']=number_format((intval($totalRevenue)*15)/100);
@@ -513,9 +517,11 @@ class AdminPanelController extends Controller
         $data['completed_orders']=Admin::get_orders_count_by_date($postFields);
         $data['filtered_orders']=Admin::get_all_orders_by_filters($page,10,$postFields);
         $data['filtered_orders_count']=Admin::get_orders_count_by_date($postFields);
-        $data['payment_requests']=Admin::get_translator_payment_requests_count(['state'=>$postFields['payment_state'],'is_paid'=>$postFields['paid']],['from_date'=>$postFields['from_date'],'to_date'=>$postFields['to_date']]);
+        $data['payment_requests']=120;
         $data['payment_requests_sum']=Admin::get_translator_payment_requests_sum(['state'=>$postFields['payment_state'],'is_paid'=>$postFields['paid']],['from_date'=>$postFields['from_date'],'to_date'=>$postFields['to_date']]);
+        $data['filtered_payment_requests']=Admin::get_translator_payment_requests($requestsPage,10,['state'=>$postFields['payment_state'],'is_paid'=>$postFields['paid']],['from_date'=>$postFields['from_date'],'to_date'=>$postFields['to_date']]);
         $data['current_page']=$page;
+        $data['requests_current_page']=$requestsPage;
         return $res->withJson(['status'=>true,'info'=>$data]);
     }
     //get all notifications and render the page
