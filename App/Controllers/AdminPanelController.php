@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Ticket;
 use App\Models\Translator;
 use App\Models\User;
+use App\Models\Notification;
 class AdminPanelController extends Controller
 {
 
@@ -532,8 +533,10 @@ class AdminPanelController extends Controller
         $privatePage=$req->getParam("private_page") ? $req->getParam("private_page"):1;
         $data['public_notifications']=Admin::get_all_public_notifications($publicPage,10);
         $data['public_notifications_count']=Admin::get_all_public_notifications_count();
+        $data['public_current_page']=$publicPage;
         $data['private_notifications']=Admin::get_all_private_notifications($privatePage,10);
         $data['private_notifications_count']=Admin::get_all_private_notifications_count();
+        $data['private_current_page']=$privatePage;
         return $this->view->render($res,"admin/admin/notifications.twig",$data);
     }
     //render a page to create new notification
@@ -542,6 +545,34 @@ class AdminPanelController extends Controller
 
     }
 
+    public function get_public_notification_info_json($req,$res,$args)
+    {
+        $notifId=$req->getParam("notif_id");
+        $notificationData=Notification::get_data_by_id($notifId);
+        if ($notificationData){
+            return $res->withJson(['status'=>true,'info'=>$notificationData]);
+        }
+        return $res->withJson(['status'=>false,'message'=>'notification not found or an error occurred']);
+    }
+    public function get_private_notification_info_json($req,$res,$args)
+    {
+        $notifId=$req->getParam("notif_id");
+        $notificationData=Admin::get_private_notification_data_by_id($notifId);
+        if ($notificationData){
+            return $res->withJson(['status'=>true,'info'=>$notificationData]);
+        }
+        return $res->withJson(['status'=>false,'message'=>'notification not found or an error occurred']);
+    }
+
+    public function delete_notification($req,$res,$args)
+    {
+        $notifId=$req->getParam("notif_id");
+        $result=Notification::delete_by_id($notifId);
+        if ($result){
+            return $res->withJson(['status'=>true]);
+        }
+        return $res->withJson(['status'=>true,'message'=>'an error occured i deleting notification']);
+    }
 
     //convert english numbers to english one
     protected function persian_num_to_english($str)

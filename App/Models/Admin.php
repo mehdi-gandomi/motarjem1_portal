@@ -373,9 +373,22 @@ class Admin extends Model
         try{
             $db=static::getDB();
             $page_limit = ($page - 1) * $offset;
-            $sql="SELECT notifications.title,notifications.body,notifications.importance,notifications.attach_files,notifications.sent_date_persian,GROUP_CONCAT(notif_translator.translator_id,',') AS translator_ids,GROUP_CONCAT(CONCAT(translators.fname,' ',translators.lname),',') AS translator_names FROM `notif_translator` INNER JOIN notifications ON notif_translator.notif_id = notifications.notif_id INNER JOIN translators ON notif_translator.translator_id = translators.translator_id GROUP BY notifications.notif_id,notif_translator.notif_id LIMIT $page_limit,$offset";
+            $sql="SELECT notifications.notif_id,notifications.title,notifications.importance,notifications.sent_date_persian,GROUP_CONCAT(notif_translator.translator_id,',') AS translator_ids,GROUP_CONCAT(CONCAT(translators.fname,' ',translators.lname),',') AS translator_names FROM `notif_translator` INNER JOIN notifications ON notif_translator.notif_id = notifications.notif_id INNER JOIN translators ON notif_translator.translator_id = translators.translator_id GROUP BY notifications.notif_id,notif_translator.notif_id LIMIT $page_limit,$offset";
             $result=$db->query($sql);
-            return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+            if ($result){
+                $result=$result->fetchAll(PDO::FETCH_ASSOC);
+                $result=array_map(function ($notification){
+                    $notification['translator_ids']=explode(",",$notification['translator_ids']);
+                    $notification['translator_ids']=array_filter($notification['translator_ids']);
+                    $notification['translator_ids']=array_values($notification['translator_ids']);
+                    $notification['translator_names']=explode(",",$notification['translator_names']);
+                    $notification['translator_names']=array_filter($notification['translator_names']);
+                    $notification['translator_names']=array_values($notification['translator_names']);
+                    return $notification;
+                },$result);
+                return $result;
+            }
+            return [];
         }catch (\Exception $e){
             return [];
         }
@@ -467,6 +480,31 @@ class Admin extends Model
             return $result ? $result->fetch(PDO::FETCH_ASSOC)['requests_sum']:0;
         }catch(\Exception $e){
             return 0;
+        }
+    }
+
+    public static function get_private_notification_data_by_id($notifId)
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT notifications.notif_id,notifications.title,notifications.body,notifications.importance,notifications.attach_files,notifications.notif_type,notifications.sent_date_persian,GROUP_CONCAT(notif_translator.translator_id,',') AS translator_ids,GROUP_CONCAT(CONCAT(translators.fname,' ',translators.lname),',') AS translator_names FROM `notif_translator` INNER JOIN notifications ON notif_translator.notif_id = notifications.notif_id INNER JOIN translators ON notif_translator.translator_id = translators.translator_id WHERE notif_translator.notif_id = '$notifId' GROUP BY notifications.notif_id,notif_translator.notif_id";
+            $result=$db->query($sql);
+            if ($result){
+                $result=$result->fetchAll(PDO::FETCH_ASSOC);
+                $result=array_map(function ($notification){
+                    $notification['translator_ids']=explode(",",$notification['translator_ids']);
+                    $notification['translator_ids']=array_filter($notification['translator_ids']);
+                    $notification['translator_ids']=array_values($notification['translator_ids']);
+                    $notification['translator_names']=explode(",",$notification['translator_names']);
+                    $notification['translator_names']=array_filter($notification['translator_names']);
+                    $notification['translator_names']=array_values($notification['translator_names']);
+                    return $notification;
+                },$result);
+                return $result[0];
+            }
+            return [];
+        }catch (\Exception $e){
+            return [];
         }
     }
 }

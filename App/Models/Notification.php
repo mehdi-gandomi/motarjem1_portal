@@ -62,6 +62,16 @@ class Notification extends Model
         }
     }
 
+    public static function delete_by_id($notifId)
+    {
+        try{
+            static::delete("notifications","notif_id = '$notifId'");
+            return true;
+        }catch (\Exception $e){
+            return false;
+        }
+    }
+
     protected static function getCurrentDatePersian()
     {
         $now = new \DateTime("NOW");

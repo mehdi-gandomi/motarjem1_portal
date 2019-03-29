@@ -1,1 +1,184 @@
 {% extends "admin/layout/admin.twig" %}
+
+{% block content %}
+    <main class="main">
+        <div class="card">
+            <div class="card-body" style="min-height: 550px">
+                <h4 class="mt-4 mb-4">اطلاعیه های عمومی</h4>
+                <table class="table global-notifications OrdersTable is--responsive">
+                    {% if public_notifications %}
+                        <thead>
+                        <th class="text-center bg-teal-dark" scope="col">#</th>
+                        <th class="text-center bg-teal-dark" scope="col">عنوان اطلاعیه</th>
+                        <th class="text-center bg-teal-dark" scope="col">تاریخ ارسال</th>
+                        <th class="text-center bg-teal-dark" scope="col">درجه اهمیت</th>
+                        <th class="text-center bg-teal-dark" scope="col">جزپیات بیشتر</th>
+                        </thead>
+                        <tbody >
+                        {% for notification in public_notifications %}
+                            {% if notification.importance == "1" %}
+                                {% set importance = "خیلی مهم" %}
+                            {% endif %}
+                            {% if notification.importance == "2" %}
+                                {% set importance = "مهم" %}
+                            {% endif %}
+                            {% if notification.importance == "3" %}
+                                {% set importance = "معمولی" %}
+                            {% endif %}
+
+                            <tr>
+                                <td data-label="ردیف">{{ notification.notif_id }}</td>
+                                <td data-label="عنوان اطلاعیه">
+                                    {{notification.title}}
+                                </td>
+                                <td data-label="تاریخ ارسال">
+                                    {{notification.sent_date_persian}}
+                                </td>
+                                <td data-label="اهمیت">
+                                    {{importance}}
+                                </td>
+                                <td  data-label="جزپیات بیشتر">
+                                    <a href="javascript:void(0)" onclick="showNotificationInfo('{{ notification.notif_id }}')" class="btn btn-behance">
+                                        <i class="icon-eye"></i>
+                                        جزییات اطلاعیه
+                                    </a>
+                                    <a href="/admin/notification/edit/{{ notification.notif_id }}" class="btn btn-primary">
+                                        <i class="icon-pencil"></i>
+                                        ویرایش اطلاعیه
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="deleteNotification('{{ notification.notif_id }}')" class="btn btn-danger">
+                                        <i class="icon-trash"></i>
+                                        حذف اطلاعیه
+                                    </a>
+                                </td>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+
+                    {% else %}
+                        <h5 class="text-center mt-4 no-data">تا کنون اطلاعیه ای ارسال نشده است</h5>
+                    {% endif %}
+                </table>
+                {% include 'admin/includes/pagination.twig' with {
+                    'count' : public_notifications_count,
+                    'page_prefix':'public_',
+                    'current_page' : public_current_page,
+                    'base_path' : '/admin/notifications',
+                    'offset' : 10,
+                    'visible_numbers' : 3
+                } %}
+                <h4 class="mt-4 mb-4">اطلاعیه های خصوصی</h4>
+                <table class="table global-notifications OrdersTable is--responsive">
+                    {% if private_notifications %}
+                        <thead>
+                            <th class="text-center bg-teal-dark" scope="col">#</th>
+                            <th class="text-center bg-teal-dark" scope="col">عنوان اطلاعیه</th>
+                            <th class="text-center bg-teal-dark" scope="col">تاریخ ارسال</th>
+                            <th class="text-center bg-teal-dark" scope="col">دریافت کننده (ها)</th>
+                            <th class="text-center bg-teal-dark" scope="col">درجه اهمیت</th>
+                            <th class="text-center bg-teal-dark" scope="col">جزپیات بیشتر</th>
+                        </thead>
+                        <tbody >
+                        {% for notification in private_notifications %}
+                            {% if notification.importance == "1" %}
+                                {% set importance = "خیلی مهم" %}
+                            {% endif %}
+                            {% if notification.importance == "2" %}
+                                {% set importance = "مهم" %}
+                            {% endif %}
+                            {% if notification.importance == "3" %}
+                                {% set importance = "معمولی" %}
+                            {% endif %}
+
+                            <tr>
+                                <td data-label="ردیف">{{ notification.notif_id }}</td>
+                                <td data-label="عنوان اطلاعیه">
+                                    {{notification.title}}
+                                </td>
+                                <td data-label="تاریخ ارسال">
+                                    {{notification.sent_date_persian}}
+                                </td>
+                                <td data-label="دریافت کننده (ها)">
+                                    {% if notification.translator_names | length < 4 %}
+                                        {% for key,name in notification.translator_names %}
+                                            <a href="javascript:void(0)" onclick="showTranslatorBasicInfo('{{ notification.translator_ids[key] }}')">{{ name }}</a> &nbsp;
+                                        {% endfor %}
+                                    {% else %}
+                                        <a href="javascript:void(0)" onclick="showNotificationRecipients('{{ notification.notif_id }}')" class="btn btn-primary">مشاهده تمام دریافت کننده ها</a>
+                                    {% endif %}
+                                </td>
+                                <td data-label="اهمیت">
+                                    {{importance}}
+                                </td>
+                                <td  data-label="جزپیات بیشتر">
+                                    <a href="javascript:void(0)" onclick="showNotificationInfo('{{ notification.notif_id }}',true)" class="btn btn-behance">
+                                        <i class="icon-eye"></i>
+                                        جزییات اطلاعیه
+                                    </a>
+                                    <a href="/admin/notification/edit/{{ notification.notif_id }}" class="btn btn-primary">
+                                        <i class="icon-pencil"></i>
+                                        ویرایش اطلاعیه
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="deleteNotification('{{ notification.notif_id }}')" class="btn btn-danger">
+                                        <i class="icon-trash"></i>
+                                        حذف اطلاعیه
+                                    </a>
+                                </td>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+
+                    {% else %}
+                        <h5 class="text-center mt-4 no-data">تا کنون اطلاعیه ای ارسال نشده است</h5>
+                    {% endif %}
+                </table>
+                {% include 'admin/includes/pagination.twig' with {
+                    'count' : private_notifications_count,
+                    'page_prefix':'private_',
+                    'current_page' : private_current_page,
+                    'base_path' : '/admin/notifications',
+                    'offset' : 10,
+                    'visible_numbers' : 3
+                } %}
+            </div>
+        </div>
+    </main>
+    {# translator info modal #}
+    <!-- Modal -->
+    <div aria-hidden="true" aria-labelledby="translatorBasicInfoLabel" class="modal fade" id="translatorBasicInfo" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="translatorBasicInfoLabel">اطلاعات مترجم</h5>
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="translatorBasicInfoWrap"></div>
+            </div>
+        </div>
+    </div>
+    <!-- notification info odal -->
+    <div class="modal fade" id="NotificationInfoModal" tabindex="-1" role="dialog" aria-labelledby="NotificationInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h5 class="modal-title" id="NotificationInfoModalLabel">جزپیات اطلاعیه</h5>
+                    {# <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button> #}
+                </div>
+                <div class="modal-body" id="NotificationInfoWrap" style="padding:2rem"></div>
+                <div class="modal-footer justify-content-start">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">بستن</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script_below %}
+    <script src="/public/js/sweetalert2@8.js"></script>
+    <script src="/public/js/panel/admin-notifications.js"></script>
+{% endblock %}

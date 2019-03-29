@@ -17,9 +17,9 @@ function renderNotification(notification){
     }else if(notification.importance=="3"){
         importance="معمولی";
     }
-    output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>ردیف</div><div class='order-details__detail__value'>"+notification.notif_id+"</div></div>";
+    output+="<div class='order-details__detail col-md-2'><div class='order-details__detail__label'>ردیف</div><div class='order-details__detail__value'>"+notification.notif_id+"</div></div>";
     output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>عنوان اطلاعیه</div><div class='order-details__detail__value'>"+notification.title+"</div></div>";
-    output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>تاریخ ارسال اطلاعیه</div><div class='order-details__detail__value'>"+notification.sent_date_persian+"</div></div>";
+    output+="<div class='order-details__detail col-md-4'><div class='order-details__detail__label'>تاریخ ارسال اطلاعیه</div><div class='order-details__detail__value'>"+notification.sent_date_persian+"</div></div>";
     output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>درجه اهمیت</div><div class='order-details__detail__value'>"+importance+"</div></div>";
     output+="<div class='order-details__detail col-md-12'><div class='order-details__detail__label'>متن اطلاعیه</div><div class='order-details__detail__value'>"+notification.body+"</div></div>";
     if(notification.attach_files){

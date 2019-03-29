@@ -1,5 +1,6 @@
 //show full translator profile details
-function showُTranslatorInfo(translatorId){    
+function showُTranslatorInfo(translatorId){
+    $("#NotificationInfoModal").modal("hide");
     $.get("/admin/translator-info/all/json",{translator_id:translatorId},function(data,status){
         //i coded this with template literal but because of low browser support , i converted the code
         //for debugging you have to convert it to es6 with babel.io
