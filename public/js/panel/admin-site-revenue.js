@@ -1,3 +1,14 @@
+// this function substitutes placeholders with value given as object
+function substitute(str, data) {
+    let output = str.replace(/%[^%]+%/g, function(match) {
+        if (match in data) {
+            return(data[match]);
+        } else {
+            return("");
+        }
+    });
+    return(output);
+}
 let svgLoader = "  <svg width='45' fill='#fff' version='1.1' id='L9' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'x='0px' y='0px' viewBox='0 0 100 100' enable-background='new 0 0 0 0' xml:space='preserve'><path fill=' #fff' d='M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50'><animateTransform attributeName='transform' attributeType='XML' type='rotate' dur='1s' from='0 50 50'to='360 50 50' repeatCount='indefinite' /></path></svg>";
 let infoCards={
   total_revenue:"#totalRevenue",
@@ -41,15 +52,22 @@ $(document).ready(function () {
                         $(infoCards[key]).html(data.info[key]);
                     }
                     showOrders(data.info.filtered_orders);
-                    showPagination(data.info.filtered_orders_count,data.info.current_page,10,"/admin/site-revenue", "",3,".pagination");
+                    showPagination(data.info.filtered_orders_count,data.info.current_page,10,"/admin/site-revenue", "",3,".pagination",false,true);
                 }
             });
         },800);
     });
-    $(".pagination .page-link").on("click",function () {
-        let page=$(this).data("page");
-        console.log(page);
-        //TODO request to api and get data and then render the data
+    $(document).on("click",".pagination .page-link",function (e) {
+        $.ajax({
+            type: "POST",
+            url: "/admin/site-revenue/filter?page="+$(this).data("page"),
+            data: filterFormData,
+            success: function (data, status) {
+                console.log(data);
+                showOrders(data.info.filtered_orders);
+                showPagination(parseInt(data.info.filtered_orders_count),parseInt(data.info.current_page),10,"/admin/site-revenue", "",3,".pagination",false,true);
+            }
+        });
     })
 });
 
@@ -131,11 +149,12 @@ function showOrders(orders) {
     $("#filteredOrders").html(output);
 }
 //this function shows pagination
-function showPagination(count,current_page,offset,baseUrl, queryString,visibleNumbers,el,prefix) {
+function showPagination(count,current_page,offset,baseUrl, queryString,visibleNumbers,el,prefix,noHref) {
     let output="";
     let fullUrl;
     if(el===undefined) el=".pagination";
-    if(prefix === undefined) prefix="";
+    if(prefix === undefined || prefix === false) prefix="";
+    noHref=noHref===undefined ? false:noHref;
     if(queryString){
         fullUrl=baseUrl+"?"+queryString+"&"+prefix+"page=%page%";
     }else{
@@ -144,9 +163,10 @@ function showPagination(count,current_page,offset,baseUrl, queryString,visibleNu
     if(count > offset){
         let lastPage=Math.ceil(count/offset);
         let endIndex,startIndex;
-        output+=current_page > 1 ? '<li class="page-item"><a class="page-link" href="'+baseUrl+'" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li><li class="page-item"><a class="page-link" href="'+substitute(fullUrl,{"%page%":current_page-1})+'" aria-label="Previous">قبلی</a></li>' : "";
+        if (current_page > 1){
+            output+= noHref ? '<li class="page-item"><a class="page-link" data-page="1" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li><li class="page-item"><a class="page-link" data-page="'+(current_page-1)+'" aria-label="Previous">قبلی</a></li>':'<li class="page-item"><a class="page-link" href="'+baseUrl+'" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li><li class="page-item"><a class="page-link" href="'+substitute(fullUrl,{"%page%":current_page-1})+'" aria-label="Previous">قبلی</a></li>';
+        }
         if((current_page+(visibleNumbers-1)) > lastPage){
-
             endIndex=lastPage;
             startIndex=current_page-(visibleNumbers-(lastPage-current_page));
         }else{
@@ -157,11 +177,11 @@ function showPagination(count,current_page,offset,baseUrl, queryString,visibleNu
         startIndex= startIndex<=0 ? 1:startIndex;
         for(pageNumber=startIndex;pageNumber<=endIndex;pageNumber++){
             output+= pageNumber==current_page ? "<li class='page-item active'>":"<li class='page-item'>";
-            output+="<a class='page-link' href='"+substitute(fullUrl,{"%page%":pageNumber})+"'>"+pageNumber+"</a>";
+            output+=noHref ? "<a class='page-link' data-page='"+pageNumber+"'>"+pageNumber+"</a>":"<a class='page-link' href='"+substitute(fullUrl,{"%page%":pageNumber})+"'>"+pageNumber+"</a>";
         }
         if(current_page != lastPage){
-            output+='<li class="page-item"><a class="page-link" href="'+substitute(fullUrl,{"%page%":current_page+1})+'" aria-label="Previous">بعدی</a></li>';
-            output+='<li class="page-item"><a class="page-link" href="'+substitute(fullUrl,{"%page%":lastPage})+'" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>';
+            output+=noHref ? '<li class="page-item"><a class="page-link" data-page="'+(current_page+1)+'" aria-label="Previous">بعدی</a></li>':'<li class="page-item"><a class="page-link" href="'+substitute(fullUrl,{"%page%":current_page+1})+'" aria-label="Previous">بعدی</a></li>';
+            output+=noHref ? '<li class="page-item"><a class="page-link" data-page="'+lastPage+'" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>':'<li class="page-item"><a class="page-link" href="'+substitute(fullUrl,{"%page%":lastPage})+'" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>';
         }
     }
     $(el).html(output);

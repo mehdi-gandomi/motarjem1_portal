@@ -52,13 +52,13 @@
                 <div class="row mt-3">
                     <div class="col-md-4">
                         <a class="info-card" href="/translator/messages?unread=true">
-                            <div class="info-card__icon bg-dark-purple">
-                                <img alt="" src="/public/images/icon/income.svg"/>
+                            <div class="info-card__icon bg-dark-teal">
+                                <img alt="" src="/public/images/icon/money.svg"/>
                             </div>
                             <div class="info-card__content">
-                                <div class="info-card__content__title">درآمد شما از یک ماه گذشته</div>
+                                <div class="info-card__content__title">درآمد کلی سیستم تاکنون</div>
                                 <div class="info-card__content__value">
-                                    {{ month_revenue ? month_revenue : 0 }}
+                                    {{ total_revenue ? total_revenue | number_format : 0 }}
                                     <span class="f-1rem ml-1">تومان</span>
                                 </div>
                             </div>
@@ -72,7 +72,38 @@
                             <div class="info-card__content">
                                 <div class="info-card__content__title">درآمد شما تاکنون</div>
                                 <div class="info-card__content__value">
-                                    {{ total_revenue ? total_revenue : 0 }}
+                                    {{ admin_revenue ? admin_revenue | number_format : 0 }}
+                                    <span class="f-1rem ml-1">تومان</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="info-card" href="/translator/messages?unread=true">
+                            <div class="info-card__icon bg-dark-teal">
+                                <img alt="" src="/public/images/icon/money.svg"/>
+                            </div>
+                            <div class="info-card__content">
+                                <div class="info-card__content__title">درآمد مترجم ها تاکنون</div>
+                                <div class="info-card__content__value">
+                                    {{ translators_revenue ? translators_revenue | number_format : 0 }}
+                                    <span class="f-1rem ml-1">تومان</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <a class="info-card" href="/translator/messages?unread=true">
+                            <div class="info-card__icon bg-dark-teal">
+                                <img alt="" src="/public/images/icon/money.svg"/>
+                            </div>
+                            <div class="info-card__content">
+                                <div class="info-card__content__title">درآمد امیرمسعود تاکنون</div>
+                                <div class="info-card__content__value">
+                                    {{ masoud_revenue ? masoud_revenue | number_format : 0 }}
                                     <span class="f-1rem ml-1">تومان</span>
                                 </div>
                             </div>
@@ -88,6 +119,20 @@
                                 <div class="info-card__content__value">
                                     {{ unread_messages_count ? unread_messages_count : 0 }}
                                     <span class="f-1rem ml-1">پیام</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="info-card" href="">
+                            <div class="info-card__icon bg-danger">
+                                <img alt="" src="/public/images/icon/payment.svg" style="width: 60px;height: 60px;"/>
+                            </div>
+                            <div class="info-card__content">
+                                <div class="info-card__content__title">درخواست های پرداخت مترجمان </div>
+                                <div class="info-card__content__value">
+                                    {{ payment_requests_count ? payment_requests_count : 0 }}
+                                    <span class="f-1rem ml-1">درخواست</span>
                                 </div>
                             </div>
                         </a>

@@ -126,7 +126,7 @@
                     <div class="col-md-4 mt-3">
                         <div class="info-card">
                             <div class="info-card__icon " style="background: #dcb939 !important">
-                                <img alt="" src="/public/images/icon/income.svg"/>
+                                <img alt="" src="/public/images/icon/check-form.svg"/>
                             </div>
                             <div class="info-card__content" style="background: #9c9700 !important;color: #fff">
                                 <div class="info-card__content__title text-white"> سفارشات انجام شده در این بازه</div>
@@ -140,7 +140,7 @@
                     <div class="col-md-4 mt-3">
                         <div class="info-card">
                             <div class="info-card__icon " style="background: #6CA4BF !important">
-                                <img alt="" src="/public/images/icon/income.svg"/>
+                                <img alt="" src="/public/images/icon/stopwatch.svg"/>
                             </div>
                             <div class="info-card__content" style="background: #257ba5 !important;color: #fff">
                                 <div class="info-card__content__title text-white"> سفارشات درحال انجام در این بازه</div>
@@ -151,10 +151,38 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-4 mt-3">
+                        <div class="info-card">
+                            <div class="info-card__icon " style="background: #6CA4BF !important">
+                                <img alt="" src="/public/images/icon/income.svg"/>
+                            </div>
+                            <div class="info-card__content" style="background: #257ba5 !important;color: #fff">
+                                <div class="info-card__content__title text-white"> درخواست های پرداخت در این بازه</div>
+                                <div class="info-card__content__value">
+                                    <span id="pendingOrders">{{ payment_requests ? payment_requests : 0 }}</span>
+                                    <span class="f-1rem ml-1">درخواست</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        <div class="info-card">
+                            <div class="info-card__icon " style="background: #6CA4BF !important">
+                                <img alt="" src="/public/images/icon/income.svg"/>
+                            </div>
+                            <div class="info-card__content" style="background: #257ba5 !important;color: #fff">
+                                <div class="info-card__content__title text-white">جمع درخواست های پرداخت در این بازه</div>
+                                <div class="info-card__content__value">
+                                    <span id="pendingOrders">{{ payment_requests_sum ? payment_requests_sum : 0 }}</span>
+                                    <span class="f-1rem ml-1">تومان</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
             </div>
 
         </div>
-            <h4 class="mt-4 mb-3">اطلاعات سفارشات در این بازه</h4>
+            <h4 class="mt-5 mb-3">اطلاعات سفارشات در این بازه</h4>
             <table class="table OrdersTable is--responsive">
                 <thead>
                 <tr>

@@ -97,9 +97,11 @@ class AdminPanelController extends Controller
         //count of orders that is accepted and a translator had completed it
         $data['completed_orders_count']=Order::get_completed_orders();
         //get total revenue till now
-        $data['total_revenue']=number_format(Admin::get_total_revenue());
-        //get revenue of this month
-        $data['month_revenue']=number_format(Admin::get_monthly_revenue());
+        $data['total_revenue']=Admin::get_total_revenue_with_filtering(['done'=>["0","1"],'from_date'=>"0",'to_date'=>jstrftime("%Y/%m/%d %H:%M","","","","en")]);
+        $data['admin_revenue']=(intval($data['total_revenue'])*15)/100;
+        $data['masoud_revenue']=(intval($data['total_revenue'])*15)/100;
+        $data['translators_revenue']=(intval($data['total_revenue'])*70)/100;
+        $data['payment_requests_count']=Admin::get_translator_payment_requests_count(['state'=>['-1','0','1'],'is_paid'=>['0','1']]);
         //get unread messages
         $data['unread_messages_count']=Admin::get_unread_tickets_count();
         //get last three tickets sent by translators
@@ -493,8 +495,9 @@ class AdminPanelController extends Controller
         $data=[];
         $page=$req->getParam("page") ? $req->getParam("page"):1;
         $postFields=$req->getParsedBody();
-        $postFields['from_date']=$postFields['from_date']=== "" ? 0:$this->persian_num_to_english($postFields['from_date']);
-        $postFields['to_date']=$postFields['to_date'] === "" ? jstrftime("%Y/%m/%d %H:%M","","","","en"):$this->persian_num_to_english($postFields['to_date']) ;
+        $postFields['from_date']=(!isset($postFields['from_date']) || $postFields['from_date']=== "") ? 0:$this->persian_num_to_english($postFields['from_date']);
+        $postFields['to_date']=(!isset($postFields['to_date']) || $postFields['to_date'] === "") ? jstrftime("%Y/%m/%d %H:%M","","","","en"):$this->persian_num_to_english($postFields['to_date']) ;
+        $postFields['done']= !isset($postFields['done']) ? ['0','1']:$postFields['done'];
         $totalRevenue=Admin::get_total_revenue_with_filtering($postFields);
         $data['total_revenue']=number_format($totalRevenue);
         $data['admin_revenue']=number_format((intval($totalRevenue)*15)/100);
