@@ -107,4 +107,22 @@ class Notification extends Model
         $persianDate = gregorian_to_jalali($year, $month, $day);
         return $persianDate[0] . "/" . $persianDate[1] . "/" . $persianDate[2] . " " . $time;
     }
+
+    public static function get_data_with_recipients_by_id($notif_id)
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT notifications.notif_id,notifications.title,notifications.importance,notifications.body,notifications.attach_files,GROUP_CONCAT(notif_translator.translator_id,',') AS recipients FROM `notif_translator` INNER JOIN notifications ON notif_translator.notif_id = notifications.notif_id INNER JOIN translators ON notif_translator.translator_id = translators.translator_id WHERE notif_translator.notif_id = '$notif_id' GROUP BY notifications.notif_id,notif_translator.notif_id";
+            $result=$db->query($sql);
+            if ($result){
+                $result=$result->fetch(PDO::FETCH_ASSOC);
+                $result['recipients']=explode(",",$result['recipients']);
+                $result['recipients']=array_filter($result['recipients']);
+                return $result;
+            }
+            return [];
+        }catch (\Exception $e){
+            return [];
+        }
+    }
 }

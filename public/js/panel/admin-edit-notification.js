@@ -73,8 +73,6 @@ $(document).ready(function (e) {
         // validates the size of the file
         FilePondPluginFileValidateSize
     );
-// Select the file input and use create() to turn it into a pond
-    FilePond.create(document.querySelector("#files"));
     FilePond.setOptions({
         // instantUpload: false,
         server: {
@@ -90,5 +88,21 @@ $(document).ready(function (e) {
                 }
             }
         }
+    });
+    initialFiles=[];
+    let files=$("#hidden-attach-files").text().trim();
+    files=files.split(",");
+    files.forEach(function (file) {
+        initialFiles.push({
+            source: "/public/uploads/attachments/"+file,
+            // set type to limbo to tell FilePond this is a temp file
+            options: {
+                type: 'limbo'
+            }
+        })
+    });
+    // Select the file input and use create() to turn it into a pond
+    const pond=FilePond.create(document.querySelector("#files"),{
+        files: initialFiles
     });
 });

@@ -587,6 +587,14 @@ class AdminPanelController extends Controller
         return $res->withJson(['status'=>false,'message'=>'an error occurred when saving notification in db :(']);
     }
 
+    public function get_notification_edit_page($req,$res,$args)
+    {
+        $data=[];
+        $data['translators']=Translator::get_all("translator_id,fname,lname");
+        $data['notification']=Notification::get_data_with_recipients_by_id($args['notif_id']);
+        return $this->view->render($res,"admin/admin/edit-notification.twig",$data);
+    }
+
     //upload attachment for notification
     public function upload_notification_attachment($req,$res,$args)
     {

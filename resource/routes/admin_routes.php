@@ -38,8 +38,10 @@ $app->group('/admin', function ($app) use ($container) {
     $app->get("/site-revenue","App\Controllers\AdminPanelController:get_website_revenue_page");
     $app->get("/notifications","App\Controllers\AdminPanelController:get_notifications_page");
     $app->get("/notifications/new","App\Controllers\AdminPanelController:get_new_notification_page");
-    $app->get("/notification/public/info","App\Controllers\AdminPanelController:get_public_notification_info_json");
     $app->get("/notification/private/info","App\Controllers\AdminPanelController:get_private_notification_info_json");
+    $app->get("/notification/public/info","App\Controllers\AdminPanelController:get_public_notification_info_json");
+    $app->get("/notification/edit/{notif_id}","App\Controllers\AdminPanelController:get_notification_edit_page");
+    $app->get("/notification/view/","App\Controllers\AdminPanelController:get_private_notification_info_json");
     $app->post("/translator/employ","App\Controllers\AdminPanelController:post_employ_translator");
     $app->post("/translator/deny","App\Controllers\AdminPanelController:post_deny_translator");
     $app->post("/translator-order-request/accept","App\Controllers\AdminPanelController:accept_translator_order_request");
@@ -52,6 +54,7 @@ $app->group('/admin', function ($app) use ($container) {
     $app->post("/notification/delete","App\Controllers\AdminPanelController:delete_notification");
     $app->post("/notifications/upload-attachment","App\Controllers\AdminPanelController:upload_notification_attachment");
     $app->post("/notifications/new","App\Controllers\AdminPanelController:post_new_notification");
+
 })->add(function ($req, $res, $next) use ($container) {
     if (isset($_SESSION['is_admin_logged_in'])) {
         return $next($req, $res);
