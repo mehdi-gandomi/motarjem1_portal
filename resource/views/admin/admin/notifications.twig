@@ -4,7 +4,13 @@
     <main class="main">
         <div class="card">
             <div class="card-body" style="min-height: 550px">
-                <h4 class="mt-4 mb-4">اطلاعیه های عمومی</h4>
+                <div class="d-flex  justify-content-between">
+                    <h4 class="mt-4 mb-4">اطلاعیه های عمومی</h4>
+                    <a href="/admin/notifications/new?is_private=0" class="btn btn-success" style="height: 36px;">
+                        <span class="icon-plus"></span>
+                        <span class="mr-2">اطلاعیه جدید</span>
+                    </a>
+                </div>
                 <table class="table global-notifications OrdersTable is--responsive">
                     {% if public_notifications %}
                         <thead>
@@ -68,7 +74,14 @@
                     'offset' : 10,
                     'visible_numbers' : 3
                 } %}
-                <h4 class="mt-4 mb-4">اطلاعیه های خصوصی</h4>
+                <div class="d-flex justify-content-between">
+                    <h4 class="mt-4 mb-4">اطلاعیه های خصوصی</h4>
+                    <a href="/admin/notifications/new?is_private=1" class="btn btn-success" style="height: 36px;">
+                        <span class="icon-plus"></span>
+                        <span class="mr-2">اطلاعیه جدید</span>
+                    </a>
+                </div>
+
                 <table class="table global-notifications OrdersTable is--responsive">
                     {% if private_notifications %}
                         <thead>

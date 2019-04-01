@@ -160,6 +160,19 @@ class Translator extends Model
             return false;
         }
     }
+
+    public static function get_all($fields="*")
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT $fields FROM translators WHERE level='2' AND is_employed='1'";
+            $result=$db->query($sql);
+            return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+        }catch (\Exception $e){
+            return [];
+        }
+    }
+
     //this method activtes the account by username given to it
     public function activate($username)
     {

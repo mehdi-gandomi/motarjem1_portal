@@ -72,6 +72,31 @@ class Notification extends Model
         }
     }
 
+    public static function new($notification)
+    {
+        try{
+            unset($notification['file']);
+            $notification['sent_date_persian']=self::getCurrentDatePersian();
+            if ($notification['notif_type']=="1"){
+                $recipients=$notification['recipients'];
+                unset($notification['recipients']);
+                $notifId=static::insert("notifications",$notification);
+                foreach ($recipients as $recipientId){
+                    static::insert("notif_translator",['notif_id'=>$notifId,'translator_id'=>$recipientId]);
+                }
+                return true;
+            }else{
+                static::insert("notifications",$notification);
+                return true;
+            }
+
+
+        }catch (\Exception $e){
+            file_put_contents("err.txt",$e->getMessage());
+            return false;
+        }
+    }
+
     protected static function getCurrentDatePersian()
     {
         $now = new \DateTime("NOW");

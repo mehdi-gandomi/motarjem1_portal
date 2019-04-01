@@ -542,7 +542,10 @@ class AdminPanelController extends Controller
     //render a page to create new notification
     public function get_new_notification_page($req,$res,$args)
     {
-
+        $data=[];
+        $data['is_private']=$req->getParam("is_private") ?intval($req->getParam("is_private")):0;
+        $data['translators']=Translator::get_all("translator_id,fname,lname");
+        return $this->view->render($res,"admin/admin/new-notification.twig",$data);
     }
 
     public function get_public_notification_info_json($req,$res,$args)
@@ -573,6 +576,35 @@ class AdminPanelController extends Controller
         }
         return $res->withJson(['status'=>true,'message'=>'an error occured i deleting notification']);
     }
+    //save new notification in db and send result as json
+    public function post_new_notification($req,$res,$args)
+    {
+        $postFields=$req->getParsedBody();
+        $result=Notification::new($postFields);
+        if ($result){
+            return $res->withJson(['status'=>true]);
+        }
+        return $res->withJson(['status'=>false,'message'=>'an error occurred when saving notification in db :(']);
+    }
+
+    //upload attachment for notification
+    public function upload_notification_attachment($req,$res,$args)
+    {
+        $uploadedFiles = $req->getUploadedFiles();
+        $uploadedFile = $uploadedFiles['file'];
+        $directory = dirname(dirname(__DIR__)) . '/public/uploads/attachments';
+        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+            try {
+                $filename = $this->moveUploadedFile($directory, $uploadedFile);
+                $res->write($filename);
+            } catch (\Exception $e) {
+                $res->write("error while uploading file "+$e->getMessage())->withStatus(500);
+            }
+        } else {
+            $res->write($uploadedFile->getError())->withStatus(500);
+        }
+    }
+
 
     //convert english numbers to english one
     protected function persian_num_to_english($str)
@@ -581,4 +613,5 @@ class AdminPanelController extends Controller
         $english_nums = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
         return str_replace($persian_nums, $english_nums, $str);
     }
+
 }
