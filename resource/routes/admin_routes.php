@@ -41,7 +41,8 @@ $app->group('/admin', function ($app) use ($container) {
     $app->get("/notification/private/info","App\Controllers\AdminPanelController:get_private_notification_info_json");
     $app->get("/notification/public/info","App\Controllers\AdminPanelController:get_public_notification_info_json");
     $app->get("/notification/edit/{notif_id}","App\Controllers\AdminPanelController:get_notification_edit_page");
-    $app->get("/notification/view/","App\Controllers\AdminPanelController:get_private_notification_info_json");
+    $app->get("/notification/view/{notif_id}","App\Controllers\AdminPanelController:get_private_notification_info_json");
+    $app->get("/users/manage","App\Controllers\AdminPanelController:get_user_management_page");
     $app->post("/translator/employ","App\Controllers\AdminPanelController:post_employ_translator");
     $app->post("/translator/deny","App\Controllers\AdminPanelController:post_deny_translator");
     $app->post("/translator-order-request/accept","App\Controllers\AdminPanelController:accept_translator_order_request");

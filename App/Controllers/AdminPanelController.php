@@ -605,6 +605,10 @@ class AdminPanelController extends Controller
         return $res->withJson(['status'=>false,'message'=>'an error occurred when updating notification in db :(']);
     }
 
+    public function get_user_management_page($req,$res,$args)
+    {
+        return $this->view->render($res,"admin/admin/user-management.twig");
+    }
     //upload attachment for notification
     public function upload_notification_attachment($req,$res,$args)
     {
