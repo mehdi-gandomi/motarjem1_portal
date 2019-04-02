@@ -92,7 +92,6 @@ class Notification extends Model
 
 
         }catch (\Exception $e){
-            file_put_contents("err.txt",$e->getMessage());
             return false;
         }
     }
@@ -112,7 +111,7 @@ class Notification extends Model
     {
         try{
             $db=static::getDB();
-            $sql="SELECT notifications.notif_id,notifications.title,notifications.importance,notifications.body,notifications.attach_files,GROUP_CONCAT(notif_translator.translator_id,',') AS recipients FROM `notif_translator` INNER JOIN notifications ON notif_translator.notif_id = notifications.notif_id INNER JOIN translators ON notif_translator.translator_id = translators.translator_id WHERE notif_translator.notif_id = '$notif_id' GROUP BY notifications.notif_id,notif_translator.notif_id";
+            $sql="SELECT notifications.notif_id,notifications.notif_type,notifications.title,notifications.importance,notifications.body,notifications.attach_files,GROUP_CONCAT(notif_translator.translator_id,',') AS recipients FROM `notif_translator` INNER JOIN notifications ON notif_translator.notif_id = notifications.notif_id INNER JOIN translators ON notif_translator.translator_id = translators.translator_id WHERE notif_translator.notif_id = '$notif_id' GROUP BY notifications.notif_id,notif_translator.notif_id";
             $result=$db->query($sql);
             if ($result){
                 $result=$result->fetch(PDO::FETCH_ASSOC);
@@ -123,6 +122,29 @@ class Notification extends Model
             return [];
         }catch (\Exception $e){
             return [];
+        }
+    }
+
+    public static function edit_by_notif_id($notif_id,$notification)
+    {
+        try{
+            unset($notification['file']);
+            if ($notification['notif_type']=="1"){
+                $recipients=$notification['recipients'];
+                unset($notification['recipients']);
+                static::update("notifications",$notification,"notif_id = '$notif_id'");
+                static::delete("notif_translator","notif_id = '$notif_id'");
+                foreach ($recipients as $recipientId){
+                    static::insert("notif_translator",['notif_id'=>$notif_id,'translator_id'=>$recipientId]);
+                }
+                return true;
+            }else{
+                static::update("notifications",$notification,"notif_id = '$notif_id'");
+                return true;
+            }
+        }catch (\Exception $e){
+            file_put_contents("err.txt",$e->getMessage());
+            return false;
         }
     }
 }

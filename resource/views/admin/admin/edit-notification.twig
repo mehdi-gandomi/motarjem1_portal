@@ -10,8 +10,8 @@
         <div class="card">
             <div class="card-body" style="min-height: 550px">
                 <h4 class="mt-3 mb-5">ویرایش اطلاعیه</h4>
-                <form class="row" id="newNotificationForm" action="/admin/notifications/new" method="post">
-                    <input type="hidden" name="attach_files" id="attachments">
+                <form class="row" id="newNotificationForm" action="/admin/notifications/edit/{{ notification.notif_id }}" method="post">
+                    <input type="hidden" name="attach_files" id="attachments" value="{{ notification.attach_files }}">
                     <div class="form-group col-lg-3">
                         <label for="title">عنوان اطلاعیه</label>
                         <input type="text" name="title" id="title" class="form-control" value="{{ notification.title }}">
@@ -19,8 +19,8 @@
                     <div class="form-group col-lg-2">
                         <label for="type">نوع اطلاعیه</label>
                         <select class="form-control" name="notif_type" id="type">
-                            <option value="0" {{ notification.notif_type == 0 ? "selected":"" }}>عمومی</option>
-                            <option value="1" {{ notification.notif_type == 1 ? "selected":"" }}>خصوصی</option>
+                            <option value="0" {{ notification.notif_type == "0" ? "selected":"" }}>عمومی</option>
+                            <option value="1" {{ notification.notif_type == "1" ? "selected":"" }}>خصوصی</option>
                         </select>
                     </div>
 
@@ -62,9 +62,6 @@
             </div>
         </div>
     </main>
-    <div class="d-none" id="hidden-attach-files">
-        {{ notification.attach_files }}
-    </div>
 {% endblock %}
 {% block script_below %}
     <script src="/public/js/panel/medium-editor.min.js"></script>

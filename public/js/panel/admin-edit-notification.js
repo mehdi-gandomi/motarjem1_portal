@@ -1,5 +1,4 @@
 let uploadedFiles = [];
-
 $("#type").on("change",function (e) {
     $("#recipients").parent().toggleClass("d-none");
 });
@@ -33,7 +32,7 @@ $("#newNotificationForm").on("submit",function (e) {
                 if (data.status){
                     Swal.fire({
                         title: 'موفق !',
-                        text:"اطلاعیه با موفقیت ازسال شد !",
+                        text:"اطلاعیه با موفقیت ویرایش شد !",
                         type: 'success',
                         confirmButtonColor: '#3085d6',
                         showCancelButton: true,
@@ -49,7 +48,7 @@ $("#newNotificationForm").on("submit",function (e) {
                     console.log(data.message);
                     return Swal.fire(
                         'خطا !',
-                        "خطایی در ارسال اطلاعیه رخ داد !",
+                        "خطایی در ویرایش اطلاعیه رخ داد !",
                         'error'
                     );
                 }
@@ -86,23 +85,41 @@ $(document).ready(function (e) {
                 onerror: function(response) {
                     return response.data;
                 }
+            },
+            revert:{
+                url:"/admin/notifications/upload-attachment",
+                onload:function (response) {
+                    console.log(response);
+                    uploadedFiles=uploadedFiles.filter(function (file) {
+                        return file != response;
+                    });
+                    $("#attachments").val(uploadedFiles.join(","));
+                },
+                onerror:function (res) {
+                    console.log(res);
+                }
             }
         }
     });
-    initialFiles=[];
-    let files=$("#hidden-attach-files").text().trim();
-    files=files.split(",");
-    files.forEach(function (file) {
-        initialFiles.push({
-            source: "/public/uploads/attachments/"+file,
-            // set type to limbo to tell FilePond this is a temp file
-            options: {
-                type: 'limbo'
-            }
-        })
-    });
-    // Select the file input and use create() to turn it into a pond
-    const pond=FilePond.create(document.querySelector("#files"),{
-        files: initialFiles
-    });
+    let uploadedFiles=$("#attachments").val()=="" ? []:$("#attachments").val().split(",");
+       if (uploadedFiles.length>0){
+           initialFiles=[];
+           uploadedFiles.forEach(function (file) {
+               initialFiles.push({
+                   source: "/public/uploads/attachments/"+file,
+                   // set type to limbo to tell FilePond this is a temp file
+                   options: {
+                       type: 'limbo'
+                   }
+               })
+           });
+           // Select the file input and use create() to turn it into a pond
+           FilePond.create(document.querySelector("#files"),{
+               files: initialFiles
+           });
+       }else{
+           FilePond.create(document.querySelector("#files"));
+       }
+
+
 });

@@ -54,6 +54,8 @@ $app->group('/admin', function ($app) use ($container) {
     $app->post("/notification/delete","App\Controllers\AdminPanelController:delete_notification");
     $app->post("/notifications/upload-attachment","App\Controllers\AdminPanelController:upload_notification_attachment");
     $app->post("/notifications/new","App\Controllers\AdminPanelController:post_new_notification");
+    $app->post("/notifications/edit/{notif_id}","App\Controllers\AdminPanelController:post_edit_notification");
+    $app->delete("/notifications/upload-attachment","App\Controllers\AdminPanelController:delete_uploaded_attachment");
 
 })->add(function ($req, $res, $next) use ($container) {
     if (isset($_SESSION['is_admin_logged_in'])) {

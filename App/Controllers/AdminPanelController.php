@@ -595,6 +595,16 @@ class AdminPanelController extends Controller
         return $this->view->render($res,"admin/admin/edit-notification.twig",$data);
     }
 
+    //update notification by notif_id
+    public function post_edit_notification($req,$res,$args)
+    {
+        $result=Notification::edit_by_notif_id($args['notif_id'],$req->getParsedBody());
+        if ($result){
+            return $res->withJson(['status'=>true]);
+        }
+        return $res->withJson(['status'=>false,'message'=>'an error occurred when updating notification in db :(']);
+    }
+
     //upload attachment for notification
     public function upload_notification_attachment($req,$res,$args)
     {
@@ -613,6 +623,19 @@ class AdminPanelController extends Controller
         }
     }
 
+    public function delete_uploaded_attachment($req,$res,$args)
+    {
+        try{
+            $body = file_get_contents("php://input");
+            $filePath=dirname(dirname(__DIR__)).$body;
+            unlink($filePath);
+            $fileArr=explode("/",$body);
+            $fileArr=$fileArr[count($fileArr)-1];
+            return $res->write($fileArr);
+        }catch (\Exception $e){
+            return $res->write("an error occured when deleting the file")->withStatus(500);
+        }
+    }
 
     //convert english numbers to english one
     protected function persian_num_to_english($str)
