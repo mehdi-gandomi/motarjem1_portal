@@ -507,4 +507,45 @@ class Admin extends Model
             return [];
         }
     }
+
+    public static function get_all_users_by_filtering($page, $offset, $filteringOptions=null)
+    {
+        try{
+            $db=static::getDB();
+            if (is_array($filteringOptions) && count($filteringOptions) > 0){
+                if (isset($filteringOptions['user_filters'])){
+                    if (in_array("user",$filteringOptions['user_filters']) && in_array("translator",$filteringOptions['user_filters'])){
+                        if (isset($filteringOptions['is_active'])){
+                            $sql="SELECT user_id,fname,lname,username,is_active,register_date_persian,avatar,0 AS is_translator FROM users";
+                            $sql.="WHERE is_active IN ('".implode("','",$filteringOptions['is_active'])."')'";
+                            $users=$db->query($sql) ? $db->query($sql)->fetchAll(PDO::FETCH_ASSOC):[];
+                            $sql="SELECT translator_id AS user_id,fname,lname,username,is_active,register_date_persian,avatar,1 AS is_translator FROM translators";
+                            $sql.="WHERE is_active IN ('".implode("','",$filteringOptions['is_active'])."')'";
+                            $users=$db->query($sql) ? array_merge($users,$db->query($sql)->fetchAll(PDO::FETCH_ASSOC)):$users;
+                            return $users;
+                        }
+                        $sql="SELECT user_id,fname,lname,username,is_active,register_date_persian,avatar,0 AS is_translator FROM users";
+                        $users=$db->query($sql) ? $db->query($sql)->fetchAll(PDO::FETCH_ASSOC):[];
+                        $sql="SELECT translator_id AS user_id,fname,lname,username,is_active,register_date_persian,avatar,1 AS is_translator FROM translators";
+                        $users=$db->query($sql) ? array_merge($users,$db->query($sql)->fetchAll(PDO::FETCH_ASSOC)):$users;
+                        return $users;
+                    }else if (in_array("user",$filteringOptions['user_filters']) && !in_array("translator",$filteringOptions['user_filters'])){
+                        if (isset($filteringOptions['is_active'])){
+                            $sql="SELECT user_id,fname,lname,username,is_active,register_date_persian,avatar,0 AS is_translator FROM users";
+                            $sql.="WHERE is_active IN ('".implode("','",$filteringOptions['is_active'])."')'";
+                            $users=$db->query($sql) ? $db->query($sql)->fetchAll(PDO::FETCH_ASSOC):[];
+                            return $users;
+                        }
+                        $sql="SELECT user_id,fname,lname,username,is_active,register_date_persian,avatar,0 AS is_translator FROM users";
+                        $users=$db->query($sql) ? $db->query($sql)->fetchAll(PDO::FETCH_ASSOC):[];
+                        $sql="SELECT translator_id AS user_id,fname,lname,username,is_active,register_date_persian,avatar,1 AS is_translator FROM translators";
+                        $users=$db->query($sql) ? array_merge($users,$db->query($sql)->fetchAll(PDO::FETCH_ASSOC)):[];
+                        return $users;
+                    }
+                }
+            }
+        }catch (\Exception $e){
+
+        }
+    }
 }

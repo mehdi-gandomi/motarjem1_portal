@@ -607,7 +607,12 @@ class AdminPanelController extends Controller
 
     public function get_user_management_page($req,$res,$args)
     {
-        return $this->view->render($res,"admin/admin/user-management.twig");
+        $page=$req->getParam("page") ? $req->getParam("page"):1;
+        $userFilter=$req->getParam("user_filter") ? explode(",",$req->getParam("user_filter")) ? ['user','translator'];
+        $activeState=$req->getParam("active_state") ? explode(",",$req->getParam("active_state")) ? ['0','1'];
+        $data=[];
+        $data['users']=Admin::get_all_users_by_filtering($page,10,['user_filter'=>$userFilter,'is_active'=>$activeState]);
+        return $this->view->render($res,"admin/admin/user-management.twig",$data);
     }
     //upload attachment for notification
     public function upload_notification_attachment($req,$res,$args)
