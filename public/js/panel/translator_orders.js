@@ -55,7 +55,6 @@ $("input[type=checkbox]").on("change",function(e){
     let page=getQueryString("page");
     let doneQsFromUrl=getQueryString("done");
     if(doneQsFromUrl && doneQsFromUrl.indexOf(value) < 0 ){
-        console.log("fuck1");
         if(state){
             doneQsFromUrl+=","+value;
         }else{

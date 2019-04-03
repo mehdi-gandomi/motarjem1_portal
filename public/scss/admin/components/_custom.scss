@@ -125,3 +125,14 @@
 .flex-d-column{
     flex-direction: column !important;
 }
+.avatar-in-table{
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    &.lightbox-enabled{
+     &:hover{
+        cursor: zoom-in;
+        filter: brightness(0.7);
+     }   
+    }
+}

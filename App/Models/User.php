@@ -28,6 +28,7 @@ class User extends Model
         }
 
     }
+
     public static function by_id($userId, $fields = "*")
     {
         try {
@@ -206,5 +207,45 @@ class User extends Model
         $time = $now->format("H:i");
         $persianDate = gregorian_to_jalali($year, $month, $day);
         return $persianDate[0] . "/" . $persianDate[1] . "/" . $persianDate[2] . " " . $time;
+    }
+
+    public static function get_all_by_filtering($page, $offset, $fields="*", $filteringOptions=null)
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT $fields FROM users";
+            $page_limit = ($page - 1) * $offset;
+            if (is_array($filteringOptions) && count($filteringOptions) > 0){
+                $sql.=" WHERE ";
+                $arr=[];
+                foreach($filteringOptions as $key=>$option){
+                    array_push($arr,"`$key` IN ('".implode("','",$option)."')");
+                }
+                $sql.=implode(" AND ",$arr);
+                $arr=null;
+            }
+            $sql.=" LIMIT $page_limit,$offset";
+            $result=$db->query($sql);
+            return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+        }catch (\Exception $e){
+            return [];
+        }
+    }
+    public static function get_all_count_by_filtering($filteringOptions)
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT COUNT(*) AS users_count FROM users WHERE";
+            $arr=[];
+            foreach($filteringOptions as $key=>$option){
+                array_push($arr,"`$key` IN ('".implode("','",$option)."')");
+            }
+            $sql.=implode(" AND ",$arr);
+            $arr=null;
+            $result=$db->query($sql);
+            return $result ? $result->fetch(PDO::FETCH_ASSOC)['users_count']:0;
+        }catch (\Exception $e){
+            return [];
+        }
     }
 }

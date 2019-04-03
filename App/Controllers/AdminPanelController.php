@@ -607,12 +607,39 @@ class AdminPanelController extends Controller
 
     public function get_user_management_page($req,$res,$args)
     {
-        $page=$req->getParam("page") ? $req->getParam("page"):1;
-        $userFilter=$req->getParam("user_filter") ? explode(",",$req->getParam("user_filter")) ? ['user','translator'];
-        $activeState=$req->getParam("active_state") ? explode(",",$req->getParam("active_state")) ? ['0','1'];
+        $customerPage=$req->getParam("c_page") ? $req->getParam("c_page"):1;
+        $translatorPage=$req->getParam("t_page") ? $req->getParam("t_page"):1;
+        $translatorActiveState=$req->getParam("translator_active_state") != null ? explode(",",$req->getParam("translator_active_state")) : ['0','1'];
+        $userActiveState=$req->getParam("user_active_state") != null ? explode(",",$req->getParam("user_active_state")) : ['0','1'];
+        $employedState=$req->getParam("employ_state") ? explode(",",$req->getParam("employ_state")) : ['0','1'];
         $data=[];
-        $data['users']=Admin::get_all_users_by_filtering($page,10,['user_filter'=>$userFilter,'is_active'=>$activeState]);
+        $data['translators']=Translator::get_all_by_filtering($translatorPage,10,"translator_id,fname,lname,avatar,username,is_active,is_employed,register_date_persian",['is_active'=>$translatorActiveState,'is_employed'=>$employedState]);
+        $data['translators_count']=Translator::get_all_count_by_filtering(['is_active'=>$translatorActiveState,'is_employed'=>$employedState]);
+        $data['customers']=User::get_all_by_filtering($customerPage,10,"user_id,fname,lname,avatar,username,is_active,register_date_persian",['is_active'=>$userActiveState]);
+        $data['customers_count']=User::get_all_count_by_filtering(['is_active'=>$userActiveState]);
+        $data['translator_current_page']=$translatorPage;
+        $data['customer_current_page']=$customerPage;
+        $data['translator_active_state']=$translatorActiveState;
+        $data['employment_state']=$employedState;
+        $data['user_active_state']=$userActiveState;
         return $this->view->render($res,"admin/admin/user-management.twig",$data);
+    }
+
+    public function get_user_management_data_json($req,$res,$args)
+    {
+        $customerPage=$req->getParam("c_page") ? $req->getParam("c_page"):1;
+        $translatorPage=$req->getParam("t_page") ? $req->getParam("t_page"):1;
+        $translatorActiveState=$req->getParam("translator_active_state") ? explode(",",$req->getParam("translator_active_state")) : ['0','1'];
+        $userActiveState=$req->getParam("user_active_state") !=null ? explode(",",$req->getParam("user_active_state")) : ['0','1'];
+        $employedState=$req->getParam("employ_state") !=null ? explode(",",$req->getParam("employ_state")) : ['0','1'];
+        $data=[];
+        $data['translators']=Translator::get_all_by_filtering($translatorPage,10,"translator_id,fname,lname,avatar,username,is_active,is_employed,register_date_persian",['is_active'=>$translatorActiveState,'is_employed'=>$employedState]);
+        $data['translators_count']=Translator::get_all_count_by_filtering(['is_active'=>$translatorActiveState,'is_employed'=>$employedState]);
+        $data['customers']=User::get_all_by_filtering($customerPage,10,"user_id,fname,lname,avatar,username,is_active,register_date_persian",['is_active'=>$userActiveState]);
+        $data['customers_count']=User::get_all_count_by_filtering(['is_active'=>$userActiveState]);
+        $data['translator_current_page']=$translatorPage;
+        $data['customer_current_page']=$customerPage;
+        return $res->withJson($data);
     }
     //upload attachment for notification
     public function upload_notification_attachment($req,$res,$args)

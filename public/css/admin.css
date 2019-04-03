@@ -16367,6 +16367,19 @@ body {
           flex-direction: column !important;
 }
 
+.avatar-in-table {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+
+.avatar-in-table.lightbox-enabled:hover {
+  cursor: -webkit-zoom-in;
+  cursor: zoom-in;
+  -webkit-filter: brightness(0.7);
+          filter: brightness(0.7);
+}
+
 .avatar-upload {
   position: relative;
   max-width: 120px;

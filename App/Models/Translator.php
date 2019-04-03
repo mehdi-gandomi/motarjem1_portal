@@ -173,6 +173,45 @@ class Translator extends Model
         }
     }
 
+    public static function get_all_by_filtering($page,$offset,$fields="*",$filteringOptions=null)
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT $fields FROM translators WHERE level='2'";
+            $page_limit = ($page - 1) * $offset;
+            if (is_array($filteringOptions) && count($filteringOptions) > 0){
+                $sql.=" AND ";
+                $arr=[];
+                foreach($filteringOptions as $key=>$option){
+                    array_push($arr,"`$key` IN ('".implode("','",$option)."')");
+                }
+                $sql.=implode(" AND ",$arr);
+                $arr=null;
+            }
+            $sql.=" LIMIT $page_limit,$offset";
+            $result=$db->query($sql);
+            return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+        }catch (\Exception $e){
+            return [];
+        }
+    }
+    public static function get_all_count_by_filtering($filteringOptions=null)
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT COUNT(*) AS users_count FROM translators WHERE level='2'";
+            $arr=[];
+            foreach($filteringOptions as $key=>$option){
+                array_push($arr,"`$key` IN ('".implode("','",$option)."')");
+            }
+            $sql.=implode(" AND ",$arr);
+            $arr=null;
+            $result=$db->query($sql);
+            return $result ? $result->fetch(PDO::FETCH_ASSOC)['users_count']:0;
+        }catch (\Exception $e){
+            return 0;
+        }
+    }
     //this method activtes the account by username given to it
     public function activate($username)
     {
