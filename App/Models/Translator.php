@@ -212,6 +212,29 @@ class Translator extends Model
             return 0;
         }
     }
+
+    public static function deactivate_by_user_id($userId)
+    {
+        try {
+            static::update("translators", ["is_active" => 0], "translator_id ='$userId'");
+            return true;
+        } catch (\Exception $e) {
+            return false;
+
+        }
+    }
+
+    public static function activate_by_user_id($userId)
+    {
+        try {
+            static::update("translators", ["is_active" => 1], "translator_id ='$userId'");
+            return true;
+        } catch (\Exception $e) {
+            return false;
+
+        }
+    }
+
     //this method activtes the account by username given to it
     public function activate($username)
     {

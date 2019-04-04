@@ -1,5 +1,14 @@
 {% extends 'admin/layout/admin.twig' %}
-
+{% block style_below %}
+    <style>
+        .order-actions a span{
+            padding-top: 0.6rem;
+        }
+        .order-actions a span:before{
+            top: 210% !important;
+        }
+    </style>
+{%  endblock %}
 {% block content %}
     <main class="main">
         <div class="card card-default" style="min-height:550px">
@@ -104,17 +113,25 @@
                                 {{ user.register_date_persian }}
                             </td>
                             <td data-label="عملیات" class="order-actions" style="position: relative">
-                                <button onclick="showTranslatorInfo('{{ user.user_id  }}')" class="expand-button order-action is--primary is--medium">
-                                    <span data-hover="جزییات بیشتر">
+                                <a href="/admin/translator/info/{{ user.username }}" class="expand-button order-action is--primary is--medium">
+                                    <span data-hover="جزییات بیشتر" >
                                         <i class="icon-info"></i>
                                     </span>
-                                </button>
-                                <button onclick="deactivateTranslatorAccount('{{ user.user_id  }}')" class="expand-button order-action is--default is--large">
+                                </a>
+                                {% if user.is_active == "1" %}
+                                    <button onclick="deactivateUserAccount('{{ user.translator_id  }}','translator')" class="expand-button order-action is--default is--large">
                                     <span data-hover="غیر فعال کردن حساب">
                                         <i class="icon-lock"></i>
                                     </span>
-                                </button>
-                                <button onclick="deleteTranslator('{{ user.user_id  }}')" class="expand-button order-action is--danger">
+                                    </button>
+                                {% else %}
+                                    <button onclick="activateUserAccount('{{ user.translator_id  }}','translator')" class="expand-button order-action is--default is--large is--success">
+                                    <span data-hover="فعال کردن حساب">
+                                        <i class="icon-lock-open"></i>
+                                    </span>
+                                    </button>
+                                {% endif %}
+                                <button onclick="deleteUser('{{ user.translator_id  }}','translator')" class="expand-button order-action is--danger">
                                     <span data-hover="حذف کاربر">
                                         <i class="icon-user-unfollow"></i>
                                     </span>
@@ -196,16 +213,24 @@
                                 {{ user.register_date_persian }}
                             </td>
                             <td data-label="عملیات" class="order-actions" style="position: relative">
-                                <button onclick="showUserInfo('{{ user.user_id  }}')" class="expand-button order-action is--primary is--medium">
+                                <a href="/admin/user/info/{{ user.username }}" class="expand-button order-action is--primary is--medium">
                                     <span data-hover="جزییات بیشتر">
                                         <i class="icon-info"></i>
                                     </span>
-                                </button>
-                                <button onclick="deactivateUserAccount('{{ user.user_id  }}')" class="expand-button order-action is--default is--large">
+                                </a>
+                                {% if user.is_active == "1" %}
+                                    <button onclick="deactivateUserAccount('{{ user.user_id  }}')" class="expand-button order-action is--default is--large">
                                     <span data-hover="غیر فعال کردن حساب">
                                         <i class="icon-lock"></i>
                                     </span>
-                                </button>
+                                    </button>
+                                {% else %}
+                                    <button onclick="activateUserAccount('{{ user.user_id  }}')" class="expand-button order-action is--default is--large is--success">
+                                    <span data-hover="فعال کردن حساب">
+                                        <i class="icon-lock-open"></i>
+                                    </span>
+                                    </button>
+                                {% endif %}
                                 <button onclick="deleteUser('{{ user.user_id  }}')" class="expand-button order-action is--danger">
                                     <span data-hover="حذف کاربر">
                                         <i class="icon-user-unfollow"></i>
@@ -233,5 +258,6 @@
     </div>
 {% endblock %}
 {% block script_below %}
+    <script src="/public/js/sweetalert2@8.js"></script>
     <script src="/public/js/panel/admin-user-management.js"></script>
 {% endblock %}

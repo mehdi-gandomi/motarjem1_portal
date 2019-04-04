@@ -641,6 +641,87 @@ class AdminPanelController extends Controller
         $data['customer_current_page']=$customerPage;
         return $res->withJson($data);
     }
+
+    public function get_user_info_page($req,$res,$args)
+    {
+        $page=$req->getParam("page") ? $req->getParam("page") : 1;
+        $isDone=$req->getParam("done") ? explode(",",$req->getParam("done")) : ['0','1'];
+        $userData=User::by_username($args['username']);
+        $userOrders=User::get_orders_with_filter_by_user_id($userData['user_id'],$page,10,['is_done'=>$isDone]);
+        $userOrdersCount=User::get_orders_count_with_filter_by_user_id($userData['user_id'],['is_done'=>$isDone]);
+        return $this->view->render($res,"admin/admin/user-info.twig",['info'=>$userData,'orders'=>$userOrders,'count'=>$userOrdersCount,'current_page'=>$page,'done'=>$isDone]);
+    }
+
+    public function get_user_json_data($req,$res,$args)
+    {
+        $page=$req->getParam("page") ? $req->getParam("page") : 1;
+        $isDone=$req->getParam("done") ? explode(",",$req->getParam("done")) : ['0','1'];
+        $userData=User::by_username($args['username'],"user_id");
+        $userOrders=User::get_orders_with_filter_by_user_id($userData['user_id'],$page,10,['is_done'=>$isDone]);
+        $userOrdersCount=User::get_orders_count_with_filter_by_user_id($userData['user_id'],['is_done'=>$isDone]);
+        return $res->withJson(['orders'=>$userOrders,'count'=>$userOrdersCount,'current_page'=>$page]);
+    }
+
+    public function post_deactivate_translator($req,$res,$args)
+    {
+        $hash = md5(md5(Config::VERIFY_EMAIL_KEY));
+        $body = $req->getParsedBody();
+        if ($body['token']===$hash){
+            $result=Translator::deactivate_by_user_id($body['user_id']);
+            if ($result){
+                return $res->withJson(['status'=>true,'message'=>'حساب انتخابی با موفقیت غیرفعال شد !']);
+            }
+            return $res->withJson(['status'=>false,'message'=>'خطایی در ذخیره اطلاعات رخ داد !']);
+        }
+        return $res->withJson(['status'=>false,'message'=>'توکن ارسال شده نامعتبر می باشد !']);
+
+
+    }
+    public function post_activate_translator($req,$res,$args)
+    {
+        $hash = md5(md5(Config::VERIFY_EMAIL_KEY));
+        $body = $req->getParsedBody();
+        if ($body['token']===$hash){
+            $result=Translator::activate_by_user_id($body['user_id']);
+            if ($result){
+                return $res->withJson(['status'=>true,'message'=>'حساب انتخابی با موفقیت غیرفعال شد !']);
+            }
+            return $res->withJson(['status'=>false,'message'=>'خطایی در ذخیره اطلاعات رخ داد !']);
+        }
+        return $res->withJson(['status'=>false,'message'=>'توکن ارسال شده نامعتبر می باشد !']);
+
+
+    }
+    public function post_deactivate_user($req,$res,$args)
+    {
+        $hash = md5(md5(Config::VERIFY_EMAIL_KEY));
+        $body = $req->getParsedBody();
+        if ($body['token']===$hash){
+            $result=User::deactivate_by_user_id($body['user_id']);
+            if ($result){
+                return $res->withJson(['status'=>true,'message'=>'حساب انتخابی با موفقیت غیرفعال شد !']);
+            }
+            return $res->withJson(['status'=>false,'message'=>'خطایی در ذخیره اطلاعات رخ داد !']);
+        }
+        return $res->withJson(['status'=>false,'message'=>'توکن ارسال شده نامعتبر می باشد !']);
+
+
+    }
+    public function post_activate_user($req,$res,$args)
+    {
+        $hash = md5(md5(Config::VERIFY_EMAIL_KEY));
+        $body = $req->getParsedBody();
+        if ($body['token']===$hash){
+            $result=User::activate_by_user_id($body['user_id']);
+            if ($result){
+                return $res->withJson(['status'=>true,'message'=>'حساب انتخابی با موفقیت غیرفعال شد !']);
+            }
+            return $res->withJson(['status'=>false,'message'=>'خطایی در ذخیره اطلاعات رخ داد !']);
+        }
+        return $res->withJson(['status'=>false,'message'=>'توکن ارسال شده نامعتبر می باشد !']);
+
+
+    }
     //upload attachment for notification
     public function upload_notification_attachment($req,$res,$args)
     {

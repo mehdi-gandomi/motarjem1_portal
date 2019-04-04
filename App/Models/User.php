@@ -133,6 +133,55 @@ class User extends Model
             return false;
         }
     }
+    //this function is for getting orders by user id . you can limit the result by passing the second argument to your number of choice and also you can filter results
+    public static function get_orders_with_filter_by_user_id($userId, $page, $amount,$filtering_Options=null)
+    {
+        try {
+            $db = static::getDB();
+            $page_limit = ($page - 1) * $amount;
+            $userId=intval($userId);
+            $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.translation_kind,orders.translation_lang,orders.translation_quality,orders.delivery_type,order_logs.is_accepted,order_logs.transaction_code,orders.order_price,study_fields.title as study_field FROM orders INNER JOIN order_logs ON orders.order_id = order_logs.order_id INNER JOIN study_fields ON orders.field_of_study = study_fields.id WHERE order_logs.transaction_code != '0' AND orders.orderer_id=:orderer_id";
+            if(is_array($filtering_Options) && count($filtering_Options)>0){
+                $sql.=" AND ";
+                $arr=[];
+                foreach($filtering_Options as $key=>$option){
+                    array_push($arr,"`$key` IN ('".implode("','",$option)."')");
+                }
+                $sql.=implode(" AND ",$arr);
+                $arr=null;
+            }
+            $sql.=" ORDER BY order_date DESC LIMIT $page_limit,$amount";
+            $stmt = $db->prepare($sql);
+            $stmt->bindParam(":orderer_id",$userId);
+            $result=$stmt->execute();
+            return $result ? $stmt->fetchAll(PDO::FETCH_ASSOC) : false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+    //this function gets count of orders by user id . you can limit the result by passing the second argument to your number of choice and also you can filter results
+    public static function get_orders_count_with_filter_by_user_id($userId,$filtering_Options=null)
+    {
+        try {
+            $db = static::getDB();
+            $sql = "SELECT COUNT(*) AS orders_count FROM orders  INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE order_logs.transaction_code != '0' AND orders.orderer_id=:orderer_id";
+            if(is_array($filtering_Options) && count($filtering_Options)>0){
+                $sql.=" AND ";
+                $arr=[];
+                foreach($filtering_Options as $key=>$option){
+                    array_push($arr,"`$key` IN ('".implode("','",$option)."')");
+                }
+                $sql.=implode(" AND ",$arr);
+                $arr=null;
+            }
+            $sql.=" ORDER BY order_date DESC";
+            $stmt = $db->prepare($sql);
+            $result=$stmt->execute(['orderer_id'=>$userId]);
+            return $result ? $stmt->fetch(PDO::FETCH_ASSOC)['orders_count'] : 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
 
     //this function is for getting orders count!,you can set second argument to get working orders
     public static function get_orders_count_by_user_id($userId, $filtering_Options=null)
@@ -246,6 +295,27 @@ class User extends Model
             return $result ? $result->fetch(PDO::FETCH_ASSOC)['users_count']:0;
         }catch (\Exception $e){
             return [];
+        }
+    }
+
+    public static function deactivate_by_user_id($userId)
+    {
+        try {
+            static::update("users", ["is_active" => 0], "user_id='$userId'");
+            return true;
+        } catch (\Exception $e) {
+            return false;
+
+        }
+    }
+    public static function activate_by_user_id($userId)
+    {
+        try {
+            static::update("users", ["is_active" => 1], "user_id='$userId'");
+            return true;
+        } catch (\Exception $e) {
+            return false;
+
         }
     }
 }

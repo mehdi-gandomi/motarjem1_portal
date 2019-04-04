@@ -26,6 +26,8 @@ $app->group('/admin', function ($app) use ($container) {
     $app->get("/translator/order-requests","App\Controllers\AdminPanelController:get_translators_order_requests_page");
     $app->get("/hired-translators","App\Controllers\AdminPanelController:get_hired_translators_page");
     $app->get("/translator/info/{username}","App\Controllers\AdminPanelController:get_translator_info_page");
+    $app->get("/user/info/{username}","App\Controllers\AdminPanelController:get_user_info_page");
+    $app->get("/user/info/{username}/json","App\Controllers\AdminPanelController:get_user_json_data");
     $app->get("/order/view/{order_number}","App\Controllers\AdminPanelController:get_order_details_page");
     $app->get("/order/orderer-info/{orderer_id}","App\Controllers\AdminPanelController:get_orderer_data_json");
     $app->get("/order/translator-info/{translator_id}","App\Controllers\AdminPanelController:get_translator_data_json");
@@ -58,7 +60,10 @@ $app->group('/admin', function ($app) use ($container) {
     $app->post("/notifications/new","App\Controllers\AdminPanelController:post_new_notification");
     $app->post("/notifications/edit/{notif_id}","App\Controllers\AdminPanelController:post_edit_notification");
     $app->delete("/notifications/upload-attachment","App\Controllers\AdminPanelController:delete_uploaded_attachment");
-
+    $app->post("/translator/deactivate","App\Controllers\AdminPanelController:post_deactivate_translator");
+    $app->post("/translator/activate","App\Controllers\AdminPanelController:post_activate_translator");
+    $app->post("/user/deactivate","App\Controllers\AdminPanelController:post_deactivate_user");
+    $app->post("/user/activate","App\Controllers\AdminPanelController:post_activate_user");
 })->add(function ($req, $res, $next) use ($container) {
     if (isset($_SESSION['is_admin_logged_in'])) {
         return $next($req, $res);

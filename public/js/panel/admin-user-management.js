@@ -125,17 +125,25 @@ function showTranslators(translators) {
                     ${ user.register_date_persian }
                 </td>
                 <td data-label="عملیات" class="order-actions">
-                    <button onclick="showTranslatorInfo('${ user.user_id  }')" class="expand-button order-action is--primary is--medium">
+                    <button href="/admin/translator/info/${ user.username }" class="expand-button order-action is--primary is--medium">
                         <span data-hover="جزییات بیشتر">
                             <i class="icon-info"></i>
                         </span>
                     </button>
-                    <button onclick="deactivateTranslatorAccount('${ user.user_id  }')" class="expand-button order-action is--default is--large">
+                    ${user.is_active == "1" ? 
+                    `<button onclick="deactivateUserAccount('${ user.translator_id  }','translator')" class="expand-button order-action is--default is--large">
                         <span data-hover="غیر فعال کردن حساب">
                             <i class="icon-lock"></i>
                         </span>
-                    </button>
-                    <button onclick="deleteTranslator('${ user.user_id  }')" class="expand-button order-action is--danger">
+                    </button>`
+                    :
+                    `               
+                    <button onclick="activateUserAccount('${ user.translator_id  }','translator')" class="expand-button order-action is--default is--large is--success">
+                        <span data-hover="فعال کردن حساب">
+                            <i class="icon-lock-open"></i>
+                        </span>
+                    </button>`}
+                    <button onclick="deleteUser('${ user.translator_id  }','translator')" class="expand-button order-action is--danger">
                         <span data-hover="حذف کاربر">
                             <i class="icon-user-unfollow"></i>
                         </span>
@@ -170,17 +178,26 @@ function showUsers(users) {
                     ${ user.register_date_persian }
                 </td>
                 <td data-label="عملیات" class="order-actions">
-                    <button onclick="showUserInfo('${ user.user_id  }')" class="expand-button order-action is--primary is--medium">
+                    <button href="/admin/user/info/${ user.username }" class="expand-button order-action is--primary is--medium">
                         <span data-hover="جزییات بیشتر">
                             <i class="icon-info"></i>
                         </span>
                     </button>
-                    <button onclick="deactivateUserAccount('${ user.user_id  }')" class="expand-button order-action is--default is--large">
+                    ${user.is_active == "1" ?
+                    
+                    `<button onclick="deactivateUserAccount('${ user.user_id  }','user')" class="expand-button order-action is--default is--large">
                         <span data-hover="غیر فعال کردن حساب">
                             <i class="icon-lock"></i>
                         </span>
-                    </button>
-                    <button onclick="deleteUser('${ user.user_id  }')" class="expand-button order-action is--danger">
+                    </button>`
+                    :
+                    `               
+                    <button onclick="activateUserAccount('${ user.user_id  }','user')" class="expand-button order-action is--default is--large is--success">
+                        <span data-hover="فعال کردن حساب">
+                            <i class="icon-lock-open"></i>
+                        </span>
+                    </button>`}
+                    <button onclick="deleteUser('${ user.user_id  }','user')" class="expand-button order-action is--danger">
                         <span data-hover="حذف کاربر">
                             <i class="icon-user-unfollow"></i>
                         </span>
@@ -256,10 +273,10 @@ function substitute(str, data) {
     return(output);
 }
 
-function deactivateUser(userId) {
+function deactivateUserAccount(userId,userType) {
     Swal.fire({
         title: 'آیا مطمینید ؟',
-        text: "می خواهید این ترجمه را انجام بدهید ؟",
+        text: "آیا می خواهید این حساب را غیرفعال کنید ؟",
         type: 'info',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -270,28 +287,66 @@ function deactivateUser(userId) {
         if (result.value) {
             $.ajax({
                 type:"POST",
-                url:"/translator/order/request",
+                url:userType == "translator" ? "/admin/translator/deactivate":"/admin/user/deactivate",
                 data:{
-                    order_number:orderNumber,
-                    translator_id:translatorId
+                    token:"bad47df23cb7e6b3b8abf68cbba85d0f",
+                    user_id:userId
                 },
                 success:function(data,status){
 
                     if(data.status){
                         Swal.fire(
                             'موفق !',
-                            'درخواست شما با موفقیت ثبت شد !',
+                            data.message,
                             'success'
-                        )
-                        $.get("/translator/new-orders/json",{page:1,offset:3},function(data,status){
-                            if(data.status){
-                                renderOrders(data.orders,translatorId,"#newOrdersWrap");
-                            }
-                        })
+                        );
+                        applyFilters(window.location.search);
                     }else{
                         Swal.fire(
+                            'خطا',
+                            data.message,
+                            'error'
+                        )
+                    }
+                }
+            })
+        }else{
+
+        }
+    })
+}
+function activateUserAccount(userId,userType) {
+    Swal.fire({
+        title: 'آیا مطمینید ؟',
+        text: "آیا می خواهید این حساب را فعال کنید ؟",
+        type: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'بله',
+        cancelButtonText:'نه'
+    }).then(function(result) {
+        if (result.value) {
+            $.ajax({
+                type:"POST",
+                url:userType == "translator" ? "/admin/translator/activate":"/admin/user/activate",
+                data:{
+                    token:"bad47df23cb7e6b3b8abf68cbba85d0f",
+                    user_id:userId
+                },
+                success:function(data,status){
+
+                    if(data.status){
+                        Swal.fire(
                             'موفق !',
-                            'خطایی در ثبت اطلاعات رخ داد !',
+                            data.message,
+                            'success'
+                        );
+                        applyFilters(window.location.search);
+                    }else{
+                        Swal.fire(
+                            'خطا',
+                            data.message,
                             'error'
                         )
                     }
