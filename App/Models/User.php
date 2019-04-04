@@ -318,4 +318,13 @@ class User extends Model
 
         }
     }
+    public static function delete_by_user_id($userIّd)
+    {
+        try {
+            static::delete("users","user_id = '$userIّd'");
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
 }

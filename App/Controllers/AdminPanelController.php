@@ -722,6 +722,33 @@ class AdminPanelController extends Controller
 
 
     }
+
+    public function post_delete_translator($req,$res,$args)
+    {
+        $hash = md5(md5(Config::VERIFY_EMAIL_KEY));
+        $body = $req->getParsedBody();
+        if ($body['token']===$hash){
+            $result=Translator::delete_by_user_id($body['user_id']);
+            if ($result){
+                return $res->withJson(['status'=>true,'message'=>'حساب انتخابی با موفقیت حذف شد !']);
+            }
+            return $res->withJson(['status'=>false,'message'=>'خطایی در ذخیره اطلاعات رخ داد !']);
+        }
+        return $res->withJson(['status'=>false,'message'=>'توکن ارسال شده نامعتبر می باشد !']);
+    }
+    public function post_delete_user($req,$res,$args)
+    {
+        $hash = md5(md5(Config::VERIFY_EMAIL_KEY));
+        $body = $req->getParsedBody();
+        if ($body['token']===$hash){
+            $result=User::delete_by_user_id($body['user_id']);
+            if ($result){
+                return $res->withJson(['status'=>true,'message'=>'حساب انتخابی با موفقیت حذف شد !']);
+            }
+            return $res->withJson(['status'=>false,'message'=>'خطایی در ذخیره اطلاعات رخ داد !']);
+        }
+        return $res->withJson(['status'=>false,'message'=>'توکن ارسال شده نامعتبر می باشد !']);
+    }
     //upload attachment for notification
     public function upload_notification_attachment($req,$res,$args)
     {

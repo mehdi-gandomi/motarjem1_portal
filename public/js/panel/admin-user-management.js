@@ -357,3 +357,46 @@ function activateUserAccount(userId,userType) {
         }
     })
 }
+
+function deleteUser(userId,userType) {
+    Swal.fire({
+        title: 'آیا مطمینید ؟',
+        text: "آیا می خواهید این حساب را حذف کنید ؟",
+        type: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'بله',
+        cancelButtonText:'نه'
+    }).then(function(result) {
+        if (result.value) {
+            $.ajax({
+                type:"POST",
+                url:userType == "translator" ? "/admin/translator/delete":"/admin/user/delete",
+                data:{
+                    token:"bad47df23cb7e6b3b8abf68cbba85d0f",
+                    user_id:userId
+                },
+                success:function(data,status){
+
+                    if(data.status){
+                        Swal.fire(
+                            'موفق !',
+                            data.message,
+                            'success'
+                        );
+                        applyFilters(window.location.search);
+                    }else{
+                        Swal.fire(
+                            'خطا',
+                            data.message,
+                            'error'
+                        )
+                    }
+                }
+            })
+        }else{
+
+        }
+    })
+}

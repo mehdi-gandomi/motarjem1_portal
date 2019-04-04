@@ -235,6 +235,16 @@ class Translator extends Model
         }
     }
 
+    public static function delete_by_user_id($userIّd)
+    {
+        try {
+            static::delete("translators","translator_id = '$userIّd'");
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     //this method activtes the account by username given to it
     public function activate($username)
     {

@@ -64,6 +64,8 @@ $app->group('/admin', function ($app) use ($container) {
     $app->post("/translator/activate","App\Controllers\AdminPanelController:post_activate_translator");
     $app->post("/user/deactivate","App\Controllers\AdminPanelController:post_deactivate_user");
     $app->post("/user/activate","App\Controllers\AdminPanelController:post_activate_user");
+    $app->post("/user/delete","App\Controllers\AdminPanelController:post_delete_user");
+    $app->post("/translator/delete","App\Controllers\AdminPanelController:post_delete_translator");
 })->add(function ($req, $res, $next) use ($container) {
     if (isset($_SESSION['is_admin_logged_in'])) {
         return $next($req, $res);
