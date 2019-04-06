@@ -446,7 +446,7 @@ class Translator extends Model
         try{
             $db=static::getDB();
             $page_limit = ($page - 1) * $offset;
-            $sql="SELECT * FROM payment_logs WHERE translator_id='$userId' LIMIT $page_limit,$offset";
+            $sql="SELECT payment_logs.id,payment_logs.amount,payment_logs.refer_code,payment_logs.payment_date_persian,translator_checkout_request.request_date_persian FROM `payment_logs` INNER JOIN translator_checkout_request ON payment_logs.request_id=translator_checkout_request.id WHERE translator_checkout_request.translator_id='$userId' AND translator_checkout_request.is_paid='1' LIMIT $page_limit,$offset";
             $result=$db->query($sql);
             return $result ? $result->fetchAll(PDO::FETCH_ASSOC):false;
         }catch(\Exception $e){
@@ -458,7 +458,7 @@ class Translator extends Model
     {
         try{
             $db=static::getDB();
-            $sql="SELECT COUNT(*) AS checkout_count FROM payment_logs WHERE translator_id='$userId'";
+            $sql="SELECT COUNT(*) AS checkout_count FROM `payment_logs` INNER JOIN translator_checkout_request ON payment_logs.request_id=translator_checkout_request.id WHERE translator_checkout_request.translator_id='$userId' AND translator_checkout_request.is_paid='1'";
             $result=$db->query($sql);
             return $result ? $result->fetch(PDO::FETCH_ASSOC)['checkout_count']:false;
         }catch(\Exception $e){
@@ -495,7 +495,7 @@ class Translator extends Model
     {
         try{
             $db=static::getDB();
-            $sql="SELECT SUM(amount) AS totalCheckoutsPrice FROM payment_logs WHERE translator_id='$userId'";
+            $sql="SELECT SUM(payment_logs.amount) AS totalCheckoutsPrice FROM `payment_logs` INNER JOIN translator_checkout_request ON payment_logs.request_id=translator_checkout_request.id WHERE translator_checkout_request.translator_id='$userId' AND translator_checkout_request.is_paid='1'";
             $result=$db->query($sql);
             return $result ? $result->fetch(PDO::FETCH_ASSOC)['totalCheckoutsPrice']:false;
         }catch(\Exception $e){
