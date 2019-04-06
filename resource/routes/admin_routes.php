@@ -46,6 +46,7 @@ $app->group('/admin', function ($app) use ($container) {
     $app->get("/notification/view/{notif_id}","App\Controllers\AdminPanelController:get_private_notification_info_json");
     $app->get("/users/manage","App\Controllers\AdminPanelController:get_user_management_page");
     $app->get("/users/manage/json","App\Controllers\AdminPanelController:get_user_management_data_json");
+    $app->get("/edit-profile","App\Controllers\AdminPanelController:get_edit_profile_page");
     $app->post("/translator/employ","App\Controllers\AdminPanelController:post_employ_translator");
     $app->post("/translator/deny","App\Controllers\AdminPanelController:post_deny_translator");
     $app->post("/translator-order-request/accept","App\Controllers\AdminPanelController:accept_translator_order_request");

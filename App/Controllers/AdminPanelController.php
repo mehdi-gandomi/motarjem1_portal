@@ -749,6 +749,13 @@ class AdminPanelController extends Controller
         }
         return $res->withJson(['status'=>false,'message'=>'توکن ارسال شده نامعتبر می باشد !']);
     }
+
+    public function get_edit_profile_page($req,$res,$args)
+    {
+        $userData=Admin::by_id($_SESSION['user_id']);
+        return $this->view->render($res,"admin/admin/edit-profile.twig",['userData'=>$userData]);
+    }
+
     //upload attachment for notification
     public function upload_notification_attachment($req,$res,$args)
     {

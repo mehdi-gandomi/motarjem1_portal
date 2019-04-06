@@ -19,6 +19,18 @@ class Admin extends Model
             }
 
         }
+        public static function by_id($userId)
+        {
+            try {
+                $db=static::getDB();
+                $sql="SELECT * FROM translators WHERE translator_id=:user_id AND level='1'";
+                $stmt=$db->prepare($sql);
+                $stmt->bindParam(":user_id",$userId);
+                return $stmt->execute() ? $stmt->fetch(PDO::FETCH_ASSOC):false;
+            } catch (\Exception $e) {
+                return false;
+            }
+        }
         //Admin panel functions
         public static function get_employment_requests($page,$amount)
         {
@@ -507,5 +519,7 @@ class Admin extends Model
             return [];
         }
     }
+
+
 
 }
