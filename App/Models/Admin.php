@@ -520,6 +520,49 @@ class Admin extends Model
         }
     }
 
+    public static function update_by_id($userId, $userData)
+    {
+        try{
+            if(isset($userData['password'])){
+                $userData['password'] = \md5(\md5($userData['password']));
+            }
+            $translatorData=self::by_id($userId);
+            if($translatorData['username']!=$userData['username'] && self::check_existance_by_username($userData)){
+                return ['status'=>false,'message'=>'این نام کاربری از قبل موجود است !'];
+            }
+            if($translatorData['email']!=$userData['email'] && self::check_existance_by_email($userData)){
+                return ['status'=>false,'message'=>'این ایمیل از قبل موجود است !'];
+            }
+            static::update("translators",$userData,"`translator_id` = '$userId' AND level='1'");
+            return ['status'=>true,'message'=>'اطلاعات با موفقیت ثبت شد !'];
+        }catch(\Exception $e){
+            file_put_contents("err.txt",$e->getMessage());
+            return ['status'=>false,'message'=>'خطایی در ذخیره اطلاعات رخ داد !'];
+        }
+    }
 
+    private static function check_existance_by_username($userData)
+    {
+        try {
+            $db = static::getDB();
+            $sql = "SELECT username FROM translators WHERE username='" . $userData['username'] ."' AND level='1'";
+            return $db->query($sql)->fetch(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            return true;
+
+        }
+    }
+    public static function check_existance_by_email($postFields)
+    {
+        try {
+            $db = static::getDB();
+            $sql = "SELECT email FROM translators WHERE email='" . $postFields['email'] . "' AND level='1'";
+            return $db->query($sql)->fetch(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            return true;
+
+        }
+
+    }
 
 }

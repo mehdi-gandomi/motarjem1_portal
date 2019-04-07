@@ -1,1 +1,1 @@
-SQLSTATE[42S22]: Column not found: 1054 Unknown column 'recipients' in 'field list'
+SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'avatar' at row 1

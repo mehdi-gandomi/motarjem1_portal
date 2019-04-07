@@ -756,6 +756,69 @@ class AdminPanelController extends Controller
         return $this->view->render($res,"admin/admin/edit-profile.twig",['userData'=>$userData]);
     }
 
+    public function post_edit_profile($req,$res,$args)
+    {
+        $postFields=$req->getParsedBody();
+        $status=true;
+        $message="";
+        if (!isset($postFields['new_password']) || $postFields['new_password'] == "") {
+            unset($postFields['new_password']);
+            unset($postFields['old_password']);
+            unset($postFields['new_password_confirm']);
+            if(!isset($postFields['avatar']) || $postFields['avatar']==""){
+                unset($postFields['avatar']);
+            }
+            $result = Admin::update_by_id($_SESSION['user_id'], $postFields);
+            if ($result['status']) {
+                $_SESSION['fname'] = $postFields['fname'];
+                $_SESSION['lname'] = $postFields['lname'];
+                if(isset($postFields['avatar'])){
+                    $_SESSION['avatar']= $postFields['avatar'];
+                }
+                $_SESSION['phone'] = $postFields['cell_phone'];
+                $_SESSION['email'] = $postFields['email'];
+                $message=$result['message'];
+            } else {
+                $status=false;
+                $message=$result['message'];
+            }
+        } else {
+            $oldPassword = Admin::by_id($_SESSION['user_id'])['password'];
+            if ($oldPassword === md5(md5($postFields['old_password']))) {
+                if ($postFields['new_password'] === $postFields['new_password_confirm']) {
+                    $postFields['password'] = $postFields['new_password'];
+                    unset($postFields['new_password']);
+                    unset($postFields['old_password']);
+                    unset($postFields['new_password_confirm']);
+                    if(!isset($postFields['avatar']) || $postFields['avatar']==""){
+                        unset($postFields['avatar']);
+                    }
+                    $result = Admin::update_by_id($_SESSION['user_id'], $postFields);
+                    if ($result['status']) {
+                        $_SESSION['fname'] = $postFields['fname'];
+                        $_SESSION['lname'] = $postFields['lname'];
+                        if(isset($postFields['avatar'])){
+                            $_SESSION['avatar']= $postFields['avatar'];
+                        }
+                        $_SESSION['phone'] = $postFields['cell_phone'];
+                        $_SESSION['email'] = $postFields['email'];
+                        $message="اطلاعات با موفقیت ویرایش شد";
+                    } else {
+                        $status=false;
+                        $message=$result['message'];
+                    }
+
+                } else {
+                    $status=false;
+                    $message="فیلد پسورد با فیلد تایید پسورد مطابقت ندارد !";
+                }
+            } else {
+                $status=false;
+                $message= "پسورد قبلی اشتباه می باشد !";
+            }
+        }
+        return $res->withJson(['status'=>$status,'message'=>$message]);
+    }
     //upload attachment for notification
     public function upload_notification_attachment($req,$res,$args)
     {
@@ -767,7 +830,25 @@ class AdminPanelController extends Controller
                 $filename = $this->moveUploadedFile($directory, $uploadedFile);
                 $res->write($filename);
             } catch (\Exception $e) {
-                $res->write("error while uploading file "+$e->getMessage())->withStatus(500);
+                $res->write("error while uploading file ".$e->getMessage())->withStatus(500);
+            }
+        } else {
+            $res->write($uploadedFile->getError())->withStatus(500);
+        }
+    }
+
+    public function upload_avatar($req,$res,$args)
+    {
+        $uploadedFiles = $req->getUploadedFiles();
+        $uploadedFile = $uploadedFiles['file'];
+        $directory = dirname(dirname(__DIR__)) . '/public/uploads/avatars/admin';
+        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+            try {
+                $filename = $this->moveUploadedFile($directory, $uploadedFile);
+                $_SESSION['avatar'] = $filename;
+                return $res->withJson(['status'=>true,'filename' => $filename]);
+            } catch (\Exception $e) {
+                return $res->withJson(['status'=>false,'message' => "error while uploading file ".$e->getMessage()]);
             }
         } else {
             $res->write($uploadedFile->getError())->withStatus(500);
