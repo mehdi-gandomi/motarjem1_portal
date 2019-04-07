@@ -817,7 +817,16 @@ class AdminPanelController extends Controller
                 $message= "پسورد قبلی اشتباه می باشد !";
             }
         }
+
         return $res->withJson(['status'=>$status,'message'=>$message]);
+    }
+
+    public function get_coupon_management_page($req,$res,$args)
+    {
+        $page=$req->getParam("page") ? $req->getParam("page"):1;
+        $coupons=Admin::get_all_coupons($page,10);
+        $couponsCount=Admin::get_coupons_count();
+        return $this->view->render($res,"admin/admin/coupons.twig",['coupons'=>$coupons,'coupons_count'=>$couponsCount,'current_page'=>$page]);
     }
     //upload attachment for notification
     public function upload_notification_attachment($req,$res,$args)

@@ -565,4 +565,29 @@ class Admin extends Model
 
     }
 
+    public static function get_all_coupons($page, $offset)
+    {
+        try{
+            $db=static::getDB();
+            $page_limit = ($page - 1) * $offset;
+            $sql="SELECT * FROM `coupons` LIMIT $page_limit,$offset";
+            $result=$db->query($sql);
+            return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+        }catch (\Exception $e){
+            return [];
+        }
+    }
+
+    public static function get_coupons_count()
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT COUNT(*) AS count FROM `coupons` ";
+            $result=$db->query($sql);
+            return $result ? $result->fetch(PDO::FETCH_ASSOC)['count']:0;
+        }catch (\Exception $e){
+            return 0;
+        }
+    }
+
 }

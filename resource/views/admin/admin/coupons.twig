@@ -1,0 +1,126 @@
+{% extends 'admin/layout/admin.twig' %}
+
+{% block content %}
+    <main class="main">
+        <div class="card">
+            <div class="card-body" style="min-height: 550px">
+                <div class="d-flex justify-content-between mt-3">
+                    <h4>مدیریت کدهای تخفیف</h4>
+                    <button class="btn btn-primary" onclick="openNewCouponModal()">
+                        <i class="icon-plus"></i>
+                        کد تخفیف جدید
+                    </button>
+                </div>
+                <table class="table OrdersTable is--responsive">
+                    <thead>
+                    <tr>
+                        <th class="bg-teal-dark text-center">کد تخفیف</th>
+                        <th class="bg-teal-dark text-center">نوع تخفیف</th>
+                        <th class="bg-teal-dark text-center">درصد تخفیف</th>
+                        <th class="bg-teal-dark text-center">میزان تخفیف</th>
+                        <th class="bg-teal-dark text-center">حداقل مبلغ برای اعمال تخفیف</th>
+                        <th class="bg-teal-dark text-center">عملیات</th>
+                    </tr>
+                    </thead>
+                    <tbody >
+                    {% for coupon in coupons %}
+                        <tr>
+                            <td data-label="کد تخفیف">
+                                {{coupon.coupon_code}}
+                            </td>
+                            <td data-label="نوع تخفیف">
+                                {{coupon.is_percent_based == "1" ? "درصدی":"کاهش مبلغ"}}
+                            </td>
+                            <td data-label="درصد تخفیف">
+                                {{ coupon.discount_percent == "0" ? "مشخص نشده":coupon.discount_percent ~ " " ~ "٪" }}
+                            </td>
+                            <td data-label="میزان تخفیف">
+                                {{ coupon.discount_price =="0" ? "مشخص نشده" : coupon.discount_price | number_format ~ " " ~ "تومان" }}
+                            </td>
+                            <td data-label="حداقل مبلغ برای اعمال تخفیف">
+                                {{ coupon.min_price | number_format }} تومان
+                            </td>
+                            <td data-label="عملیات" >
+                                <button class="btn btn-danger" onclick="deleteCoupon('{{ coupon.id }}')">
+                                    <i class="icon-trash"></i>
+                                    حذف کد تخفیف
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% include 'admin/includes/pagination.twig' with { 'count' :coupons_count, 'current_page' :current_page, 'base_path' :'/admin/coupon-management', 'offset' : 10, 'visible_numbers' : 3 } %}
+
+            </div>
+        </div>
+    </main>
+    <!-- New Coupon Modal -->
+    <div aria-hidden="true" aria-labelledby="newCouponModalLabel" class="modal fade" id="newCouponModal" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h5 class="modal-title" id="newCouponModalLabel">اضافه کردن کد تخفیف جدید</h5>
+                    {# <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button> #}
+                </div>
+                <div class="modal-body" >
+                    <form id="newCouponForm" action="/coupon/new" method="post" class="row">
+                        <div class="form-group col-lg-3">
+                            <label for="coupon_code">کد تخفیف</label>
+                            <input type="text" class="form-control" name="coupon_code" id="coupon_code">
+                        </div>
+                        <div class="form-group col-lg-3">
+                            <label for="discount_type">نوع تخفیف</label>
+                            <select name="is_percent_based" id="discount_type" class="form-control">
+                                <option value="1" selected>درصدی</option>
+                                <option value="0">کسر مبلغ</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-lg-3">
+                            <label for="discount_percent">درصد تخفیف</label>
+                            <input type="text" class="form-control" name="discount_percent" id="discount_percent">
+                        </div>
+                        <div class="form-group col-lg-3 d-none">
+                            <label for="discount_price">میزان تخفیف (به تومان)</label>
+                            <input type="text" class="form-control" name="discount_price" id="discount_price">
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label for="min_price">حداقل مبلغ مورد نیاز برای اعمال تخفیف</label>
+                            <input type="text" class="form-control" name="min_price" id="min_price" placeholder="اگر خالی بماند هر قیمتی پذیرفه می شود">
+                        </div>
+                        <div class="form-group col-lg-3  d-inline-flex align-items-center pt-4">
+                            <input type="submit" class="btn btn-success" value="ذخیره">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-start">
+                    <button class="btn btn-secondary" data-dismiss="modal" type="button">بستن</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script_below %}
+    <script>
+        function openNewCouponModal() {
+            $("#newCouponModal").modal("show");
+        }
+        $(document).ready(function (e) {
+           $("#newCouponForm").on("submit",function (e) {
+               e.preventDefault();
+           })
+            $("#discount_type").on("change",function (e) {
+                if ($(this).val() === "1"){
+                    $("#discount_percent").removeClass("d-none");
+                    $("#discount_price").addClass("d-none");
+                } else{
+                    $("#discount_percent").addClass("d-none");
+                    $("#discount_price").removeClass("d-none");
+                }
+            })
+        });
+    </script>
+{% endblock %}
