@@ -118,7 +118,7 @@ function showOrderInfo(orderNumber){
         if (data.discount_code){
             output+="<div class='order-details__detail col-md-4'><div class='order-details__detail__label'>قیمت سفارش بدون تخفیف</div><div class='order-details__detail__value'>"+parseInt(data.price_without_discount).toLocaleString("us")+"</div></div>";
         }
-        output+="<div class='order-details__detail col-md-3'><div class='order-details__detail__label'>قیمت کل سفارش</div><div class='order-details__detail__value'>"+parseInt(data.order_price).toLocaleString("us")+"</div></div>";
+        output+="<div class='order-details__detail col-md-4'><div class='order-details__detail__label'>قیمت کل سفارش</div><div class='order-details__detail__value'>"+parseInt(data.order_price).toLocaleString("us")+"</div></div>";
         output+="<div class='order-details__detail col-md-5'><div class='order-details__detail__label'>سهم شما از این سفارش</div><div class='order-details__detail__value'>"+Math.ceil((data.order_price*70)/100).toLocaleString("us")+"</div></div>";
         if(data.description){
             output+="<div class='order-details__detail col-md-8'><div class='order-details__detail__label'>توضیحات</div><div class='order-details__detail__value'>"+data.description+"</div></div>";

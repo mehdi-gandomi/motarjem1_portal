@@ -172,10 +172,30 @@ based on db info #}
                     </div>
                     <div class="order-details__detail col-md-3">
                         <div class="order-details__detail__label">
+                            کد تخفیف
+                        </div>
+                        <div class="order-details__detail__value">
+                            {{ discount_code ? discount_code:"استفاده نشده" }}
+
+                        </div>
+                    </div>
+                    {% if discount_code %}
+                        <div class="order-details__detail col-md-3">
+                            <div class="order-details__detail__label">
+                                قیمت سفارش بدون تخفیف
+                            </div>
+                            <div class="order-details__detail__value">
+                                {{ price_without_discount | number_format}}
+                                تومان
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="order-details__detail col-md-3">
+                        <div class="order-details__detail__label">
                             قیمت کل سفارش
                         </div>
                         <div class="order-details__detail__value">
-                            {{ order_price }}
+                            {{ order_price | number_format }}
                             تومان
                         </div>
                     </div>
