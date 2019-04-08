@@ -24,6 +24,7 @@ class Order extends Model
             }else{
                 $postInfo['order_price'] = $priceInfo['price'];
             }
+            $postInfo['discount_code']= $postInfo['discount_code'] == "" ? 0:$postInfo['discount_code'];
             $postInfo['delivery_days'] = $priceInfo['duration'];
             static::insert("orders", $postInfo);
             return array(
@@ -39,21 +40,31 @@ class Order extends Model
     {
         try {
             $db = static::getDB();
+            $data=false;
             if (!$with_translator_data && !$with_orderer_data) {
-                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,order_logs.translator_id,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE orders.order_id = :order_id";
+                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.discount_code,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,order_logs.translator_id,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE orders.order_id = :order_id";
             } else if ($with_translator_data && !$with_orderer_data) {
-                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study  INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translators ON order_logs.translator_id=translators.translator_id WHERE orders.order_id= :order_id";
+                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.discount_code,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study  INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translators ON order_logs.translator_id=translators.translator_id WHERE orders.order_id= :order_id";
             } else if ($with_orderer_data && !$with_translator_data) {
-                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id,users.email,users.phone,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE orders.order_id= :order_id";
+                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.discount_code,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id,users.email,users.phone,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE orders.order_id= :order_id";
             } else if ($with_translator_data && $with_orderer_data) {
-                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id ,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study  INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translators ON order_logs.translator_id=translators.translator_id WHERE orders.order_id= :order_id";
+                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.discount_code,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id ,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study  INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translators ON order_logs.translator_id=translators.translator_id WHERE orders.order_id= :order_id";
             }
             if ($ordererId) {
                 $sql .= " AND orders.orderer_id='$ordererId'";
             }
             $stmt = $db->prepare($sql);
             $stmt->bindParam(":order_id", $id);
-            return $stmt->execute() ? $stmt->fetch(PDO::FETCH_ASSOC) : false;
+            $stmt->execute();
+            $data=$stmt->fetch(PDO::FETCH_ASSOC);
+            if ($data){
+                if (strlen($data['discount_code']) > 1){
+                    $priceInfo = self::calculatePrice($data['translation_lang'], $data['translation_kind'], $data['translation_quality'], $data['delivery_type'], $data['word_numbers'],$data['discount_code']);
+                    $data['price_without_discount']=$priceInfo['price'];
+                }
+            }
+
+            return  $data;
 
         } catch (\Exception $e) {
             return false;
@@ -64,20 +75,32 @@ class Order extends Model
     {
         try {
             $db = static::getDB();
+            $data=false;
             if (!$with_translator_data && !$with_orderer_data) {
-                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,order_logs.translator_id,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE orders.order_number = :order_number";
+                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.discount_code,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,order_logs.translator_id,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE orders.order_number = :order_number";
             } else if ($with_translator_data && !$with_orderer_data) {
-                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study  INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translators ON order_logs.translator_id=translators.translator_id WHERE orders.order_number= :order_number";
+                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.discount_code,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study  INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translators ON order_logs.translator_id=translators.translator_id WHERE orders.order_number= :order_number";
             } else if ($with_orderer_data && !$with_translator_data) {
-                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id,users.email,users.phone,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE orders.order_number= :order_number";
+                $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.discount_code,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id,users.email,users.phone,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id WHERE orders.order_number= :order_number";
             } else if ($with_translator_data && $with_orderer_data) {
-                $sql = "SELECT orders.orderer_id,orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id ,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study  INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translators ON order_logs.translator_id=translators.translator_id WHERE orders.order_number= :order_number";
+                $sql = "SELECT orders.orderer_id,orders.order_id,orders.order_number,orders.word_numbers,orders.order_files,orders.description,orders.discount_code,orders.translation_kind,orders.translation_quality,orders.delivery_type,orders.translation_lang,order_logs.is_accepted,orders.order_price,orders.delivery_days,order_logs.transaction_code,orders.order_date_persian,order_logs.accept_date_persian,orders.field_of_study,order_logs.order_step,order_logs.is_done,users.fname AS orderer_fname,users.lname AS orderer_lname,users.user_id,translators.fname AS translator_fname,translators.lname AS translator_lname,translators.translator_id ,study_fields.title AS study_field  FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study  INNER JOIN users ON orders.orderer_id = users.user_id INNER JOIN order_logs ON orders.order_id=order_logs.order_id INNER JOIN translators ON order_logs.translator_id=translators.translator_id WHERE orders.order_number= :order_number";
             }
             if ($ordererId) {
                 $sql .= " AND orders.orderer_id='$ordererId'";
             }
             $stmt = $db->prepare($sql);
-            return $stmt->execute(['order_number'=>$number]) ? $stmt->fetch(PDO::FETCH_ASSOC) : false;
+            $stmt->bindParam(":order_number", $number);
+            $stmt->execute();
+            $data=$stmt->fetch(PDO::FETCH_ASSOC);
+            if ($data){
+                if (strlen($data['discount_code']) > 1){
+                    $priceInfo = self::calculatePrice($data['translation_lang'], $data['translation_kind'], $data['translation_quality'], $data['delivery_type'], $data['word_numbers'],$data['discount_code']);
+                    $data['price_without_discount']=$priceInfo['price'];
+                }
+            }
+
+            return  $data;
+
 
         } catch (\Exception $e) {
             return false;
@@ -391,7 +414,7 @@ class Order extends Model
             $translationQuality = 0;
         }
         $priceWithDiscount=0;
-        if (strlen($discountCode) > 0){
+        if (strlen($discountCode) > 1){
             $discountData=\Core\Model::select("coupons","*",['coupon_code'=>$discountCode],true);
             if ($discountData){
                 switch ($discountData['is_percent_based']){

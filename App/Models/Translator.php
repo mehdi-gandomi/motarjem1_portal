@@ -330,7 +330,7 @@ class Translator extends Model
         try{
             $db = static::getDB();
             $page_limit = ($page - 1) * $offset;
-            $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.translation_lang,study_fields.title AS study_field,orders.translation_quality,orders.order_price FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE order_logs.is_accepted = '1' AND order_logs.translator_id = '$userId' AND order_logs.is_done IN (".\implode(",",$filteringOptions['is_done']).")  LIMIT $page_limit,$offset";
+            $sql = "SELECT orders.order_id,orders.order_number,orders.word_numbers,orders.discount_code,orders.translation_lang,study_fields.title AS study_field,orders.translation_quality,orders.order_price FROM orders INNER JOIN study_fields ON study_fields.id=orders.field_of_study INNER JOIN order_logs ON orders.order_id = order_logs.order_id WHERE order_logs.is_accepted = '1' AND order_logs.translator_id = '$userId' AND order_logs.is_done IN (".\implode(",",$filteringOptions['is_done']).")  LIMIT $page_limit,$offset";
             $result = $db->query($sql);
             return $result ? $result->fetchAll(PDO::FETCH_ASSOC) : false;
         }catch(\Exception $e){
