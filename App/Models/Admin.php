@@ -590,4 +590,27 @@ class Admin extends Model
         }
     }
 
+    public static function new_coupon($couponData)
+    {
+        try{
+            $couponData['min_price']=$couponData['min_price']=="" ? 0:$couponData['min_price'];
+            $couponData['discount_price']=$couponData['discount_price']=="" ? 0:$couponData['discount_price'];
+            $couponData['discount_percent']=$couponData['discount_percent']=="" ? 0:$couponData['discount_percent'];
+            static::insert("coupons",$couponData);
+            return true;
+        }catch (\Exception $e){
+            return false;
+        }
+    }
+
+    public static function delete_coupon_by_id($coupon_id)
+    {
+        try{
+            static::delete("coupons","id='$coupon_id'");
+            return true;
+        }catch (\Exception $e){
+            return false;
+        }
+    }
+
 }

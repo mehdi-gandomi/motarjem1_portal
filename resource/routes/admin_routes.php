@@ -62,6 +62,7 @@ $app->group('/admin', function ($app) use ($container) {
     $app->post("/notifications/new","App\Controllers\AdminPanelController:post_new_notification");
     $app->post("/notifications/edit/{notif_id}","App\Controllers\AdminPanelController:post_edit_notification");
     $app->delete("/notifications/upload-attachment","App\Controllers\AdminPanelController:delete_uploaded_attachment");
+    $app->delete("/coupon/{coupon_id}","App\Controllers\AdminPanelController:delete_coupon_by_id");
     $app->post("/translator/deactivate","App\Controllers\AdminPanelController:post_deactivate_translator");
     $app->post("/translator/activate","App\Controllers\AdminPanelController:post_activate_translator");
     $app->post("/user/deactivate","App\Controllers\AdminPanelController:post_deactivate_user");
@@ -70,6 +71,7 @@ $app->group('/admin', function ($app) use ($container) {
     $app->post("/translator/delete","App\Controllers\AdminPanelController:post_delete_translator");
     $app->post("/edit-profile","App\Controllers\AdminPanelController:post_edit_profile");
     $app->post("/edit-profile/upload-avatar","App\Controllers\AdminPanelController:upload_avatar");
+    $app->post("/coupon/new","App\Controllers\AdminPanelController:post_new_coupon");
 })->add(function ($req, $res, $next) use ($container) {
     if (isset($_SESSION['is_admin_logged_in'])) {
         return $next($req, $res);

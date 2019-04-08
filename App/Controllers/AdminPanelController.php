@@ -828,6 +828,25 @@ class AdminPanelController extends Controller
         $couponsCount=Admin::get_coupons_count();
         return $this->view->render($res,"admin/admin/coupons.twig",['coupons'=>$coupons,'coupons_count'=>$couponsCount,'current_page'=>$page]);
     }
+
+    public function post_new_coupon($req,$res,$args)
+    {
+        $postFields=$req->getParsedBody();
+        $result=Admin::new_coupon($postFields);
+        if ($result){
+            return $res->withJson(['status'=>true]);
+        }
+        return $res->withJson(['status'=>true,'message'=>'error in saving coupon to db']);
+    }
+
+    public function delete_coupon_by_id($req,$res,$args)
+    {
+        $result=Admin::delete_coupon_by_id($args['coupon_id']);
+        if ($result){
+            return $res->withJson(['status'=>true]);
+        }
+        return $res->withJson(['status'=>true,'message'=>'an error occurred when deleting coupon in db']);
+    }
     //upload attachment for notification
     public function upload_notification_attachment($req,$res,$args)
     {
