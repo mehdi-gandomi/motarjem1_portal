@@ -22,7 +22,12 @@
                 <li>کیفیت ترجمه : {{translation_quality}}</li>
                 <li>تعداد صفحات : {{page_number}}</li>
                 <li>زمان تحویل : {{duration}} روز</li>
-                <li>هزینه قابل پرداخت : {{final_price}} تومان</li>
+                {% if price_with_discount > 0 %}
+                    <li>هزینه سفارش : {{final_price}} تومان</li>
+                    <li>هزینه سفارش با تخفیف : {{price_with_discount}} تومان</li>
+                {% else %}
+                    <li>هزینه سفارش : {{final_price}} تومان</li>
+                {% endif %}
             </ul>
         </div>
         <div class="col-12">

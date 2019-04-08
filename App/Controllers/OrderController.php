@@ -3,7 +3,7 @@ namespace App\Controllers;
 
 use App\Dependencies\Pay\Payment;
 use App\Models\Order;
-use App\Models\Userr;
+use App\Models\User;
 use Core\Config;
 use Core\Controller;
 
@@ -85,7 +85,7 @@ class OrderController extends Controller
         $priceInfo = $orderData['priceInfo'];
         $orderNumber = $orderData['orderNumber'];
         //creating order logs
-        $logResult = Order::new_order_log($orderNumber);
+        $logResult = Order::new_order_log($orderNumber,['order_step'=>1]);
         if ($orderNumber && $logResult) {
             $tokenArray = $this->get_csrf_token($req);
             $data = array(
@@ -95,6 +95,7 @@ class OrderController extends Controller
                 'page_number' => $priceInfo['pageNumber'],
                 'duration' => $priceInfo['duration'],
                 'final_price' => $priceInfo['price'],
+                'price_with_discount'=>$priceInfo['priceWithDiscount'],
                 'order_id' => $orderNumber,
                 'page_title' => "پرداخت سفارش",
             );
@@ -239,6 +240,15 @@ class OrderController extends Controller
 
     }
 
+    public function validate_coupon_code($req,$res,$args)
+    {
+        $couponCode=$req->getParam("coupon_code");
+        $result=\Core\Model::select("coupons","*",['coupon_code'=>$couponCode],true);
+        if ($result){
+            return $res->withJson(['valid'=>true,'info'=>$result]);
+        }
+        return $res->withJson(['valid'=>false]);
+    }
     protected function send_invoice_to_email($email, $orderData, $refId)
     {
 

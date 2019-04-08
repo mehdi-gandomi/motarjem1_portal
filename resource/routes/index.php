@@ -34,6 +34,7 @@ $app->group('/', function ($app) use ($container) {
     $app->get('payment-success/{order_number}', "App\Controllers\OrderController:payment_result_zarinpal");
     $app->get('expense-calculator', "App\Controllers\ExpenseController:get");
     $app->get('order', "App\Controllers\OrderController:get")->add($container->get("csrf"));
+    $app->get("order/discount-code/validate","App\Controllers\OrderController:validate_coupon_code");
     $app->get('order-method', "App\Controllers\OrderController:order_method_page");
 
     $app->post('expense-calculator', "App\Controllers\ExpenseController:post");

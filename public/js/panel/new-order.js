@@ -231,6 +231,35 @@ $(".new-order-form").on("submit", function(e) {
     }
 });
 
+function validate_discount_code(e) {
+    const discountHint=$("#discountHint");
+    if (e.target.value == ""){
+        discountHint.removeClass("validation-failed");
+        discountHint.html("جهت دریافت کد تخفیف <a href=\"http://www.t.me/motarjem_one\">پیام</a> دهید");
+    } else{
+        $.get('/order/discount-code/validate',{
+            coupon_code: e.target.value
+        },function (data,status) {
+            if (data.valid){
+                if (data.info.is_percent_based){
+                    discountHint.removeClass("validation-failed");
+                    discountHint.html("کد تخفیف تایید شد ! "+data.info.discount_percent+"% تخفیف");
+                    return true;
+                }
+                discountHint.removeClass("validation-failed");
+                discountHint.html("کد تخفیف تایید شد ! "+parseInt(data.info.discount_price).toLocaleString("us")+ "تومان");
+                return true;
+            }else{
+                discountHint.html("کد تخفیف وارد شده یافت نشد !");
+                discountHint.addClass("validation-failed");
+                return false;
+            }
+        })
+    }
+}
+
+$("#discount").on("blur",validate_discount_code);
+
 $(document).ready(function(e) {
   /*
 We want to preview images, so we need to register the Image Preview plugin

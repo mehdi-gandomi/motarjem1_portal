@@ -299,7 +299,6 @@ class UserPanelController extends Controller
         $orderData = \App\Models\Order::new ($postInfo);
         $priceInfo = $orderData['priceInfo'];
         $orderNumber = $orderData['orderNumber'];
-        var_dump($orderData);
         //creating order logs
         $logResult = \App\Models\Order::new_order_log($orderNumber,[
             'order_step'=>1
@@ -313,6 +312,7 @@ class UserPanelController extends Controller
                 'page_number' => $priceInfo['pageNumber'],
                 'duration' => $priceInfo['duration'],
                 'final_price' => $priceInfo['price'],
+                'price_with_discount'=>$priceInfo['priceWithDiscount'],
                 'order_id' => $orderNumber,
                 'page_title' => "پرداخت سفارش",
             );

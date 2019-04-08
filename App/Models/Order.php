@@ -18,8 +18,12 @@ class Order extends Model
             $orderNumber=bin2hex(random_bytes(4));
             $postInfo['order_number']=$orderNumber;
             $postInfo['order_date_persian'] = static::getCurrentDatePersian();
-            $priceInfo = self::calculatePrice($postInfo['translation_lang'], $postInfo['translation_kind'], $postInfo['translation_quality'], $postInfo['delivery_type'], $postInfo['word_numbers']);
-            $postInfo['order_price'] = $priceInfo['price'];
+            $priceInfo = self::calculatePrice($postInfo['translation_lang'], $postInfo['translation_kind'], $postInfo['translation_quality'], $postInfo['delivery_type'], $postInfo['word_numbers'],$postInfo['discount_code']);
+            if ($priceInfo['priceWithDiscount'] > 0){
+                $postInfo['order_price'] = $priceInfo['priceWithDiscount'];
+            }else{
+                $postInfo['order_price'] = $priceInfo['price'];
+            }
             $postInfo['delivery_days'] = $priceInfo['duration'];
             static::insert("orders", $postInfo);
             return array(
@@ -319,7 +323,7 @@ class Order extends Model
             return false;
         }
     }
-    protected static function calculatePrice($translate_language, $type, $quality, $delivery_type, $wordsNumber)
+    protected static function calculatePrice($translate_language, $type, $quality, $delivery_type, $wordsNumber,$discountCode)
     {
         $basePrice = 0;
         $finalPrice = 0;
@@ -386,9 +390,27 @@ class Order extends Model
         } else {
             $translationQuality = 0;
         }
-
+        $priceWithDiscount=0;
+        if (strlen($discountCode) > 0){
+            $discountData=\Core\Model::select("coupons","*",['coupon_code'=>$discountCode],true);
+            if ($discountData){
+                switch ($discountData['is_percent_based']){
+                    case "1":
+                        if ($finalPrice >= $discountData['min_price']){
+                            $priceWithDiscount=$finalPrice - ceil(($finalPrice*floatval($discountData['discount_percent']))/100);
+                        }
+                    break;
+                    case "0":
+                        if ($finalPrice >= $discountData['min_price']){
+                            $priceWithDiscount=$finalPrice-intval($discountData['discount_price']);
+                        }
+                    break;
+                }
+            }
+        }
         return array(
             "price" => $finalPrice,
+            'priceWithDiscount'=>$priceWithDiscount,
             "quality" => $translationQuality,
             "pageNumber" => $page_number,
             'duration' => $durend,

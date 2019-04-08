@@ -174,6 +174,41 @@ addListener("#type", "change", function (e) {
   }
 })
 
+function validate_discount_code(e) {
+  const discountHint=select("#discountHint");
+  if (e.target.value == ""){
+    discountHint.classList.remove("validation-failed");
+    discountHint.innerHTML="جهت دریافت کد تخفیف <a href=\"http://www.t.me/motarjem_one\">پیام</a> دهید";
+  } else{
+    axios.get('order/discount-code/validate', {
+      params: {
+        coupon_code: e.target.value
+      }
+    })
+    .then(function (response) {
+      if (response.data.valid){
+        if (response.data.info.is_percent_based){
+          discountHint.classList.remove("validation-failed");
+          discountHint.innerHTML="کد تخفیف تایید شد ! "+response.data.info.discount_percent+"% تخفیف";
+          return true;
+        }
+        discountHint.classList.remove("validation-failed");
+        discountHint.innerHTML="کد تخفیف تایید شد ! "+parseInt(response.data.info.discount_price).toLocaleString("us")+ "تومان";
+        return true;
+      }else{
+        discountHint.innerHTML="کد تخفیف وارد شده یافت نشد !";
+        discountHint.classList.add("validation-failed");
+        return false;
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+  }
+}
+
+addListener("#discount_code","blur",validate_discount_code);
+
 addListener(".order-form","submit",function(e){
   e.preventDefault();
   let validationIsGood=false;
