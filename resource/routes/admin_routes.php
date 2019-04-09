@@ -48,6 +48,9 @@ $app->group('/admin', function ($app) use ($container) {
     $app->get("/users/manage/json","App\Controllers\AdminPanelController:get_user_management_data_json");
     $app->get("/edit-profile","App\Controllers\AdminPanelController:get_edit_profile_page");
     $app->get("/coupon-management","App\Controllers\AdminPanelController:get_coupon_management_page");
+    $app->get("/tests/manage","App\Controllers\AdminPanelController:get_test_management_page");
+    $app->get("/tests/manage/json","App\Controllers\AdminPanelController:get_test_management_json");
+    $app->get("/test/info","App\Controllers\AdminPanelController:get_test_info_json");
     $app->post("/translator/employ","App\Controllers\AdminPanelController:post_employ_translator");
     $app->post("/translator/deny","App\Controllers\AdminPanelController:post_deny_translator");
     $app->post("/translator-order-request/accept","App\Controllers\AdminPanelController:accept_translator_order_request");
@@ -72,6 +75,8 @@ $app->group('/admin', function ($app) use ($container) {
     $app->post("/edit-profile","App\Controllers\AdminPanelController:post_edit_profile");
     $app->post("/edit-profile/upload-avatar","App\Controllers\AdminPanelController:upload_avatar");
     $app->post("/coupon/new","App\Controllers\AdminPanelController:post_new_coupon");
+    $app->post("/test/new","App\Controllers\AdminPanelController:post_new_test");
+
 })->add(function ($req, $res, $next) use ($container) {
     if (isset($_SESSION['is_admin_logged_in'])) {
         return $next($req, $res);

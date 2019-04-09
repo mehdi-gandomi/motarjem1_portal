@@ -613,4 +613,64 @@ class Admin extends Model
         }
     }
 
+    public static function get_all_tests_with_filtering($page, $offset, $filteringOptions)
+    {
+        try{
+            $db=static::getDB();
+            $page_limit = ($page - 1) * $offset;
+            $sql="SELECT tests.id,tests.study_field_id,tests.language_id,tests.text,study_fields.title AS study_field FROM `tests` INNER JOIN study_fields ON tests.study_field_id = study_fields.id";
+            if (is_array($filteringOptions) && count($filteringOptions) > 0){
+                $sql.=" WHERE ";
+                if (isset($filteringOptions['languages'])){
+                    $sql.="language_id IN ('".implode("','",$filteringOptions['languages'])."')";
+                }
+            }
+            $sql.=" LIMIT $page_limit,$offset";
+            $result=$db->query($sql);
+            return $result ? $result->fetchAll(PDO::FETCH_ASSOC):[];
+        }catch (\Exception $e){
+            return [];
+        }
+    }
+
+    public static function get_all_tests_count_with_filtering($filteringOptions)
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT COUNT(*) as tests_count FROM `tests`";
+            if (is_array($filteringOptions) && count($filteringOptions) > 0){
+                $sql.=" WHERE ";
+                if (isset($filteringOptions['languages'])){
+                    $sql.="language_id IN ('".implode("','",$filteringOptions['languages'])."')";
+                }
+            }
+            $result=$db->query($sql);
+            return $result ? $result->fetch(PDO::FETCH_ASSOC)['tests_count']:0;
+        }catch (\Exception $e){
+            return 0;
+        }
+    }
+
+    public static function new_test($testData)
+    {
+        try{
+            static::insert("tests",$testData);
+            return true;
+        }catch (\Exception $e){
+            return false;
+        }
+    }
+
+    public static function get_test_info_by_id($id)
+    {
+        try{
+            $db=static::getDB();
+            $sql="SELECT tests.id,tests.study_field_id,tests.language_id,tests.text,study_fields.title AS study_field FROM `tests` INNER JOIN study_fields ON tests.study_field_id = study_fields.id WHERE tests.id='$id'";
+            $result=$db->query($sql);
+            return $result ? $result->fetch(PDO::FETCH_ASSOC):false;
+        }catch (\Exception $e){
+            return false;
+        }
+    }
+
 }

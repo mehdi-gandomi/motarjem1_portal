@@ -1,0 +1,174 @@
+{% extends 'admin/layout/admin.twig' %}
+{% block style_below %}
+    <style>
+        .ltr{
+            direction: ltr !important;
+            text-align: left !important;
+        }
+        .rtl{
+            direction: rtl !important;
+            text-align: right !important;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <main class="main">
+        <div class="card">
+            <div class="card-body" style="min-height: 550px">
+                <div class="d-flex justify-content-between mt-3 mb-3">
+                    <h4>مدیریت ازمون ها</h4>
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#newTestModal">
+                        <i class="icon-plus"></i>
+                        آزمون جدید
+                    </button>
+                </div>
+                <div class="orders-heading">
+                    <form class="table-filter">
+                        <label class="label-cbx" for="en_to_fa">
+                            {% if "1" in languages %}
+                                <input checked class="invisible" id="en_to_fa" name="language" type="checkbox" value="1"/>
+                            {% else %}
+                                <input class="invisible" id="en_to_fa" name="language" type="checkbox" value="1"/>
+                            {% endif %}
+                            <div class="checkbox">
+                                <svg height="20px" viewbox="0 0 20 20" width="20px">
+                                    <path d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z"></path>
+                                    <polyline points="4 11 8 15 16 6"></polyline>
+                                </svg>
+                            </div>
+                            <span>انگلیسی به فارسی
+                                </span>
+                        </label>
+                        <label class="label-cbx" for="fa_to_en">
+                            {% if "2" in languages %}
+                                <input checked class="invisible" id="fa_to_en" name="language" type="checkbox" value="2"/>
+                            {% else %}
+                                <input class="invisible" id="fa_to_en" name="language" type="checkbox" value="2"/>
+                            {% endif %}
+                            <div class="checkbox">
+                                <svg height="20px" viewbox="0 0 20 20" width="20px">
+                                    <path d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z"></path>
+                                    <polyline points="4 11 8 15 16 6"></polyline>
+                                </svg>
+                            </div>
+                            <span>فارسی به انگلیسی
+                                </span>
+                        </label>
+                    </form>
+                </div>
+                <table class="table OrdersTable is--responsive">
+                    <thead>
+                    <tr>
+                        <th class="bg-teal-dark text-center">#</th>
+                        <th class="bg-teal-dark text-center">زبان ترجمه</th>
+                        <th class="bg-teal-dark text-center">رشته دانشگاهی</th>
+                        <th class="bg-teal-dark text-center">عملیات</th>
+                    </tr>
+                    </thead>
+                    <tbody id="testsWrap">
+                    {% for test in tests %}
+                        <tr>
+                            <td data-label="شماره آزمون">
+                                {{test.id}}
+                            </td>
+                            <td data-label="زبان ترجمه">
+                                {{test.language_id == "1" ? "انگلیسی به فارسی":"فارسی به انگلیسی"}}
+                            </td>
+                            <td data-label="رشته دانشگاهی">
+                                {{test.study_field}}
+                            </td>
+                            <td data-label="عملیات" class="order-actions">
+                                <button onclick="showُTestInfo('{{test.id}}')" class="expand-button order-action is--primary is--medium">
+                                    <span data-hover="اطلاعات بیشتر">
+                                        <i class="icon-info"></i>
+                                    </span>
+                                </button>
+                                <button onclick="editTest('{{test.id}}')" class="expand-button order-action is--success is--medium">
+                                    <span data-hover="ویرایش آزمون">
+                                        <i class="icon-check"></i>
+                                    </span>
+                                </button>
+                                <button onclick="deleteTest('{{test.id}}')" class="expand-button order-action is--danger">
+                                    <span data-hover="حذف آزمون">
+                                        <i class="icon-close"></i>
+                                    </span>
+                                </button>
+
+                            </td>
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% include 'admin/includes/pagination.twig' with { 'count' :count, 'current_page' :current_page, 'base_path' :'/admin/tests/manage', 'offset' : 10, 'visible_numbers' : 3 } %}
+            </div>
+        </div>
+    </main>
+    <!-- New Test Modal -->
+    <div aria-hidden="true" aria-labelledby="newTestModalLabel" class="modal fade" id="newTestModal" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h5 class="modal-title" id="newTestModalLabel">اضافه کردن آزمون جدید</h5>
+                    {# <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button> #}
+                </div>
+                <div class="modal-body" >
+                    <form id="newTestForm" action="/admin/test/new" method="post" class="row">
+                        <div class="form-group col-lg-6">
+                            <label for="languageId">زبان آزمون</label>
+                            <select class="form-control" name="language_id" id="languageId">
+                                <option value="1">انگلیسی به فارسی</option>
+                                <option value="2">فارسی به انگلیسی</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label for="fieldId">رشته دانشگاهی</label>
+                            <select class="form-control" name="study_field_id" id="fieldId">
+                                {% for field in study_fields %}
+                                    <option value="{{ field.id }}">{{ field.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group col-12">
+                            <label for="testText">متن آزمون</label>
+                            <textarea class="form-control" name="text" id="testText" cols="30" rows="10"></textarea>
+                        </div>
+                        <div class="form-group col-lg-4  d-inline-flex align-items-center pt-4">
+                            <input type="submit" class="btn btn-success" value="ذخیره">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-start">
+                    <button class="btn btn-secondary" data-dismiss="modal" type="button">بستن</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test info Modal -->
+    <div aria-hidden="true" aria-labelledby="testInfoModalLabel" class="modal fade" id="testInfoModal" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h5 class="modal-title" id="testInfoModalLabel">ویرایش آزمون</h5>
+                    {# <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button> #}
+                </div>
+                <div class="modal-body" >
+                    <div class="modal-body" id="testInfoWrap" style="padding:2rem"></div>
+                </div>
+                <div class="modal-footer justify-content-start">
+                    <button class="btn btn-secondary" data-dismiss="modal" type="button">بستن</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script_below %}
+    <script src="/public/js/sweetalert2@8.js"></script>
+    <script src="/public/js/panel/admin-test-management.js"></script>
+{% endblock %}

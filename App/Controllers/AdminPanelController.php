@@ -847,6 +847,44 @@ class AdminPanelController extends Controller
         }
         return $res->withJson(['status'=>true,'message'=>'an error occurred when deleting coupon in db']);
     }
+
+    public function get_test_management_page($req,$res,$args)
+    {
+        $page=$req->getParam("page") ? $req->getParam("page"):1;
+        $langs=$req->getParam("language") ? explode(",",$req->getParam("language")):['1','2'];
+        $tests=Admin::get_all_tests_with_filtering($page,10,['languages'=>$langs]);
+        $testsCount=Admin::get_all_tests_count_with_filtering(['languages'=>$langs]);
+        $studyFields=Order::get_study_fields();
+        return $this->view->render($res,"admin/admin/test-management.twig",['languages'=>$langs,'tests'=>$tests,'count'=>$testsCount,'current_page'=>$page,'study_fields'=>$studyFields]);
+    }
+
+    public function get_test_management_json($req,$res,$args)
+    {
+        $page=$req->getParam("page") ? $req->getParam("page"):1;
+        $langs=$req->getParam("language") ? explode(",",$req->getParam("language")):['1','2'];
+        $tests=Admin::get_all_tests_with_filtering($page,10,['languages'=>$langs]);
+        $testsCount=Admin::get_all_tests_count_with_filtering(['languages'=>$langs]);
+        return $res->withJson(['tests'=>$tests,'count'=>$testsCount,'current_page'=>$page]);
+    }
+
+    public function post_new_test($req,$res,$args)
+    {
+        $postFields=$req->getParsedBody();
+        $result=Admin::new_test($postFields);
+        if ($result){
+            return $res->withJson(['status'=>true]);
+        }
+        return $res->withJson(['status'=>false,'message'=>'an error occurred when saving test to db!']);
+    }
+
+    public function get_test_info_json($req,$res,$args)
+    {
+        $testInfo=Admin::get_test_info_by_id($req->getParam("test_id"));
+        if ($testInfo){
+            return $res->withJson(['status'=>true,'info'=>$testInfo]);
+        }
+        return $res->withJson(['status'=>false,'message'=>'test not found']);
+    }
     //upload attachment for notification
     public function upload_notification_attachment($req,$res,$args)
     {

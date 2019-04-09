@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 23, 2019 at 07:41 PM
+-- Generation Time: Apr 08, 2019 at 07:31 PM
 -- Server version: 5.7.25-0ubuntu0.18.04.2
--- PHP Version: 7.2.15-0ubuntu0.18.04.1
+-- PHP Version: 7.2.15-0ubuntu0.18.04.2
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -19,6 +19,28 @@ SET time_zone = "+00:00";
 --
 -- Database: `motarjem1`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `coupons`
+--
+
+CREATE TABLE `coupons` (
+  `id` int(11) NOT NULL,
+  `coupon_code` varchar(30) NOT NULL,
+  `discount_percent` varchar(3) NOT NULL DEFAULT '0',
+  `discount_price` varchar(10) NOT NULL DEFAULT '0',
+  `min_price` varchar(10) NOT NULL DEFAULT '0',
+  `is_percent_based` tinyint(1) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `coupons`
+--
+
+INSERT INTO `coupons` (`id`, `coupon_code`, `discount_percent`, `discount_price`, `min_price`, `is_percent_based`) VALUES
+(1, 'motarjemone', '10', '0', '5000', 1);
 
 -- --------------------------------------------------------
 
@@ -64,8 +86,8 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`notif_id`, `title`, `body`, `importance`, `attach_files`, `sent_date`, `sent_date_persian`, `notif_type`) VALUES
-(1, 'تست میشه', 'ودذردنثتبرنثبترد', 1, NULL, '2019-03-07 09:50:42', NULL, 1),
-(2, 'تست عمومی', 'رسمنرذسنردبذرنبدربدر', 1, 'test.jpg', '2019-03-07 13:33:06', NULL, 0);
+(1, 'تست میشه', 'ودذردنثتبرنثبترد', 1, NULL, '2019-03-07 09:50:42', '1397/12/14 13:20', 1),
+(7, 'اطلاعیه دوم', '                                                                                                                <p>سیذدسااعسدراسعوراسای</p>\r\n                        \r\n                        \r\n                        \r\n                        ', 2, '0dc8e1cb70692a9e.svg,802f00e9fb52346f.svg', '2019-04-02 17:00:48', '1398/1/13 21:30', 1);
 
 -- --------------------------------------------------------
 
@@ -74,8 +96,8 @@ INSERT INTO `notifications` (`notif_id`, `title`, `body`, `importance`, `attach_
 --
 
 CREATE TABLE `notif_translator` (
-  `translator_id` int(11) DEFAULT NULL,
-  `notif_id` int(11) DEFAULT NULL
+  `translator_id` int(11) NOT NULL,
+  `notif_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -83,7 +105,8 @@ CREATE TABLE `notif_translator` (
 --
 
 INSERT INTO `notif_translator` (`translator_id`, `notif_id`) VALUES
-(1, 1);
+(1, 1),
+(1, 7);
 
 -- --------------------------------------------------------
 
@@ -106,7 +129,7 @@ CREATE TABLE `orders` (
   `order_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `order_date_persian` varchar(16) NOT NULL,
   `field_of_study` varchar(3) DEFAULT NULL,
-  `discount_code` varchar(10) DEFAULT NULL,
+  `discount_code` varchar(30) DEFAULT '0',
   `order_price` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -115,9 +138,11 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`order_id`, `order_number`, `orderer_id`, `word_numbers`, `translation_quality`, `translation_lang`, `translation_kind`, `delivery_type`, `delivery_days`, `order_files`, `description`, `order_date`, `order_date_persian`, `field_of_study`, `discount_code`, `order_price`) VALUES
-(21, 'f37a84e3', 2, '250', 5, 1, 1, 1, '1', '', '', '2019-03-02 17:30:26', '1397/12/11 21:00', '0', '', '5000'),
-(22, 'f37a84c4', 2, '250', 5, 1, 1, 1, '1', '', '', '2019-03-02 17:30:26', '1397/12/11 21:00', '0', '', '5000'),
-(23, 'f37b54c4', 2, '250', 5, 1, 1, 1, '1', '3dba7368848bd09a.jpg', '', '2019-03-02 17:30:26', '1397/12/11 21:00', '0', '', '5000');
+(21, 'f37a84e3', 2, '250', 5, 1, 1, 1, '1', '', '', '2019-03-02 17:30:26', '1397/12/10 21:00', '0', 'motarjemone', '5000'),
+(22, 'f37a84c4', 2, '250', 5, 1, 1, 1, '1', '', '', '2019-03-02 17:30:26', '1397/12/12 21:00', '0', '', '5000'),
+(23, 'f37b54c4', 2, '250', 5, 1, 1, 1, '1', '3dba7368848bd09a.jpg', '', '2019-03-02 17:30:26', '1397/12/11 21:00', '0', '', '5000'),
+(25, '694b3ae9', 2, '1500', 5, 1, 1, 2, '1', '', '', '2019-04-08 17:08:25', '1398/1/19 21:38', NULL, 'motarjemone', '36000'),
+(29, 'e83f6528', 2, '500', 5, 1, 2, 2, '1', '', '', '2019-04-08 17:32:41', '1398/1/19 22:02', '91', 'motarjemone', '21600');
 
 -- --------------------------------------------------------
 
@@ -144,7 +169,9 @@ CREATE TABLE `order_logs` (
 INSERT INTO `order_logs` (`id`, `order_id`, `translator_id`, `transaction_code`, `is_accepted`, `accept_date`, `accept_date_persian`, `order_step`, `is_done`) VALUES
 (3, 21, 1, 'knegbnrgb35', 1, NULL, NULL, 1, 0),
 (4, 22, 0, 'fkrjvenvo56', 0, NULL, NULL, 2, 0),
-(5, 23, 1, 'vevnv,ernv56', 1, '1398/01/02 23:30', '1398/01/02 23:30', 2, 1);
+(5, 23, 1, 'vevnv,ernv56', 1, '1398/01/02 23:30', '1398/01/02 23:30', 2, 1),
+(7, 25, 0, '0', 0, NULL, NULL, 1, 0),
+(11, 29, 0, '0', 0, NULL, NULL, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -154,20 +181,19 @@ INSERT INTO `order_logs` (`id`, `order_id`, `translator_id`, `transaction_code`,
 
 CREATE TABLE `payment_logs` (
   `id` int(11) NOT NULL,
-  `translator_id` int(11) NOT NULL,
+  `request_id` int(11) NOT NULL,
   `amount` varchar(10) NOT NULL,
   `refer_code` varchar(16) NOT NULL,
-  `pyment_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `payment_date_persian` varchar(16) DEFAULT NULL
+  `payment_date` varchar(16) NOT NULL,
+  `payment_date_persian` varchar(16) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `payment_logs`
 --
 
-INSERT INTO `payment_logs` (`id`, `translator_id`, `amount`, `refer_code`, `pyment_date`, `payment_date_persian`) VALUES
-(1, 1, '10000', 'jvjlvjlvj,bk,s', '2019-03-11 20:30:00', NULL),
-(2, 1, '120300', 'cklzdjvldsfjb', '2019-03-03 20:30:00', NULL);
+INSERT INTO `payment_logs` (`id`, `request_id`, `amount`, `refer_code`, `payment_date`, `payment_date_persian`) VALUES
+(3, 16, '20000', 'nfj,vjebfkvjef', '2019/02/27 17:09', '1398/01/07 17:09');
 
 -- --------------------------------------------------------
 
@@ -360,7 +386,7 @@ INSERT INTO `Tickets` (`ticket_number`, `creator_id`, `user_type`, `subject`, `c
 ('9d94b7', 1, 2, 'لاگین نشدن به کنسول', '2019-03-05 19:57:23', '1397/12/14 23:27', '2019-03-05 19:57:23', '1397/12/14 23:27', 'waiting'),
 ('a6d316', 2, 1, 'لاگین نشدن به کنسول3', '2019-02-24 20:02:33', '1397/12/5 23:32', '2019-02-24 20:02:33', '1397/12/5 23:32', 'waiting'),
 ('ad10b2', 2, 1, 'تست میشه', '2019-02-24 09:54:21', '1397/12/5 13:24', '2019-02-24 09:54:21', '1397/12/5 13:24', 'waiting'),
-('bfd311', 2, 1, 'تمدید دامنه', '2019-03-05 19:59:54', '1397/12/14 23:29', '2019-03-20 16:13:28', '1397/12/29 19:43', 'answered'),
+('bfd311', 2, 1, 'تمدید دامنه', '2019-03-05 19:59:54', '1397/12/14 23:29', '2019-03-24 10:49:22', '1398/1/4 15:19', 'answered'),
 ('eda4cc', 2, 1, 'لاگین نشدن به کنسول5', '2019-02-24 20:04:26', '1397/12/5 23:34', '2019-03-20 16:21:38', '1397/12/29 19:51', 'answered');
 
 -- --------------------------------------------------------
@@ -425,7 +451,8 @@ INSERT INTO `Ticket_Messages` (`ticket_id`, `ticket_number`, `parent_ticket_id`,
 (48, 'bfd311', '35', 0, '2019-03-20 16:13:28', '1397/12/29 19:43', '<p>تست در صفحه تیکت ها</p>', NULL),
 (49, '77ad1c', '25', 0, '2019-03-20 16:17:13', '1397/12/29 19:47', '<p>تست پاسخ</p>', NULL),
 (50, '5a981a', '11', 0, '2019-03-20 16:19:00', '1397/12/29 19:49', '<p>خطایابی</p>', NULL),
-(51, 'eda4cc', '10', 0, '2019-03-20 16:21:38', '1397/12/29 19:51', '<p>حام بابا</p>', NULL);
+(51, 'eda4cc', '10', 0, '2019-03-20 16:21:38', '1397/12/29 19:51', '<p>حام بابا</p>', NULL),
+(52, 'bfd311', '48', 0, '2019-03-24 10:49:22', '1398/1/4 15:19', 'vc,bdfbfjk;g', NULL);
 
 -- --------------------------------------------------------
 
@@ -445,7 +472,7 @@ CREATE TABLE `translators` (
   `phone` varchar(11) DEFAULT NULL,
   `meli_code` varchar(10) NOT NULL,
   `melicard_photo` varchar(20) NOT NULL,
-  `avatar` varchar(20) NOT NULL,
+  `avatar` varchar(50) NOT NULL,
   `degree` varchar(20) NOT NULL,
   `exp_years` varchar(2) DEFAULT NULL,
   `address` text,
@@ -465,9 +492,8 @@ CREATE TABLE `translators` (
 
 INSERT INTO `translators` (`translator_id`, `username`, `password`, `fname`, `lname`, `sex`, `email`, `cell_phone`, `phone`, `meli_code`, `melicard_photo`, `avatar`, `degree`, `exp_years`, `address`, `register_date`, `register_date_persian`, `en_to_fa`, `fa_to_en`, `level`, `is_active`, `is_employed`, `is_denied`) VALUES
 (1, 'coderguy', '81d93b8220c41d7a3b911024ac34464c', 'مهدی', 'گندمی', 1, 'coderguy1999@gmail.com', '09389318493', '05632313094', '0640617743', 'card.jpg', 'default-avatar.svg', 'کارشناسی', '2', 'بیرجند', NULL, '1397/10/30 19:52', 1, 1, 2, 1, 1, 0),
-(5, 'coderguy1985', '81d93b8220c41d7a3b911024ac34464c', 'مهدی', 'گندمی', 1, 'coderguy1985@gmail.com', '09389318493', '05632313094', '0640617743', '', 'default-avatar.svg', 'کاردانی', '2', '', '2019-02-11 20:37:48', '1397/11/23 00:07', 0, 1, 2, 0, 1, 0),
 (7, 'mehdi', '81d93b8220c41d7a3b911024ac34464c', 'مهدی', 'گندمی', 1, 'watch.dogs3030@gmail.com', '09389318493', '05632313094', '0640617743', 'card.jpg', '80a2c20bbf6e8527.png', 'کاردانی', '2', 'jskbvhefjvdf', '2019-03-10 18:39:03', '1397/12/19 22:09', 1, 0, 2, 1, 0, 0),
-(8, 'admin', '2a6d1ba9c08ccb0cc7cabe1bf0c8258f', 'رضا', 'قاسمی', 1, 'mehdigandomi.contact@gmail.com', '09389318493', '09389318493', '0640617744', 'card.jpg', 'default-avatar.svg', 'کارشناسی', '10', 'تهران', '2019-03-15 20:54:52', '1397/12/24 19:52', 1, 1, 1, 1, 1, 0);
+(8, 'admin', '2a6d1ba9c08ccb0cc7cabe1bf0c8258f', 'رضا', 'قاسمی', 1, 'mehdigandomi@gmail.com', '09389318493', '09389318493', '0640617744', 'card.jpg', 'dd8edd08cc4edfc0.jpg', 'کارشناسی', '10', 'تهران', '2019-03-15 20:54:52', '1397/12/24 19:52', 1, 1, 1, 1, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -491,8 +517,7 @@ CREATE TABLE `translator_account` (
 --
 
 INSERT INTO `translator_account` (`id`, `translator_id`, `card_number`, `shaba_number`, `bank_name`, `account_owner`, `account_credit`, `revenue`) VALUES
-(1, 1, '6037997144942727', '126569589589652896258965', 'ملی', 'مهدی گندمی', '1000000', '10000000'),
-(2, 8, '6037997444942782', '126529659589258925892558', 'ملی', 'رضا قاسمی', '10000000', '100000000');
+(1, 1, '6037997144942727', '126569589589652896258965', 'ملی', 'مهدی گندمی', '1000000', '10000000');
 
 -- --------------------------------------------------------
 
@@ -507,6 +532,7 @@ CREATE TABLE `translator_checkout_request` (
   `request_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `request_date_persian` varchar(16) NOT NULL,
   `is_paid` tinyint(1) NOT NULL DEFAULT '0',
+  `payment_log_id` int(11) NOT NULL DEFAULT '0',
   `state` tinyint(1) NOT NULL DEFAULT '-1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -514,9 +540,9 @@ CREATE TABLE `translator_checkout_request` (
 -- Dumping data for table `translator_checkout_request`
 --
 
-INSERT INTO `translator_checkout_request` (`id`, `translator_id`, `amount`, `request_date`, `request_date_persian`, `is_paid`, `state`) VALUES
-(16, 1, 500000, '2019-03-05 17:50:57', '1397/12/14 21:20', 0, -1),
-(17, 1, 500000, '2019-03-05 18:05:47', '1397/12/14 21:35', 0, -1);
+INSERT INTO `translator_checkout_request` (`id`, `translator_id`, `amount`, `request_date`, `request_date_persian`, `is_paid`, `payment_log_id`, `state`) VALUES
+(16, 1, 500000, '2019-03-05 17:50:57', '1397/12/14 21:20', 1, 3, 1),
+(17, 1, 500000, '2019-03-05 18:05:47', '1397/12/14 21:35', 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -574,7 +600,7 @@ CREATE TABLE `users` (
   `lname` varchar(50) NOT NULL,
   `email` varchar(256) NOT NULL,
   `phone` varchar(11) DEFAULT NULL,
-  `avatar` varchar(20) DEFAULT 'default-avatar.svg',
+  `avatar` varchar(50) DEFAULT 'default-avatar.svg',
   `is_active` tinyint(1) NOT NULL DEFAULT '0',
   `register_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `register_date_persian` varchar(16) DEFAULT NULL
@@ -585,13 +611,18 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `password`, `fname`, `lname`, `email`, `phone`, `avatar`, `is_active`, `register_date`, `register_date_persian`) VALUES
-(2, 'coderguy', '81d93b8220c41d7a3b911024ac34464c', 'مهدی', 'گندمی', 'coderguy1999@gmail.com', '09389318493', '898905b65ed4a096.jpg', 1, '2019-01-20 16:22:21', '1397/10/30 19:52'),
-(8, 'coderguy1999', '81d93b8220c41d7a3b911024ac34464c', 'مهدی', 'گندمی', 'coderguy1998@gmail.com', '05632313094', 'default-avatar.svg', 1, '2019-01-24 09:52:48', '1397/11/4 13:22'),
-(12, 'mehdi', '81d93b8220c41d7a3b911024ac34464c', 'مهدی', 'گندمی', 'watch.dogs3030@gmail.com', '09389318493', 'default-avatar.svg', 1, '2019-02-06 12:03:49', '1397/11/17 15:33');
+(2, 'coderguy', '81d93b8220c41d7a3b911024ac34464c', 'مهدی', 'گندمی', 'coderguy1999@gmail.com', '09389318493', 'default-avatar.svg', 1, '2019-01-20 16:22:21', '1397/10/30 19:52'),
+(8, 'coderguy1999', '81d93b8220c41d7a3b911024ac34464c', 'مهدی', 'گندمی', 'coderguy1998@gmail.com', '05632313094', 'default-avatar.svg', 1, '2019-01-24 09:52:48', '1397/11/4 13:22');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `coupons`
+--
+ALTER TABLE `coupons`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `forgot_password`
@@ -609,6 +640,7 @@ ALTER TABLE `notifications`
 -- Indexes for table `notif_translator`
 --
 ALTER TABLE `notif_translator`
+  ADD PRIMARY KEY (`notif_id`,`translator_id`),
   ADD KEY `translator_id` (`translator_id`),
   ADD KEY `notif_id` (`notif_id`);
 
@@ -631,7 +663,7 @@ ALTER TABLE `order_logs`
 --
 ALTER TABLE `payment_logs`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `translator_id` (`translator_id`);
+  ADD KEY `translator_id` (`request_id`);
 
 --
 -- Indexes for table `posts`
@@ -711,6 +743,11 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `coupons`
+--
+ALTER TABLE `coupons`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+--
 -- AUTO_INCREMENT for table `forgot_password`
 --
 ALTER TABLE `forgot_password`
@@ -719,22 +756,22 @@ ALTER TABLE `forgot_password`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notif_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `notif_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 --
 -- AUTO_INCREMENT for table `order_logs`
 --
 ALTER TABLE `order_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT for table `payment_logs`
 --
 ALTER TABLE `payment_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `posts`
 --
@@ -749,7 +786,7 @@ ALTER TABLE `tests`
 -- AUTO_INCREMENT for table `Ticket_Messages`
 --
 ALTER TABLE `Ticket_Messages`
-  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 --
 -- AUTO_INCREMENT for table `translators`
 --
@@ -759,7 +796,7 @@ ALTER TABLE `translators`
 -- AUTO_INCREMENT for table `translator_account`
 --
 ALTER TABLE `translator_account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `translator_checkout_request`
 --
@@ -779,7 +816,7 @@ ALTER TABLE `translator_tests`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- Constraints for dumped tables
 --
@@ -807,7 +844,7 @@ ALTER TABLE `order_logs`
 -- Constraints for table `payment_logs`
 --
 ALTER TABLE `payment_logs`
-  ADD CONSTRAINT `payment_logs_ibfk_1` FOREIGN KEY (`translator_id`) REFERENCES `translators` (`translator_id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+  ADD CONSTRAINT `payment_logs_ibfk_1` FOREIGN KEY (`request_id`) REFERENCES `translator_checkout_request` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 --
 -- Constraints for table `tests`
