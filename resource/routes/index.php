@@ -52,14 +52,14 @@ function wpPosts ()
 $wpPostsMV=function($request, $response, $next)
 {
     
-    if (!isset($_SESSION['latestPosts']) || count($_SESSION['latestPosts'])<1) {
+//    if (!isset($_SESSION['latestPosts']) || count($_SESSION['latestPosts'])<1) {
         $posts=\Core\Model::select("posts");
         $posts=array_map(function($post){
             $post['categories']=json_decode($post['categories'],true);
             return $post;
         },$posts);
         $_SESSION["latestPosts"] = $posts;
-    }
+//    }
     $response = $next($request, $response);
     return $response;
     
@@ -78,13 +78,13 @@ $app->group('/', function ($app) use ($container) {
     });
     $app->get('automation', function (Request $request, Response $response, array $args) {
         $posts=wpPosts();
-        var_dump($posts);
         if($posts){
             $sql="DELETE FROM posts";
             $db=\Core\Model::getDB();
             $result=$db->query($sql);
             if($result){
                 for($i=0;$i<count($posts);$i++){
+                    var_dump($posts[$i]);
                     $sql="INSERT INTO posts (title,previewText,link,date,thumbnail,categories) VALUES (:title,:previewText,:link,:date,:thumbnail,:categories)";
                     $stmt=$db->prepare($sql);
                     $stmt->execute($posts[$i]);
