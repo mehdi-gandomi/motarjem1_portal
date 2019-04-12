@@ -10545,6 +10545,18 @@ textarea.form__input {
       flex-basis: 50%;
 }
 
+.choice-wrap .choice:hover {
+  background: #fbf0f0;
+}
+
+.choice-wrap .choice > a {
+  color: #000;
+}
+
+.choice-wrap .choice > a:hover {
+  text-decoration: none !important;
+}
+
 .choice-wrap .choice.right {
   border-left: 5px solid #eee;
 }
@@ -10566,7 +10578,7 @@ textarea.form__input {
 }
 
 .choice-wrap .choice__button {
-  color: #fff;
+  color: #fff !important;
   background-color: transparent;
   outline: 0;
   -webkit-transition: background-color 0.3s ease;

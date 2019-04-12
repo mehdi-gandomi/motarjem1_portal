@@ -11,6 +11,16 @@
     width: 80%;
     margin: auto;
     .choice{
+        transition: all 0.5s ease-in-out;
+        &:hover{
+            background: #fbf0f0;
+        }
+         > a{
+            color: #000;
+            &:hover{
+                text-decoration: none !important;
+            }
+        }
         padding: 2rem;
         display: flex;
         flex-direction: column;
@@ -35,7 +45,7 @@
             margin:1rem auto;
         }
         &__button{
-            color: #fff;
+            color: #fff !important;
             background-color: transparent;
             outline: 0;
             -moz-transition: background-color 0.3s ease;

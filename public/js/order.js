@@ -211,7 +211,7 @@ addListener("#discount_code","blur",validate_discount_code);
 
 addListener(".order-form","submit",function(e){
   e.preventDefault();
-  let validationIsGood=false;
+  var validationIsGood=false;
   if(hasEmptyValue("#fullname")){
     select("#fullname").classList.add("validation-failed");
     validationIsGood=false;
