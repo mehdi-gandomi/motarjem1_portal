@@ -224,10 +224,10 @@ class Order extends Model
                 'translator_id' => $translatorId,
                 'order_id' => $orderData['order_id'],
                 'request_date_persian'=>self::getCurrentDatePersian(),
-                'state' => 1
             ]);
             return true;
         } catch (\Exception $e) {
+            file_put_contents("err.txt",$e->getMessage());
             return false;
         }
     }
@@ -238,8 +238,8 @@ class Order extends Model
             static::insert("translator_order_request", [
                 'translator_id' => $translatorId,
                 'order_id' => $orderData['order_id'],
-                'request_date_persian'=>$this->getCurrentDatePersian(),
-                'state' => 0,
+                'request_date_persian'=>self::getCurrentDatePersian(),
+                'is_denied' => 1,
             ]);
             return true;
         } catch (\Exception $e) {

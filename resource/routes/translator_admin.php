@@ -35,8 +35,6 @@ $app->post('/translator/password-reset', "App\Controllers\TranslatorAuthControll
 $app->group('/translator', function ($app) use ($container) {
     $app->get('', "App\Controllers\TranslatorPanelController:get_dashboard");
     $app->group('',function($app) use ($container){
-        $app->get('/test/filter', "App\Controllers\TranslatorPanelController:get_test_json");
-        $app->post("/test/send","App\Controllers\TranslatorPanelController:save_test_data");
         $app->get('/order/info/{order_number}', "App\Controllers\TranslatorPanelController:get_order_info");
         $app->post('/order/request', "App\Controllers\TranslatorPanelController:request_order");
         $app->post('/order/decline', "App\Controllers\TranslatorPanelController:decline_order");
@@ -66,6 +64,8 @@ $app->group('/translator', function ($app) use ($container) {
         }
         return $next($req, $res);
     });
+    $app->get('/test/filter', "App\Controllers\TranslatorPanelController:get_test_json");
+    $app->post("/test/send","App\Controllers\TranslatorPanelController:save_test_data");
     $app->get("/edit-profile","App\Controllers\TranslatorPanelController:get_edit_profile_page");
     $app->post("/edit-profile","App\Controllers\TranslatorPanelController:post_edit_profile");
     $app->post("/edit-profile/upload-avatar","App\Controllers\TranslatorPanelController:upload_avatar");

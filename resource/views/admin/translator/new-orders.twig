@@ -51,11 +51,11 @@
                 <div class="table-title">
                     <h4 class="mt-3 mr-4">سفارشات جدید</h4>
                     <div class="radio-group">
-                        <input type="radio" id="new_orders" name="choice" value="new" {{choice == 'new' :"" }}/>
+                        <input type="radio" id="new_orders" name="choice" value="new" {{choice == 'new' ? "checked" :"" }}/>
                         <label for="new_orders">سفارشات جدید</label >
-                        <input type="radio" id="requested_orders" name="choice" value="requested" {{choice == 'requested' :"" }}/>
+                        <input type="radio" id="requested_orders" name="choice" value="requested" {{choice == 'requested' ? "checked" :"" }}/>
                         <label class="left-negative-margin" for="requested_orders">سفارشات درخواست شده</label >
-                        <input type="radio" id="denied_orders" name="choice" value="denied" {{choice == 'denied' :"" }}/>
+                        <input type="radio" id="denied_orders" name="choice" value="denied" {{choice == 'denied' ? "checked" :"" }}/>
                         <label class="no-border left-negative-margin" for="denied_orders">سفارشات رد شده</label >
                     </div>
                 </div>
