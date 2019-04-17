@@ -76,24 +76,24 @@ $app->group('/', function ($app) use ($container) {
     $app->get('contact-us', function (Request $request, Response $response, array $args) {
         $this->view->render($response, "website/contact-us.twig", ["page_title" => "تماس باما", "latestPosts" => $_SESSION["latestPosts"]]);
     });
-    $app->get('automation', function (Request $request, Response $response, array $args) {
-        $posts=wpPosts();
-        if($posts){
-            $sql="DELETE FROM posts";
-            $db=\Core\Model::getDB();
-            $result=$db->query($sql);
-            if($result){
-                for($i=0;$i<count($posts);$i++){
-                    var_dump($posts[$i]);
-                    $sql="INSERT INTO posts (title,previewText,link,date,thumbnail,categories) VALUES (:title,:previewText,:link,:date,:thumbnail,:categories)";
-                    $stmt=$db->prepare($sql);
-                    $stmt->execute($posts[$i]);
-                }
-
-            }
-
-        }
-    });
+//    $app->get('automation', function (Request $request, Response $response, array $args) {
+//        $posts=wpPosts();
+//        if($posts){
+//            $sql="DELETE FROM posts";
+//            $db=\Core\Model::getDB();
+//            $result=$db->query($sql);
+//            if($result){
+//                for($i=0;$i<count($posts);$i++){
+//                    var_dump($posts[$i]);
+//                    $sql="INSERT INTO posts (title,previewText,link,date,thumbnail,categories) VALUES (:title,:previewText,:link,:date,:thumbnail,:categories)";
+//                    $stmt=$db->prepare($sql);
+//                    $stmt->execute($posts[$i]);
+//                }
+//
+//            }
+//
+//        }
+//    });
     $app->get('payment-success/{order_number}', "App\Controllers\OrderController:payment_result_zarinpal");
     $app->get('expense-calculator', "App\Controllers\ExpenseController:get");
     $app->get('order', "App\Controllers\OrderController:get")->add($container->get("csrf"));

@@ -108,15 +108,27 @@ function validate_inputs() {
         return true;
       break;
       case 1:
+          var isValid=true;
           if(!select("input[name=delivery_type]:checked")){
             printValidationHint("#delivery-hint","این فیلد الزامی می باشد","validation-failed-hint");
             validationError("show");
-            return false;
+            isValid= false;
           }else{
             validationError("hide");
             printValidationHint("#delivery-hint","","validation-failed-hint",false);
-            return true;
+            isValid=true;
           }
+          if (uploadedFiles.length < 1){
+            // validationError("show");
+            var element=createEl("div",["validation-errors","mt-2"]);
+            element.innerHTML=" حتما باید یک فایل آپلود کنید !";
+            select(".filepond--root").parentElement.appendChild(element);
+            isValid=false;
+          } else{
+            // validationError("hide");
+            isValid=true;
+          }
+          return isValid;
       break;
   }
 }
@@ -161,9 +173,7 @@ addListener(".next-step", "click", function (e) {
 addListener(".prev-step", "click", function (e) {
   toggleStep("prev");
 }, true);
-// addListener(".form-wrapper", "submit", function (e) {
-//   e.preventDefault();
-// });
+
 
 addListener("#type", "change", function (e) {
   let kind = e.target.value;
@@ -238,6 +248,15 @@ addListener(".order-form","submit",function(e){
     validationError("hide");
     validationIsGood=true;
   }
+  if (uploadedFiles.length < 1){
+    toggleStep("prev");
+    // validationError("show");
+    body.scrollTop=550;
+    validationIsGood=false;
+  }else{
+    validationError("hide");
+    validationIsGood=true;
+  }
 
   if(validationIsGood){
     e.target.submit();
@@ -273,8 +292,11 @@ We want to preview images, so we need to register the Image Preview plugin
         url: 'upload-order-file',
         onload: function (response) {
           uploadedFiles.push(response);
-          console.log(response);
           select("#uploaded-files").value = uploadedFiles.join(",");
+          var child = select(".filepond--root").parentElement.querySelector(".validation-errors");
+          if (child){
+            select(".filepond--root").parentElement.removeChild(child);
+          }
           return response.key;
         },
         onerror: function (response) {

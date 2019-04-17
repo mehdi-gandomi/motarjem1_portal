@@ -61,6 +61,9 @@ class OrderController extends Controller
     public function save_order_info($req, $res, $args)
     {
         $postInfo = $req->getParsedBody();
+        if (!isset($postInfo['order_files']) && $postInfo['order_files'] == ""){
+            return $res->withRedirect("/order");
+        }
         if (!isset($_SESSION['is_user_logged_in'])) {
             $exists = User::check_user_existance(['email' => $postInfo['email'], 'username' => $postInfo['email']]);
             if ($exists) {
@@ -121,6 +124,7 @@ class OrderController extends Controller
                     $this->view->render($res, "website/redirect-page.twig", ['redirect_url' => "https://www.zarinpal.com/pg/StartPay/" . $result->Authority, 'message' => "در حال هدایت به درگاه زرین پال", "message_below" => "لطفا صبر کنید ..."]);
                 } else {
                     echo "خطایی رخ داد";
+                    var_dump($result);
                 }
                 break;
             case "mellat":
