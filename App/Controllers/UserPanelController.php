@@ -329,9 +329,9 @@ class UserPanelController extends Controller
         $payment->set_gateway($gateway);
         $orderPriceRial = \intval($orderData['order_price']) * 10;
         $payment->set_info(array(
-            'order_id' => $orderNumber,
+            'order_id' => $orderData['order_id'],
             'price' => $orderPriceRial,
-            'callback_url' => Config::BASE_URL . '/payment-success/' . $orderData['order_number'],
+            'callback_url' => Config::BASE_URL . '/payment-success/' . $orderNumber,
         ));
         return $payment->pay();
     }
